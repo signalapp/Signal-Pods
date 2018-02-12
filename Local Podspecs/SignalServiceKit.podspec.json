@@ -1,0 +1,67 @@
+{
+  "name": "SignalServiceKit",
+  "version": "0.9.0",
+  "summary": "An Objective-C library for communicating with the Signal messaging service.",
+  "description": "An Objective-C library for communicating with the Signal messaging service.",
+  "homepage": "https://github.com/WhisperSystems/SignalServiceKit",
+  "license": "GPLv3",
+  "authors": {
+    "Frederic Jacobs": "github@fredericjacobs.com"
+  },
+  "source": {
+    "git": "https://github.com/WhisperSystems/SignalServiceKit.git",
+    "tag": "0.9.0"
+  },
+  "social_media_url": "https://twitter.com/FredericJacobs",
+  "platforms": {
+    "ios": "8.0"
+  },
+  "requires_arc": true,
+  "source_files": "SignalServiceKit/src/**/*.{h,m,mm}",
+  "compiler_flags": "-fcxx-modules",
+  "prefix_header_file": "SignalServiceKit/src/TSPrefix.h",
+  "xcconfig": {
+    "OTHER_CFLAGS": "$(inherited) -DSQLITE_HAS_CODEC"
+  },
+  "resources": [
+    "SignalServiceKit/Resources/Certificates/*"
+  ],
+  "dependencies": {
+    "Curve25519Kit": [
+
+    ],
+    "CocoaLumberjack": [
+
+    ],
+    "AFNetworking": [
+
+    ],
+    "AxolotlKit": [
+
+    ],
+    "Mantle": [
+
+    ],
+    "YapDatabase/SQLCipher": [
+
+    ],
+    "SocketRocket": [
+
+    ],
+    "libPhoneNumber-iOS": [
+
+    ],
+    "GRKOpenSSLFramework": [
+
+    ],
+    "SAMKeychain": [
+
+    ],
+    "TwistedOakCollapsingFutures": [
+
+    ],
+    "Reachability": [
+
+    ]
+  }
+}
