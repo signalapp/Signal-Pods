@@ -113,6 +113,7 @@
 #import "OWSCallMessageHandler.h"
 #import "ProfileManagerProtocol.h"
 #import "ProtoBuf+OWS.h"
+#import "OWSSignaliOSProtos.pb.h"
 #import "ECKeyPair+OWSPrivateKey.h"
 #import "OWSFingerprint.h"
 #import "OWSFingerprintBuilder.h"
