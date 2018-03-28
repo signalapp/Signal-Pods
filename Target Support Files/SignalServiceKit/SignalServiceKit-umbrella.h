@@ -105,6 +105,7 @@
 #import "TSVerifyCodeRequest.h"
 #import "TSNetworkManager.h"
 #import "OWSCensorshipConfiguration.h"
+#import "OWSCountryMetadata.h"
 #import "OWSSignalService.h"
 #import "SubProtocol.pb.h"
 #import "TSSocketManager.h"
