@@ -60,6 +60,7 @@
 #import "TSInteraction.h"
 #import "TSMessage.h"
 #import "TSOutgoingMessage.h"
+#import "TSQuotedMessage.h"
 #import "TSInvalidIdentityKeyErrorMessage.h"
 #import "TSInvalidIdentityKeyReceivingErrorMessage.h"
 #import "TSInvalidIdentityKeySendingErrorMessage.h"
@@ -182,6 +183,7 @@
 #import "OWSFileSystem.h"
 #import "OWSQueues.h"
 #import "Threading.h"
+#import "UIImage+OWS.h"
 
 FOUNDATION_EXPORT double SignalServiceKitVersionNumber;
 FOUNDATION_EXPORT const unsigned char SignalServiceKitVersionString[];
