@@ -176,6 +176,7 @@
 #import "OWSAnalyticsEvents.h"
 #import "OWSAsserts.h"
 #import "OWSBackgroundTask.h"
+#import "OWSBackupFragment.h"
 #import "OWSDispatch.h"
 #import "OWSError.h"
 #import "OWSFileSystem.h"
