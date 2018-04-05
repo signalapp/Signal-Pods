@@ -194,6 +194,11 @@ static NSString *const ext_key_class = @"class";
 - (BOOL)configureEncryptionForDatabase:(sqlite3 *)sqlite;
 #endif
 
+// These methods can be used when you want to block on
+// YapDatabase closing and being deallocated.
+- (void)flushInternalQueue;
+- (void)flushCheckpointQueue;
+
 @end
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		006856CFE9A83A8FDC66B21A1D843C6B /* YapDatabaseSearchQueuePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 138D10DAFCC4D71A2704DB4C6267EE52 /* YapDatabaseSearchQueuePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		00C4BDD26743A48820A4F03B1E6D7739 /* DDASLLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 75439E4B7BD815C231AD4B6E97B73F97 /* DDASLLogger.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		011E596CE9397F77C5A58615E26853D0 /* SessionBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AD12C95E17C1E1B4C94A2B38E7714D1 /* SessionBuilder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		0122AF8957E33DEADFA83083D8B884D0 /* brg_endian.h in Headers */ = {isa = PBXBuildFile; fileRef = ED61B6EA8C82C83FA584BD9A93F6CE4D /* brg_endian.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		0149659461BA9259292980CE411AF8D7 /* NSArray+PureLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 44D7A1D7FA7998C7A4074EFF66A54271 /* NSArray+PureLayout.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
@@ -26,7 +25,6 @@
 		041FE57868E68CA99411C19ABBD0C7D5 /* AFURLSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 67E53CE84D71A426ACDAFE1C8E6C0420 /* AFURLSessionManager.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		0448013060DEFC2215A76E3F354E7CC4 /* CodedInputStream.m in Sources */ = {isa = PBXBuildFile; fileRef = 1830D48BCB57E3693B3A729E3A64C68E /* CodedInputStream.m */; };
 		04882B9E3572E9B002A5B7BEBE6C570F /* GTSR4.crt in Resources */ = {isa = PBXBuildFile; fileRef = 78D5CF3C989F7F45A4BDA2839B0E4178 /* GTSR4.crt */; };
-		04A53F2FCC49210BF9C0F1FE428676E4 /* YYImage-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 54296C68C0CBF56E03994AABC311A5CA /* YYImage-dummy.m */; };
 		04BB87811EC053F6C797984DFF18187B /* OWSAttachmentsProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = E2EA8C9FD7BA22F376576DD9DE34C921 /* OWSAttachmentsProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		04CBF5245D60067947218D67A03DF0D7 /* TSRecipient.m in Sources */ = {isa = PBXBuildFile; fileRef = D7B8CDA31014E4B4FF8A6EE66494B12C /* TSRecipient.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		04E41C30DD36E423E3CE427F12594F12 /* OWSProvisioningProtos.pb.m in Sources */ = {isa = PBXBuildFile; fileRef = 7495C2BB9051B5816F034C8E2E067397 /* OWSProvisioningProtos.pb.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
@@ -92,6 +90,7 @@
 		121E3FED6AB027C240191C88B9BBE964 /* SSZipArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = D89A7EAF35AC523E5CCB988F41B3CE38 /* SSZipArchive.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0 -w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		1243E07A60C683A77BB99012C88CDF01 /* OWSAddToProfileWhitelistOfferMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 631B9DBC988072FA5B921D819160DD83 /* OWSAddToProfileWhitelistOfferMessage.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		12713932D0FC457AB70414EDC9A83CC5 /* OWSDisappearingMessagesConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 5167C880B363EF89D575BFE3D59DE299 /* OWSDisappearingMessagesConfiguration.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		12CDEC4EA7971DAFF5537C8930259898 /* YYImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 33A7F06086B48481C1C6A2917E6AA081 /* YYImage.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		134DA9C43F45C851D0B0E551E1ACB512 /* JSQMessagesCellTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = C1A91E7B6A8A9AD0BFE0405B5A9C49FB /* JSQMessagesCellTextView.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		1355ADF28B4D83F24EDA380D14253920 /* DDLog.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C8A20D60A3E2026DE6F2239FEDDD4F2 /* DDLog.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		139DEF2BF620D849A6F4D5717FFA478F /* SRLog.h in Headers */ = {isa = PBXBuildFile; fileRef = 7170B3CC23B07BDD6B29BE46642F82C0 /* SRLog.h */; settings = {ATTRIBUTES = (Project, ); }; };
@@ -99,7 +98,6 @@
 		14030B871E2A144EE1799ACB5C5DE09E /* YapDatabaseFilteredViewTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E1918063FC0FAAAE9685468CDDBF68 /* YapDatabaseFilteredViewTypes.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		14073FAEB60D8517039FA00052088978 /* OWSUnknownContactBlockOfferMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = D1870CB6C1DBBF7DA82608F79334B16B /* OWSUnknownContactBlockOfferMessage.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		1419F8D61895137D229FB3C57484CADC /* SignalServiceKit-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = AB5552F2A232D43C6AEE573BFE8105C4 /* SignalServiceKit-dummy.m */; };
-		143753E50F610FB3A594A1CD731EF7B4 /* DDOSLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = E312BF0B20CF0BC12BC6F9ECA850222F /* DDOSLogger.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		1443386DF5A3C95C1856FA0BB4F04909 /* hmac.c in Sources */ = {isa = PBXBuildFile; fileRef = 7AC5B6096176E39E2C4DBA0072DA73FA /* hmac.c */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0 -w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		146251198C938EBCC5DF4B24BE8854EA /* OWSDevicesService.m in Sources */ = {isa = PBXBuildFile; fileRef = 55189EE8078FF8A7515362772FD03B3A /* OWSDevicesService.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		14B7DB6C2FF572723BA0CEDD4A230D6D /* UIActivityIndicatorView+AFNetworking.h in Headers */ = {isa = PBXBuildFile; fileRef = B99271953FB0C924BE4CFB76C7B56C32 /* UIActivityIndicatorView+AFNetworking.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -136,6 +134,7 @@
 		1BDE900A51EC4AF9A100BF12EAC6DC81 /* YapDatabaseCloudKitOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = C2BAC2B8551926DDC7D781A948C98569 /* YapDatabaseCloudKitOptions.m */; };
 		1BFC54F1AC3D1383C491C0909D9A4360 /* SerializationUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 4AFD70EAF378156D33CB9A2DD65E9B43 /* SerializationUtilities.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1BFF53AFB137EAE37034BE8FD8F5E5BD /* ExtendableMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = DB9892C973323E39B5D3AACD6A09EF76 /* ExtendableMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1CCB6AC04D9CE07EBE4DE04959888155 /* YYSpriteSheetImage.m in Sources */ = {isa = PBXBuildFile; fileRef = EAE2499BC2030B8422674BD779036634 /* YYSpriteSheetImage.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		1CF6F18CE0EBF231F5F310BE7A2C82EA /* TOCTypeDefs.h in Headers */ = {isa = PBXBuildFile; fileRef = AE9AB47F4C3ED9912D22BC574B3F8748 /* TOCTypeDefs.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1D0C090BF03D7F2093EBFAEFB0A49CDF /* ge_p2_dbl.c in Sources */ = {isa = PBXBuildFile; fileRef = C424B0A0375DB455BB35AD18F2CC021F /* ge_p2_dbl.c */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		1D0E778792A1B90093A493807D34053B /* OWSVerificationStateChangeMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 075F7FAB767248C65B1F9924532E07B7 /* OWSVerificationStateChangeMessage.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
@@ -197,7 +196,6 @@
 		247B4B85F6E9648BC4BF88125462F221 /* OWSMessageSender.m in Sources */ = {isa = PBXBuildFile; fileRef = 1496D3E5B20EF5BAAC0E689B9D993BE0 /* OWSMessageSender.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		249C8CB6AABB75AB992D4B6BF6A2C216 /* AFAutoPurgingImageCache.m in Sources */ = {isa = PBXBuildFile; fileRef = AD1D431F5995FA69316CFD5D953151E9 /* AFAutoPurgingImageCache.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		24DDCC8452A282FD47581E2434726140 /* NSDictionary+MTLJSONKeyPath.m in Sources */ = {isa = PBXBuildFile; fileRef = 739ACE3F627DEE230FACFA321ECEA393 /* NSDictionary+MTLJSONKeyPath.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0 -w -Xanalyzer -analyzer-disable-all-checks"; }; };
-		24E1DFAC5D7E68C76DE62A52E53E92F4 /* YYImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 33A7F06086B48481C1C6A2917E6AA081 /* YYImage.m */; };
 		252F4D8D33119090F32A30267270F177 /* sqlite3.h in Headers */ = {isa = PBXBuildFile; fileRef = 425467CC38FC1D1B7E9F8E8D6B413F9F /* sqlite3.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2573725BB5BA299CBE27E300223CF5F4 /* ExtendableMessageBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = 86C51F84B544EEA1E969DD2D3CD55C7D /* ExtendableMessageBuilder.m */; };
 		25A4733F90A0C37A4EEE777F8D4E768E /* AppContext.m in Sources */ = {isa = PBXBuildFile; fileRef = A68015494B82D39201B9DAFF499B895D /* AppContext.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
@@ -216,7 +214,6 @@
 		27F921D9095FF092DD9584D24590B741 /* ReceivingChain.m in Sources */ = {isa = PBXBuildFile; fileRef = 63320518B7D8A1A0610AEE710267ED53 /* ReceivingChain.m */; };
 		280176D6B392BB946D3CA889822D4C57 /* YapDatabaseViewOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 85D1B3D6CEED0F807D9523FF475E5582 /* YapDatabaseViewOptions.m */; };
 		282D0A680FFC3BA71D585A2467507893 /* OWSCallBusyMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 293D6F0B44AFAD76EE568AB6130D3C37 /* OWSCallBusyMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		28540FF79E4B96AF75F0FE18E7E8B954 /* DDLog.m in Sources */ = {isa = PBXBuildFile; fileRef = C4E8C02634AB7C614250A52BF6C90CD9 /* DDLog.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		289E59C5CAA551A1DACD14FBEEE313C8 /* YapCollectionKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E0D3F2673F31188EB3CA3545AD2DF29 /* YapCollectionKey.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		28A3511B75540C14DE9D9F5675E62705 /* TSIncomingMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 0DCF3821B6493F9D686F42B06F83C1A3 /* TSIncomingMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2994EA35C97FC85186CE5F1737CFBF3A /* PreKeyBundle+jsonDict.m in Sources */ = {isa = PBXBuildFile; fileRef = 798C77E2DF244A6AFB0E15C41D30A6A0 /* PreKeyBundle+jsonDict.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
@@ -301,6 +298,7 @@
 		3BC394D653A1EC7A08482BB2C8271130 /* YapDatabaseRTreeIndexTransaction.m in Sources */ = {isa = PBXBuildFile; fileRef = 772DFDFDA2F85929B62C2F9379315F89 /* YapDatabaseRTreeIndexTransaction.m */; };
 		3BDC3968BB763294CBB5A507E6B1B737 /* NSObject+OWS.h in Headers */ = {isa = PBXBuildFile; fileRef = F8279A519047D255796BEEC97F7619F1 /* NSObject+OWS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3BF1A5181CBC2DC6A4DA177EDEB8F876 /* Utilities.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF2E3A3CEB8DA07A646D7517DE19332 /* Utilities.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3BF63F8A6D09316EAC15B4FC2E5169EB /* YYImageCoder.m in Sources */ = {isa = PBXBuildFile; fileRef = C09657384D5A4B3B0014722A16EDD88F /* YYImageCoder.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		3C08E56278E1D35218B5C79C3DCEAD7A /* YapDatabaseConnectionState.m in Sources */ = {isa = PBXBuildFile; fileRef = BE45D73B4480A7C44B4F413BDE58BACA /* YapDatabaseConnectionState.m */; };
 		3C109874B7E9786D44D2431480BFBDF5 /* YDBCKRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = B4E41A4ED3F551C99918A916159731DB /* YDBCKRecord.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3C4CB1343C80DB16D6874E48E5E30750 /* OWSSyncConfigurationMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = E4AD66D1B376E90464CF5BDAB1D4263A /* OWSSyncConfigurationMessage.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
@@ -336,7 +334,6 @@
 		40915308989310FAA03BF19060A0D805 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 26BA95D6D069CB36CF521261FDF735D4 /* SystemConfiguration.framework */; };
 		409DB4605B7D94FCDA765AC1DD40E794 /* NSRunLoop+SRWebSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = FB9701BA686F6A6E0B66112E453874FE /* NSRunLoop+SRWebSocket.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		414CCF8418D273A4FE069A7C69DC0B23 /* TOCFuture+MoreContinuations.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BECB046E4C5D5ABDDD2302438DFFBDA /* TOCFuture+MoreContinuations.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
-		414D3D4FFE86A7B64900A8D2E394609B /* DDTTYLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 158871B389D9E7EE75316978EE2C1BC3 /* DDTTYLogger.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		4155E86B740C759368FA277EBD2038EF /* Pods-SignalTests-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = C1B02C5E79932C95E8DC282BBAB823EB /* Pods-SignalTests-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		41756BDC77556F4FFB2B5F39BD215681 /* YapDatabaseSecondaryIndexSetup.m in Sources */ = {isa = PBXBuildFile; fileRef = 172218DB06F9E4FC8FA4F37D004F8B26 /* YapDatabaseSecondaryIndexSetup.m */; };
 		41B153DB2AF4AEAA45163B12B04C1026 /* ge_msub.h in Headers */ = {isa = PBXBuildFile; fileRef = 10222936F2CF88520BBE0F64D8271ED6 /* ge_msub.h */; settings = {ATTRIBUTES = (Project, ); }; };
@@ -352,6 +349,7 @@
 		42A26A6BDD38D5890C6B22BD34132F38 /* ge_p3_0.c in Sources */ = {isa = PBXBuildFile; fileRef = 574C13E5325B5B9F3310FC872F82B489 /* ge_p3_0.c */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		4378A3F8E6DF145F0B0735F047AD13D5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5850F0EA55B34D740E6463ACD2F23A21 /* Foundation.framework */; };
 		43A332E0FC64EF6858F94AE1E0260C59 /* NBPhoneNumberDefines.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A293A424803E7A911D05452359D4ACE /* NBPhoneNumberDefines.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		44BF553427BE008BC24C6EFC4ED74520 /* DDASLLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 75439E4B7BD815C231AD4B6E97B73F97 /* DDASLLogger.m */; };
 		44F3BA2D15C97B36DD81F39E8804EE36 /* Curve25519Kit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6FF7C85B08892009BB3454348D85A42F /* Curve25519Kit.framework */; };
 		44F95E9B9274CF84345DA48E17478363 /* YapDatabaseFilteredViewConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DC3F6CFBA35E08C63A360D968961385 /* YapDatabaseFilteredViewConnection.m */; };
 		45075613DFB080A9AFB6FA007DB1B3AD /* ContactsUpdater.h in Headers */ = {isa = PBXBuildFile; fileRef = 07B9EF4CCC40658FC4EC30DD9BC94481 /* ContactsUpdater.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -403,6 +401,7 @@
 		4E9CC0AF24E35257F6222761C242EB61 /* ATAppUpdater-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 6331BEA546A8733F48143309ECFC9D3F /* ATAppUpdater-dummy.m */; };
 		4EF40750210FE27C3E2B44907FE7B192 /* YapDatabase-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = EC2E54654BC04F57460FBBC944DD2573 /* YapDatabase-dummy.m */; };
 		4F56A259C3B1679E49306049E5234452 /* OWSEndSessionMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CF2D5CBE760BC95231888551C966067 /* OWSEndSessionMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4F6EFCCC0268C89F71DEE0B2F7D977B0 /* YYAnimatedImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 457DD17513DF1CFE9A74364F7B52F655 /* YYAnimatedImageView.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		4F7C821150FA32B6BBD8BDF319587C97 /* pow225521.h in Headers */ = {isa = PBXBuildFile; fileRef = 2640F67488F8819FB9F977695497471C /* pow225521.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		4F8CACF08BF9ED783BEC7ADC2038CD0C /* NSUserDefaults+OWS.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBB25639DD3EFBC53E2AB4221C7CFD2 /* NSUserDefaults+OWS.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		50290E08B4ACA2BC66B2FB8E86986AE1 /* TSErrorMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = B6A5551A58F8D4071DEB7EC442B07167 /* TSErrorMessage.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
@@ -531,7 +530,6 @@
 		67287BC9606106B2DBAFBEA1BC3B396F /* UIRefreshControl+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = CFB1DC3F3A3017A1D20A8EB9AFBCC196 /* UIRefreshControl+AFNetworking.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		6741CD00B68FEADBF2C1650D2A497A76 /* AFNetworking-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = B13787D8231436C828B4587324340A81 /* AFNetworking-dummy.m */; };
 		6745437F93EC4F8EAD0719581A4456AD /* DDAbstractDatabaseLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = 936626A47A145259588133A4AC773911 /* DDAbstractDatabaseLogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		67850332BA20648BDF97596DFC2F2E80 /* DDMultiFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 2C69E5B8051B189BE909F128983C87F1 /* DDMultiFormatter.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		6791BB4D949571810387F894C8B3991D /* api.h in Headers */ = {isa = PBXBuildFile; fileRef = 395ED46AF7F3943DABDA8F5D53BA5208 /* api.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		6792F80F58811895383448F289D71E40 /* NSString+SSK.m in Sources */ = {isa = PBXBuildFile; fileRef = EA01C1C9E694D678E26C7DF0C6D4289E /* NSString+SSK.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		67D83367A5607AED3E2AD52C9EBE3C9A /* YapDatabaseSecondaryIndexPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 71B2E105A282F0265C81DD71A15B5D57 /* YapDatabaseSecondaryIndexPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -546,7 +544,6 @@
 		6A154F5675F4A0FB67CBD478A9B40825 /* YapDatabaseFullTextSearch.h in Headers */ = {isa = PBXBuildFile; fileRef = 07240EE8CFFE53957363D4856B551D84 /* YapDatabaseFullTextSearch.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6A34902256D94C7DB8D0046CE3572AF1 /* NSValueTransformer+MTLInversionAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = C1A580BDE8F9ABCF94FE1735AB4BC2C4 /* NSValueTransformer+MTLInversionAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6A77B26A1C95AC419C25931145090A5E /* Pods-SignalShareExtension-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A30056B6A888A848B19F7CA5CC91CAA /* Pods-SignalShareExtension-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6B32627011C87C6070004E2C6BBE155D /* YYFrameImage.m in Sources */ = {isa = PBXBuildFile; fileRef = FD43A540579E9D3C738802A9FFAC1E06 /* YYFrameImage.m */; };
 		6B3AA1D6E59C23AD069861D3A4DC6081 /* SQLCipher-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 41F4ABEDC9BA843DCCB857262A2F16DC /* SQLCipher-dummy.m */; };
 		6B51FC920A2FC488D20C0ECDA8A9AC3A /* ExtendableMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 24AD4E0361DB92381D3BCBB5E2321D91 /* ExtendableMessage.m */; };
 		6B791C31EDA76DC34BF6718457E00183 /* YapDatabaseSecondaryIndexHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = C511B6E6990B3F35B5F0ACC3A74E57CA /* YapDatabaseSecondaryIndexHandler.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -595,7 +592,6 @@
 		7455EAF62FCE4D54CCDE09D2069B7F4E /* fe_pow22523.c in Sources */ = {isa = PBXBuildFile; fileRef = 8090C269091F403C88DC1A8978952716 /* fe_pow22523.c */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		74A379A7CF9189ECD06ED4499E2C81D1 /* OWSCensorshipConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 48AE34C33A36CF401498F4F0E90E41C8 /* OWSCensorshipConfiguration.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		74A89ADB25EBB09063BB9F94F8E53EF4 /* JSQMessagesBubbleSizeCalculating.h in Headers */ = {isa = PBXBuildFile; fileRef = 630BB0CFDD1DCD6693C74CE61781836A /* JSQMessagesBubbleSizeCalculating.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		74B814E8B0205D072E2F7054712F2F51 /* YYSpriteSheetImage.m in Sources */ = {isa = PBXBuildFile; fileRef = EAE2499BC2030B8422674BD779036634 /* YYSpriteSheetImage.m */; };
 		74EC2569DEBD0E165AAF49558B4655F6 /* BobAxolotlParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = E79C2AA2979BC1362640BF1FAC4811C1 /* BobAxolotlParameters.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7505863D29FC0FB1D5ECE0F8ED81A541 /* PreKeyRecord.m in Sources */ = {isa = PBXBuildFile; fileRef = 546E233B45BE99603EF87E785F8D839B /* PreKeyRecord.m */; };
 		751E8AADD830CE748AF00BCF7879D8FB /* YDBCKMergeInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 41246E4FACC507F2CB52173766BE6CDC /* YDBCKMergeInfo.m */; };
@@ -623,7 +619,6 @@
 		79703EC463E9825C6A62D5351AC33C30 /* OWSDisappearingMessagesJob.h in Headers */ = {isa = PBXBuildFile; fileRef = E9C5206E795124F3F5007AC45906565F /* OWSDisappearingMessagesJob.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		799A5F97277949461844781CD4085AD1 /* NSDictionary+MTLMappingAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = AE14B1E586E1B1C9D108529C44B3F3B4 /* NSDictionary+MTLMappingAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		79A58B6B6054D71673C9D33E3D87E7E4 /* YapDatabaseConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 92BD4110323677BF86404BA139018605 /* YapDatabaseConnection.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		79A75D21F829E6BB63AC74167A2E1C51 /* DDContextFilterLogFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 5AB6D84130ACD22BA215DB859E1C81F6 /* DDContextFilterLogFormatter.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		79BA007420993D0DFE54577FEEF54B38 /* sign.c in Sources */ = {isa = PBXBuildFile; fileRef = D5C69AE722DEB638EA73838AC42D619F /* sign.c */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		7A379C17BDCDFAE080C5374352E41CEB /* OWSDisappearingMessagesConfigurationMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 6668A75720A94FC3E70BD7C7997DD786 /* OWSDisappearingMessagesConfigurationMessage.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		7A6D26F196946C72449BD28A0265891B /* OWSWebsocketSecurityPolicy.m in Sources */ = {isa = PBXBuildFile; fileRef = 85999C55ABD6C7A88B4A37978EB85B41 /* OWSWebsocketSecurityPolicy.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
@@ -671,10 +666,10 @@
 		80B134B64F74DFEA1F66872AA9C7B944 /* SRRunLoopThread.m in Sources */ = {isa = PBXBuildFile; fileRef = DCC6AF97BE4A6ED189005D716042BC4B /* SRRunLoopThread.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		81CDA49FA65B0233E4CC25A0FCD2BA7F /* NSDate+YapDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = AAE8458F8035D761C212003E46BEA858 /* NSDate+YapDatabase.m */; };
 		8229B2F2ED8C9DEC526285D0F3C05A8F /* AxolotlParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 1747774DB7F06566A23C706AF47CCD3B /* AxolotlParameters.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		822E39411FF4C6DAD09CC6C8E7EBDA69 /* DDAbstractDatabaseLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 043681077450924897238F3E9EA7B59A /* DDAbstractDatabaseLogger.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		823423529C92E6CA794A1FB60793EED3 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C328319FF763E7525980679DBE390EF /* UIKit.framework */; };
 		83106C5519C2A52A287A8C8DDF20FCCA /* SocketRocket-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = A435A8C4A7E6CAB2BB082CA39DD75565 /* SocketRocket-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		83170664CF89F6605DBB9E1E92157974 /* sc.h in Headers */ = {isa = PBXBuildFile; fileRef = 487537332E7D63329BC6C85A24A1199B /* sc.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		839E0770F6C613FF06F532BF8AE2E8AA /* DDOSLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = E312BF0B20CF0BC12BC6F9ECA850222F /* DDOSLogger.m */; };
 		83D2920834C47D21DD38C5155B3206A2 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5850F0EA55B34D740E6463ACD2F23A21 /* Foundation.framework */; };
 		83D2C1DD6AB2747514EE05F4FCBB70C8 /* OWSProvisioningMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = F08E27C277427239D61491D022F20484 /* OWSProvisioningMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		845AD935AB0DB194E235548739E1D304 /* OWSCallAnswerMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 855F16ADBA4763F00FF0CD53E67B1CBA /* OWSCallAnswerMessage.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
@@ -724,7 +719,6 @@
 		8C7EB106356DB881ADA146E6678F16C3 /* SRProxyConnect.h in Headers */ = {isa = PBXBuildFile; fileRef = DB267E0D0F5810C88325FBE3D05B05EE /* SRProxyConnect.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		8CCFC253781A9B5878EC401AB6667468 /* OWSMessageDecrypter.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D792244CC0167203E78ACA18C449C9C /* OWSMessageDecrypter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8D446DA58F07E1FAF9C5E35521C29A8B /* JSQMessagesCellTextView.h in Headers */ = {isa = PBXBuildFile; fileRef = 294308ADE07DC44FB1393ADF66BE4B06 /* JSQMessagesCellTextView.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8D7E3F574C83CB5077AD91746DCC1A20 /* CocoaLumberjack-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = F7D01A1BEAE27156FB9D739EA7401B3E /* CocoaLumberjack-dummy.m */; };
 		8DCE7053BA80CB5D99B4ED42042CE2CA /* EXTScope.h in Headers */ = {isa = PBXBuildFile; fileRef = B7C22514840C0BB18B0D33F2EB99C858 /* EXTScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8DE2C546B888A2DB9768752575883262 /* YDBCKRecordTableInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = CA3C5788ED774CF1CA79A547B49E1450 /* YDBCKRecordTableInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8E1C09635AF764837A5D144EB6AA2213 /* Reachability.h in Headers */ = {isa = PBXBuildFile; fileRef = 4327ECDBF57DBCCE8D637B151D157244 /* Reachability.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -764,6 +758,7 @@
 		954B9E170482DF7FAAA759852C16D293 /* YapDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = C1A2DE52612900D08C19054BD1183642 /* YapDatabase.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		95E640CB9FF56D4EB9F8170571E4231D /* OWSOutgoingNullMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = C0AED59CBB54F9D0565BDA1231FF14DF /* OWSOutgoingNullMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		95E7A7A75C20BA50510E2D224DD167CD /* SRProxyConnect.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F0A124574FC601E7412BE3EAC575A56 /* SRProxyConnect.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
+		9608D4B0170CC80060FA3CA0BE546D3F /* DDDispatchQueueLogFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 9E7EF14E3F6710CF7754347DBE029305 /* DDDispatchQueueLogFormatter.m */; };
 		9615F951C86E6D3D0089C326AC8374A9 /* YapDatabaseViewOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC4C9CFB4E8F21C01DFC2E615CEFE7C /* YapDatabaseViewOptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		963BD7FCBFEFB4F41972F14DF094BD57 /* JSQAudioMediaItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 5007DC459304BFE13FAF326AAB07CA23 /* JSQAudioMediaItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9686B6B86B4E305616B4C9D66C421397 /* YapActionable.h in Headers */ = {isa = PBXBuildFile; fileRef = C12A0134CA1F986778A323902D93536F /* YapActionable.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -781,6 +776,7 @@
 		98118B8AE0A12FA7385CCB85F4FFFBE4 /* OWSGroupsOutputStream.m in Sources */ = {isa = PBXBuildFile; fileRef = 534683A21C1441E51E98E243FD2A3E76 /* OWSGroupsOutputStream.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		9845A21EB9C875C4C80B869E43F7CD3E /* AppContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 22B5914B645862A6ABB93AA691B6DF52 /* AppContext.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		98E3B0ECC629AC1DFD855916D4893309 /* OWSOutgoingSentMessageTranscript.h in Headers */ = {isa = PBXBuildFile; fileRef = EBAC4CB6626CE974BDBCB5980E9655DC /* OWSOutgoingSentMessageTranscript.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		99109BA641B54D51E9CF72F99D9EBD72 /* YYImage-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 54296C68C0CBF56E03994AABC311A5CA /* YYImage-dummy.m */; };
 		99228D9AF608ACDAA69CF877AD9C9D17 /* OWSProvisioningProtos.pb.h in Headers */ = {isa = PBXBuildFile; fileRef = 8C08EDA5B244E6B4B44B7B7210E845C7 /* OWSProvisioningProtos.pb.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9A3C3C562AEAC402CE4EA768C67D8410 /* ge_msub.c in Sources */ = {isa = PBXBuildFile; fileRef = 9758C0E4679801A52BCC5409E8D27EB7 /* ge_msub.c */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		9AB0EC9DBF96BF6E4020E781A24954AB /* OWSMessageManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1110FF289BEB3026E7725F1E217E5BA6 /* OWSMessageManager.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
@@ -898,6 +894,7 @@
 		AF81B9B1DBC93E279EECDC8AEC3C9B7A /* YapDatabaseCrossProcessNotificationConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 04DC6765C93F42FE21075CEA3F5AFCDA /* YapDatabaseCrossProcessNotificationConnection.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		AFB7D548E58FA2D19A8EAA9518956845 /* JSQMessagesCollectionViewDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = FB081981FC7E27CAA1BEF05CC934E7ED /* JSQMessagesCollectionViewDataSource.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B07F74F75C3E43471503D1DFEF92E7DD /* YapReachability.h in Headers */ = {isa = PBXBuildFile; fileRef = FA7EEE2752BE96AB7AF497A3B9630E05 /* YapReachability.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B0E5D25086154A8091C73BE5011A7D1C /* DDTTYLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 158871B389D9E7EE75316978EE2C1BC3 /* DDTTYLogger.m */; };
 		B1556EE843C7AFCE4A0CCBFE84D0D7BF /* crypto_sign.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F3E1CB58D0EAA8D1D89E171710D4D35 /* crypto_sign.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		B15E773EF95A093EFA564AFFDB41DABC /* TSNetworkManager.h in Headers */ = {isa = PBXBuildFile; fileRef = E31D4FD3A80019D5A92C95835E8FA2B4 /* TSNetworkManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B163D16F4F11FF04BA5C7A18535303A9 /* ioapi_mem.h in Headers */ = {isa = PBXBuildFile; fileRef = C12C31F4A2323102E483023E1579B3E6 /* ioapi_mem.h */; settings = {ATTRIBUTES = (Project, ); }; };
@@ -923,6 +920,7 @@
 		B5BB728BC2B43FA87ACE9845841ECC15 /* SRError.h in Headers */ = {isa = PBXBuildFile; fileRef = 2089E0829FF6CE690C39A88F12386EE7 /* SRError.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		B5DB1E727052C523E43A904CB89CEC4D /* OWSFileSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = B805683900AB4B7CC14B094D26E15C8F /* OWSFileSystem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B5DF7389B61151D1789C527676F172F3 /* JSQMessagesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 70BD70EF481CCD3C6A25ECAA8149D6FC /* JSQMessagesViewController.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
+		B61FBE51A277D9FFDE70E876DD931D21 /* DDASLLogCapture.m in Sources */ = {isa = PBXBuildFile; fileRef = FE009C99B103C2B3F49A85324E53F706 /* DDASLLogCapture.m */; };
 		B65A10034493E4030E0E7987D61ED5F7 /* TOCFuture+MoreContructors.h in Headers */ = {isa = PBXBuildFile; fileRef = B782E8B47563C4FE3D8D267DC60D62E8 /* TOCFuture+MoreContructors.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B663090117F301ADE47AF08F70BBC4B5 /* Randomness.m in Sources */ = {isa = PBXBuildFile; fileRef = B851C95A27462B371022CAA06315D09D /* Randomness.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		B6BF647B05BCE812D623FE5CBB41C870 /* YapDatabaseViewPageMetadata.h in Headers */ = {isa = PBXBuildFile; fileRef = 8D1BECC2FF06B7852B484A0525062A0C /* YapDatabaseViewPageMetadata.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -984,13 +982,11 @@
 		C468B1EEA6722D3C0DFFB49F9630CCF1 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D95DEBDAAE59A8C172A387C43D9D362B /* Security.framework */; };
 		C4FB956A345E54680937A8C8903A740D /* YDBCKChangeRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = 3BDA4F1E7C903DD527881B133D847C25 /* YDBCKChangeRecord.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C5D704A402927FF0C4BA695597D20E19 /* ge_madd.c in Sources */ = {isa = PBXBuildFile; fileRef = D34F4D19F75D58353F89C16FDA274D20 /* ge_madd.c */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
-		C5E600895BEDC5DFF643B88C7C4779E7 /* DDASLLogCapture.m in Sources */ = {isa = PBXBuildFile; fileRef = FE009C99B103C2B3F49A85324E53F706 /* DDASLLogCapture.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		C5F93D10BFE013A6216B2F98B7CA7950 /* UIImage+JSQMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BD686BA2059FED54E7E0756166DF1B3 /* UIImage+JSQMessages.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C628F2CC1093623BFD4BD95224490D9F /* SignedPrekeyRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = 6BB77F07CF5667B1E9879705172930C0 /* SignedPrekeyRecord.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C6A8104285F5591F28B6C8B5F216A467 /* Contact.m in Sources */ = {isa = PBXBuildFile; fileRef = A3E1BE6D3DEF8F8BB070E1E18D7DE2F6 /* Contact.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		C6C1C993CBE682CF381D470CC2F9AFA2 /* NSLayoutConstraint+PureLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 83E8FBEBEC88FBB49BDA46599CB89048 /* NSLayoutConstraint+PureLayout.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		C6DA85EA2A93AE9AFB8EF6262FF5DDE3 /* DDContextFilterLogFormatter.h in Headers */ = {isa = PBXBuildFile; fileRef = B80889A2941B619F79D0E5FBF915F0F0 /* DDContextFilterLogFormatter.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		C6F3F7F77E30C691B47AB46BF41AF5D5 /* YYAnimatedImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 457DD17513DF1CFE9A74364F7B52F655 /* YYAnimatedImageView.m */; };
 		C719CF7729ECF7FBA9456F7A1CFA9ABE /* MTLValueTransformer.h in Headers */ = {isa = PBXBuildFile; fileRef = 3DD5714C8EEF6C809A020140267096F6 /* MTLValueTransformer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C751782E213E53BB086C47131D12D2CC /* OWSCallHangupMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 26FF1B2EBC629AE83FE0326A3EBAFF45 /* OWSCallHangupMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C752A1DF8E48411566D60C07E70ADFFF /* MutableField.m in Sources */ = {isa = PBXBuildFile; fileRef = 71A1BC2504A1776416DC5DBE63958A7D /* MutableField.m */; };
@@ -1028,6 +1024,7 @@
 		CDD1C22F188111BB6D4D707D98814E65 /* SubProtocol.pb.m in Sources */ = {isa = PBXBuildFile; fileRef = 17BE5394DF757074A4DF3EE3CA385E3D /* SubProtocol.pb.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		CDE08876BC73F45E3DC4D2B6789A7232 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5850F0EA55B34D740E6463ACD2F23A21 /* Foundation.framework */; };
 		CE10BD7A2D600E62E82DFA4E429369C9 /* YapCollectionKey.m in Sources */ = {isa = PBXBuildFile; fileRef = E7E7C8955ADCE2A7D7AC3CDD124A8CDD /* YapCollectionKey.m */; };
+		CE43B0AAFC50C2251A03AC7D5A910C84 /* YYFrameImage.m in Sources */ = {isa = PBXBuildFile; fileRef = FD43A540579E9D3C738802A9FFAC1E06 /* YYFrameImage.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		CE5E1174D98B5AFDD3DC84E839197274 /* TOCTimeout.h in Headers */ = {isa = PBXBuildFile; fileRef = 9FE3FA84B06ADC67BA24EDC76BBC6927 /* TOCTimeout.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CF594BCC8E8B3EEEB888E94DF2AE1012 /* d2.h in Headers */ = {isa = PBXBuildFile; fileRef = 130CCB39586620384E8EC78BEBF89DFA /* d2.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		CF60D7BF1DA368AD78A38D5E54F5AC3C /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D95DEBDAAE59A8C172A387C43D9D362B /* Security.framework */; };
@@ -1038,7 +1035,6 @@
 		D0715055BFF7680418B510FE229DABF1 /* JSQMessagesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = DD2E64C31588C289C169F4C05F2AC9B2 /* JSQMessagesViewController.xib */; };
 		D082393C06F2D5F0B1ABD7F20D28B4D4 /* DDASLLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = ED4338C3A09390492AE17B070FE3D54D /* DDASLLogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D088DEF7389B7B53E300E0924FC89863 /* fe_sub.c in Sources */ = {isa = PBXBuildFile; fileRef = 70EEE2BC3569B039D178D2A53821D802 /* fe_sub.c */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
-		D1174EB6E9095C3E6BD56E99FB7E090F /* YYImageCoder.m in Sources */ = {isa = PBXBuildFile; fileRef = C09657384D5A4B3B0014722A16EDD88F /* YYImageCoder.m */; };
 		D136F8ED8169A3285A3516F7B4E8599E /* MTLJSONAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 380A356C27D844E1249667BBEC235AEB /* MTLJSONAdapter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D14E011C111E8AEF955C8F5D56026F3C /* Pods-Signal-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D5C999A1030C31409A8F9954956C6D6 /* Pods-Signal-dummy.m */; };
 		D1F4CD427FA5171D65BE9422C3AE8208 /* fe_invert.c in Sources */ = {isa = PBXBuildFile; fileRef = D4892CED0956F26DC3D2CEB1A8A86310 /* fe_invert.c */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
@@ -1081,6 +1077,7 @@
 		DA604383A4B2812F270C511C85C23AD8 /* AFURLRequestSerialization.h in Headers */ = {isa = PBXBuildFile; fileRef = 77F74A5A1B2805DEF5CDA30DA5945694 /* AFURLRequestSerialization.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DA89A530D7C4AED72E37805ECC93CF11 /* NSError+MTLModelException.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E0073D4A05095345B5ABA9AE6C8A972 /* NSError+MTLModelException.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0 -w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		DA9A01F1D092A2F1589F62BD5DA4335E /* OWSCallMessageHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 8E1171E5DBAB4EE0009C9660A550321D /* OWSCallMessageHandler.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DAA7C6946582816FFFFF1583C54421AF /* CocoaLumberjack-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = F7D01A1BEAE27156FB9D739EA7401B3E /* CocoaLumberjack-dummy.m */; };
 		DB47AD5869F7953C5A425739DC8F3393 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 006E900E881DFA15A56F0906AF8E1A9B /* MobileCoreServices.framework */; };
 		DB60C1B1A0B539C06D0DF693BC48958D /* YapDatabaseRTreeIndexConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = DC6727BBD4929F54DA9F07D9305E32BF /* YapDatabaseRTreeIndexConnection.m */; };
 		DB61039B8C1E1BB04DEB2A0366C8CB20 /* AFNetworkActivityIndicatorManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 8BA20DDB962F5A035965CD84C26F4CA1 /* AFNetworkActivityIndicatorManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1116,6 +1113,7 @@
 		E1A2B7B877DCB8F2C5EC82A3BF84298B /* AbstractMessageBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = B9EC66069333C94E0420815EC993E84B /* AbstractMessageBuilder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E1A8D02668CB910BA1E325180AE07A51 /* OWSStorage+Subclass.h in Headers */ = {isa = PBXBuildFile; fileRef = C538D197029D09B03C40A5AEC46769A3 /* OWSStorage+Subclass.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E1AB6F9956A3F9D15E6A5868E59A3978 /* OWSBackupFragment.m in Sources */ = {isa = PBXBuildFile; fileRef = 65FF2CF44097B38545A83B1836E9C8AB /* OWSBackupFragment.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
+		E1B652A7B773976ED398993DEB852FD3 /* DDContextFilterLogFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 5AB6D84130ACD22BA215DB859E1C81F6 /* DDContextFilterLogFormatter.m */; };
 		E1B9AB9AB955852FB16C5B0086BF754D /* Threading.h in Headers */ = {isa = PBXBuildFile; fileRef = 387908000FB03B270876800D4742068B /* Threading.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E21CF6A4C1A9CD13B9DD42DD455E8F56 /* SRSecurityPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 36B87DDF3856D20F9876B15190E42B1F /* SRSecurityPolicy.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E24ED2860A39C55E52B663001F1C7C46 /* Cryptography.h in Headers */ = {isa = PBXBuildFile; fileRef = 4281C960B5790A473E685ED900ACE7CF /* Cryptography.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1181,11 +1179,11 @@
 		ED5B296DF18B58DCF6911EB1986F9109 /* TSAttachmentPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = D3CE5A1ECF40D1FB20518B6567C7D720 /* TSAttachmentPointer.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		EDA483326F477A19A1750EE6351960BA /* OWSCallBusyMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 304C70B7C3078B1D2AA43C31479222D1 /* OWSCallBusyMessage.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		EDCE8CDD74C0EEAC6908E99E4B80DBA5 /* YapDatabaseAutoViewPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5379BAD2C6EC8FC40A9974E06344D0C2 /* YapDatabaseAutoViewPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		EDD2E444C834136EFB931DFA85AED1C6 /* DDMultiFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 2C69E5B8051B189BE909F128983C87F1 /* DDMultiFormatter.m */; };
 		EDD7A1EFAA354F7BAEAFCA44CC69EECF /* UnionFind.h in Headers */ = {isa = PBXBuildFile; fileRef = ABB80515BD31635F352D6312E86881AE /* UnionFind.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		EE02B563EE5DB97408DC3B6328BA4554 /* YapManyToManyCache.m in Sources */ = {isa = PBXBuildFile; fileRef = D898FCE7E54104CBE383C5CA5A011CAB /* YapManyToManyCache.m */; };
 		EE20A8A02628893DC28CFF22E2D8A655 /* SRMutex.m in Sources */ = {isa = PBXBuildFile; fileRef = 818AD1FD1BF4A9EA54E9C3FDFFC92C4E /* SRMutex.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		EE2430D4BC7528EADF3665CF71FFAEF2 /* Curve25519.m in Sources */ = {isa = PBXBuildFile; fileRef = 60022E4ACE9CE8DD77EA9247B2ABD174 /* Curve25519.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
-		EE7035C010DAB2772CC8C21F757966B5 /* DDDispatchQueueLogFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 9E7EF14E3F6710CF7754347DBE029305 /* DDDispatchQueueLogFormatter.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		EE8CEFFE25DFE42291B7225257C326EF /* OWSFailedMessagesJob.h in Headers */ = {isa = PBXBuildFile; fileRef = 7DCECBAA9A0F2FFDAA7A2EF925646F93 /* OWSFailedMessagesJob.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		EED50BD154064027A7A82C05FEF29B7D /* JSQSystemSoundPlayer-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = BA336448A72D9D4D9EB0155EBC4A4CFA /* JSQSystemSoundPlayer-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		EF4B06F29C36A623AA41C0EA0156F0EE /* ge_p3_to_p2.c in Sources */ = {isa = PBXBuildFile; fileRef = C6613B470C528940D8D18EAE57A3A2F3 /* ge_p3_to_p2.c */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
@@ -1234,7 +1232,6 @@
 		F90037F9A006240A6C18AD8DD7F0948E /* GeneratedMessageBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 6BBAD607B07DC6B81F0184D9DF204757 /* GeneratedMessageBuilder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F90DC5B00B3186AD9263C956FF7312CE /* crypto_int32.h in Headers */ = {isa = PBXBuildFile; fileRef = 011780EF9D47D8E1428E6DCB4C542FFC /* crypto_int32.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		F92BEEAB283A69C051CC668152FAC3D6 /* OWSStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = F68F868B3A079A7C57914CC31B7600C2 /* OWSStorage.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
-		F98946C7910079171AAAD5E53C6A32F8 /* DDFileLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EE742488C5E72D7BD266090BADDEAF3 /* DDFileLogger.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		F98DF814D7806650E350DB9CB3F3427D /* TSRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 56171D111C3D724B791B172A160414AB /* TSRequest.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F99832B6DCFC15204F9EABCEDA1527E0 /* SocketRocket.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E52964BF63D7B644D027CA5FBC532E1 /* SocketRocket.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F99F947CDB4EE2182D08BDBB6513A21B /* ge_add.c in Sources */ = {isa = PBXBuildFile; fileRef = 4A810CBFC845C03B09C3D40B3E7188E4 /* ge_add.c */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
@@ -1258,9 +1255,11 @@
 		FC22103BF1CC417C9F70EBD9A7520CF3 /* OWSAnalyticsEvents.h in Headers */ = {isa = PBXBuildFile; fileRef = 74531B114E19576F40A21617AAB42EF0 /* OWSAnalyticsEvents.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		FC5D306D5FCA46204C99A5FBF9A6FFCC /* OWSPrimaryStorage+SignedPreKeyStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 02FFC649B668265EEA81653BCFDA775F /* OWSPrimaryStorage+SignedPreKeyStore.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		FCB04AD7699792C8E8745F92DEA325E0 /* Pods-SignalMessaging-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = C3C1815E8B061A667781DA86B8760FB7 /* Pods-SignalMessaging-dummy.m */; };
+		FCB6BCE8193E1E3F12CA242697C60702 /* DDAbstractDatabaseLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 043681077450924897238F3E9EA7B59A /* DDAbstractDatabaseLogger.m */; };
 		FCD4E41F7ECBBB0B9C72AFEA45720A47 /* TSRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 1C129A3793D53B2508D7F993F4C4C121 /* TSRequest.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		FCF4A7B251C23C2EDEE4F36A474EEC45 /* JSQMessagesBubbleImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 8863629C6433757BECA46D58D03CF638 /* JSQMessagesBubbleImage.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		FD16AD52224993C62D6841A3547D2154 /* YapDatabaseRTreeIndex.h in Headers */ = {isa = PBXBuildFile; fileRef = E7A094C2418F066A044FC311544CAC78 /* YapDatabaseRTreeIndex.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FD865F296C1724A27C956846B15F2DF5 /* DDLog.m in Sources */ = {isa = PBXBuildFile; fileRef = C4E8C02634AB7C614250A52BF6C90CD9 /* DDLog.m */; };
 		FDAE06D912B40554CFEB2AEB72909E8D /* ge_p2_0.c in Sources */ = {isa = PBXBuildFile; fileRef = 0A04320D480D46381C5085F483B43802 /* ge_p2_0.c */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		FDD4E567E2D6D980D596EA150C845FBF /* SSZipArchive.h in Headers */ = {isa = PBXBuildFile; fileRef = 287C1869B48059319E57BDE6CF4421D2 /* SSZipArchive.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		FE4869EA69CC99D0312D2F8A08CD38B2 /* MutableExtensionRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = B6F7C1C8BB3901365BD5EA47A275F849 /* MutableExtensionRegistry.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1270,6 +1269,7 @@
 		FF2E3D7FC4F50F6F9837CC1916F5C183 /* JSQMessagesCollectionView.h in Headers */ = {isa = PBXBuildFile; fileRef = 110E9121A37D41AEC09C767F62190656 /* JSQMessagesCollectionView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		FF8244AADCAC5FF6F7A38707D5EDDB52 /* SRIOConsumer.m in Sources */ = {isa = PBXBuildFile; fileRef = 6F0B4891D6469A8DC0FC724715A8C41B /* SRIOConsumer.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		FFBEF4723DB39DC06E714280BB05D46C /* DDLog+LOGV.h in Headers */ = {isa = PBXBuildFile; fileRef = 772C7F8F4275F345B3DD6F43A52DD4A9 /* DDLog+LOGV.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FFCC6FD5CA9169C1905762B88FEAE110 /* DDFileLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EE742488C5E72D7BD266090BADDEAF3 /* DDFileLogger.m */; };
 		FFF64BE525AF87680FC20DEAC40D5EC5 /* NSURLRequest+SRWebSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 1C70F76BE94F19ECCFBBF9DDB29D3601 /* NSURLRequest+SRWebSocket.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 /* End PBXBuildFile section */
 
@@ -6954,7 +6954,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = CA7B1FAFF153D5C77C206A69920C34FF /* Build configuration list for PBXNativeTarget "YYImage" */;
 			buildPhases = (
-				A2A42D8CBADBF814F5C72C699524CD9E /* Sources */,
+				DA86F19FB89D5FE1EB053438AA6D043B /* Sources */,
 				687515B98C12EB4D65CC85FC09D42D08 /* Frameworks */,
 				768A8767E23EDC3B633A9D3691C06D22 /* Headers */,
 			);
@@ -7040,7 +7040,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = E09C3EC8EF90A444F35239CFF235AEBC /* Build configuration list for PBXNativeTarget "CocoaLumberjack" */;
 			buildPhases = (
-				EA0D3CFF9300BDA50EBA2A9380747DDD /* Sources */,
+				710384131094B5918630C2690B6C55F0 /* Sources */,
 				04B9048608CAAF9383E07F5AA2C1A830 /* Frameworks */,
 				D498875195CCAFF64933E5438E8717EA /* Headers */,
 			);
@@ -7655,6 +7655,24 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		710384131094B5918630C2690B6C55F0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DAA7C6946582816FFFFF1583C54421AF /* CocoaLumberjack-dummy.m in Sources */,
+				FCB6BCE8193E1E3F12CA242697C60702 /* DDAbstractDatabaseLogger.m in Sources */,
+				B61FBE51A277D9FFDE70E876DD931D21 /* DDASLLogCapture.m in Sources */,
+				44BF553427BE008BC24C6EFC4ED74520 /* DDASLLogger.m in Sources */,
+				E1B652A7B773976ED398993DEB852FD3 /* DDContextFilterLogFormatter.m in Sources */,
+				9608D4B0170CC80060FA3CA0BE546D3F /* DDDispatchQueueLogFormatter.m in Sources */,
+				FFCC6FD5CA9169C1905762B88FEAE110 /* DDFileLogger.m in Sources */,
+				FD865F296C1724A27C956846B15F2DF5 /* DDLog.m in Sources */,
+				EDD2E444C834136EFB931DFA85AED1C6 /* DDMultiFormatter.m in Sources */,
+				839E0770F6C613FF06F532BF8AE2E8AA /* DDOSLogger.m in Sources */,
+				B0E5D25086154A8091C73BE5011A7D1C /* DDTTYLogger.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		72575AFACE39F40F34938C318DC2AFF1 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -7723,19 +7741,6 @@
 			files = (
 				65EBD7FC0BE286B265F789E42D13F09F /* JSQSystemSoundPlayer-dummy.m in Sources */,
 				22D75941C6FC15BA3BC27C6130E14E3A /* JSQSystemSoundPlayer.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		A2A42D8CBADBF814F5C72C699524CD9E /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				C6F3F7F77E30C691B47AB46BF41AF5D5 /* YYAnimatedImageView.m in Sources */,
-				6B32627011C87C6070004E2C6BBE155D /* YYFrameImage.m in Sources */,
-				04A53F2FCC49210BF9C0F1FE428676E4 /* YYImage-dummy.m in Sources */,
-				24E1DFAC5D7E68C76DE62A52E53E92F4 /* YYImage.m in Sources */,
-				D1174EB6E9095C3E6BD56E99FB7E090F /* YYImageCoder.m in Sources */,
-				74B814E8B0205D072E2F7054712F2F51 /* YYSpriteSheetImage.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7815,6 +7820,19 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		DA86F19FB89D5FE1EB053438AA6D043B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4F6EFCCC0268C89F71DEE0B2F7D977B0 /* YYAnimatedImageView.m in Sources */,
+				CE43B0AAFC50C2251A03AC7D5A910C84 /* YYFrameImage.m in Sources */,
+				99109BA641B54D51E9CF72F99D9EBD72 /* YYImage-dummy.m in Sources */,
+				12CDEC4EA7971DAFF5537C8930259898 /* YYImage.m in Sources */,
+				3BF63F8A6D09316EAC15B4FC2E5169EB /* YYImageCoder.m in Sources */,
+				1CCB6AC04D9CE07EBE4DE04959888155 /* YYSpriteSheetImage.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E038DD00DACCB9DAABFF9B8AB7AF15A7 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -7868,24 +7886,6 @@
 				79BA007420993D0DFE54577FEEF54B38 /* sign.c in Sources */,
 				B49D9723A242EA3B8CD42DF561117877 /* sign_modified.c in Sources */,
 				A06ADB4D91E65D838AD595A45772608B /* zeroize.c in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		EA0D3CFF9300BDA50EBA2A9380747DDD /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				8D7E3F574C83CB5077AD91746DCC1A20 /* CocoaLumberjack-dummy.m in Sources */,
-				822E39411FF4C6DAD09CC6C8E7EBDA69 /* DDAbstractDatabaseLogger.m in Sources */,
-				C5E600895BEDC5DFF643B88C7C4779E7 /* DDASLLogCapture.m in Sources */,
-				00C4BDD26743A48820A4F03B1E6D7739 /* DDASLLogger.m in Sources */,
-				79A75D21F829E6BB63AC74167A2E1C51 /* DDContextFilterLogFormatter.m in Sources */,
-				EE7035C010DAB2772CC8C21F757966B5 /* DDDispatchQueueLogFormatter.m in Sources */,
-				F98946C7910079171AAAD5E53C6A32F8 /* DDFileLogger.m in Sources */,
-				28540FF79E4B96AF75F0FE18E7E8B954 /* DDLog.m in Sources */,
-				67850332BA20648BDF97596DFC2F2E80 /* DDMultiFormatter.m in Sources */,
-				143753E50F610FB3A594A1CD731EF7B4 /* DDOSLogger.m in Sources */,
-				414D3D4FFE86A7B64900A8D2E394609B /* DDTTYLogger.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
