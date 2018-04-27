@@ -48,6 +48,7 @@
 #import "OWSSyncContactsMessage.h"
 #import "OWSSyncGroupsMessage.h"
 #import "OWSSyncGroupsRequestMessage.h"
+#import "OWSContactShare+Private.h"
 #import "OWSContactShare.h"
 #import "OWSDisappearingConfigurationUpdateInfoMessage.h"
 #import "OWSDisappearingMessagesConfigurationMessage.h"
