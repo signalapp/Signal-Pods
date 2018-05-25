@@ -21,8 +21,8 @@
 #import "NSBundle+JSQMessages.h"
 
 
-static NSString * const kJSQMessageReceivedSoundName = @"message_received";
-static NSString * const kJSQMessageSentSoundName = @"message_sent";
+static NSString * const kJSQMessageReceivedSoundName = @"Сhirp";
+static NSString * const kJSQMessageSentSoundName = @"Сhirp";
 
 
 @implementation JSQSystemSoundPlayer (JSQMessages)
@@ -62,10 +62,10 @@ static NSString * const kJSQMessageSentSoundName = @"message_sent";
     NSString *fileName = [NSString stringWithFormat:@"JSQMessagesAssets.bundle/Sounds/%@", soundName];
     
     if (asAlert) {
-        [[JSQSystemSoundPlayer sharedPlayer] playAlertSoundWithFilename:fileName fileExtension:kJSQSystemSoundTypeAIFF];
+        [[JSQSystemSoundPlayer sharedPlayer] playAlertSoundWithFilename:fileName fileExtension:kJSQSystemSoundTypeWAV];
     }
     else {
-        [[JSQSystemSoundPlayer sharedPlayer] playSoundWithFilename:fileName fileExtension:kJSQSystemSoundTypeAIFF];
+        [[JSQSystemSoundPlayer sharedPlayer] playSoundWithFilename:fileName fileExtension:kJSQSystemSoundTypeWAV];
     }
     
     //  restore original bundle
