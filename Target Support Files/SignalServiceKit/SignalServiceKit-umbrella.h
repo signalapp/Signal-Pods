@@ -184,6 +184,7 @@
 #import "OWSDispatch.h"
 #import "OWSError.h"
 #import "OWSFileSystem.h"
+#import "OWSLogger.h"
 #import "OWSOperation.h"
 #import "OWSQueues.h"
 #import "Threading.h"
