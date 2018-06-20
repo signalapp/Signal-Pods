@@ -140,7 +140,6 @@
 #import "OWSStorage.h"
 #import "TSDatabaseSecondaryIndexes.h"
 #import "TSDatabaseView.h"
-#import "TSRecipient.h"
 #import "TSStorageHeaders.h"
 #import "TSStorageKeys.h"
 #import "TSYapDatabaseObject.h"
