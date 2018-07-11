@@ -80,6 +80,7 @@
 #import "OWSFailedAttachmentDownloadsJob.h"
 #import "OWSFailedMessagesJob.h"
 #import "OWSIdentityManager.h"
+#import "OWSIncompleteCallsJob.h"
 #import "OWSMessageDecrypter.h"
 #import "OWSMessageHandler.h"
 #import "OWSMessageManager.h"
