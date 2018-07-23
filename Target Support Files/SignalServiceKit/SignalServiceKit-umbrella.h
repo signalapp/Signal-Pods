@@ -107,7 +107,6 @@
 #import "OWSDevicesService.h"
 #import "OWSRequestBuilder.h"
 #import "OWSUploadOperation.h"
-#import "CDSAttestationRequest.h"
 #import "OWSRequestFactory.h"
 #import "TSRequest.h"
 #import "TSVerifyCodeRequest.h"
