@@ -167,6 +167,7 @@
 #import "iOSVersions.h"
 #import "MIMETypeUtil.h"
 #import "NSArray+OWS.h"
+#import "NSAttributedString+OWS.h"
 #import "NSData+Base64.h"
 #import "NSData+Image.h"
 #import "NSData+messagePadding.h"
@@ -175,6 +176,7 @@
 #import "NSError+MessageSending.h"
 #import "NSNotificationCenter+OWS.h"
 #import "NSObject+OWS.h"
+#import "NSString+OWS.h"
 #import "NSString+SSK.h"
 #import "NSTimer+OWS.h"
 #import "NSURLSessionDataTask+StatusCode.h"
@@ -191,8 +193,13 @@
 #import "OWSLogger.h"
 #import "OWSOperation.h"
 #import "OWSQueues.h"
+#import "Theme.h"
 #import "Threading.h"
+#import "UIColor+OWS.h"
+#import "UIFont+OWS.h"
 #import "UIImage+OWS.h"
+#import "UIView+OWS.h"
+#import "UIViewController+OWS.h"
 
 FOUNDATION_EXPORT double SignalServiceKitVersionNumber;
 FOUNDATION_EXPORT const unsigned char SignalServiceKitVersionString[];
