@@ -157,6 +157,7 @@
 #import "AppContext.h"
 #import "AppReadiness.h"
 #import "AppVersion.h"
+#import "ByteParser.h"
 #import "BadArgument.h"
 #import "BadState.h"
 #import "Constraints.h"
