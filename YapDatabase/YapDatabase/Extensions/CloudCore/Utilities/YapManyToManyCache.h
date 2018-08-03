@@ -4,6 +4,8 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * A many-to-many cache has the following features:
  * 
@@ -89,7 +91,7 @@
  * And then the key/value tuple is moved to the beginning of the most-recently-used linked-list.
 **/
 - (void)insertKey:(id)key value:(id)value;
-- (void)insertKey:(id)key value:(id)value metadata:(id)metadata;
+- (void)insertKey:(id)key value:(id)value metadata:(nullable id)metadata;
 
 /**
  * Returns whether or not the cache contains the key/value tuple.
@@ -107,7 +109,7 @@
  * 
  * If the key/value tuple exists, it's moved to the beginning of the most-recently-used linked-list.
 **/
-- (id)metadataForKey:(id)key value:(id)value;
+- (nullable id)metadataForKey:(id)key value:(id)value;
 
 /**
  * Returns YES if the given key or value has 1 or more entries in the cache.
@@ -128,15 +130,15 @@
  * 
  * All key/value tuples accessed during enumeration are moved to the beginning of the most-recently-used linked-list.
 **/
-- (void)enumerateValuesForKey:(id)key withBlock:(void (^)(id value, id metadata, BOOL *stop))block;
-- (void)enumerateKeysForValue:(id)value withBlock:(void (^)(id value, id metadata, BOOL *stop))block;
+- (void)enumerateValuesForKey:(id)key withBlock:(void (^)(id value, __nullable id metadata, BOOL *stop))block;
+- (void)enumerateKeysForValue:(id)value withBlock:(void (^)(id value, __nullable id metadata, BOOL *stop))block;
 
 /**
  * Enumerates all key/value pairs in the cache.
  * 
  * As this method is designed to enumerate all values, it ddes not affect the most-recently-used linked-list.
 **/
-- (void)enumerateWithBlock:(void (^)(id key, id value, id metadata, BOOL *stop))block;
+- (void)enumerateWithBlock:(void (^)(id key, id value, __nullable id metadata, BOOL *stop))block;
 
 /**
  * Removes the tuple that matches the given key/value pair.
@@ -161,3 +163,5 @@
 - (void)debug;
 
 @end
+
+NS_ASSUME_NONNULL_END

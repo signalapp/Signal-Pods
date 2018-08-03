@@ -12,7 +12,7 @@
  * See YapDatabaseLogging.h for more information.
 **/
 #if DEBUG
-  static const int ydbLogLevel = YDB_LOG_LEVEL_VERBOSE | YDB_LOG_FLAG_TRACE;
+  static const int ydbLogLevel = YDB_LOG_LEVEL_WARN;
 #else
   static const int ydbLogLevel = YDB_LOG_LEVEL_WARN;
 #endif
@@ -549,6 +549,8 @@
 			}
 			
 		} usingBlock:^(NSString *collection, NSString *key, id object, NSUInteger index, BOOL *stop) {
+		#pragma clang diagnostic push // silence warnings: synchronous access
+		#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 			
 			//
 			// Processing Block
@@ -583,6 +585,8 @@
 					}
 				}
 			}
+			
+		#pragma clang diagnostic pop
 		}];
 		
 	}

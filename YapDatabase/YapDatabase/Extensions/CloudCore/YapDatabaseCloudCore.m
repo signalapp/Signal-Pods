@@ -190,9 +190,10 @@ withRegisteredExtensions:(NSDictionary __unused *)registeredExtensions
 **/
 - (YapDatabaseExtensionConnection *)newConnection:(YapDatabaseConnection *)databaseConnection
 {
-	NSAssert(NO, @"Missing required method(%@) in subclass(%@)", NSStringFromSelector(_cmd), [self class]);
+	// Subclasses should override this method,
+	// and return an instance of their own subclass.
 	
-	return nil;
+	return [[YapDatabaseCloudCoreConnection alloc] initWithParent:self databaseConnection:databaseConnection];
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -275,6 +276,8 @@ withRegisteredExtensions:(NSDictionary __unused *)registeredExtensions
 	__block YapDatabaseCloudCorePipeline *pipeline = nil;
 	
 	dispatch_block_t block = ^{
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		pipeline = pipelines[name];
 		
@@ -286,6 +289,8 @@ withRegisteredExtensions:(NSDictionary __unused *)registeredExtensions
 				pipeline = pipelines[alias];
 			}
 		}
+		
+	#pragma clang diagnostic pop
 	};
 	
 	if (dispatch_get_specific(IsOnQueueKey))
@@ -315,6 +320,8 @@ withRegisteredExtensions:(NSDictionary __unused *)registeredExtensions
 	__block BOOL result = YES;
 	
 	dispatch_block_t block = ^{ @autoreleasepool {
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		if (pipelines[pipeline.name] != nil)
 		{
@@ -341,6 +348,8 @@ withRegisteredExtensions:(NSDictionary __unused *)registeredExtensions
 		if (suspendCount > 0) {
 			[pipeline suspendWithCount:suspendCount];
 		}
+		
+	#pragma clang diagnostic pop
 	}};
 	
 	if (dispatch_get_specific(IsOnQueueKey))
@@ -359,8 +368,12 @@ withRegisteredExtensions:(NSDictionary __unused *)registeredExtensions
 	__block NSArray *allPipelines = nil;
 	
 	dispatch_block_t block = ^{ @autoreleasepool {
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		allPipelines = [pipelines allValues];
+		
+	#pragma clang diagnostic pop
 	}};
 	
 	if (dispatch_get_specific(IsOnQueueKey))
@@ -379,8 +392,12 @@ withRegisteredExtensions:(NSDictionary __unused *)registeredExtensions
 	__block NSArray *allPipelineNames = nil;
 	
 	dispatch_block_t block = ^{ @autoreleasepool {
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		allPipelineNames = [pipelines allKeys];
+		
+	#pragma clang diagnostic pop
 	}};
 	
 	if (dispatch_get_specific(IsOnQueueKey))
@@ -400,8 +417,12 @@ withRegisteredExtensions:(NSDictionary __unused *)registeredExtensions
 	__block NSArray *allNames = nil;
 	
 	dispatch_block_t block = ^{ @autoreleasepool {
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		allNames = [pipelines allKeys];
+		
+	#pragma clang diagnostic pop
 	}};
 	
 	if (dispatch_get_specific(IsOnQueueKey))
@@ -429,7 +450,12 @@ withRegisteredExtensions:(NSDictionary __unused *)registeredExtensions
 	__block NSUInteger result = 0;
 	
 	dispatch_block_t block = ^{
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
+		
 		result = suspendCount;
+		
+	#pragma clang diagnostic pop
 	};
 	
 	if (dispatch_get_specific(IsOnQueueKey))
@@ -450,6 +476,8 @@ withRegisteredExtensions:(NSDictionary __unused *)registeredExtensions
 	__block NSUInteger newSuspendCount = 0;
 	
 	dispatch_block_t block = ^{ @autoreleasepool {
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		if (suspendCount <= (NSUIntegerMax - suspendCountIncrement))
 			suspendCount += suspendCountIncrement;
@@ -463,6 +491,8 @@ withRegisteredExtensions:(NSDictionary __unused *)registeredExtensions
 		{
 			[pipeline suspendWithCount:suspendCountIncrement];
 		}
+		
+	#pragma clang diagnostic pop
 	}};
 	
 	if (dispatch_get_specific(IsOnQueueKey))
@@ -478,7 +508,9 @@ withRegisteredExtensions:(NSDictionary __unused *)registeredExtensions
 	__block NSUInteger newSuspendCount = 0;
 	
 	dispatch_block_t block = ^{ @autoreleasepool {
-	
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
+		
 		if (suspendCount > 0) {
 			suspendCount--;
 		}
@@ -489,6 +521,8 @@ withRegisteredExtensions:(NSDictionary __unused *)registeredExtensions
 		{
 			[pipeline resume];
 		}
+		
+	#pragma clang diagnostic pop
 	}};
 	
 	if (dispatch_get_specific(IsOnQueueKey))
@@ -512,6 +546,8 @@ withRegisteredExtensions:(NSDictionary __unused *)registeredExtensions
 	YDBLogAutoTrace();
 	
 	dispatch_block_t block = ^{ @autoreleasepool {
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		[rowidsToPipelineName enumerateKeysAndObjectsUsingBlock:^(NSNumber *rowid, NSString *pipelineName, BOOL *stop){
 			
@@ -521,6 +557,8 @@ withRegisteredExtensions:(NSDictionary __unused *)registeredExtensions
 				pipeline.rowid = [rowid longLongValue];
 			}
 		}];
+		
+	#pragma clang diagnostic pop
 	}};
 	
 	if (dispatch_get_specific(IsOnQueueKey))
@@ -537,6 +575,8 @@ withRegisteredExtensions:(NSDictionary __unused *)registeredExtensions
 	YDBLogAutoTrace();
 	
 	dispatch_block_t block = ^{ @autoreleasepool {
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		[sortedGraphsPerPipeline enumerateKeysAndObjectsUsingBlock:
 		    ^(NSString *pipelineName, NSArray *sortedGraphs, BOOL *stop)
@@ -547,6 +587,8 @@ withRegisteredExtensions:(NSDictionary __unused *)registeredExtensions
 				[pipeline restoreGraphs:sortedGraphs];
 			}
 		}];
+		
+	#pragma clang diagnostic pop
 	}};
 	
 	if (dispatch_get_specific(IsOnQueueKey))
@@ -572,6 +614,8 @@ withRegisteredExtensions:(NSDictionary __unused *)registeredExtensions
 	}
 	
 	dispatch_block_t block = ^{ @autoreleasepool {
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		for (YapDatabaseCloudCorePipeline *pipeline in [pipelines objectEnumerator])
 		{
@@ -582,6 +626,8 @@ withRegisteredExtensions:(NSDictionary __unused *)registeredExtensions
 			         insertedOperations:insertedForPipeline
 			         modifiedOperations:modifiedOperations];
 		}
+		
+	#pragma clang diagnostic pop
 	}};
 	
 	if (dispatch_get_specific(IsOnQueueKey))

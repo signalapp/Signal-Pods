@@ -58,6 +58,7 @@
 #import "YapDatabaseCloudKitOptions.h"
 #import "YapDatabaseCloudKitTransaction.h"
 #import "YapDatabaseCloudKitTypes.h"
+#import "YapDatabaseConnectionPool.h"
 #import "YapDatabaseConnectionProxy.h"
 #import "YapDatabaseCrossProcessNotification.h"
 #import "YapDatabaseCrossProcessNotificationConnection.h"

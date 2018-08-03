@@ -2403,6 +2403,26 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 }
 
 /**
+ * Fetches the graph index that corresponds to newly added operations.
+ * That is, operations that are added during this commit (read-write transaction).
+ *
+ * This may be useful if you need to find and modify operations added during the current read/write transaction.
+ *
+ * @return
+ *   The index of the graph that will contain newly added operations from this commit.
+ *   Or NSNotFound if the pipeline isn't found.
+**/
+- (NSUInteger)graphForAddedOperationsInPipeline:(NSString *)pipelineName
+{
+	YapDatabaseCloudCorePipeline *pipeline = [parentConnection->parent pipelineWithName:pipelineName];
+	
+	if (pipeline)
+		return pipeline.graphCount;
+	else
+		return NSNotFound;
+}
+
+/**
  * @param operation
  *   The operation to search for.
  *   The operation.pipeline property specifies which pipeline to use.
@@ -2503,6 +2523,49 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 									  usingBlock:^(YapDatabaseCloudCoreOperation *operation, NSUInteger graphIdx, BOOL *stop)
 	{
 		enumBlock([operation copy], graphIdx, stop);
+	}];
+}
+
+/**
+ * Public API
+**/
+- (void)enumerateAddedOperationsUsingBlock:(void (^)(YapDatabaseCloudCorePipeline *pipeline,
+                                                     YapDatabaseCloudCoreOperation *operation,
+                                                     NSUInteger graphIdx, BOOL *stop))enumBlock
+{
+	if (enumBlock == nil) return;
+	if (databaseTransaction->isReadWriteTransaction == NO) return;
+	
+	[self _enumerateAndModifyOperations:YDBCloudCore_EnumOps_Added
+	                         usingBlock:
+	  ^YapDatabaseCloudCoreOperation *(YapDatabaseCloudCorePipeline *pipeline,
+	                                   YapDatabaseCloudCoreOperation *operation,
+	                                   NSUInteger graphIdx, BOOL *stop)
+	{
+		enumBlock(pipeline, [operation copy], graphIdx, stop);
+		return nil;
+	}];
+}
+
+/**
+ * Public API
+**/
+- (void)enumerateAddedOperationsInPipeline:(NSString *)pipelineName
+                                usingBlock:(void (^)(YapDatabaseCloudCoreOperation *operation,
+                                                     NSUInteger graphIdx, BOOL *stop))enumBlock
+{
+	if (enumBlock == nil) return;
+	if (databaseTransaction->isReadWriteTransaction == NO) return;
+	
+	YapDatabaseCloudCorePipeline *pipeline = [parentConnection->parent pipelineWithName:pipelineName];
+	
+	[self _enumerateAndModifyOperations:YDBCloudCore_EnumOps_All
+	                         inPipeline:pipeline
+	                         usingBlock:
+	  ^YapDatabaseCloudCoreOperation *(YapDatabaseCloudCoreOperation *operation, NSUInteger graphIdx, BOOL *stop)
+	{
+		enumBlock([operation copy], graphIdx, stop);
+		return nil;
 	}];
 }
 
@@ -2640,33 +2703,52 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	if (enumBlock == nil) return;
 	
 	__block BOOL stop = NO;
-	__block BOOL pipelineHasOps = NO;
-	__block NSUInteger lastGraphIdx = 0;
 	
-	[pipeline _enumerateOperationsUsingBlock:
-	  ^(YapDatabaseCloudCoreOperation *queuedOp, NSUInteger graphIdx, BOOL *innerStop)
+	NSArray<NSArray<YapDatabaseCloudCoreOperation *> *> *graphOperations = pipeline.graphOperations;
+	
+	[graphOperations enumerateObjectsUsingBlock:
+		^(NSArray<YapDatabaseCloudCoreOperation *> *operations, NSUInteger idx, BOOL *innerStop)
 	{
-		pipelineHasOps = YES;
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
-		if (lastGraphIdx != graphIdx)
+		if (flags & YDBCloudCore_EnumOps_Existing)
 		{
-			if (flags & YDBCloudCore_EnumOps_Inserted)
+			for (YapDatabaseCloudCoreOperation *queuedOp in operations)
 			{
-				NSDictionary *insertedGraphs = parentConnection->operations_inserted[pipeline.name];
-				NSMutableArray<YapDatabaseCloudCoreOperation *> *insertedOps = insertedGraphs[@(lastGraphIdx)];
-				
-				for (NSUInteger i = 0; i < insertedOps.count; i++)
+				YapDatabaseCloudCoreOperation *modifiedOp = parentConnection->operations_modified[queuedOp.uuid];
+			
+				if (modifiedOp)
+					modifiedOp = enumBlock(modifiedOp, idx, &stop);
+				else
+					modifiedOp = enumBlock(queuedOp, idx, &stop);
+			
+				if (modifiedOp)
 				{
-					YapDatabaseCloudCoreOperation *op = insertedOps[i];
-					
-					YapDatabaseCloudCoreOperation *modifiedOp = enumBlock(op, lastGraphIdx, &stop);
-					
-					if (modifiedOp)
-					{
-						insertedOps[i] = modifiedOp;
-					}
-					
-					if (stop) break;
+					parentConnection->operations_modified[modifiedOp.uuid] = modifiedOp;
+				}
+			
+				if (stop) {
+					*innerStop = YES;
+					return;
+				}
+			}
+		}
+		
+		if (flags & YDBCloudCore_EnumOps_Inserted)
+		{
+			NSDictionary *insertedGraphs = parentConnection->operations_inserted[pipeline.name];
+			NSMutableArray<YapDatabaseCloudCoreOperation *> *insertedOps = insertedGraphs[@(idx)];
+			
+			for (NSUInteger i = 0; i < insertedOps.count; i++)
+			{
+				YapDatabaseCloudCoreOperation *op = insertedOps[i];
+				
+				YapDatabaseCloudCoreOperation *modifiedOp = enumBlock(op, idx, &stop);
+				
+				if (modifiedOp)
+				{
+					insertedOps[i] = modifiedOp;
 				}
 				
 				if (stop) {
@@ -2674,31 +2756,15 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 					return;
 				}
 			}
-			
-			lastGraphIdx = graphIdx;
 		}
 		
-		if (flags & YDBCloudCore_EnumOps_Existing)
-		{
-			YapDatabaseCloudCoreOperation *modifiedOp = parentConnection->operations_modified[queuedOp.uuid];
-			
-			if (modifiedOp)
-				modifiedOp = enumBlock(modifiedOp, graphIdx, &stop);
-			else
-				modifiedOp = enumBlock(queuedOp, graphIdx, &stop);
-			
-			if (modifiedOp)
-			{
-				parentConnection->operations_modified[modifiedOp.uuid] = modifiedOp;
-			}
-			
-			if (stop) *innerStop = YES;
-		}
+	#pragma clang diagnostic pop
 	}];
 	
 	if (!stop && (flags & YDBCloudCore_EnumOps_Added))
 	{
-		NSUInteger nextGraphIdx = pipelineHasOps ? (lastGraphIdx + 1) : 0;
+		NSUInteger lastGraphIdx = graphOperations.count;
+		NSUInteger nextGraphIdx = (lastGraphIdx == 0) ? 0 : (lastGraphIdx + 1);
 		
 		NSMutableArray<YapDatabaseCloudCoreOperation *> *addedOps =
 		  parentConnection->operations_added[pipeline.name];
@@ -3323,18 +3389,23 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 		
 		[parentConnection->operations_added enumerateKeysAndObjectsUsingBlock:
 		    ^(NSString *pipelineName, NSArray *allAddedOperationsForPipeline, BOOL *stop)
-		 {
-			 YapDatabaseCloudCorePipeline *pipeline = [parentConnection->parent pipelineWithName:pipelineName];
-			 NSUInteger graphIdx = pipeline.graphCount;
+		{
+		#pragma clang diagnostic push
+		#pragma clang diagnostic ignored "-Wimplicit-retain-self"
+			
+			YapDatabaseCloudCorePipeline *pipeline = [parentConnection->parent pipelineWithName:pipelineName];
+			NSUInteger graphIdx = pipeline.graphCount;
 			 
-			 NSArray *processedOperationsForPipeline =
-			   [self processOperations:allAddedOperationsForPipeline inPipeline:pipeline withGraphIdx:graphIdx];
-			 
-			 if (processedOperationsForPipeline.count > 0)
-			 {
-				 processedAddedOps[pipelineName] = processedOperationsForPipeline;
-			 }
-		 }];
+			NSArray *processedOperationsForPipeline =
+			  [self processOperations:allAddedOperationsForPipeline inPipeline:pipeline withGraphIdx:graphIdx];
+			
+			if (processedOperationsForPipeline.count > 0)
+			{
+				processedAddedOps[pipelineName] = processedOperationsForPipeline;
+			}
+			
+		#pragma clang diagnostic pop
+		}];
 	}
 	
 	// Step 3 of 5:
@@ -3344,6 +3415,9 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	[processedAddedOps enumerateKeysAndObjectsUsingBlock:
 	    ^(NSString *pipelineName, NSArray *operations, BOOL *stop)
 	{
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
+		
 		YapDatabaseCloudCorePipeline *pipeline = [parentConnection->parent pipelineWithName:pipelineName];
 		uint64_t nextGraphID = [pipeline nextGraphID];
 		
@@ -3355,6 +3429,8 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 		  [[YapDatabaseCloudCoreGraph alloc] initWithPersistentOrder:nextGraphID operations:operations];
 		
 		[parentConnection->graphs_added setObject:graph forKey:pipelineName];
+		
+	#pragma clang diagnostic pop
 	}];
 	
 	for (YapDatabaseCloudCorePipeline *pipeline in pipelines)
@@ -3398,7 +3474,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 			{
 				[self mappingTable_insertRowWithRowid:[rowid unsignedLongLongValue] cloudURI:cloudURI];
 				
-				[parentConnection->cleanMappingCache insertKey:rowid value:cloudURI];
+				[self->parentConnection->cleanMappingCache insertKey:rowid value:cloudURI];
 			}
 			else if (metadata == YDBCloudCore_DiryMappingMetadata_NeedsRemove)
 			{
@@ -3429,7 +3505,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 			{
 				[self tagTable_insertOrUpdateRowWithKey:key identifier:identifier tag:tag];
 				
-				[parentConnection->tagCache setObject:tag forKey:tuple];
+				[self->parentConnection->tagCache setObject:tag forKey:tuple];
 			}
 		}];
 	}

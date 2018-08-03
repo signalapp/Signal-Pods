@@ -184,6 +184,7 @@ extern NSString *const YapDatabaseCustomKey;
 
 extern NSString *const YapDatabaseObjectChangesKey;
 extern NSString *const YapDatabaseMetadataChangesKey;
+extern NSString *const YapDatabaseInsertedKeysKey;
 extern NSString *const YapDatabaseRemovedKeysKey;
 extern NSString *const YapDatabaseRemovedCollectionsKey;
 extern NSString *const YapDatabaseAllKeysRemovedKey;
@@ -243,33 +244,33 @@ extern NSString *const YapDatabaseModifiedExternallyKey;
  * 
  *   YapDatabase *database = [[YapDatabase alloc] initWithPath:databasePath];
 **/
-- (id)initWithPath:(NSString *)path;
+- (nullable id)initWithPath:(NSString *)path;
 
 /**
  * Opens or creates a sqlite database with the given path.
  * The given options are used instead of the default options.
 **/
-- (id)initWithPath:(NSString *)path
-           options:(nullable YapDatabaseOptions *)options;
+- (nullable id)initWithPath:(NSString *)path
+                    options:(nullable YapDatabaseOptions *)options;
 
 /**
  * Opens or creates a sqlite database with the given path.
  * The given serializer and deserializer are used for both objects and metadata.
  * No sanitizer is used.
 **/
-- (id)initWithPath:(NSString *)path
-        serializer:(nullable YapDatabaseSerializer)serializer
-      deserializer:(nullable YapDatabaseDeserializer)deserializer;
+- (nullable id)initWithPath:(NSString *)path
+                 serializer:(nullable YapDatabaseSerializer)serializer
+               deserializer:(nullable YapDatabaseDeserializer)deserializer;
 
 /**
  * Opens or creates a sqlite database with the given path.
  * The given serializer and deserializer are used for both objects and metadata.
  * The given options are used instead of the default options.
 **/
-- (id)initWithPath:(NSString *)path
-        serializer:(nullable YapDatabaseSerializer)serializer
-      deserializer:(nullable YapDatabaseDeserializer)deserializer
-           options:(nullable YapDatabaseOptions *)options;
+- (nullable id)initWithPath:(NSString *)path
+                 serializer:(nullable YapDatabaseSerializer)serializer
+               deserializer:(nullable YapDatabaseDeserializer)deserializer
+                    options:(nullable YapDatabaseOptions *)options;
 
 /**
  * Opens or creates a sqlite database with the given path.
@@ -277,48 +278,51 @@ extern NSString *const YapDatabaseModifiedExternallyKey;
  * The given sanitizer is used for both objects and metadata.
  * The given options are used instead of the default options.
 **/
-- (id)initWithPath:(NSString *)path
-        serializer:(nullable YapDatabaseSerializer)serializer
-      deserializer:(nullable YapDatabaseDeserializer)deserializer
-      preSanitizer:(nullable YapDatabasePreSanitizer)preSanitizer
-     postSanitizer:(nullable YapDatabasePostSanitizer)postSanitizer
-           options:(nullable YapDatabaseOptions *)options;
+- (nullable id)initWithPath:(NSString *)path
+                 serializer:(nullable YapDatabaseSerializer)serializer
+               deserializer:(nullable YapDatabaseDeserializer)deserializer
+               preSanitizer:(nullable YapDatabasePreSanitizer)preSanitizer
+              postSanitizer:(nullable YapDatabasePostSanitizer)postSanitizer
+                    options:(nullable YapDatabaseOptions *)options;
 
 /**
  * Opens or creates a sqlite database with the given path.
  * The given serializers and deserializers are used.
  * No sanitizer is used.
 **/
-- (id)initWithPath:(NSString *)path objectSerializer:(nullable YapDatabaseSerializer)objectSerializer
-                                  objectDeserializer:(nullable YapDatabaseDeserializer)objectDeserializer
-                                  metadataSerializer:(nullable YapDatabaseSerializer)metadataSerializer
-                                metadataDeserializer:(nullable YapDatabaseDeserializer)metadataDeserializer;
+- (nullable id)initWithPath:(NSString *)path
+           objectSerializer:(nullable YapDatabaseSerializer)objectSerializer
+         objectDeserializer:(nullable YapDatabaseDeserializer)objectDeserializer
+         metadataSerializer:(nullable YapDatabaseSerializer)metadataSerializer
+       metadataDeserializer:(nullable YapDatabaseDeserializer)metadataDeserializer;
 
 /**
  * Opens or creates a sqlite database with the given path.
  * The given serializers and deserializers are used.
  * The given sanitizers are used.
 **/
-- (id)initWithPath:(NSString *)path objectSerializer:(nullable YapDatabaseSerializer)objectSerializer
-                                  objectDeserializer:(nullable YapDatabaseDeserializer)objectDeserializer
-                                  metadataSerializer:(nullable YapDatabaseSerializer)metadataSerializer
-                                metadataDeserializer:(nullable YapDatabaseDeserializer)metadataDeserializer
-                                             options:(nullable YapDatabaseOptions *)options;
+- (nullable id)initWithPath:(NSString *)path
+           objectSerializer:(nullable YapDatabaseSerializer)objectSerializer
+         objectDeserializer:(nullable YapDatabaseDeserializer)objectDeserializer
+         metadataSerializer:(nullable YapDatabaseSerializer)metadataSerializer
+       metadataDeserializer:(nullable YapDatabaseDeserializer)metadataDeserializer
+                    options:(nullable YapDatabaseOptions *)options;
 
 /**
  * Opens or creates a sqlite database with the given path.
  * The given serializers and deserializers are used.
  * The given sanitizers are used.
 **/
-- (id)initWithPath:(NSString *)path objectSerializer:(nullable YapDatabaseSerializer)objectSerializer
-                                  objectDeserializer:(nullable YapDatabaseDeserializer)objectDeserializer
-                                  metadataSerializer:(nullable YapDatabaseSerializer)metadataSerializer
-                                metadataDeserializer:(nullable YapDatabaseDeserializer)metadataDeserializer
-                                  objectPreSanitizer:(nullable YapDatabasePreSanitizer)objectPreSanitizer
-                                 objectPostSanitizer:(nullable YapDatabasePostSanitizer)objectPostSanitizer
-                                metadataPreSanitizer:(nullable YapDatabasePreSanitizer)metadataPreSanitizer
-                               metadataPostSanitizer:(nullable YapDatabasePostSanitizer)metadataPostSanitizer
-                                             options:(nullable YapDatabaseOptions *)options;
+- (nullable id)initWithPath:(NSString *)path
+           objectSerializer:(nullable YapDatabaseSerializer)objectSerializer
+         objectDeserializer:(nullable YapDatabaseDeserializer)objectDeserializer
+         metadataSerializer:(nullable YapDatabaseSerializer)metadataSerializer
+       metadataDeserializer:(nullable YapDatabaseDeserializer)metadataDeserializer
+         objectPreSanitizer:(nullable YapDatabasePreSanitizer)objectPreSanitizer
+        objectPostSanitizer:(nullable YapDatabasePostSanitizer)objectPostSanitizer
+       metadataPreSanitizer:(nullable YapDatabasePreSanitizer)metadataPreSanitizer
+      metadataPostSanitizer:(nullable YapDatabasePostSanitizer)metadataPostSanitizer
+                    options:(nullable YapDatabaseOptions *)options;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark Properties
@@ -415,6 +419,18 @@ extern NSString *const YapDatabaseModifiedExternallyKey;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
+ * Allows you to configure the default values for new connections.
+ *
+ * When you create a connection via [database newConnection], that new connection will inherit
+ * its initial configuration via the default values configured for the parent database.
+ * Of course, the connection may then override these default configuration values, and configure itself as needed.
+ *
+ * Changing the default values only affects future connections that will be created.
+ * It does not affect connections that have already been created.
+**/
+@property (atomic, readonly) YapDatabaseConnectionConfig *connectionDefaults;
+
+/**
  * Allows you to set the default objectCacheEnabled and objectCacheLimit for all new connections.
  *
  * When you create a connection via [database newConnection], that new connection will inherit
@@ -427,12 +443,10 @@ extern NSString *const YapDatabaseModifiedExternallyKey;
  * The default defaultObjectCacheEnabled is YES.
  * The default defaultObjectCacheLimit is 250.
  *
- * For more detailed documentation on these properties, see the YapDatabaseConnection header file.
- * @see YapDatabaseConnection objectCacheEnabled
- * @see YapDatabaseConnection objectCacheLimit
+ * @deprecated Use `connectionDefaults` property instead.
 **/
-@property (atomic, assign, readwrite) BOOL defaultObjectCacheEnabled;
-@property (atomic, assign, readwrite) NSUInteger defaultObjectCacheLimit;
+@property (atomic, assign, readwrite) BOOL defaultObjectCacheEnabled __attribute((deprecated));
+@property (atomic, assign, readwrite) NSUInteger defaultObjectCacheLimit __attribute((deprecated));
 
 /**
  * Allows you to set the default metadataCacheEnabled and metadataCacheLimit for all new connections.
@@ -447,12 +461,10 @@ extern NSString *const YapDatabaseModifiedExternallyKey;
  * The default defaultMetadataCacheEnabled is YES.
  * The default defaultMetadataCacheLimit is 500.
  *
- * For more detailed documentation on these properties, see the YapDatabaseConnection header file.
- * @see YapDatabaseConnection metadataCacheEnabled
- * @see YapDatabaseConnection metadataCacheLimit
+ * @deprecated Use `connectionDefaults` property instead.
 **/
-@property (atomic, assign, readwrite) BOOL defaultMetadataCacheEnabled;
-@property (atomic, assign, readwrite) NSUInteger defaultMetadataCacheLimit;
+@property (atomic, assign, readwrite) BOOL defaultMetadataCacheEnabled __attribute((deprecated));
+@property (atomic, assign, readwrite) NSUInteger defaultMetadataCacheLimit __attribute((deprecated));
 
 /**
  * Allows you to set the default objectPolicy and metadataPolicy for all new connections.
@@ -466,13 +478,11 @@ extern NSString *const YapDatabaseModifiedExternallyKey;
  * 
  * The default defaultObjectPolicy is YapDatabasePolicyContainment.
  * The default defaultMetadataPolicy is YapDatabasePolicyContainment.
- * 
- * For more detailed documentation on these properties, see the YapDatabaseConnection header file.
- * @see YapDatabaseConnection objectPolicy
- * @see YapDatabaseConnection metadataPolicy
+ *
+ * @deprecated Use `connectionDefaults` property instead.
 **/
-@property (atomic, assign, readwrite) YapDatabasePolicy defaultObjectPolicy;
-@property (atomic, assign, readwrite) YapDatabasePolicy defaultMetadataPolicy;
+@property (atomic, assign, readwrite) YapDatabasePolicy defaultObjectPolicy __attribute((deprecated));
+@property (atomic, assign, readwrite) YapDatabasePolicy defaultMetadataPolicy __attribute((deprecated));
 
 #if TARGET_OS_IOS || TARGET_OS_TV
 /**
@@ -487,10 +497,9 @@ extern NSString *const YapDatabaseModifiedExternallyKey;
  * 
  * The default defaultAutoFlushMemoryFlags is YapDatabaseConnectionFlushMemoryFlags_All.
  *
- * For more detailed documentation on these properties, see the YapDatabaseConnection header file.
- * @see YapDatabaseConnection autoFlushMemoryFlags
+ * @deprecated Use `connectionDefaults` property instead.
 **/
-@property (atomic, assign, readwrite) YapDatabaseConnectionFlushMemoryFlags defaultAutoFlushMemoryFlags;
+@property (atomic, assign, readwrite) YapDatabaseConnectionFlushMemoryFlags defaultAutoFlushMemoryFlags __attribute((deprecated));
 #endif
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -519,6 +528,7 @@ extern NSString *const YapDatabaseModifiedExternallyKey;
  * Creating a new connection everytime you need to access the database is a recipe for foolishness.
 **/
 - (YapDatabaseConnection *)newConnection;
+- (YapDatabaseConnection *)newConnection:(nullable YapDatabaseConnectionConfig *)config;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark Extensions
@@ -801,6 +811,27 @@ extern NSString *const YapDatabaseModifiedExternallyKey;
  * and also clear the previouslyRegisteredExtensionNames information at this point.
 **/
 - (nullable NSArray<NSString *> *)previouslyRegisteredExtensionNames;
+
+/**
+ * It's sometimes useful to find out when all async registerExtension/unregisterExtension requests have completed.
+ *
+ * One way to accomplish this is simply to queue an asyncReadWriteTransaction on any databaseConnection.
+ * Since all async register/unregister extension requests are immediately dispatch_async'd through the
+ * internal serial writeQueue, you'll know that once your asyncReadWriteTransaction is running,
+ * all previously scheduled register/unregister requests have completed.
+ *
+ * Although the above technique works, the 'flushExtensionRequestsWithCompletionQueue::'
+ * is a more efficient way to accomplish this task. (And a more elegant & readable way too.)
+ *
+ * @param completionQueue
+ *   The dispatch_queue to invoke the completionBlock on.
+ *   If NULL, dispatch_get_main_queue() is automatically used.
+ *
+ * @param completionBlock
+ *   The block to invoke once all previously scheduled register/unregister extension requests have completed.
+ **/
+- (void)flushExtensionRequestsWithCompletionQueue:(nullable dispatch_queue_t)completionQueue
+									       completionBlock:(nullable dispatch_block_t)completionBlock;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark Connection Pooling
