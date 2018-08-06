@@ -1,8 +1,5 @@
 //
-//  Ed25519.h
-//
-//  Created by Frederic Jacobs on 22/07/14.
-//  Copyright (c) 2014 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -19,8 +16,7 @@
  *
  *  @return The ed25519 64-bytes signature.
  */
-
-+(NSData*)sign:(NSData*)data withKeyPair:(ECKeyPair*)keyPair;
++ (NSData *)sign:(NSData *)data withKeyPair:(ECKeyPair *)keyPair;
 
 /**
  *  Verify ed25519 signature with 32-bytes Curve25519 key pair. Throws an NSInvalid
@@ -31,7 +27,6 @@
  *
  *  @return Returns TRUE if the signature is valid, false if it's not.
  */
-
-+(BOOL)verifySignature:(NSData*)signature publicKey:(NSData*)pubKey data:(NSData*)data;
++ (BOOL)verifySignature:(NSData *)signature publicKey:(NSData *)pubKey data:(NSData *)data;
 
 @end
