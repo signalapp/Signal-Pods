@@ -9,39 +9,82 @@
 #import "HKDFKit.h"
 #import <CommonCrypto/CommonCrypto.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 #define HKDF_HASH_ALG kCCHmacAlgSHA256
 #define HKDF_HASH_LEN CC_SHA256_DIGEST_LENGTH
 
 @implementation HKDFKit
 
-+ (NSData *)deriveKey:(NSData *)seed info:(NSData *)info salt:(NSData *)salt outputSize:(int)outputSize{
++ (NSData *)deriveKey:(NSData *)seed info:(nullable NSData *)info salt:(NSData *)salt outputSize:(int)outputSize
+{
     return [self deriveKey:seed info:info salt:salt outputSize:outputSize offset:1];
 }
 
-+ (NSData*)TextSecureV2deriveKey:(NSData*)seed info:(NSData*)info salt:(NSData*)salt outputSize:(int)outputSize{
++ (NSData *)TextSecureV2deriveKey:(NSData *)seed
+                             info:(nullable NSData *)info
+                             salt:(NSData *)salt
+                       outputSize:(int)outputSize
+{
     return [self deriveKey:seed info:info salt:salt outputSize:outputSize offset:0];
 }
 
 #pragma mark Private Methods
 
-+ (NSData *)deriveKey:(NSData *)seed info:(NSData *)info salt:(NSData *)salt outputSize:(int)outputSize offset:(int)offset{
++ (NSData *)deriveKey:(NSData *)seed
+                 info:(nullable NSData *)info
+                 salt:(NSData *)salt
+           outputSize:(int)outputSize
+               offset:(int)offset
+{
     NSData *prk = [self extract:seed salt:salt];
     NSData *okm = [self expand:prk info:info outputSize:outputSize offset:offset];
     return okm;
 }
 
-+ (NSData*)extract:(NSData*)data salt:(NSData*)salt{
-    char prk[HKDF_HASH_LEN] = {0};
-    CCHmac(HKDF_HASH_ALG, [salt bytes], [salt length], [data bytes], [data length], prk);
-    return [NSData dataWithBytes:prk length:sizeof(prk)];
++ (NSData *)extract:(NSData *)data salt:(NSData *)salt
+{
+    if (!salt) {
+        @throw [NSException exceptionWithName:NSInvalidArgumentException reason:@"Missing salt." userInfo:nil];
+    }
+    if (salt.length >= SIZE_MAX) {
+        @throw [NSException exceptionWithName:NSInvalidArgumentException reason:@"Oversize salt." userInfo:nil];
+    }
+    if (!data) {
+        @throw [NSException exceptionWithName:NSInvalidArgumentException reason:@"Missing data." userInfo:nil];
+    }
+    if (data.length >= SIZE_MAX) {
+        @throw [NSException exceptionWithName:NSInvalidArgumentException reason:@"Oversize data." userInfo:nil];
+    }
+
+    NSMutableData *prkData = [[NSMutableData alloc] initWithLength:HKDF_HASH_LEN];
+    CCHmac(HKDF_HASH_ALG, [salt bytes], [salt length], [data bytes], [data length], prkData.mutableBytes);
+    return [prkData copy];
 }
 
-+ (NSData*)expand:(NSData*)data info:(NSData*)info outputSize:(int)outputSize offset:(int)offset{
-    int             iterations = (int)ceil((double)outputSize/(double)HKDF_HASH_LEN);
-    NSData          *mixin = [NSData data];
-    NSMutableData   *results = [NSMutableData data];
++ (NSData *)expand:(NSData *)data info:(nullable NSData *)info outputSize:(int)outputSize offset:(int)offset
+{
+    if (!data) {
+        @throw [NSException exceptionWithName:NSInvalidArgumentException reason:@"Missing data." userInfo:nil];
+    }
+    if (data.length >= SIZE_MAX) {
+        @throw [NSException exceptionWithName:NSInvalidArgumentException reason:@"Oversize data." userInfo:nil];
+    }
+    if (info != nil && info.length >= SIZE_MAX) {
+        @throw [NSException exceptionWithName:NSInvalidArgumentException reason:@"Oversize info." userInfo:nil];
+    }
+    if (outputSize >= NSUIntegerMax) {
+        @throw [NSException exceptionWithName:NSInvalidArgumentException reason:@"Oversize outputSize." userInfo:nil];
+    }
+    if (outputSize < 1) {
+        @throw [NSException exceptionWithName:NSInvalidArgumentException reason:@"Invalid outputSize." userInfo:nil];
+    }
 
-    for (int i=offset; i<(iterations+offset); i++) {
+    int iterations = (int)ceil((double)outputSize / (double)HKDF_HASH_LEN);
+    NSData *mixin = [NSData data];
+    NSMutableData *results = [NSMutableData data];
+
+    for (int i = offset; i < (iterations + offset); i++) {
         CCHmacContext ctx;
         CCHmacInit(&ctx, HKDF_HASH_ALG, [data bytes], [data length]);
         CCHmacUpdate(&ctx, [mixin bytes], [mixin length]);
@@ -50,14 +93,15 @@
         }
         unsigned char c = i;
         CCHmacUpdate(&ctx, &c, 1);
-        unsigned char T[HKDF_HASH_LEN];
-        CCHmacFinal(&ctx, T);
-        NSData *stepResult = [NSData dataWithBytes:T length:sizeof(T)];
-        [results appendData:stepResult];
-        mixin = [stepResult copy];
+        NSMutableData *stepResultData = [[NSMutableData alloc] initWithLength:HKDF_HASH_LEN];
+        CCHmacFinal(&ctx, stepResultData.mutableBytes);
+        [results appendData:stepResultData];
+        mixin = [stepResultData copy];
     }
-    
-    return [[NSData dataWithData:results] subdataWithRange:NSMakeRange(0, outputSize)];
+
+    return [results subdataWithRange:NSMakeRange(0, outputSize)];
 }
 
 @end
+
+NS_ASSUME_NONNULL_END

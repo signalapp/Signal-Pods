@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface HKDFKit : NSObject
 
 /**
@@ -20,8 +22,7 @@
  *
  *  @return The derived key material
  */
-
-+ (NSData*)deriveKey:(NSData*)seed info:(NSData*)info salt:(NSData*)salt outputSize:(int)outputSize;
++ (NSData *)deriveKey:(NSData *)seed info:(nullable NSData *)info salt:(NSData *)salt outputSize:(int)outputSize;
 
 /**
  *  TextSecure v2 HKDF implementation
@@ -33,8 +34,11 @@
  *
  *  @return The derived key material
  */
-
-+ (NSData*)TextSecureV2deriveKey:(NSData*)seed info:(NSData*)info salt:(NSData*)salt outputSize:(int)outputSize;
-
++ (NSData *)TextSecureV2deriveKey:(NSData *)seed
+                             info:(nullable NSData *)info
+                             salt:(NSData *)salt
+                       outputSize:(int)outputSize;
 
 @end
+
+NS_ASSUME_NONNULL_END
