@@ -121,6 +121,7 @@
 #import "ProfileManagerProtocol.h"
 #import "ProtoUtils.h"
 #import "OWSSignaliOSProtos.pb.h"
+#import "ECKeyPair+OWSPrivateKey.h"
 #import "OWSFingerprint.h"
 #import "OWSFingerprintBuilder.h"
 #import "OWSFingerprintProtos.pb.h"

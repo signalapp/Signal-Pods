@@ -1,5 +1,9 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Randomness.h
+//  AxolotlKit
+//
+//  Created by Frederic Jacobs on 21/07/14.
+//  Copyright (c) 2014 Frederic Jacobs. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -14,7 +18,7 @@
  *  @return Random Bytes.
  */
 
-+ (NSData *)generateRandomBytes:(int)numberBytes;
++(NSData*) generateRandomBytes:(int)numberBytes;
 
 
 @end
