@@ -16,8 +16,8 @@
     "tag": "0.9.0"
   },
   "source_files": [
-    "AxolotlKit/Classes/*.{h,m}",
-    "AxolotlKit/Classes/**/*.{h,m}"
+    "AxolotlKit/Classes/*.{h,m,swift}",
+    "AxolotlKit/Classes/**/*.{h,m,swift}"
   ],
   "public_header_files": [
     "AxolotlKit/Classes/*.{h}",
@@ -36,10 +36,10 @@
     "HKDFKit": [
       "~> 0.0.3"
     ],
-    "ProtocolBuffers": [
-      "~> 1.9.8"
-    ],
     "CocoaLumberjack": [
+
+    ],
+    "SwiftProtobuf": [
 
     ]
   }

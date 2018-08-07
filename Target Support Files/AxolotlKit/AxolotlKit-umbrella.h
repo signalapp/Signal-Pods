@@ -21,7 +21,6 @@
 #import "PreKeyBundle.h"
 #import "PreKeyRecord.h"
 #import "SignedPrekeyRecord.h"
-#import "WhisperTextProtocol.pb.h"
 #import "AliceAxolotlParameters.h"
 #import "AxolotlParameters.h"
 #import "BobAxolotlParameters.h"
