@@ -154,7 +154,6 @@
 #import "iOSVersions.h"
 #import "MIMETypeUtil.h"
 #import "NSArray+OWS.h"
-#import "NSData+Base64.h"
 #import "NSData+Image.h"
 #import "NSData+messagePadding.h"
 #import "NSData+OWS.h"
