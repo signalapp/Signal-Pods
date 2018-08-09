@@ -118,7 +118,6 @@
 #import "OWSHTTPSecurityPolicy.h"
 #import "OWSRecipientIdentity.h"
 #import "OWSWebsocketSecurityPolicy.h"
-#import "SecurityUtils.h"
 #import "SignalServiceKit.h"
 #import "OWSPrimaryStorage+Calling.h"
 #import "OWSPrimaryStorage+keyFromIntLong.h"
