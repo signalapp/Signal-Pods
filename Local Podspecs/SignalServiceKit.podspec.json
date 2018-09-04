@@ -66,5 +66,12 @@
     "PromiseKit": [
       "~> 4.0"
     ]
-  }
+  },
+  "testspecs": [
+    {
+      "name": "Tests",
+      "test_type": "unit",
+      "source_files": "SignalServiceKit/tests/**/*.{h,m,swift}"
+    }
+  ]
 }
