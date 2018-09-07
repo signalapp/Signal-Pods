@@ -137,6 +137,7 @@
 #import "TSYapDatabaseObject.h"
 #import "YapDatabaseConnection+OWS.h"
 #import "YapDatabaseTransaction+OWS.h"
+#import "TestAppContext.h"
 #import "TextSecureKitEnv.h"
 #import "TSConstants.h"
 #import "TSPrefix.h"
