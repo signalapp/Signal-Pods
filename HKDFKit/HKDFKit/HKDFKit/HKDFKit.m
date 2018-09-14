@@ -3,10 +3,11 @@
 //  HKDFKit
 //
 //  Created by Frederic Jacobs on 29/03/14.
-//  Copyright (c) 2014 Frederic Jacobs. All rights reserved.
+//  Copyright (c) 2018. All rights reserved.
 //
 
 #import "HKDFKit.h"
+#import "SHKAsserts.h"
 #import <CommonCrypto/CommonCrypto.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -45,19 +46,22 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSData *)extract:(NSData *)data salt:(NSData *)salt
 {
     if (!salt) {
-        @throw [NSException exceptionWithName:NSInvalidArgumentException reason:@"Missing salt." userInfo:nil];
+        OWSRaiseException(NSInvalidArgumentException, @"Missing salt.");
     }
     if (salt.length >= SIZE_MAX) {
-        @throw [NSException exceptionWithName:NSInvalidArgumentException reason:@"Oversize salt." userInfo:nil];
+        OWSRaiseException(NSInvalidArgumentException, @"Oversize salt.");
     }
     if (!data) {
-        @throw [NSException exceptionWithName:NSInvalidArgumentException reason:@"Missing data." userInfo:nil];
+        OWSRaiseException(NSInvalidArgumentException, @"Missing data.");
     }
     if (data.length >= SIZE_MAX) {
-        @throw [NSException exceptionWithName:NSInvalidArgumentException reason:@"Oversize data." userInfo:nil];
+        OWSRaiseException(NSInvalidArgumentException, @"Oversize data.");
     }
 
-    NSMutableData *prkData = [[NSMutableData alloc] initWithLength:HKDF_HASH_LEN];
+    NSMutableData *_Nullable prkData = [[NSMutableData alloc] initWithLength:HKDF_HASH_LEN];
+    if (!prkData) {
+        OWSFail(@"Could not allocate buffer.");
+    }
     CCHmac(HKDF_HASH_ALG, [salt bytes], [salt length], [data bytes], [data length], prkData.mutableBytes);
     return [prkData copy];
 }
@@ -65,26 +69,32 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSData *)expand:(NSData *)data info:(nullable NSData *)info outputSize:(int)outputSize offset:(int)offset
 {
     if (!data) {
-        @throw [NSException exceptionWithName:NSInvalidArgumentException reason:@"Missing data." userInfo:nil];
+        OWSRaiseException(NSInvalidArgumentException, @"Missing data.");
     }
     if (data.length >= SIZE_MAX) {
-        @throw [NSException exceptionWithName:NSInvalidArgumentException reason:@"Oversize data." userInfo:nil];
+        OWSRaiseException(NSInvalidArgumentException, @"Oversize data.");
     }
     if (info != nil && info.length >= SIZE_MAX) {
-        @throw [NSException exceptionWithName:NSInvalidArgumentException reason:@"Oversize info." userInfo:nil];
+        OWSRaiseException(NSInvalidArgumentException, @"Oversize info.");
     }
     if (outputSize >= NSUIntegerMax) {
-        @throw [NSException exceptionWithName:NSInvalidArgumentException reason:@"Oversize outputSize." userInfo:nil];
+        OWSRaiseException(NSInvalidArgumentException, @"Oversize outputSize.");
     }
     if (outputSize < 1) {
-        @throw [NSException exceptionWithName:NSInvalidArgumentException reason:@"Invalid outputSize." userInfo:nil];
+        OWSRaiseException(NSInvalidArgumentException, @"Invalid outputSize.");
     }
 
     int iterations = (int)ceil((double)outputSize / (double)HKDF_HASH_LEN);
     NSData *mixin = [NSData data];
     NSMutableData *results = [NSMutableData data];
 
-    for (int i = offset; i < (iterations + offset); i++) {
+    NSUInteger generatedLength;
+    ows_mul_overflow(HKDF_HASH_LEN, iterations, &generatedLength);
+
+    int offsetIterations;
+    ows_add_overflow(iterations, offset, &offsetIterations);
+
+    for (int i = offset; i < offsetIterations; i++) {
         CCHmacContext ctx;
         CCHmacInit(&ctx, HKDF_HASH_ALG, [data bytes], [data length]);
         CCHmacUpdate(&ctx, [mixin bytes], [mixin length]);
@@ -93,11 +103,15 @@ NS_ASSUME_NONNULL_BEGIN
         }
         unsigned char c = i;
         CCHmacUpdate(&ctx, &c, 1);
-        NSMutableData *stepResultData = [[NSMutableData alloc] initWithLength:HKDF_HASH_LEN];
+        NSMutableData *_Nullable stepResultData = [[NSMutableData alloc] initWithLength:HKDF_HASH_LEN];
+        if (!stepResultData) {
+            OWSFail(@"Could not allocate buffer.");
+        }
         CCHmacFinal(&ctx, stepResultData.mutableBytes);
         [results appendData:stepResultData];
         mixin = [stepResultData copy];
     }
+    OWSAssert(results.length == generatedLength);
 
     return [results subdataWithRange:NSMakeRange(0, outputSize)];
 }

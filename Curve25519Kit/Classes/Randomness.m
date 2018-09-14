@@ -3,6 +3,7 @@
 //
 
 #import "Randomness.h"
+#import "SCKAsserts.h"
 
 @implementation Randomness
 
@@ -10,12 +11,12 @@
 {
     NSMutableData *_Nullable randomBytes = [NSMutableData dataWithLength:numberBytes];
     if (!randomBytes) {
-        @throw [NSException exceptionWithName:@"random problem" reason:@"problem generating the random " userInfo:nil];
+        OWSFail(@"Could not allocate buffer for random bytes.");
     }
     int err = 0;
     err = SecRandomCopyBytes(kSecRandomDefault, numberBytes, [randomBytes mutableBytes]);
-    if (err != noErr && randomBytes.length != numberBytes) {
-        @throw [NSException exceptionWithName:@"random problem" reason:@"problem generating the random " userInfo:nil];
+    if (err != noErr || randomBytes.length != numberBytes) {
+        OWSFail(@"Could not generate random bytes.");
     }
     return [randomBytes copy];
 }

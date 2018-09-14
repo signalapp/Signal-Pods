@@ -3,6 +3,7 @@
 //
 #import "Curve25519.h"
 #import "Randomness.h"
+#import "SCKAsserts.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -90,8 +91,7 @@ extern int curve25519_sign(unsigned char *signature_out, /* 64 bytes */
 {
     NSMutableData *signatureData = [NSMutableData dataWithLength:ECCSignatureLength];
     if (!signatureData) {
-        @throw
-            [NSException exceptionWithName:NSInvalidArgumentException reason:@"Could not allocate buffer" userInfo:nil];
+        OWSFail(@"Could not allocate buffer");
     }
 
     NSData *randomBytes = [Randomness generateRandomBytes:64];
@@ -99,9 +99,7 @@ extern int curve25519_sign(unsigned char *signature_out, /* 64 bytes */
     if (curve25519_sign(
             signatureData.mutableBytes, self.privateKey.bytes, [data bytes], [data length], [randomBytes bytes])
         == -1) {
-        @throw [NSException exceptionWithName:NSInternalInconsistencyException
-                                       reason:@"Message couldn't be signed."
-                                     userInfo:nil];
+        OWSRaiseException(NSInternalInconsistencyException, @"Message couldn't be signed.");
     }
 
     return [signatureData copy];
@@ -109,17 +107,14 @@ extern int curve25519_sign(unsigned char *signature_out, /* 64 bytes */
 
 - (NSData *)generateSharedSecretFromPublicKey:(NSData *)theirPublicKey
 {
-
-    if ([theirPublicKey length] != ECCKeyLength) {
-        @throw [NSException exceptionWithName:NSInvalidArgumentException
-                                       reason:@"The supplied public key does not contain 32 bytes"
-                                     userInfo:nil];
+    if (theirPublicKey.length != ECCKeyLength) {
+        OWSRaiseException(
+                          NSInvalidArgumentException, @"Public key has unexpected length: %lu", (unsigned long)theirPublicKey.length);
     }
 
     NSMutableData *sharedSecretData = [NSMutableData dataWithLength:32];
     if (!sharedSecretData) {
-        @throw
-            [NSException exceptionWithName:NSInvalidArgumentException reason:@"Could not allocate buffer" userInfo:nil];
+        OWSFail(@"Could not allocate buffer");
     }
 
     curve25519_donna(sharedSecretData.mutableBytes, self.privateKey.bytes, [theirPublicKey bytes]);
