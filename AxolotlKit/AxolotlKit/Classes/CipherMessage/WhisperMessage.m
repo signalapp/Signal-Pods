@@ -1,11 +1,10 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2017 Open Whisper Systems. All rights reserved.
 //
 
 #import "WhisperMessage.h"
 #import "AxolotlExceptions.h"
 #import "Constants.h"
-#import "NSData+SPK.h"
 #import "NSData+keyVersionByte.h"
 #import "SerializationUtilities.h"
 #import <AxolotlKit/AxolotlKit-Swift.h>
@@ -36,8 +35,10 @@ NS_ASSUME_NONNULL_BEGIN
         NSError *error;
         NSData *_Nullable messageData = [messageBuilder buildSerializedDataAndReturnError:&error];
         if (!messageData || error) {
-            OWSFailDebug(@"Could not serialize proto: %@.", error);
-            OWSRaiseException(InvalidMessageException, @"Could not serialize proto.");
+            SPKFail(@"%@ Could not serialize proto: %@.", self.logTag, error);
+            @throw [NSException exceptionWithName:InvalidMessageException
+                                           reason:@"could not serialize proto"
+                                         userInfo:@{}];
         }
         [serialized appendData:messageData];
 
@@ -97,8 +98,8 @@ NS_ASSUME_NONNULL_BEGIN
         SPKProtoTSProtoWhisperMessage *_Nullable whisperMessage =
             [SPKProtoTSProtoWhisperMessage parseData:messageData error:&error];
         if (!whisperMessage || error) {
-            OWSFailDebug(@"Could not parse proto: %@.", error);
-            OWSRaiseException(InvalidMessageException, @"Could not parse proto.");
+            SPKFail(@"%@ Could not parse proto: %@.", self.logTag, error);
+            @throw [NSException exceptionWithName:InvalidMessageException reason:@"Could not parse proto" userInfo:@{}];
         }
 
         _serialized = serialized;
@@ -121,13 +122,13 @@ NS_ASSUME_NONNULL_BEGIN
     NSError *error;
     NSData *_Nullable data = [dataParser nextDataWithLength:self.serialized.length - MAC_LENGTH error:&error];
     if (!data || error) {
-        OWSFailDebug(@"Could not parse data: %@.", error);
-        OWSRaiseException(InvalidMessageException, @"Could not parse data.");
+        SPKFail(@"%@ Could not parse data: %@", self.logTag, error);
+        @throw [NSException exceptionWithName:InvalidMessageException reason:@"Could not parse data." userInfo:@{}];
     }
     NSData *_Nullable theirMac = [dataParser nextDataWithLength:MAC_LENGTH error:&error];
     if (!theirMac || error) {
-        OWSFailDebug(@"Could not parse their mac: %@.", error);
-        OWSRaiseException(InvalidMessageException, @"Could not parse their mac.");
+        SPKFail(@"%@ Could not parse theirMac: %@", self.logTag, error);
+        @throw [NSException exceptionWithName:InvalidMessageException reason:@"Could not parse theirMac." userInfo:@{}];
     }
 
     NSData *ourMac = [SerializationUtilities macWithVersion:messageVersion
@@ -136,9 +137,9 @@ NS_ASSUME_NONNULL_BEGIN
                                                      macKey:macKey
                                                  serialized:data];
 
-    if (![theirMac ows_constantTimeIsEqualToData:ourMac]) {
-        OWSFailDebug(@"Bad Mac! Their Mac: %@ Our Mac: %@", theirMac, ourMac);
-        OWSRaiseException(InvalidMessageException, @"Bad Mac!");
+    if (![theirMac isEqualToData:ourMac]) {
+        SPKFail(@"%@ Bad Mac! Their Mac: %@ Our Mac: %@", self.logTag, theirMac, ourMac);
+        @throw [NSException exceptionWithName:InvalidMessageException reason:@"Bad Mac!" userInfo:@{}];
     }
 }
 

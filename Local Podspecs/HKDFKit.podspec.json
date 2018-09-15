@@ -16,17 +16,9 @@
     "git": "https://github.com/FredericJacobs/HKDFKit.git",
     "tag": "0.0.3"
   },
-  "source_files": [
-    "HKDFKit/HKDFKit/*{h,m}",
-    "HKDFKit/Private/*{h,m}"
-  ],
+  "source_files": "HKDFKit/HKDFKit/*{h,m}",
   "public_header_files": "HKDFKit/HKDFKit/*.h",
   "requires_arc": true,
-  "dependencies": {
-    "CocoaLumberjack": [
-
-    ]
-  },
   "platforms": {
     "osx": null,
     "ios": null,

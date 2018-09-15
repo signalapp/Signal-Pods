@@ -44,7 +44,7 @@ static uint8_t kChainKeySeed[kTSKeySeedLength] = { 02 };
 
 - (instancetype)initWithData:(NSData *)chainKey index:(int)index
 {
-    OWSAssert(chainKey.length == ECCKeyLength);
+    SPKAssert(chainKey.length == ECCKeyLength);
 
     self = [super init];
 
@@ -90,7 +90,7 @@ static uint8_t kChainKeySeed[kTSKeySeedLength] = { 02 };
 
     NSMutableData *_Nullable bufferData = [NSMutableData dataWithLength:CC_SHA256_DIGEST_LENGTH];
     if (!bufferData) {
-        OWSFail(@"Couldn't allocate buffer.");
+        @throw [NSException exceptionWithName:NSGenericException reason:@"Couldn't allocate buffer." userInfo:nil];
     }
 
     CCHmacContext ctx;

@@ -80,7 +80,7 @@ NS_ASSUME_NONNULL_BEGIN
     size_t bufferSize = [data length] + kCCBlockSizeAES128;
     NSMutableData *_Nullable bufferData = [NSMutableData dataWithLength:bufferSize];
     if (!bufferData) {
-        OWSFail(@"Couldn't allocate buffer.");
+        @throw [NSException exceptionWithName:CipherException reason:@"Couldn't allocate buffer." userInfo:nil];
     }
 
     size_t bytesDecrypted = 0;

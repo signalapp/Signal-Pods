@@ -13,6 +13,7 @@
 #import "AxolotlExceptions.h"
 #import "Constants.h"
 #import "SessionCipher.h"
+#import "SPKAsserts.h"
 #import "CipherMessage.h"
 #import "PreKeyWhisperMessage.h"
 #import "WhisperMessage.h"
@@ -42,7 +43,6 @@
 #import "SessionStore.h"
 #import "SignedPreKeyStore.h"
 #import "NSData+keyVersionByte.h"
-#import "NSData+SPK.h"
 #import "SerializationUtilities.h"
 
 FOUNDATION_EXPORT double AxolotlKitVersionNumber;

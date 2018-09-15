@@ -73,7 +73,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (id<CipherMessage>)encryptMessage:(NSData *)paddedMessage protocolContext:(nullable id)protocolContext
 {
-    OWSAssert(paddedMessage);
+    SPKAssert(paddedMessage);
 
     SessionRecord *sessionRecord =
         [self.sessionStore loadSession:self.recipientId deviceId:self.deviceId protocolContext:protocolContext];
@@ -137,7 +137,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSData *)decrypt:(id<CipherMessage>)whisperMessage protocolContext:(nullable id)protocolContext
 {
-    OWSAssert(whisperMessage);
+    SPKAssert(whisperMessage);
 
     if ([whisperMessage isKindOfClass:[PreKeyWhisperMessage class]]) {
         return
@@ -150,7 +150,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSData *)decryptPreKeyWhisperMessage:(PreKeyWhisperMessage *)preKeyWhisperMessage
                         protocolContext:(nullable id)protocolContext
 {
-    OWSAssert(preKeyWhisperMessage);
+    SPKAssert(preKeyWhisperMessage);
 
     SessionRecord *sessionRecord =
         [self.sessionStore loadSession:self.recipientId deviceId:self.deviceId protocolContext:protocolContext];
@@ -174,7 +174,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSData *)decryptWhisperMessage:(WhisperMessage *)whisperMessage protocolContext:(nullable id)protocolContext
 {
-    OWSAssert(whisperMessage);
+    SPKAssert(whisperMessage);
 
     SessionRecord *sessionRecord =
         [self.sessionStore loadSession:self.recipientId deviceId:self.deviceId protocolContext:protocolContext];
@@ -207,8 +207,8 @@ NS_ASSUME_NONNULL_BEGIN
                       whisperMessage:(WhisperMessage *)whisperMessage
                      protocolContext:(nullable id)protocolContext
 {
-    OWSAssert(sessionRecord);
-    OWSAssert(whisperMessage);
+    SPKAssert(sessionRecord);
+    SPKAssert(whisperMessage);
 
     SessionState   *sessionState   = [sessionRecord sessionState];
     NSMutableArray *exceptions     = [NSMutableArray array];
@@ -282,8 +282,8 @@ NS_ASSUME_NONNULL_BEGIN
                      whisperMessage:(WhisperMessage *)whisperMessage
                     protocolContext:(nullable id)protocolContext
 {
-    OWSAssert(sessionState);
-    OWSAssert(whisperMessage);
+    SPKAssert(sessionState);
+    SPKAssert(whisperMessage);
 
     if (![sessionState hasSenderChain]) {
         @throw [NSException exceptionWithName:InvalidMessageException reason:@"Uninitialized session!" userInfo:nil];
@@ -301,9 +301,9 @@ NS_ASSUME_NONNULL_BEGIN
     NSData *theirEphemeral = whisperMessage.senderRatchetKey.removeKeyType;
     int counter = whisperMessage.counter;
     ChainKey *chainKey       = [self getOrCreateChainKeys:sessionState theirEphemeral:theirEphemeral];
-    OWSAssert(chainKey);
+    SPKAssert(chainKey);
     MessageKeys *messageKeys = [self getOrCreateMessageKeysForSession:sessionState theirEphemeral:theirEphemeral chainKey:chainKey counter:counter];
-    OWSAssert(messageKeys);
+    SPKAssert(messageKeys);
 
     [whisperMessage verifyMacWithVersion:messageVersion
                        senderIdentityKey:sessionState.remoteIdentityKey
@@ -321,9 +321,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (ChainKey *)getOrCreateChainKeys:(SessionState *)sessionState
                     theirEphemeral:(NSData *)theirEphemeral
 {
-    OWSAssert(sessionState);
-    OWSAssert(theirEphemeral);
-    OWSAssert(theirEphemeral.length == ECCKeyLength);
+    SPKAssert(sessionState);
+    SPKAssert(theirEphemeral);
+    SPKAssert(theirEphemeral.length == ECCKeyLength);
 
     @try {
         if ([sessionState hasReceiverChain:theirEphemeral]) {
@@ -332,22 +332,22 @@ NS_ASSUME_NONNULL_BEGIN
         } else{
             DDLogInfo(@"%@ %@.%d creating new chains.", self.tag, self.recipientId, self.deviceId);
             RootKey *rootKey = [sessionState rootKey];
-            OWSAssert(rootKey.keyData.length == ECCKeyLength);
+            SPKAssert(rootKey.keyData.length == ECCKeyLength);
 
             ECKeyPair *ourEphemeral = [sessionState senderRatchetKeyPair];
-            OWSAssert(ourEphemeral.publicKey.length == ECCKeyLength);
+            SPKAssert(ourEphemeral.publicKey.length == ECCKeyLength);
 
             RKCK *receiverChain = [rootKey createChainWithTheirEphemeral:theirEphemeral ourEphemeral:ourEphemeral];
 
             ECKeyPair *ourNewEphemeral = [Curve25519 generateKeyPair];
-            OWSAssert(ourNewEphemeral.publicKey.length == ECCKeyLength);
+            SPKAssert(ourNewEphemeral.publicKey.length == ECCKeyLength);
 
             RKCK *senderChain = [receiverChain.rootKey createChainWithTheirEphemeral:theirEphemeral ourEphemeral:ourNewEphemeral];
 
-            OWSAssert(senderChain.rootKey.keyData.length == ECCKeyLength);
+            SPKAssert(senderChain.rootKey.keyData.length == ECCKeyLength);
             [sessionState setRootKey:senderChain.rootKey];
 
-            OWSAssert(receiverChain.chainKey.key.length == ECCKeyLength);
+            SPKAssert(receiverChain.chainKey.key.length == ECCKeyLength);
             [sessionState addReceiverChain:theirEphemeral chainKey:receiverChain.chainKey];
             [sessionState setPreviousCounter:MAX(sessionState.senderChainKey.index-1 , 0)];
             [sessionState setSenderChain:ourNewEphemeral chainKey:senderChain.chainKey];
@@ -365,9 +365,9 @@ NS_ASSUME_NONNULL_BEGIN
                                          chainKey:(ChainKey *)chainKey
                                           counter:(int)counter
 {
-    OWSAssert(sessionState);
-    OWSAssert(theirEphemeral);
-    OWSAssert(chainKey);
+    SPKAssert(sessionState);
+    SPKAssert(theirEphemeral);
+    SPKAssert(chainKey);
 
     if (chainKey.index > counter) {
         if ([sessionState hasMessageKeys:theirEphemeral counter:counter]) {

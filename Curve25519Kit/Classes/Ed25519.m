@@ -4,7 +4,6 @@
 
 #import "Ed25519.h"
 #import "Curve25519.h"
-#import "SCKAsserts.h"
 
 extern int curve25519_verify(const unsigned char *signature, /* 64 bytes */
     const unsigned char *curve25519_pubkey, /* 32 bytes */
@@ -25,7 +24,9 @@ extern int curve25519_verify(const unsigned char *signature, /* 64 bytes */
 {
 
     if ([data length] < 1) {
-        OWSRaiseException(NSInvalidArgumentException, @"Data needs to be at least one byte");
+        @throw [NSException exceptionWithName:NSInvalidArgumentException
+                                       reason:@"Data needs to be at least one byte"
+                                     userInfo:nil];
     }
 
     return [keyPair sign:data];
@@ -35,20 +36,22 @@ extern int curve25519_verify(const unsigned char *signature, /* 64 bytes */
 {
 
     if ([data length] < 1) {
-        OWSRaiseException(NSInvalidArgumentException, @"Data needs to be at least one byte");
+        @throw [NSException exceptionWithName:NSInvalidArgumentException
+                                       reason:@"Data needs to be at least one byte"
+                                     userInfo:nil];
     }
     if ([data length] >= ULONG_MAX) {
-        OWSRaiseException(NSInvalidArgumentException, @"Data is too long.");
+        @throw [NSException exceptionWithName:NSInvalidArgumentException reason:@"Data is too long" userInfo:nil];
     }
 
     if ([pubKey length] != ECCKeyLength) {
-        OWSRaiseException(
-            NSInvalidArgumentException, @"Public Key has unexpected length: %lu", (unsigned long)pubKey.length);
+        @throw
+            [NSException exceptionWithName:NSInvalidArgumentException reason:@"Public Key isn't 32 bytes" userInfo:nil];
     }
 
     if ([signature length] != ECCSignatureLength) {
-        OWSRaiseException(
-            NSInvalidArgumentException, @"Signature has unexpected length: %lu", (unsigned long)signature.length);
+        @throw
+            [NSException exceptionWithName:NSInvalidArgumentException reason:@"Signature isn't 64 bytes" userInfo:nil];
     }
 
     BOOL success = (curve25519_verify([signature bytes], [pubKey bytes], [data bytes], [data length]) == 0);

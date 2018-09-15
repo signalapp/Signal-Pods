@@ -21,17 +21,11 @@
     "Sources/ed25519/*.{c,h}",
     "Sources/ed25519/additions/*.{c,h}",
     "Sources/ed25519/nacl_sha512/*.{c,h}",
-    "Sources/ed25519/nacl_includes/*.{c,h}",
-    "Private/*.{h,m}"
+    "Sources/ed25519/nacl_includes/*.{c,h}"
   ],
   "frameworks": "Security",
   "public_header_files": "Classes/*.h",
   "requires_arc": true,
-  "dependencies": {
-    "CocoaLumberjack": [
-
-    ]
-  },
   "platforms": {
     "osx": null,
     "ios": null,

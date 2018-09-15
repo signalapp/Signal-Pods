@@ -69,7 +69,7 @@ const int kPreKeyOfLastResortId = 0xFFFFFF;
 
 - (void)processPrekeyBundle:(PreKeyBundle *)preKeyBundle protocolContext:(nullable id)protocolContext
 {
-    OWSAssert(preKeyBundle);
+    SPKAssert(preKeyBundle);
 
     NSData *theirIdentityKey  = preKeyBundle.identityKey.removeKeyType;
     NSData *theirSignedPreKey = preKeyBundle.signedPreKeyPublic.removeKeyType;
@@ -135,8 +135,8 @@ const int kPreKeyOfLastResortId = 0xFFFFFF;
                        withSession:(SessionRecord *)sessionRecord
                    protocolContext:(nullable id)protocolContext
 {
-    OWSAssert(message);
-    OWSAssert(sessionRecord);
+    SPKAssert(message);
+    SPKAssert(sessionRecord);
 
     int    messageVersion    = message.version;
     NSData *theirIdentityKey = message.identityKey.removeKeyType;
