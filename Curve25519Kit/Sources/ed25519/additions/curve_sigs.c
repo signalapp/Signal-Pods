@@ -63,7 +63,7 @@ int curve25519_sign(unsigned char* signature_out,
    signature_out[63] &= 0x7F; /* bit should be zero already, but just in case */
    signature_out[63] |= sign_bit;
 
-   //free(sigbuf);
+   free(sigbuf);
    return 0;
 }
 
