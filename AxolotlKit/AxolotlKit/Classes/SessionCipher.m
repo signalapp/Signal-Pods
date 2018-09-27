@@ -39,6 +39,8 @@ NS_ASSUME_NONNULL_BEGIN
 @implementation SessionCipher
 
 - (instancetype)initWithAxolotlStore:(id<AxolotlStore>)sessionStore recipientId:(NSString*)recipientId deviceId:(int)deviceId{
+    OWSAssert(sessionStore);
+    OWSAssert(recipientId);
     return [self initWithSessionStore:sessionStore
                           preKeyStore:sessionStore
                     signedPreKeyStore:sessionStore
@@ -53,6 +55,12 @@ NS_ASSUME_NONNULL_BEGIN
                     identityKeyStore:(id<IdentityKeyStore>)identityKeyStore
                          recipientId:(NSString*)recipientId
                             deviceId:(int)deviceId{
+    OWSAssert(sessionStore);
+    OWSAssert(preKeyStore);
+    OWSAssert(signedPreKeyStore);
+    OWSAssert(identityKeyStore);
+    OWSAssert(recipientId);
+
     self = [super init];
 
     if (self){
@@ -238,7 +246,7 @@ NS_ASSUME_NONNULL_BEGIN
                                                whisperMessage:whisperMessage
                                               protocolContext:protocolContext];
                 DDLogInfo(@"%@ successfully decrypted with PREVIOUS session state: %@", self.tag, previousState);
-                NSAssert(decryptedData != nil, @"Expected exception or non-nil data");
+                OWSAssert(decryptedData != nil);
                 stateToPromoteIdx = idx;
                 *stop = YES;
             } @catch (NSException *exception) {
@@ -248,7 +256,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     if (decryptedData) {
         SessionState *sessionStateToPromote = [sessionRecord previousSessionStates][stateToPromoteIdx];
-        NSAssert(sessionStateToPromote != nil, @"the session state we just used is now missing");
+        OWSAssert(sessionStateToPromote != nil);
         DDLogInfo(@"%@ promoting session: %@", self.tag, sessionStateToPromote);
         [[sessionRecord previousSessionStates] removeObjectAtIndex:stateToPromoteIdx];
         [sessionRecord promoteState:sessionStateToPromote];
@@ -322,8 +330,8 @@ NS_ASSUME_NONNULL_BEGIN
                     theirEphemeral:(NSData *)theirEphemeral
 {
     OWSAssert(sessionState);
-    OWSAssert(theirEphemeral);
-    OWSAssert(theirEphemeral.length == ECCKeyLength);
+    OWSGuardWithException(theirEphemeral, InvalidMessageException);
+    OWSGuardWithException(theirEphemeral.length == 32, InvalidMessageException);
 
     @try {
         if ([sessionState hasReceiverChain:theirEphemeral]) {
@@ -332,24 +340,27 @@ NS_ASSUME_NONNULL_BEGIN
         } else{
             DDLogInfo(@"%@ %@.%d creating new chains.", self.tag, self.recipientId, self.deviceId);
             RootKey *rootKey = [sessionState rootKey];
-            OWSAssert(rootKey.keyData.length == ECCKeyLength);
+            OWSAssert(rootKey.keyData.length == 32);
 
             ECKeyPair *ourEphemeral = [sessionState senderRatchetKeyPair];
-            OWSAssert(ourEphemeral.publicKey.length == ECCKeyLength);
+            OWSAssert(ourEphemeral.publicKey.length == 32);
 
             RKCK *receiverChain = [rootKey createChainWithTheirEphemeral:theirEphemeral ourEphemeral:ourEphemeral];
 
             ECKeyPair *ourNewEphemeral = [Curve25519 generateKeyPair];
-            OWSAssert(ourNewEphemeral.publicKey.length == ECCKeyLength);
+            OWSAssert(ourNewEphemeral.publicKey.length == 32);
 
             RKCK *senderChain = [receiverChain.rootKey createChainWithTheirEphemeral:theirEphemeral ourEphemeral:ourNewEphemeral];
 
-            OWSAssert(senderChain.rootKey.keyData.length == ECCKeyLength);
+            OWSAssert(senderChain.rootKey.keyData.length == 32);
             [sessionState setRootKey:senderChain.rootKey];
 
-            OWSAssert(receiverChain.chainKey.key.length == ECCKeyLength);
+            OWSAssert(receiverChain.chainKey.key.length == 32);
             [sessionState addReceiverChain:theirEphemeral chainKey:receiverChain.chainKey];
-            [sessionState setPreviousCounter:MAX(sessionState.senderChainKey.index-1 , 0)];
+
+            int previousCounter;
+            ows_sub_overflow(sessionState.senderChainKey.index, 1, &previousCounter);
+            [sessionState setPreviousCounter:MAX(previousCounter, 0)];
             [sessionState setSenderChain:ourNewEphemeral chainKey:senderChain.chainKey];
             
             return receiverChain.chainKey;
@@ -366,7 +377,8 @@ NS_ASSUME_NONNULL_BEGIN
                                           counter:(int)counter
 {
     OWSAssert(sessionState);
-    OWSAssert(theirEphemeral);
+    OWSGuardWithException(theirEphemeral, InvalidMessageException);
+    OWSGuardWithException(theirEphemeral.length == 32, InvalidMessageException);
     OWSAssert(chainKey);
 
     if (chainKey.index > counter) {
@@ -380,7 +392,12 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     NSUInteger kCounterLimit = 2000;
-    if (counter - chainKey.index > kCounterLimit) {
+    int counterOffset;
+    if (__builtin_sub_overflow(counter, chainKey.index, &counterOffset)) {
+        OWSFailDebug(@"Overflow while calculating counter offset");
+        OWSRaiseException(InvalidMessageException, @"Overflow while calculating counter offset");
+    }
+    if (counterOffset > kCounterLimit) {
         DDLogError(@"%@ %@.%d Exceeded future message limit: %lu, index: %d, counter: %d)",
             self.tag,
             self.recipientId,
@@ -392,7 +409,7 @@ NS_ASSUME_NONNULL_BEGIN
                                        reason:@"Exceeded message keys chain length limit"
                                      userInfo:@{}];
     }
-    
+
     while (chainKey.index < counter) {
         MessageKeys *messageKeys = [chainKey messageKeys];
         [sessionState setMessageKeys:theirEphemeral messageKeys:messageKeys];
@@ -417,7 +434,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (int)remoteRegistrationId:(nullable id)protocolContext
 {
-    SessionRecord *record =
+    SessionRecord *_Nullable record =
         [self.sessionStore loadSession:self.recipientId deviceId:_deviceId protocolContext:protocolContext];
 
     if (!record) {
@@ -429,7 +446,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (int)sessionVersion:(nullable id)protocolContext
 {
-    SessionRecord *record =
+    SessionRecord *_Nullable record =
         [self.sessionStore loadSession:self.recipientId deviceId:_deviceId protocolContext:protocolContext];
 
     if (!record) {

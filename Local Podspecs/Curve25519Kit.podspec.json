@@ -37,5 +37,12 @@
     "ios": null,
     "tvos": null,
     "watchos": null
-  }
+  },
+  "testspecs": [
+    {
+      "name": "Tests",
+      "test_type": "unit",
+      "source_files": "BuildTests/BuildTestsTests/**/*.{h,m,swift}"
+    }
+  ]
 }
