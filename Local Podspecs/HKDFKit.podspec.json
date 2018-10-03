@@ -17,20 +17,27 @@
     "tag": "0.0.3"
   },
   "source_files": [
-    "HKDFKit/HKDFKit/*{h,m}",
-    "HKDFKit/Private/*{h,m}"
+    "HKDFKit/HKDFKit/*.{h,m,mm,swift}",
+    "HKDFKit/Private/*.{h,m,mm,swift}"
   ],
   "public_header_files": "HKDFKit/HKDFKit/*.h",
+  "platforms": {
+    "ios": "9.0"
+  },
   "requires_arc": true,
   "dependencies": {
     "CocoaLumberjack": [
 
+    ],
+    "SignalCoreKit": [
+
     ]
   },
-  "platforms": {
-    "osx": null,
-    "ios": null,
-    "tvos": null,
-    "watchos": null
-  }
+  "testspecs": [
+    {
+      "name": "Tests",
+      "test_type": "unit",
+      "source_files": "HKDFKit/HKDFKitTests/**/*.{h,m,swift}"
+    }
+  ]
 }

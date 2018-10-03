@@ -33,6 +33,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (NSData *)generateSharedSecretFromPublicKey:(NSData *)theirPublicKey andKeyPair:(ECKeyPair *)keyPair;
 
++ (NSData *)generateSharedSecretFromPublicKey:(NSData *)publicKey privateKey:(NSData *)privateKey;
+
 /**
  *  Generate a curve25519 key pair
  *

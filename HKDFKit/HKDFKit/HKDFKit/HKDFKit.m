@@ -1,14 +1,10 @@
 //
-//  HKDFKit.m
-//  HKDFKit
-//
-//  Created by Frederic Jacobs on 29/03/14.
-//  Copyright (c) 2018. All rights reserved.
+//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
 //
 
 #import "HKDFKit.h"
-#import "SHKAsserts.h"
 #import <CommonCrypto/CommonCrypto.h>
+#import <SignalCoreKit/OWSAsserts.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

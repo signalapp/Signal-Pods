@@ -1,0 +1,45 @@
+{
+  "name": "SignalCoreKit",
+  "version": "1.0.0",
+  "summary": "A Swift & Objective-C library used by other Signal libraries.",
+  "description": "A Swift & Objective-C library used by other Signal libraries.",
+  "homepage": "https://github.com/signalapp/SignalCoreKit",
+  "license": "GPLv3",
+  "authors": {
+    "iOS Team": "ios@signal.org"
+  },
+  "source": {
+    "git": "https://github.com/signalapp/SignalCoreKit.git",
+    "tag": "1.0.0"
+  },
+  "social_media_url": "https://twitter.com/signalapp",
+  "platforms": {
+    "ios": "9.0"
+  },
+  "requires_arc": true,
+  "source_files": [
+    "SignalCoreKit/src/**/*.{h,m,mm,swift}",
+    "SignalCoreKit/Private/**/*.{h,m,mm,swift}"
+  ],
+  "public_header_files": "SignalCoreKit/src/**/*.h",
+  "compiler_flags": "-fcxx-modules",
+  "prefix_header_file": "SignalCoreKit/SCKPrefix.h",
+  "xcconfig": {
+    "OTHER_CFLAGS": "$(inherited) -DSQLITE_HAS_CODEC"
+  },
+  "dependencies": {
+    "CocoaLumberjack": [
+
+    ],
+    "GRKOpenSSLFramework": [
+
+    ]
+  },
+  "testspecs": [
+    {
+      "name": "Tests",
+      "test_type": "unit",
+      "source_files": "SignalCoreKitTests/src/**/*.{h,m,swift}"
+    }
+  ]
+}
