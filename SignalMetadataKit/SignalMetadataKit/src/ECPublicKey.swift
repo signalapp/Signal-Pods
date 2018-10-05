@@ -24,6 +24,7 @@ import Foundation
     }
 
     // https://github.com/signalapp/libsignal-protocol-java/blob/master/java/src/main/java/org/whispersystems/libsignal/ecc/Curve.java#L30
+    @objc
     public init(serializedKeyData: Data) throws {
         let parser = OWSDataParser(data: serializedKeyData)
 

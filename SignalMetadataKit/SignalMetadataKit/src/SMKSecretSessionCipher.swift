@@ -79,13 +79,16 @@ public class SMKDecryptResult: NSObject {
     @objc public let senderRecipientId: String
     @objc public let senderDeviceId: Int
     @objc public let paddedPayload: Data
+    @objc public let messageType: SMKMessageType
 
     init(senderRecipientId: String,
          senderDeviceId: Int,
-         paddedPayload: Data) {
+         paddedPayload: Data,
+         messageType: SMKMessageType) {
         self.senderRecipientId = senderRecipientId
         self.senderDeviceId = senderDeviceId
         self.paddedPayload = paddedPayload
+        self.messageType = messageType
     }
 }
 
@@ -317,7 +320,10 @@ public class SMKDecryptResult: NSObject {
             guard senderDeviceId >= 0 && senderDeviceId <= INT_MAX else {
                 throw SMKError.assertionError(description: "\(logTag) Invalid senderDeviceId.")
             }
-            return SMKDecryptResult(senderRecipientId: senderRecipientId, senderDeviceId: Int(senderDeviceId), paddedPayload: paddedMessagePlaintext)
+            return SMKDecryptResult(senderRecipientId: senderRecipientId,
+                                    senderDeviceId: Int(senderDeviceId),
+                                    paddedPayload: paddedMessagePlaintext,
+                                    messageType: messageContent.messageType)
     }
 
     // MARK: - Encrypt

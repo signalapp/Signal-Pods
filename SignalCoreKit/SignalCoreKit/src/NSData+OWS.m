@@ -45,7 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Base64
 
-+ (NSData *)dataFromBase64StringNoPadding:(NSString *)aString
++ (nullable NSData *)dataFromBase64StringNoPadding:(NSString *)aString
 {
     int padding = aString.length % 4;
 
@@ -71,7 +71,7 @@ NS_ASSUME_NONNULL_BEGIN
 // returns the NSData representation of the base64 string
 //
 
-+ (NSData *)dataFromBase64String:(NSString *)aString
++ (nullable NSData *)dataFromBase64String:(NSString *)aString
 {
     return [[NSData alloc] initWithBase64EncodedString:aString options:NSDataBase64DecodingIgnoreUnknownCharacters];
 }
