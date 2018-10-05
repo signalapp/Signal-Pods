@@ -105,6 +105,7 @@
 #import "OWSCensorshipConfiguration.h"
 #import "OWSCountryMetadata.h"
 #import "OWSSignalService.h"
+#import "OWSWebSocket.h"
 #import "TSSocketManager.h"
 #import "ContactsManagerProtocol.h"
 #import "NotificationsProtocol.h"
