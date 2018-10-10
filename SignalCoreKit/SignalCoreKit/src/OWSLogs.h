@@ -83,4 +83,9 @@ static inline BOOL ShouldLogError()
         DDLogError(@"%@%@", OWSLogPrefix(), [NSString stringWithFormat:_messageFormat, ##__VA_ARGS__]);                \
     } while (0)
 
+#define OWSLogFlush()                                                                                                  \
+    do {                                                                                                               \
+        [DDLog flushLog];                                                                                              \
+    } while (0)
+
 NS_ASSUME_NONNULL_END

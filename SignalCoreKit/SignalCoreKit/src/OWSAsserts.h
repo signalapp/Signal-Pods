@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
     do {                                                                                                               \
         if (!(X)) {                                                                                                    \
             OWSLogError(@"Assertion failed: %s", CONVERT_EXPR_TO_STRING(X));                                           \
-            [DDLog flushLog];                                                                                          \
+            OWSLogFlush();                                                                                             \
             NSAssert(0, @"Assertion failed: %s", CONVERT_EXPR_TO_STRING(X));                                           \
         }                                                                                                              \
     } while (NO)
@@ -31,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
     do {                                                                                                               \
         if (!(X)) {                                                                                                    \
             OWSLogError(@"Assertion failed: %s", CONVERT_EXPR_TO_STRING(X));                                           \
-            [DDLog flushLog];                                                                                          \
+            OWSLogFlush();                                                                                             \
             NSCAssert(0, @"Assertion failed: %s", CONVERT_EXPR_TO_STRING(X));                                          \
         }                                                                                                              \
     } while (NO)
@@ -51,14 +51,14 @@ NS_ASSUME_NONNULL_BEGIN
 #define OWSFailNoFormat(message)                                                                                       \
     do {                                                                                                               \
         OWSLogError(@"%@", message);                                                                                   \
-        [DDLog flushLog];                                                                                              \
+        OWSLogFlush();                                                                                                 \
         NSAssert(0, message);                                                                                          \
     } while (NO)
 
 #define OWSCFailNoFormat(message)                                                                                      \
     do {                                                                                                               \
         OWSLogError(@"%@", message);                                                                                   \
-        [DDLog flushLog];                                                                                              \
+        OWSLogFlush();                                                                                                 \
         NSCAssert(0, message);                                                                                         \
     } while (NO)
 
@@ -98,14 +98,14 @@ NS_ASSUME_NONNULL_BEGIN
 #define OWSFailDebug(_messageFormat, ...)                                                                              \
     do {                                                                                                               \
         OWSLogError(_messageFormat, ##__VA_ARGS__);                                                                    \
-        [DDLog flushLog];                                                                                              \
+        OWSLogFlush();                                                                                                 \
         OWSFailWithoutLogging(_messageFormat, ##__VA_ARGS__);                                                          \
     } while (0)
 
 #define OWSCFailDebug(_messageFormat, ...)                                                                             \
     do {                                                                                                               \
         OWSLogError(_messageFormat, ##__VA_ARGS__);                                                                    \
-        [DDLog flushLog];                                                                                              \
+        OWSLogFlush();                                                                                                 \
         OWSCFailWithoutLogging(_messageFormat, ##__VA_ARGS__);                                                         \
     } while (NO)
 
@@ -149,7 +149,7 @@ __attribute__((annotate("returns_localized_nsstring"))) static inline NSString *
 #define OWSRaiseException(name, formatParam, ...)                                                                      \
     do {                                                                                                               \
         OWSLogError(@"Exception: %@ %@", name, [NSString stringWithFormat:formatParam, ##__VA_ARGS__]);                \
-        [DDLog flushLog];                                                                                              \
+        OWSLogFlush();                                                                                                 \
         @throw [NSException exceptionWithName:name                                                                     \
                                        reason:[NSString stringWithFormat:formatParam, ##__VA_ARGS__]                   \
                                      userInfo:nil];                                                                    \
@@ -159,7 +159,7 @@ __attribute__((annotate("returns_localized_nsstring"))) static inline NSString *
     do {                                                                                                               \
         OWSLogError(                                                                                                   \
             @"Exception: %@ %@ %@", name, userInfoParam, [NSString stringWithFormat:formatParam, ##__VA_ARGS__]);      \
-        [DDLog flushLog];                                                                                              \
+        OWSLogFlush();                                                                                                 \
         @throw [NSException exceptionWithName:name                                                                     \
                                        reason:[NSString stringWithFormat:formatParam, ##__VA_ARGS__]                   \
                                      userInfo:userInfoParam];                                                          \
