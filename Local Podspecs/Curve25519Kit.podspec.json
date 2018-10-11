@@ -24,19 +24,19 @@
     "Sources/ed25519/nacl_includes/*.{c,h}",
     "Private/*.{h,m}"
   ],
-  "public_header_files": "Classes/*.h",
   "frameworks": "Security",
+  "public_header_files": "Classes/*.h",
   "requires_arc": true,
-  "platforms": {
-    "ios": "9.0"
-  },
   "dependencies": {
     "CocoaLumberjack": [
 
-    ],
-    "SignalCoreKit": [
-
     ]
+  },
+  "platforms": {
+    "osx": null,
+    "ios": null,
+    "tvos": null,
+    "watchos": null
   },
   "testspecs": [
     {

@@ -14,19 +14,19 @@ public enum SPKProtoError: Error {
 
 @objc public class SPKProtoTSProtoWhisperMessage: NSObject {
 
-    // MARK: - SPKProtoTSProtoWhisperMessageBuilder
+    fileprivate static let logTag = "SPKProtoTSProtoWhisperMessage"
+    fileprivate let logTag = "SPKProtoTSProtoWhisperMessage"
 
-    @objc public class func builder(ratchetKey: Data, counter: UInt32, ciphertext: Data) -> SPKProtoTSProtoWhisperMessageBuilder {
-        return SPKProtoTSProtoWhisperMessageBuilder(ratchetKey: ratchetKey, counter: counter, ciphertext: ciphertext)
-    }
+    // MARK: - SPKProtoTSProtoWhisperMessageBuilder
 
     @objc public class SPKProtoTSProtoWhisperMessageBuilder: NSObject {
 
         private var proto = SPKProtos_TSProtoWhisperMessage()
 
-        @objc fileprivate override init() {}
+        @objc public override init() {}
 
-        @objc fileprivate init(ratchetKey: Data, counter: UInt32, ciphertext: Data) {
+        // Initializer for required fields
+        @objc public init(ratchetKey: Data, counter: UInt32, ciphertext: Data) {
             super.init()
 
             setRatchetKey(ratchetKey)
@@ -48,6 +48,15 @@ public enum SPKProtoError: Error {
 
         @objc public func setCiphertext(_ valueParam: Data) {
             proto.ciphertext = valueParam
+        }
+
+        // NOTE: This method is intended for debugging purposes only.
+        @objc public func buildIgnoringErrors() -> SPKProtoTSProtoWhisperMessage? {
+            guard _isDebugAssertConfiguration() else {
+                return nil
+            }
+
+            return try! self.build()
         }
 
         @objc public func build() throws -> SPKProtoTSProtoWhisperMessage {
@@ -82,6 +91,15 @@ public enum SPKProtoError: Error {
         self.ratchetKey = ratchetKey
         self.counter = counter
         self.ciphertext = ciphertext
+    }
+
+    // NOTE: This method is intended for debugging purposes only.
+    @objc public func serializedDataIgnoringErrors() -> Data? {
+        guard _isDebugAssertConfiguration() else {
+            return nil
+        }
+
+        return try! self.serializedData()
     }
 
     @objc
@@ -122,39 +140,23 @@ public enum SPKProtoError: Error {
     }
 }
 
-#if DEBUG
-
-extension SPKProtoTSProtoWhisperMessage {
-    @objc public func serializedDataIgnoringErrors() -> Data? {
-        return try! self.serializedData()
-    }
-}
-
-extension SPKProtoTSProtoWhisperMessage.SPKProtoTSProtoWhisperMessageBuilder {
-    @objc public func buildIgnoringErrors() -> SPKProtoTSProtoWhisperMessage? {
-        return try! self.build()
-    }
-}
-
-#endif
-
 // MARK: - SPKProtoTSProtoPreKeyWhisperMessage
 
 @objc public class SPKProtoTSProtoPreKeyWhisperMessage: NSObject {
 
-    // MARK: - SPKProtoTSProtoPreKeyWhisperMessageBuilder
+    fileprivate static let logTag = "SPKProtoTSProtoPreKeyWhisperMessage"
+    fileprivate let logTag = "SPKProtoTSProtoPreKeyWhisperMessage"
 
-    @objc public class func builder(signedPreKeyID: UInt32, baseKey: Data, identityKey: Data, message: Data) -> SPKProtoTSProtoPreKeyWhisperMessageBuilder {
-        return SPKProtoTSProtoPreKeyWhisperMessageBuilder(signedPreKeyID: signedPreKeyID, baseKey: baseKey, identityKey: identityKey, message: message)
-    }
+    // MARK: - SPKProtoTSProtoPreKeyWhisperMessageBuilder
 
     @objc public class SPKProtoTSProtoPreKeyWhisperMessageBuilder: NSObject {
 
         private var proto = SPKProtos_TSProtoPreKeyWhisperMessage()
 
-        @objc fileprivate override init() {}
+        @objc public override init() {}
 
-        @objc fileprivate init(signedPreKeyID: UInt32, baseKey: Data, identityKey: Data, message: Data) {
+        // Initializer for required fields
+        @objc public init(signedPreKeyID: UInt32, baseKey: Data, identityKey: Data, message: Data) {
             super.init()
 
             setSignedPreKeyID(signedPreKeyID)
@@ -185,6 +187,15 @@ extension SPKProtoTSProtoWhisperMessage.SPKProtoTSProtoWhisperMessageBuilder {
 
         @objc public func setMessage(_ valueParam: Data) {
             proto.message = valueParam
+        }
+
+        // NOTE: This method is intended for debugging purposes only.
+        @objc public func buildIgnoringErrors() -> SPKProtoTSProtoPreKeyWhisperMessage? {
+            guard _isDebugAssertConfiguration() else {
+                return nil
+            }
+
+            return try! self.build()
         }
 
         @objc public func build() throws -> SPKProtoTSProtoPreKeyWhisperMessage {
@@ -232,6 +243,15 @@ extension SPKProtoTSProtoWhisperMessage.SPKProtoTSProtoWhisperMessageBuilder {
         self.message = message
     }
 
+    // NOTE: This method is intended for debugging purposes only.
+    @objc public func serializedDataIgnoringErrors() -> Data? {
+        guard _isDebugAssertConfiguration() else {
+            return nil
+        }
+
+        return try! self.serializedData()
+    }
+
     @objc
     public func serializedData() throws -> Data {
         return try self.proto.serializedData()
@@ -276,37 +296,20 @@ extension SPKProtoTSProtoWhisperMessage.SPKProtoTSProtoWhisperMessageBuilder {
     }
 }
 
-#if DEBUG
-
-extension SPKProtoTSProtoPreKeyWhisperMessage {
-    @objc public func serializedDataIgnoringErrors() -> Data? {
-        return try! self.serializedData()
-    }
-}
-
-extension SPKProtoTSProtoPreKeyWhisperMessage.SPKProtoTSProtoPreKeyWhisperMessageBuilder {
-    @objc public func buildIgnoringErrors() -> SPKProtoTSProtoPreKeyWhisperMessage? {
-        return try! self.build()
-    }
-}
-
-#endif
-
 // MARK: - SPKProtoTSProtoKeyExchangeMessage
 
 @objc public class SPKProtoTSProtoKeyExchangeMessage: NSObject {
 
-    // MARK: - SPKProtoTSProtoKeyExchangeMessageBuilder
+    fileprivate static let logTag = "SPKProtoTSProtoKeyExchangeMessage"
+    fileprivate let logTag = "SPKProtoTSProtoKeyExchangeMessage"
 
-    @objc public class func builder() -> SPKProtoTSProtoKeyExchangeMessageBuilder {
-        return SPKProtoTSProtoKeyExchangeMessageBuilder()
-    }
+    // MARK: - SPKProtoTSProtoKeyExchangeMessageBuilder
 
     @objc public class SPKProtoTSProtoKeyExchangeMessageBuilder: NSObject {
 
         private var proto = SPKProtos_TSProtoKeyExchangeMessage()
 
-        @objc fileprivate override init() {}
+        @objc public override init() {}
 
         @objc public func setId(_ valueParam: UInt32) {
             proto.id = valueParam
@@ -326,6 +329,15 @@ extension SPKProtoTSProtoPreKeyWhisperMessage.SPKProtoTSProtoPreKeyWhisperMessag
 
         @objc public func setBaseKeySignature(_ valueParam: Data) {
             proto.baseKeySignature = valueParam
+        }
+
+        // NOTE: This method is intended for debugging purposes only.
+        @objc public func buildIgnoringErrors() -> SPKProtoTSProtoKeyExchangeMessage? {
+            guard _isDebugAssertConfiguration() else {
+                return nil
+            }
+
+            return try! self.build()
         }
 
         @objc public func build() throws -> SPKProtoTSProtoKeyExchangeMessage {
@@ -390,6 +402,15 @@ extension SPKProtoTSProtoPreKeyWhisperMessage.SPKProtoTSProtoPreKeyWhisperMessag
         self.proto = proto
     }
 
+    // NOTE: This method is intended for debugging purposes only.
+    @objc public func serializedDataIgnoringErrors() -> Data? {
+        guard _isDebugAssertConfiguration() else {
+            return nil
+        }
+
+        return try! self.serializedData()
+    }
+
     @objc
     public func serializedData() throws -> Data {
         return try self.proto.serializedData()
@@ -410,37 +431,20 @@ extension SPKProtoTSProtoPreKeyWhisperMessage.SPKProtoTSProtoPreKeyWhisperMessag
     }
 }
 
-#if DEBUG
-
-extension SPKProtoTSProtoKeyExchangeMessage {
-    @objc public func serializedDataIgnoringErrors() -> Data? {
-        return try! self.serializedData()
-    }
-}
-
-extension SPKProtoTSProtoKeyExchangeMessage.SPKProtoTSProtoKeyExchangeMessageBuilder {
-    @objc public func buildIgnoringErrors() -> SPKProtoTSProtoKeyExchangeMessage? {
-        return try! self.build()
-    }
-}
-
-#endif
-
 // MARK: - SPKProtoTSProtoSenderKeyMessage
 
 @objc public class SPKProtoTSProtoSenderKeyMessage: NSObject {
 
-    // MARK: - SPKProtoTSProtoSenderKeyMessageBuilder
+    fileprivate static let logTag = "SPKProtoTSProtoSenderKeyMessage"
+    fileprivate let logTag = "SPKProtoTSProtoSenderKeyMessage"
 
-    @objc public class func builder() -> SPKProtoTSProtoSenderKeyMessageBuilder {
-        return SPKProtoTSProtoSenderKeyMessageBuilder()
-    }
+    // MARK: - SPKProtoTSProtoSenderKeyMessageBuilder
 
     @objc public class SPKProtoTSProtoSenderKeyMessageBuilder: NSObject {
 
         private var proto = SPKProtos_TSProtoSenderKeyMessage()
 
-        @objc fileprivate override init() {}
+        @objc public override init() {}
 
         @objc public func setId(_ valueParam: UInt32) {
             proto.id = valueParam
@@ -452,6 +456,15 @@ extension SPKProtoTSProtoKeyExchangeMessage.SPKProtoTSProtoKeyExchangeMessageBui
 
         @objc public func setCiphertext(_ valueParam: Data) {
             proto.ciphertext = valueParam
+        }
+
+        // NOTE: This method is intended for debugging purposes only.
+        @objc public func buildIgnoringErrors() -> SPKProtoTSProtoSenderKeyMessage? {
+            guard _isDebugAssertConfiguration() else {
+                return nil
+            }
+
+            return try! self.build()
         }
 
         @objc public func build() throws -> SPKProtoTSProtoSenderKeyMessage {
@@ -493,6 +506,15 @@ extension SPKProtoTSProtoKeyExchangeMessage.SPKProtoTSProtoKeyExchangeMessageBui
         self.proto = proto
     }
 
+    // NOTE: This method is intended for debugging purposes only.
+    @objc public func serializedDataIgnoringErrors() -> Data? {
+        guard _isDebugAssertConfiguration() else {
+            return nil
+        }
+
+        return try! self.serializedData()
+    }
+
     @objc
     public func serializedData() throws -> Data {
         return try self.proto.serializedData()
@@ -513,37 +535,20 @@ extension SPKProtoTSProtoKeyExchangeMessage.SPKProtoTSProtoKeyExchangeMessageBui
     }
 }
 
-#if DEBUG
-
-extension SPKProtoTSProtoSenderKeyMessage {
-    @objc public func serializedDataIgnoringErrors() -> Data? {
-        return try! self.serializedData()
-    }
-}
-
-extension SPKProtoTSProtoSenderKeyMessage.SPKProtoTSProtoSenderKeyMessageBuilder {
-    @objc public func buildIgnoringErrors() -> SPKProtoTSProtoSenderKeyMessage? {
-        return try! self.build()
-    }
-}
-
-#endif
-
 // MARK: - SPKProtoTSProtoSenderKeyDistributionMessage
 
 @objc public class SPKProtoTSProtoSenderKeyDistributionMessage: NSObject {
 
-    // MARK: - SPKProtoTSProtoSenderKeyDistributionMessageBuilder
+    fileprivate static let logTag = "SPKProtoTSProtoSenderKeyDistributionMessage"
+    fileprivate let logTag = "SPKProtoTSProtoSenderKeyDistributionMessage"
 
-    @objc public class func builder() -> SPKProtoTSProtoSenderKeyDistributionMessageBuilder {
-        return SPKProtoTSProtoSenderKeyDistributionMessageBuilder()
-    }
+    // MARK: - SPKProtoTSProtoSenderKeyDistributionMessageBuilder
 
     @objc public class SPKProtoTSProtoSenderKeyDistributionMessageBuilder: NSObject {
 
         private var proto = SPKProtos_TSProtoSenderKeyDistributionMessage()
 
-        @objc fileprivate override init() {}
+        @objc public override init() {}
 
         @objc public func setId(_ valueParam: UInt32) {
             proto.id = valueParam
@@ -559,6 +564,15 @@ extension SPKProtoTSProtoSenderKeyMessage.SPKProtoTSProtoSenderKeyMessageBuilder
 
         @objc public func setSigningKey(_ valueParam: Data) {
             proto.signingKey = valueParam
+        }
+
+        // NOTE: This method is intended for debugging purposes only.
+        @objc public func buildIgnoringErrors() -> SPKProtoTSProtoSenderKeyDistributionMessage? {
+            guard _isDebugAssertConfiguration() else {
+                return nil
+            }
+
+            return try! self.build()
         }
 
         @objc public func build() throws -> SPKProtoTSProtoSenderKeyDistributionMessage {
@@ -610,6 +624,15 @@ extension SPKProtoTSProtoSenderKeyMessage.SPKProtoTSProtoSenderKeyMessageBuilder
         self.proto = proto
     }
 
+    // NOTE: This method is intended for debugging purposes only.
+    @objc public func serializedDataIgnoringErrors() -> Data? {
+        guard _isDebugAssertConfiguration() else {
+            return nil
+        }
+
+        return try! self.serializedData()
+    }
+
     @objc
     public func serializedData() throws -> Data {
         return try self.proto.serializedData()
@@ -629,19 +652,3 @@ extension SPKProtoTSProtoSenderKeyMessage.SPKProtoTSProtoSenderKeyMessageBuilder
         return result
     }
 }
-
-#if DEBUG
-
-extension SPKProtoTSProtoSenderKeyDistributionMessage {
-    @objc public func serializedDataIgnoringErrors() -> Data? {
-        return try! self.serializedData()
-    }
-}
-
-extension SPKProtoTSProtoSenderKeyDistributionMessage.SPKProtoTSProtoSenderKeyDistributionMessageBuilder {
-    @objc public func buildIgnoringErrors() -> SPKProtoTSProtoSenderKeyDistributionMessage? {
-        return try! self.build()
-    }
-}
-
-#endif

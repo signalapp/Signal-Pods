@@ -11,10 +11,11 @@
 #endif
 
 #import "AxolotlExceptions.h"
+#import "Constants.h"
+#import "SessionCipher.h"
 #import "CipherMessage.h"
 #import "PreKeyWhisperMessage.h"
 #import "WhisperMessage.h"
-#import "Constants.h"
 #import "AES-CBC.h"
 #import "PreKeyBundle.h"
 #import "PreKeyRecord.h"
@@ -32,17 +33,16 @@
 #import "RootKey.h"
 #import "SendingChain.h"
 #import "TSDerivedSecrets.h"
-#import "SessionCipher.h"
 #import "SessionBuilder.h"
 #import "SessionRecord.h"
 #import "SessionState.h"
-#import "SPK-Bridging-Header.h"
 #import "AxolotlStore.h"
 #import "IdentityKeyStore.h"
 #import "PreKeyStore.h"
 #import "SessionStore.h"
 #import "SignedPreKeyStore.h"
 #import "NSData+keyVersionByte.h"
+#import "NSData+SPK.h"
 #import "SerializationUtilities.h"
 
 FOUNDATION_EXPORT double AxolotlKitVersionNumber;

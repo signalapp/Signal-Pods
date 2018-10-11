@@ -101,7 +101,7 @@ The SwiftProtobuf tests need a version of protoc which supports the
 `swift_prefix` option (introduced in protoc 3.2.0).
 It may work with earlier versions of protoc.
 You can get recent versions from
-[Google's github repository](https://github.com/protocolbuffers/protobuf).
+[Google's github repository](https://github.com/google/protobuf).
 
 ## Building and Installing the Code Generator Plugin
 
@@ -182,7 +182,7 @@ you used to build the plugin above:
 
 ```swift
 dependencies: [
-        .package(url: "https://github.com/apple/swift-protobuf.git", from: "1.1.0")
+        .package(url: "https://github.com/apple/swift-protobuf.git", from: "1.0.0")
 ]
 ```
 

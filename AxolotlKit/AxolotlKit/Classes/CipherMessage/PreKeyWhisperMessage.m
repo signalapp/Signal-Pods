@@ -46,10 +46,10 @@ NS_ASSUME_NONNULL_BEGIN
         _identityKey = identityKey;
         _message = whisperMessage;
 
-        SPKProtoTSProtoPreKeyWhisperMessageBuilder *messageBuilder = [SPKProtoTSProtoPreKeyWhisperMessage builderWithSignedPreKeyID:signedPrekeyId
-                                                                                                                            baseKey:baseKey
-                                                                                                                        identityKey:identityKey
-                                                                                                                            message:whisperMessage.serialized];
+        SPKProtoTSProtoPreKeyWhisperMessageBuilder *messageBuilder = [[SPKProtoTSProtoPreKeyWhisperMessageBuilder alloc] initWithSignedPreKeyID:signedPrekeyId
+                                                                                                                                        baseKey:baseKey
+                                                                                                                                    identityKey:identityKey
+                                                                                                                                        message:whisperMessage.serialized];
         [messageBuilder setRegistrationID:registrationId];
 
         if (prekeyId != -1) {
@@ -117,10 +117,6 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     return self;
-}
-
-- (CipherMessageType)cipherMessageType {
-    return CipherMessageType_Prekey;
 }
 
 #pragma mark - Logging

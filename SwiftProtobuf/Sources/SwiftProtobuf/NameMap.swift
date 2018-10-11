@@ -68,11 +68,9 @@ fileprivate class InternPool {
   }
 }
 
-#if !swift(>=4.2)
 // Constants for FNV hash http://tools.ietf.org/html/draft-eastlake-fnv-03
 private let i_2166136261 = Int(bitPattern: 2166136261)
 private let i_16777619 = Int(16777619)
-#endif
 
 /// An immutable bidirectional mapping between field/enum-case names
 /// and numbers, used to record field names for text-based
@@ -129,13 +127,6 @@ public struct _NameMap: ExpressibleByDictionaryLiteral {
       }
     }
 
-  #if swift(>=4.2)
-    public func hash(into hasher: inout Hasher) {
-      for byte in utf8Buffer {
-        hasher.combine(byte)
-      }
-    }
-  #else  // swift(>=4.2)
     public var hashValue: Int {
       var h = i_2166136261
       for byte in utf8Buffer {
@@ -143,7 +134,6 @@ public struct _NameMap: ExpressibleByDictionaryLiteral {
       }
       return h
     }
-  #endif  // swift(>=4.2)
 
     public static func ==(lhs: Name, rhs: Name) -> Bool {
       if lhs.utf8Buffer.count != rhs.utf8Buffer.count {
