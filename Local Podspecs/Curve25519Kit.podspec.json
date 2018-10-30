@@ -12,11 +12,11 @@
   "summary": "Key agreement (curve25519) and signing (ed25519), all with curve25519 keys.",
   "description": "Curve25519 is a fast and secure curve used for key agreement. Unfortunately, it does not support signing out of the box. This pod translates the point curves to do ed25519 signing with curve25519 keys.",
   "source": {
-    "git": "https://github.com/WhisperSystems/Curve25519Kit.git",
+    "git": "https://github.com/signalapp/Curve25519Kit.git",
     "tag": "2.1.0"
   },
   "source_files": [
-    "Classes/*.{h,m}",
+    "Classes/*.{h,m,swift}",
     "Sources/Curve25519/curve25519-donna.c",
     "Sources/ed25519/*.{c,h}",
     "Sources/ed25519/additions/*.{c,h}",
@@ -24,19 +24,19 @@
     "Sources/ed25519/nacl_includes/*.{c,h}",
     "Private/*.{h,m}"
   ],
-  "frameworks": "Security",
   "public_header_files": "Classes/*.h",
+  "frameworks": "Security",
   "requires_arc": true,
+  "platforms": {
+    "ios": "9.0"
+  },
   "dependencies": {
     "CocoaLumberjack": [
 
+    ],
+    "SignalCoreKit": [
+
     ]
-  },
-  "platforms": {
-    "osx": null,
-    "ios": null,
-    "tvos": null,
-    "watchos": null
   },
   "testspecs": [
     {

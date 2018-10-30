@@ -1,9 +1,5 @@
 //
-//  PrekeyWhisperMessage.m
-//  AxolotlKit
-//
-//  Created by Frederic Jacobs on 23/07/14.
-//  Copyright (c) 2014 Frederic Jacobs. All rights reserved.
+//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
 //
 
 #import "PreKeyWhisperMessage.h"
@@ -11,6 +7,7 @@
 #import "Constants.h"
 #import "SerializationUtilities.h"
 #import <AxolotlKit/AxolotlKit-Swift.h>
+#import <SignalCoreKit/SCKExceptionWrapper.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -26,12 +23,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @implementation PreKeyWhisperMessage
 
-- (instancetype)initWithWhisperMessage:(WhisperMessage *)whisperMessage
-                        registrationId:(int)registrationId
-                              prekeyId:(int)prekeyId
-                        signedPrekeyId:(int)signedPrekeyId
-                               baseKey:(NSData *)baseKey
-                           identityKey:(NSData *)identityKey
+- (instancetype)init_throws_withWhisperMessage:(WhisperMessage *)whisperMessage
+                                registrationId:(int)registrationId
+                                      prekeyId:(int)prekeyId
+                                signedPrekeyId:(int)signedPrekeyId
+                                       baseKey:(NSData *)baseKey
+                                   identityKey:(NSData *)identityKey
 {
     OWSAssert(whisperMessage);
     OWSAssert(baseKey);
@@ -46,10 +43,10 @@ NS_ASSUME_NONNULL_BEGIN
         _identityKey = identityKey;
         _message = whisperMessage;
 
-        SPKProtoTSProtoPreKeyWhisperMessageBuilder *messageBuilder = [[SPKProtoTSProtoPreKeyWhisperMessageBuilder alloc] initWithSignedPreKeyID:signedPrekeyId
-                                                                                                                                        baseKey:baseKey
-                                                                                                                                    identityKey:identityKey
-                                                                                                                                        message:whisperMessage.serialized];
+        SPKProtoTSProtoPreKeyWhisperMessageBuilder *messageBuilder = [SPKProtoTSProtoPreKeyWhisperMessage builderWithSignedPreKeyID:signedPrekeyId
+                                                                                                                            baseKey:baseKey
+                                                                                                                        identityKey:identityKey
+                                                                                                                            message:whisperMessage.serialized];
         [messageBuilder setRegistrationID:registrationId];
 
         if (prekeyId != -1) {
@@ -73,7 +70,18 @@ NS_ASSUME_NONNULL_BEGIN
     return self;
 }
 
-- (instancetype)initWithData:(NSData *)serialized
+- (nullable instancetype)initWithData:(NSData *)serialized error:(NSError **)outError
+{
+    @try {
+        self = [self init_throws_withData:serialized];
+        return self;
+    } @catch (NSException *exception) {
+        *outError = SCKExceptionWrapperErrorMake(exception);
+        return nil;
+    }
+}
+
+- (instancetype)init_throws_withData:(NSData *)serialized
 {
     if (self = [super init]) {
         if (serialized.length < 1) {
@@ -113,10 +121,14 @@ NS_ASSUME_NONNULL_BEGIN
         _signedPrekeyId = preKeyWhisperMessage.signedPreKeyID;
         _baseKey = preKeyWhisperMessage.baseKey;
         _identityKey = preKeyWhisperMessage.identityKey;
-        _message = [[WhisperMessage alloc] initWithData:preKeyWhisperMessage.message];
+        _message = [[WhisperMessage alloc] init_throws_withData:preKeyWhisperMessage.message];
     }
 
     return self;
+}
+
+- (CipherMessageType)cipherMessageType {
+    return CipherMessageType_Prekey;
 }
 
 #pragma mark - Logging

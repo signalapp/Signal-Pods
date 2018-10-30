@@ -1,6 +1,7 @@
 //
 //  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
 //
+
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -31,7 +32,13 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return 32-byte shared secret derived from ECDH with curve25519 public key and key pair.
  */
-+ (NSData *)generateSharedSecretFromPublicKey:(NSData *)theirPublicKey andKeyPair:(ECKeyPair *)keyPair;
++ (NSData *)throws_generateSharedSecretFromPublicKey:(NSData *)theirPublicKey andKeyPair:(ECKeyPair *)keyPair NS_SWIFT_UNAVAILABLE("throws objc expections");
+
++ (NSData *)throws_generateSharedSecretFromPublicKey:(NSData *)publicKey privateKey:(NSData *)privateKey NS_SWIFT_UNAVAILABLE("throws objc expections");
+
++ (nullable NSData *)generateSharedSecretFromPublicKey:(NSData *)publicKey
+                                   privateKey:(NSData *)privateKey
+                                        error:(NSError **)outError;
 
 /**
  *  Generate a curve25519 key pair

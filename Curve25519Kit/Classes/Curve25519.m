@@ -1,9 +1,11 @@
 //
 //  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
 //
+
 #import "Curve25519.h"
-#import "Randomness.h"
-#import "SCKAsserts.h"
+#import <SignalCoreKit/OWSAsserts.h>
+#import <SignalCoreKit/Randomness.h>
+#import <SignalCoreKit/SCKExceptionWrapper.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -79,16 +81,22 @@ extern int curve25519_sign(unsigned char *signature_out, /* 64 bytes */
 
     static const uint8_t basepoint[ECCKeyLength] = { 9 };
 
-    NSMutableData *publicKey = [NSMutableData new];
-    publicKey.length = ECCKeyLength;
+    NSMutableData *publicKey = [NSMutableData dataWithLength:ECCKeyLength];
+    if (!publicKey) {
+        OWSFail(@"Could not allocate buffer");
+    }
 
     curve25519_donna(publicKey.mutableBytes, privateKey.mutableBytes, basepoint);
 
     return [[ECKeyPair alloc] initWithPublicKey:[publicKey copy] privateKey:[privateKey copy]];
 }
 
-- (NSData *)sign:(NSData *)data
+- (NSData *)throws_sign:(NSData *)data
 {
+    if (!data) {
+        OWSRaiseException(NSInvalidArgumentException, @"Missing data.");
+    }
+
     NSMutableData *signatureData = [NSMutableData dataWithLength:ECCSignatureLength];
     if (!signatureData) {
         OWSFail(@"Could not allocate buffer");
@@ -105,23 +113,6 @@ extern int curve25519_sign(unsigned char *signature_out, /* 64 bytes */
     return [signatureData copy];
 }
 
-- (NSData *)generateSharedSecretFromPublicKey:(NSData *)theirPublicKey
-{
-    if (theirPublicKey.length != ECCKeyLength) {
-        OWSRaiseException(
-                          NSInvalidArgumentException, @"Public key has unexpected length: %lu", (unsigned long)theirPublicKey.length);
-    }
-
-    NSMutableData *sharedSecretData = [NSMutableData dataWithLength:32];
-    if (!sharedSecretData) {
-        OWSFail(@"Could not allocate buffer");
-    }
-
-    curve25519_donna(sharedSecretData.mutableBytes, self.privateKey.bytes, [theirPublicKey bytes]);
-
-    return [sharedSecretData copy];
-}
-
 @end
 
 #pragma mark -
@@ -133,9 +124,46 @@ extern int curve25519_sign(unsigned char *signature_out, /* 64 bytes */
     return [ECKeyPair generateKeyPair];
 }
 
-+ (NSData *)generateSharedSecretFromPublicKey:(NSData *)theirPublicKey andKeyPair:(ECKeyPair *)keyPair
++ (NSData *)throws_generateSharedSecretFromPublicKey:(NSData *)theirPublicKey andKeyPair:(ECKeyPair *)keyPair
 {
-    return [keyPair generateSharedSecretFromPublicKey:theirPublicKey];
+    if (!keyPair) {
+        OWSRaiseException(NSInvalidArgumentException, @"Missing key pair.");
+    }
+
+    return [self throws_generateSharedSecretFromPublicKey:theirPublicKey privateKey:keyPair.privateKey];
+}
+
++ (nullable NSData *)generateSharedSecretFromPublicKey:(NSData *)publicKey
+                                            privateKey:(NSData *)privateKey
+                                                 error:(NSError **)outError
+{
+    @try {
+        return [self throws_generateSharedSecretFromPublicKey:publicKey privateKey:privateKey];
+    } @catch (NSException *exception) {
+        *outError = SCKExceptionWrapperErrorMake(exception);
+        return nil;
+    }
+}
+
++ (NSData *)throws_generateSharedSecretFromPublicKey:(NSData *)publicKey privateKey:(NSData *)privateKey
+{
+    if (publicKey.length != ECCKeyLength) {
+        OWSRaiseException(
+                          NSInvalidArgumentException, @"Public key has unexpected length: %lu", (unsigned long)publicKey.length);
+    }
+    if (privateKey.length != ECCKeyLength) {
+        OWSRaiseException(
+                          NSInvalidArgumentException, @"Private key has unexpected length: %lu", (unsigned long)privateKey.length);
+    }
+
+    NSMutableData *sharedSecretData = [NSMutableData dataWithLength:32];
+    if (!sharedSecretData) {
+        OWSFail(@"Could not allocate buffer");
+    }
+
+    curve25519_donna(sharedSecretData.mutableBytes, privateKey.bytes, publicKey.bytes);
+
+    return [sharedSecretData copy];
 }
 
 @end

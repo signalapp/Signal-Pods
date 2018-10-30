@@ -4,7 +4,8 @@
 
 #import "Ed25519.h"
 #import "Curve25519.h"
-#import "SCKAsserts.h"
+#import <SignalCoreKit/OWSAsserts.h>
+#import <SignalCoreKit/SCKExceptionWrapper.h>
 
 extern int curve25519_verify(const unsigned char *signature, /* 64 bytes */
     const unsigned char *curve25519_pubkey, /* 32 bytes */
@@ -13,7 +14,7 @@ extern int curve25519_verify(const unsigned char *signature, /* 64 bytes */
 
 @interface ECKeyPair ()
 
-- (NSData *)sign:(NSData *)data;
+- (NSData *)throws_sign:(NSData *)data;
 
 @end
 
@@ -21,19 +22,48 @@ extern int curve25519_verify(const unsigned char *signature, /* 64 bytes */
 
 @implementation Ed25519
 
-+ (NSData *)sign:(NSData *)data withKeyPair:(ECKeyPair *)keyPair
++ (nullable NSData *)sign:(NSData *)data withKeyPair:(ECKeyPair *)keyPair error:(NSError **)outError
 {
+    @try {
+        return [self throws_sign:data withKeyPair:keyPair];
+    } @catch (NSException *exception) {
+        *outError = SCKExceptionWrapperErrorMake(exception);
+        return nil;
+    }
+}
 
++ (NSData *)throws_sign:(NSData *)data withKeyPair:(ECKeyPair *)keyPair
+{
     if ([data length] < 1) {
         OWSRaiseException(NSInvalidArgumentException, @"Data needs to be at least one byte");
     }
+    if (!keyPair) {
+        OWSRaiseException(NSInvalidArgumentException, @"Missing key pair.");
+    }
 
-    return [keyPair sign:data];
+    return [keyPair throws_sign:data];
 }
 
-+ (BOOL)verifySignature:(NSData *)signature publicKey:(NSData *)pubKey data:(NSData *)data
++ (BOOL)verifySignature:(NSData *)signature
+              publicKey:(NSData *)publicKey
+                   data:(NSData *)data
+              didVerify:(BOOL *)didVerify
+                  error:(NSError **)outError;
 {
+    @try {
+        *didVerify = [self throws_verifySignature:signature publicKey:publicKey data:data];
+        // TODO this seems potentially unintuitive for the caller.
+        // Instead of returning YES, should we remove didVerify and return an error when verification fails? (but no
+        // exception was thrown)
+        return YES;
+    } @catch (NSException *exception) {
+        *outError = SCKExceptionWrapperErrorMake(exception);
+        return NO;
+    }
+}
 
++ (BOOL)throws_verifySignature:(NSData *)signature publicKey:(NSData *)pubKey data:(NSData *)data
+{
     if ([data length] < 1) {
         OWSRaiseException(NSInvalidArgumentException, @"Data needs to be at least one byte");
     }

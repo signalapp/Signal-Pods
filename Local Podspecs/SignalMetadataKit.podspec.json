@@ -1,0 +1,60 @@
+{
+  "name": "SignalMetadataKit",
+  "version": "1.0.0",
+  "summary": "A Swift & Objective-C library used by other Signal libraries.",
+  "description": "A Swift & Objective-C library used by other Signal libraries.",
+  "homepage": "https://github.com/signalapp/SignalMetadataKit",
+  "license": "GPLv3",
+  "authors": {
+    "iOS Team": "ios@signal.org"
+  },
+  "source": {
+    "git": "https://github.com/signalapp/SignalMetadataKit.git",
+    "tag": "1.0.0"
+  },
+  "social_media_url": "https://twitter.com/signalapp",
+  "platforms": {
+    "ios": "9.0"
+  },
+  "requires_arc": true,
+  "source_files": [
+    "SignalMetadataKit/src/**/*.{h,m,mm,swift}",
+    "SignalMetadataKit/Private/**/*.{h,m,mm,swift}"
+  ],
+  "public_header_files": "SignalMetadataKit/src/**/*.h",
+  "compiler_flags": "-fcxx-modules",
+  "prefix_header_file": "SignalMetadataKit/SMKPrefix.h",
+  "xcconfig": {
+    "OTHER_CFLAGS": "$(inherited) -DSQLITE_HAS_CODEC"
+  },
+  "resources": [
+    "SignalMetadataKit/Resources/Certificates/*"
+  ],
+  "dependencies": {
+    "AxolotlKit": [
+
+    ],
+    "CocoaLumberjack": [
+
+    ],
+    "Curve25519Kit": [
+
+    ],
+    "HKDFKit": [
+
+    ],
+    "SignalCoreKit": [
+
+    ],
+    "SwiftProtobuf": [
+
+    ]
+  },
+  "testspecs": [
+    {
+      "name": "Tests",
+      "test_type": "unit",
+      "source_files": "SignalMetadataKitTests/src/**/*.{h,m,swift}"
+    }
+  ]
+}

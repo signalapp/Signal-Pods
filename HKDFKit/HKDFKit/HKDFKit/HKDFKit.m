@@ -1,14 +1,11 @@
 //
-//  HKDFKit.m
-//  HKDFKit
-//
-//  Created by Frederic Jacobs on 29/03/14.
-//  Copyright (c) 2018. All rights reserved.
+//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
 //
 
 #import "HKDFKit.h"
-#import "SHKAsserts.h"
 #import <CommonCrypto/CommonCrypto.h>
+#import <SignalCoreKit/OWSAsserts.h>
+#import <SignalCoreKit/SCKExceptionWrapper.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -17,33 +14,47 @@ NS_ASSUME_NONNULL_BEGIN
 
 @implementation HKDFKit
 
-+ (NSData *)deriveKey:(NSData *)seed info:(nullable NSData *)info salt:(NSData *)salt outputSize:(int)outputSize
++ (nullable NSData *)deriveKey:(NSData *)seed
+                          info:(nullable NSData *)info
+                          salt:(NSData *)salt
+                    outputSize:(int)outputSize
+                         error:(NSError **)outError
 {
-    return [self deriveKey:seed info:info salt:salt outputSize:outputSize offset:1];
+    @try {
+        return [self throws_deriveKey:seed info:info salt:salt outputSize:outputSize];
+    } @catch (NSException *exception) {
+        *outError = SCKExceptionWrapperErrorMake(exception);
+        return nil;
+    }
 }
 
-+ (NSData *)TextSecureV2deriveKey:(NSData *)seed
-                             info:(nullable NSData *)info
-                             salt:(NSData *)salt
-                       outputSize:(int)outputSize
++ (NSData *)throws_deriveKey:(NSData *)seed info:(nullable NSData *)info salt:(NSData *)salt outputSize:(int)outputSize
 {
-    return [self deriveKey:seed info:info salt:salt outputSize:outputSize offset:0];
+    return [self throws_deriveKey:seed info:info salt:salt outputSize:outputSize offset:1];
+}
+
++ (NSData *)throws_TextSecureV2deriveKey:(NSData *)seed
+                                    info:(nullable NSData *)info
+                                    salt:(NSData *)salt
+                              outputSize:(int)outputSize
+{
+    return [self throws_deriveKey:seed info:info salt:salt outputSize:outputSize offset:0];
 }
 
 #pragma mark Private Methods
 
-+ (NSData *)deriveKey:(NSData *)seed
-                 info:(nullable NSData *)info
-                 salt:(NSData *)salt
-           outputSize:(int)outputSize
-               offset:(int)offset
++ (NSData *)throws_deriveKey:(NSData *)seed
+                        info:(nullable NSData *)info
+                        salt:(NSData *)salt
+                  outputSize:(int)outputSize
+                      offset:(int)offset
 {
-    NSData *prk = [self extract:seed salt:salt];
-    NSData *okm = [self expand:prk info:info outputSize:outputSize offset:offset];
+    NSData *prk = [self throws_extract:seed salt:salt];
+    NSData *okm = [self throws_expand:prk info:info outputSize:outputSize offset:offset];
     return okm;
 }
 
-+ (NSData *)extract:(NSData *)data salt:(NSData *)salt
++ (NSData *)throws_extract:(NSData *)data salt:(NSData *)salt
 {
     if (!salt) {
         OWSRaiseException(NSInvalidArgumentException, @"Missing salt.");
@@ -66,7 +77,7 @@ NS_ASSUME_NONNULL_BEGIN
     return [prkData copy];
 }
 
-+ (NSData *)expand:(NSData *)data info:(nullable NSData *)info outputSize:(int)outputSize offset:(int)offset
++ (NSData *)throws_expand:(NSData *)data info:(nullable NSData *)info outputSize:(int)outputSize offset:(int)offset
 {
     if (!data) {
         OWSRaiseException(NSInvalidArgumentException, @"Missing data.");
