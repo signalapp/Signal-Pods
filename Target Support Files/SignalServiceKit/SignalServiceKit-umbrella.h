@@ -38,7 +38,7 @@
 #import "OWSReceiptsForSenderMessage.h"
 #import "OWSRecordTranscriptJob.h"
 #import "OWSVerificationStateSyncMessage.h"
-#import "OWSAttachmentsProcessor.h"
+#import "OWSAttachmentDownloads.h"
 #import "TSAttachment.h"
 #import "TSAttachmentPointer.h"
 #import "TSAttachmentStream.h"
