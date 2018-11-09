@@ -127,7 +127,6 @@
 #import "OWSPrimaryStorage+SignedPreKeyStore.h"
 #import "OWSIncomingMessageFinder.h"
 #import "OWSMediaGalleryFinder.h"
-#import "OWSPrimaryStorage+messageIDs.h"
 #import "OWSPrimaryStorage.h"
 #import "OWSStorage+Subclass.h"
 #import "OWSStorage.h"
