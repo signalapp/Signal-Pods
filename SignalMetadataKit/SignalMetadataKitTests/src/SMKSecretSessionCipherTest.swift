@@ -329,21 +329,21 @@ class SMKSecretSessionCipherTest: XCTestCase {
     private func initializeSessions(aliceMockClient: MockClient,
                             bobMockClient: MockClient) {
 //    ECKeyPair          bobPreKey       = Curve.generateKeyPair();
-        let bobPreKey = bobMockClient.preKeyStore.createKey()
+        let bobPreKey = bobMockClient.generateMockPreKey()
 //    IdentityKeyPair    bobIdentityKey  = bobStore.getIdentityKeyPair();
         let bobIdentityKey = bobMockClient.identityKeyPair
 //    SignedPreKeyRecord bobSignedPreKey = KeyHelper.generateSignedPreKey(bobIdentityKey, 2);
-        let bobSignedPreKey = bobMockClient.signedPreKeyStore.createKey()
+        let bobSignedPreKey = bobMockClient.generateMockSignedPreKey()
 //
 //    PreKeyBundle bobBundle             = new PreKeyBundle(1, 1, 1, bobPreKey.getPublicKey(), 2, bobSignedPreKey.getKeyPair().getPublicKey(), bobSignedPreKey.getSignature(), bobIdentityKey.getPublicKey());
         let bobBundle = PreKeyBundle(registrationId: bobMockClient.registrationId,
-                                           deviceId: bobMockClient.deviceId,
-                                           preKeyId: bobPreKey.id,
-                                           preKeyPublic: try! bobPreKey.keyPair.ecPublicKey().serialized,
-                                           signedPreKeyPublic: try! bobSignedPreKey.keyPair.ecPublicKey().keyData.prependKeyType(),
-                                           signedPreKeyId: bobSignedPreKey.id,
-                                           signedPreKeySignature: bobSignedPreKey.signature,
-                                           identityKey: try! bobIdentityKey.ecPublicKey().keyData.prependKeyType())!
+                                     deviceId: bobMockClient.deviceId,
+                                     preKeyId: bobPreKey.id,
+                                     preKeyPublic: try! bobPreKey.keyPair.ecPublicKey().serialized,
+                                     signedPreKeyPublic: try! bobSignedPreKey.keyPair.ecPublicKey().keyData.prependKeyType(),
+                                     signedPreKeyId: bobSignedPreKey.id,
+                                     signedPreKeySignature: bobSignedPreKey.signature,
+                                     identityKey: try! bobIdentityKey.ecPublicKey().keyData.prependKeyType())!
 
 //    SessionBuilder aliceSessionBuilder = new SessionBuilder(aliceStore, new SignalProtocolAddress("+14152222222", 1));
         let aliceSessionBuilder = aliceMockClient.createSessionBuilder(forRecipient: bobMockClient)

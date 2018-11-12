@@ -141,7 +141,6 @@
 #import "YapDatabaseTransaction+OWS.h"
 #import "MockSSKEnvironment.h"
 #import "OWSFakeCallMessageHandler.h"
-#import "OWSFakeContactsManager.h"
 #import "OWSFakeContactsUpdater.h"
 #import "OWSFakeMessageSender.h"
 #import "OWSFakeNetworkManager.h"

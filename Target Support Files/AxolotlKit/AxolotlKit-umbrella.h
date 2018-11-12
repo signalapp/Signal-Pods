@@ -42,6 +42,7 @@
 #import "PreKeyStore.h"
 #import "SessionStore.h"
 #import "SignedPreKeyStore.h"
+#import "SPKMockProtocolStore.h"
 #import "NSData+keyVersionByte.h"
 #import "SerializationUtilities.h"
 
