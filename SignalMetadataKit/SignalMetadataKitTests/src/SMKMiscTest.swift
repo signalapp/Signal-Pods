@@ -125,8 +125,8 @@ class SMKTest: XCTestCase {
 
         let certificateValidator = MockCertificateValidator()
 
-        let bobPrekey = bobMockClient.preKeyStore.createKey()
-        let bobSignedPrekey = bobMockClient.signedPreKeyStore.createKey()
+        let bobPrekey = bobMockClient.generateMockPreKey()
+        let bobSignedPrekey = bobMockClient.generateMockSignedPreKey()
 
         let bobPreKeyBundle = PreKeyBundle(registrationId: bobMockClient.registrationId,
                                            deviceId: bobMockClient.deviceId,
