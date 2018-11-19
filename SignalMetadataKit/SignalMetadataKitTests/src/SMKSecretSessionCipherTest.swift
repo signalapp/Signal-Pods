@@ -128,8 +128,9 @@ class SMKSecretSessionCipherTest: XCTestCase {
                                                         localDeviceId: bobMockClient.deviceId,
                                                         protocolContext: nil)
             XCTFail("Decryption should have failed.")
-        } catch _ as SMKCertificateError {
+        } catch let knownSenderError as SecretSessionKnownSenderError {
             // Decryption is expected to fail.
+            XCTAssert(knownSenderError.underlyingError is SMKCertificateError )
         } catch {
             XCTFail("Unexpected error: \(error)")
         }
@@ -187,8 +188,9 @@ class SMKSecretSessionCipherTest: XCTestCase {
                                                         localDeviceId: bobMockClient.deviceId,
                                                         protocolContext: nil)
             XCTFail("Decryption should have failed.")
-        } catch _ as SMKCertificateError {
+        } catch let knownSenderError as SecretSessionKnownSenderError {
             // Decryption is expected to fail.
+            XCTAssert(knownSenderError.underlyingError is SMKCertificateError )
         } catch {
             XCTFail("Unexpected error: \(error)")
         }
@@ -240,16 +242,21 @@ class SMKSecretSessionCipherTest: XCTestCase {
 //    }
         let certificateValidator = SMKCertificateDefaultValidator(trustRoot: try! trustRoot.ecPublicKey())
         do {
-            try bobCipher.throwswrapped_decryptMessage(certificateValidator: certificateValidator,
+            _ = try bobCipher.throwswrapped_decryptMessage(certificateValidator: certificateValidator,
                                                     cipherTextData: ciphertext,
                                                     timestamp: 31335,
                                                     localRecipientId: bobMockClient.recipientId,
                                                     localDeviceId: bobMockClient.deviceId,
                                                     protocolContext: nil)
             XCTFail("Decryption should have failed.")
-        } catch {
+        } catch let knownSenderError as SecretSessionKnownSenderError {
             // Decryption is expected to fail.
-            XCTAssertTrue(error is SMKError)
+            guard case SMKError.assertionError = knownSenderError.underlyingError else {
+                XCTFail("unexpected error: \(knownSenderError.underlyingError)")
+                return
+            }
+        } catch {
+            XCTFail("unexpected error: \(error)")
         }
     }
 
@@ -287,7 +294,7 @@ class SMKSecretSessionCipherTest: XCTestCase {
                                                            key: try! serverKey.ecPublicKey(),
                                                            signatureData: serverCertificateSignature)
         XCTAssertEqual(try! signedServerCertificate.toProto().certificate, unsignedServerCertificateData)
-        let signedServerCertificateData = try! signedServerCertificate.serialized()
+        _ = try! signedServerCertificate.serialized()
 
 //    byte[] senderCertificateBytes = SignalProtos.SenderCertificate.Certificate.newBuilder()
 //    .setSender(sender)
