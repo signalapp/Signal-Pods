@@ -12,9 +12,9 @@ public class SecretSessionKnownSenderError: NSObject, CustomNSError {
     @objc
     public static let kSenderDeviceIdKey = "kSenderDeviceIdKey"
 
-    let senderRecipientId: String
-    let senderDeviceId: UInt32
-    let underlyingError: Error
+    public let senderRecipientId: String
+    public let senderDeviceId: UInt32
+    public let underlyingError: Error
 
     init(senderRecipientId: String, senderDeviceId: UInt32, underlyingError: Error) {
         self.senderRecipientId = senderRecipientId
@@ -22,7 +22,7 @@ public class SecretSessionKnownSenderError: NSObject, CustomNSError {
         self.underlyingError = underlyingError
     }
 
-    public var errorUserInfo: [String : Any] {
+    public var errorUserInfo: [String: Any] {
         return [
             type(of: self).kSenderRecipientIdKey: self.senderRecipientId,
             type(of: self).kSenderDeviceIdKey: self.senderDeviceId,
