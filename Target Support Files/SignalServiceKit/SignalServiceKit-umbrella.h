@@ -39,7 +39,6 @@
 #import "OWSRecordTranscriptJob.h"
 #import "OWSVerificationStateSyncMessage.h"
 #import "OWSAttachmentDownloads.h"
-#import "OWSAttachmentsProcessor.h"
 #import "TSAttachment.h"
 #import "TSAttachmentPointer.h"
 #import "TSAttachmentStream.h"
