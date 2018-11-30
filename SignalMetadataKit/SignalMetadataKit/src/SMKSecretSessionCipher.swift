@@ -26,7 +26,7 @@ public class SecretSessionKnownSenderError: NSObject, CustomNSError {
         return [
             type(of: self).kSenderRecipientIdKey: self.senderRecipientId,
             type(of: self).kSenderDeviceIdKey: self.senderDeviceId,
-            NSUnderlyingErrorKey: underlyingError
+            NSUnderlyingErrorKey: (underlyingError as NSError)
         ]
     }
 }
