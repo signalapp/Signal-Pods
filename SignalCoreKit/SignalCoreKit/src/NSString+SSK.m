@@ -4,6 +4,7 @@
 
 #import "NSString+SSK.h"
 #import "iOSVersions.h"
+#import <objc/runtime.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -37,6 +38,8 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 #pragma mark -
+
+static void *kNSString_SSK_hasExcessiveDiacriticals = &kNSString_SSK_hasExcessiveDiacriticals;
 
 @implementation NSString (SSK)
 
@@ -203,9 +206,23 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL)hasExcessiveDiacriticals
 {
+    NSNumber *cachedValue = objc_getAssociatedObject(self, kNSString_SSK_hasExcessiveDiacriticals);
+    if (!cachedValue) {
+        cachedValue = @([self computeHasExcessiveDiacriticals]);
+        objc_setAssociatedObject(self, kNSString_SSK_hasExcessiveDiacriticals, cachedValue, OBJC_ASSOCIATION_COPY);
+    }
+
+    return cachedValue.boolValue;
+}
+
+- (BOOL)computeHasExcessiveDiacriticals
+{
     // discard any zalgo style text, by detecting maximum number of glyphs per character
     NSUInteger index = 0;
-    while (index < self.length) {
+
+    // store in local var, it's a hot code path.
+    NSUInteger length = self.length;
+    while (index < length) {
         // Walk the grapheme clusters in the string.
         NSRange range = [self rangeOfComposedCharacterSequenceAtIndex:index];
         if (range.length > 8) {

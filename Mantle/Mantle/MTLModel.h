@@ -76,9 +76,16 @@ typedef enum : NSUInteger {
 /// Returns an initialized model object, or nil if validation failed.
 - (instancetype)initWithDictionary:(NSDictionary *)dictionaryValue error:(NSError **)error;
 
+// BEGIN ORM-PERF-1
+// Commented out by mkirk as part of ORM perf optimizations.
+// The `MTLSelectorWithCapitalizedKeyPattern` can be quite expensive in aggregate
+// and we're not using the reflective features that require it.
+// If we later want to use this feature, we'll need to carefully evaluate the perf
+// implications on large migrations.
 /// Merges the value of the given key on the receiver with the value of the same
 /// key from the given model object, giving precedence to the other model object.
-- (void)mergeValueForKey:(NSString *)key fromModel:(id<MTLModel>)model;
+//- (void)mergeValueForKey:(NSString *)key fromModel:(id<MTLModel>)model;
+// END ORM-PERF-1
 
 /// Returns the keys for all @property declarations, except for `readonly`
 /// properties without ivars, or properties on MTLModel itself.
@@ -120,10 +127,17 @@ typedef enum : NSUInteger {
 /// This is the designated initializer for this class.
 - (instancetype)init;
 
+// BEGIN ORM-PERF-1
+// Commented out by mkirk as part of ORM perf optimizations.
+// The `MTLSelectorWithCapitalizedKeyPattern` can be quite expensive in aggregate
+// and we're not using the reflective features that require it.
+// If we later want to use this feature, we'll need to carefully evaluate the perf
+// implications on large migrations.
 /// By default, this method looks for a `-merge<Key>FromModel:` method on the
 /// receiver, and invokes it if found. If not found, and `model` is not nil, the
 /// value for the given key is taken from `model`.
-- (void)mergeValueForKey:(NSString *)key fromModel:(id<MTLModel>)model;
+//- (void)mergeValueForKey:(NSString *)key fromModel:(id<MTLModel>)model;
+// END ORM-PERF-1
 
 /// Merges the values of the given model object into the receiver, using
 /// -mergeValueForKey:fromModel: for each key in +propertyKeys.
@@ -161,19 +175,29 @@ typedef enum : NSUInteger {
 
 @end
 
-/// Implements validation logic for MTLModel.
-@interface MTLModel (Validation)
-
-/// Validates the model.
-///
-/// The default implementation simply invokes -validateValue:forKey:error: with
-/// all +propertyKeys and their current value. If -validateValue:forKey:error:
-/// returns a new value, the property is set to that new value.
-///
-/// error - If not NULL, this may be set to any error that occurs during
-///         validation
-///
-/// Returns YES if the model is valid, or NO if the validation failed.
-- (BOOL)validate:(NSError **)error;
-
-@end
+// BEGIN ORM-PERF-2
+// Commented out by mkirk as part of ORM perf optimizations.
+//
+// The validation NSCoding validation reflection used by Mantle is expensive, and
+// we've never used it.
+// If we later want to use this feature, we'll need to carefully evaluate the perf
+// implications on large migrations.
+//
+///// Implements validation logic for MTLModel.
+//@interface MTLModel (Validation)
+//
+///// Validates the model.
+/////
+///// The default implementation simply invokes -validateValue:forKey:error: with
+///// all +propertyKeys and their current value. If -validateValue:forKey:error:
+///// returns a new value, the property is set to that new value.
+/////
+///// error - If not NULL, this may be set to any error that occurs during
+/////         validation
+/////
+///// Returns YES if the model is valid, or NO if the validation failed.
+//- (BOOL)validate:(NSError **)error;
+//
+//@end
+//
+// END ORM-PERF-2
