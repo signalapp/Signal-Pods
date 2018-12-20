@@ -4,9 +4,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface NSString (SSK)
+@interface NSString (OWS)
 
 - (NSString *)ows_stripped;
+
+- (NSString *)digitsOnly;
 
 - (NSString *)filterStringForDisplay;
 

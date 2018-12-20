@@ -159,6 +159,7 @@
 #import "NSData+Image.h"
 #import "NSError+MessageSending.h"
 #import "NSNotificationCenter+OWS.h"
+#import "NSString+SSK.h"
 #import "NSTimer+OWS.h"
 #import "NSURLSessionDataTask+StatusCode.h"
 #import "NSUserDefaults+OWS.h"

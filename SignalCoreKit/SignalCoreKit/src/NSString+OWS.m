@@ -2,7 +2,7 @@
 //  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
 //
 
-#import "NSString+SSK.h"
+#import "NSString+OWS.h"
 #import "iOSVersions.h"
 #import <objc/runtime.h>
 
@@ -41,7 +41,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 static void *kNSString_SSK_hasExcessiveDiacriticals = &kNSString_SSK_hasExcessiveDiacriticals;
 
-@implementation NSString (SSK)
+@implementation NSString (OWS)
 
 - (NSString *)ows_stripped
 {
@@ -382,6 +382,18 @@ static void *kNSString_SSK_hasExcessiveDiacriticals = &kNSString_SSK_hasExcessiv
 
     return [NSString stringWithFormat:amountFormat,
                      [NSNumberFormatter localizedStringFromNumber:@(duration) numberStyle:NSNumberFormatterNoStyle]];
+}
+
+- (NSString *)removeAllCharactersIn:(NSCharacterSet *)characterSet
+{
+    OWSAssertDebug(characterSet);
+
+    return [[self componentsSeparatedByCharactersInSet:characterSet] componentsJoinedByString:@""];
+}
+
+- (NSString *)digitsOnly
+{
+    return [self removeAllCharactersIn:[NSCharacterSet.decimalDigitCharacterSet invertedSet]];
 }
 
 @end
