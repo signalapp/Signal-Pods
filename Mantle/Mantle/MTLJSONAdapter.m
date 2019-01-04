@@ -359,7 +359,18 @@ NSString * const MTLJSONAdapterThrownExceptionErrorKey = @"MTLJSONAdapterThrownE
 
 	id model = [self.modelClass modelWithDictionary:dictionaryValue error:error];
 
-	return [model validate:error] ? model : nil;
+	// BEGIN ORM-PERF-2
+	// Commented out by mkirk as part of ORM perf optimizations.
+	//
+	// The validation NSCoding validation reflection used by Mantle is expensive, and
+	// we've never used it.
+	// If we later want to use this feature, we'll need to carefully evaluate the perf
+	// implications on large migrations.
+	//
+	// return [model validate:error] ? model : nil;
+	//
+	return model;
+	// END ORM-PERF-2
 }
 
 + (NSDictionary *)valueTransformersForModelClass:(Class)modelClass {

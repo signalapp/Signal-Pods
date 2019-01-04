@@ -97,7 +97,7 @@ typedef enum : NSUInteger {
 ///         validation
 ///
 /// Returns YES if the model is valid, or NO if the validation failed.
-- (BOOL)validate:(NSError **)error;
+//- (BOOL)validate:(NSError **)error;
 
 @end
 
@@ -137,13 +137,14 @@ typedef enum : NSUInteger {
 /// receiver, and invokes it if found. If not found, and `model` is not nil, the
 /// value for the given key is taken from `model`.
 //- (void)mergeValueForKey:(NSString *)key fromModel:(id<MTLModel>)model;
-// END ORM-PERF-1
-
+//
 /// Merges the values of the given model object into the receiver, using
 /// -mergeValueForKey:fromModel: for each key in +propertyKeys.
 ///
 /// `model` must be an instance of the receiver's class or a subclass thereof.
-- (void)mergeValuesForKeysFromModel:(id<MTLModel>)model;
+//- (void)mergeValuesForKeysFromModel:(id<MTLModel>)model;
+//
+// END ORM-PERF-1
 
 /// The storage behavior of a given key.
 ///
