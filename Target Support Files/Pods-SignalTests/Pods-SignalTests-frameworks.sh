@@ -1,4 +1,18 @@
 #!/bin/sh
+                
+# ---- this is added by cocoapods-binary ---
+# Readlink cannot handle relative symlink well, so we override it to a new one
+# If the path isn't an absolute path, we add a realtive prefix.
+readlink () {
+    path=`/usr/bin/readlink $1`;
+    if [ $(echo "$path" | cut -c 1-1) = '/' ]; then
+        echo $path;
+    else
+        echo "`dirname $1`/$path";
+    fi
+}
+# --- 
+#!/bin/sh
 set -e
 set -u
 set -o pipefail
@@ -162,7 +176,8 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/SwiftProtobuf/SwiftProtobuf.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/YYImage/YYImage.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/YapDatabase/YapDatabase.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/ZXingObjC/ZXingObjC.framework"
+  install_framework "${PODS_ROOT}/ZXingObjC/ZXingObjC.framework"
+  install_framework "${PODS_ROOT}/ZXingObjC/ZXingObjC.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/libPhoneNumber-iOS/libPhoneNumber_iOS.framework"
 fi
 if [[ "$CONFIGURATION" == "App Store Release" ]]; then
@@ -185,7 +200,8 @@ if [[ "$CONFIGURATION" == "App Store Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/SwiftProtobuf/SwiftProtobuf.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/YYImage/YYImage.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/YapDatabase/YapDatabase.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/ZXingObjC/ZXingObjC.framework"
+  install_framework "${PODS_ROOT}/ZXingObjC/ZXingObjC.framework"
+  install_framework "${PODS_ROOT}/ZXingObjC/ZXingObjC.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/libPhoneNumber-iOS/libPhoneNumber_iOS.framework"
 fi
 if [ "${COCOAPODS_PARALLEL_CODE_SIGN}" == "true" ]; then

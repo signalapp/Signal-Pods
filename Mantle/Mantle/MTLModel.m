@@ -24,6 +24,24 @@ static void *MTLModelCachedTransitoryPropertyKeysKey = &MTLModelCachedTransitory
 // property keys.
 static void *MTLModelCachedPermanentPropertyKeysKey = &MTLModelCachedPermanentPropertyKeysKey;
 
+// BEGIN ORM-PERF-4
+// Added by mkirk as part of ORM perf optimizations.
+//
+// +dictionaryValueKeys is somewhat expensive, so we follow existing library patterns
+// to cache the computed reflection on the class via an associated object
+//
+// Used to cache the reflection performed in +dictionaryValueKeys
+static void *MTLModelCachedDictionaryValueKeysKey = &MTLModelCachedDictionaryValueKeysKey;
+// END ORM-PERF-4
+
+// BEGIN ORM-PERF-2
+// Commented out by mkirk as part of ORM perf optimizations.
+//
+// The validation NSCoding validation reflection used by Mantle is expensive, and
+// we've never used it.
+// If we later want to use this feature, we'll need to carefully evaluate the perf
+// implications on large migrations.
+//
 // Validates a value for an object and sets it if necessary.
 //
 // obj         - The object for which the value is being validated. This value
@@ -38,35 +56,36 @@ static void *MTLModelCachedPermanentPropertyKeysKey = &MTLModelCachedPermanentPr
 //
 // Returns YES if `value` could be validated and set, or NO if an error
 // occurred.
-static BOOL MTLValidateAndSetValue(id obj, NSString *key, id value, BOOL forceUpdate, NSError **error) {
-	// Mark this as being autoreleased, because validateValue may return
-	// a new object to be stored in this variable (and we don't want ARC to
-	// double-free or leak the old or new values).
-	__autoreleasing id validatedValue = value;
-
-	@try {
-		if (![obj validateValue:&validatedValue forKey:key error:error]) return NO;
-
-		if (forceUpdate || value != validatedValue) {
-			[obj setValue:validatedValue forKey:key];
-		}
-
-		return YES;
-	} @catch (NSException *ex) {
-		NSLog(@"*** Caught exception setting key \"%@\" : %@", key, ex);
-
-		// Fail fast in Debug builds.
-		#if DEBUG
-		@throw ex;
-		#else
-		if (error != NULL) {
-			*error = [NSError mtl_modelErrorWithException:ex];
-		}
-
-		return NO;
-		#endif
-	}
-}
+//static BOOL MTLValidateAndSetValue(id obj, NSString *key, id value, BOOL forceUpdate, NSError **error) {
+//    // Mark this as being autoreleased, because validateValue may return
+//    // a new object to be stored in this variable (and we don't want ARC to
+//    // double-free or leak the old or new values).
+//    __autoreleasing id validatedValue = value;
+//
+//    @try {
+//        if (![obj validateValue:&validatedValue forKey:key error:error]) return NO;
+//
+//        if (forceUpdate || value != validatedValue) {
+//            [obj setValue:validatedValue forKey:key];
+//        }
+//
+//        return YES;
+//    } @catch (NSException *ex) {
+//        NSLog(@"*** Caught exception setting key \"%@\" : %@", key, ex);
+//
+//        // Fail fast in Debug builds.
+//        #if DEBUG
+//        @throw ex;
+//        #else
+//        if (error != NULL) {
+//            *error = [NSError mtl_modelErrorWithException:ex];
+//        }
+//
+//        return NO;
+//        #endif
+//    }
+//}
+// END ORM-PERF-2
 
 @interface MTLModel ()
 
@@ -140,9 +159,18 @@ static BOOL MTLValidateAndSetValue(id obj, NSString *key, id value, BOOL forceUp
 		__autoreleasing id value = [dictionary objectForKey:key];
 
 		if ([value isEqual:NSNull.null]) value = nil;
-
-		BOOL success = MTLValidateAndSetValue(self, key, value, YES, error);
-		if (!success) return nil;
+		// BEGIN ORM-PERF-2
+		// Commented out by mkirk as part of ORM perf optimizations.
+		//
+		// The validation NSCoding validation reflection used by Mantle is expensive, and
+		// we've never used it.
+		// If we later want to use this feature, we'll need to carefully evaluate the perf
+		// implications on large migrations.
+		//
+		// BOOL success = MTLValidateAndSetValue(self, key, value, YES, error);
+		// if (!success) return nil;
+		[self setValue:value forKey:key];
+		// END ORM-PERF-2
 	}
 
 	return self;
@@ -215,11 +243,28 @@ static BOOL MTLValidateAndSetValue(id obj, NSString *key, id value, BOOL forceUp
 	return permanentPropertyKeys;
 }
 
-- (NSDictionary *)dictionaryValue {
-	NSSet *keys = [self.class.transitoryPropertyKeys setByAddingObjectsFromSet:self.class.permanentPropertyKeys];
-
-	return [self dictionaryWithValuesForKeys:keys.allObjects];
+// BEGIN ORM-PERF-4
+// Added by mkirk as part of ORM perf optimizations.
+//
+// +dictionaryValueKeys is somewhat expensive, so we follow existing library patterns
+// to cache the computed reflection on the class via an associated object
+//
+// Used to cache the reflection performed in +dictionaryValueKeys
++ (NSArray<NSString *> *)dictionaryValueKeys {
+	NSArray<NSString *> *dictionaryValueKeys = objc_getAssociatedObject(self, MTLModelCachedDictionaryValueKeysKey);
+	if (!dictionaryValueKeys) {
+		NSSet *keys = [self.class.transitoryPropertyKeys setByAddingObjectsFromSet:self.permanentPropertyKeys];
+		dictionaryValueKeys = keys.allObjects;
+		objc_setAssociatedObject(self, MTLModelCachedDictionaryValueKeysKey, dictionaryValueKeys, OBJC_ASSOCIATION_COPY);
+	}
+	return dictionaryValueKeys;
 }
+
+- (NSDictionary *)dictionaryValue {
+	NSArray<NSString *> *keys = self.class.dictionaryValueKeys;
+	return [self dictionaryWithValuesForKeys:keys];
+}
+// END ORM-PERF-4
 
 + (MTLPropertyStorage)storageBehaviorForPropertyWithKey:(NSString *)propertyKey {
 	objc_property_t property = class_getProperty(self.class, propertyKey.UTF8String);
@@ -250,45 +295,61 @@ static BOOL MTLValidateAndSetValue(id obj, NSString *key, id value, BOOL forceUp
 
 #pragma mark Merging
 
-- (void)mergeValueForKey:(NSString *)key fromModel:(NSObject<MTLModel> *)model {
-	NSParameterAssert(key != nil);
+// BEGIN ORM-PERF-1
+// Commented out by mkirk as part of ORM perf optimizations.
+// The `MTLSelectorWithCapitalizedKeyPattern` can be quite expensive in aggregate
+// and we're not using the reflective features that require it.
+// If we later want to use this feature, we'll need to carefully evaluate the perf
+// implications on large migrations.
+//
+//- (void)mergeValueForKey:(NSString *)key fromModel:(NSObject<MTLModel> *)model {
+//    NSParameterAssert(key != nil);
+//
+////    SEL selector = MTLSelectorWithCapitalizedKeyPattern("merge", key, "FromModel:");
+////    if (![self respondsToSelector:selector]) {
+////        if (model != nil) {
+////            [self setValue:[model valueForKey:key] forKey:key];
+////        }
+////
+////        return;
+////    }
+//
+//    IMP imp = [self methodForSelector:selector];
+//    void (*function)(id, SEL, id<MTLModel>) = (__typeof__(function))imp;
+//    function(self, selector, model);
+//}
+//
+//- (void)mergeValuesForKeysFromModel:(id<MTLModel>)model {
+//    NSSet *propertyKeys = model.class.propertyKeys;
+//
+//    for (NSString *key in self.class.propertyKeys) {
+//        if (![propertyKeys containsObject:key]) continue;
+//
+//        [self mergeValueForKey:key fromModel:model];
+//    }
+//}
+// END ORM-PERF-1
 
-	SEL selector = MTLSelectorWithCapitalizedKeyPattern("merge", key, "FromModel:");
-	if (![self respondsToSelector:selector]) {
-		if (model != nil) {
-			[self setValue:[model valueForKey:key] forKey:key];
-		}
-
-		return;
-	}
-
-	IMP imp = [self methodForSelector:selector];
-	void (*function)(id, SEL, id<MTLModel>) = (__typeof__(function))imp;
-	function(self, selector, model);
-}
-
-- (void)mergeValuesForKeysFromModel:(id<MTLModel>)model {
-	NSSet *propertyKeys = model.class.propertyKeys;
-
-	for (NSString *key in self.class.propertyKeys) {
-		if (![propertyKeys containsObject:key]) continue;
-
-		[self mergeValueForKey:key fromModel:model];
-	}
-}
-
-#pragma mark Validation
-
-- (BOOL)validate:(NSError **)error {
-	for (NSString *key in self.class.propertyKeys) {
-		id value = [self valueForKey:key];
-
-		BOOL success = MTLValidateAndSetValue(self, key, value, NO, error);
-		if (!success) return NO;
-	}
-
-	return YES;
-}
+// BEGIN ORM-PERF-2
+// Commented out by mkirk as part of ORM perf optimizations.
+//
+// The validation NSCoding validation reflection used by Mantle is expensive, and
+// we've never used it.
+// If we later want to use this feature, we'll need to carefully evaluate the perf
+// implications on large migrations.
+//#pragma mark Validation
+//
+//- (BOOL)validate:(NSError **)error {
+//    for (NSString *key in self.class.propertyKeys) {
+//        id value = [self valueForKey:key];
+//
+//        BOOL success = MTLValidateAndSetValue(self, key, value, NO, error);
+//        if (!success) return NO;
+//    }
+//
+//    return YES;
+//}
+// END ORM-PERF-2
 
 #pragma mark NSCopying
 
