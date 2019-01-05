@@ -18,6 +18,14 @@
 /// selector.
 SEL MTLSelectorWithKeyPattern(NSString *key, const char *suffix) __attribute__((pure, nonnull(1, 2)));
 
+
+// BEGIN ORM-PERF-1
+// Commented out by mkirk as part of ORM perf optimizations.
+// The `MTLSelectorWithCapitalizedKeyPattern` can be quite expensive in aggregate
+// and we're not using the reflective features that require it.
+// If we later want to use this feature, we'll need to carefully evaluate the perf
+// implications on large migrations.
+//
 /// Creates a selector from a key and a constant prefix and suffix.
 ///
 /// prefix - A string to prepend to the key as part of the selector.
@@ -28,4 +36,6 @@ SEL MTLSelectorWithKeyPattern(NSString *key, const char *suffix) __attribute__((
 ///
 /// Returns a selector, or NULL if the input strings cannot form a valid
 /// selector.
-SEL MTLSelectorWithCapitalizedKeyPattern(const char *prefix, NSString *key, const char *suffix) __attribute__((pure, nonnull(1, 2, 3)));
+//SEL MTLSelectorWithCapitalizedKeyPattern(const char *prefix, NSString *key, const char *suffix) __attribute__((pure, nonnull(1, 2, 3)));
+//
+// END ORM-PERF-1
