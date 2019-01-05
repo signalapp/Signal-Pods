@@ -15,7 +15,7 @@
 #import "NSData+OWS.h"
 #import "NSDate+OWS.h"
 #import "NSObject+OWS.h"
-#import "NSString+OWS.h"
+#import "NSString+SSK.h"
 #import "OWSAsserts.h"
 #import "OWSLogs.h"
 #import "Randomness.h"
