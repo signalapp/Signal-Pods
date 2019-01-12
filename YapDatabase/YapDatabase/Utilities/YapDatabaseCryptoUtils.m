@@ -160,6 +160,7 @@ NSError *YDBErrorWithDescription(NSString *description)
 
 + (nullable NSError *)convertDatabaseIfNecessary:(NSString *)databaseFilePath
                                 databasePassword:(NSData *)databasePassword
+                                         options:(YapDatabaseOptions *)options
                                  recordSaltBlock:(YapRecordDatabaseSaltBlock)recordSaltBlock
 {
     if (![self doesDatabaseNeedToBeConverted:databaseFilePath]) {
@@ -169,11 +170,13 @@ NSError *YDBErrorWithDescription(NSString *description)
 
     return [self convertDatabase:databaseFilePath
                 databasePassword:databasePassword
+                         options:options
                  recordSaltBlock:recordSaltBlock];
 }
 
 + (nullable NSError *)convertDatabase:(NSString *)databaseFilePath
                      databasePassword:(NSData *)databasePassword
+                              options:(YapDatabaseOptions *)options
                       recordSaltBlock:(YapRecordDatabaseSaltBlock)recordSaltBlock
 {
     YapAssert(databaseFilePath.length > 0);
@@ -243,6 +246,27 @@ NSError *YDBErrorWithDescription(NSString *description)
     }
     
     YDBLogInfo(@"%@ convertDatabase: database keyed.", self.logTag);
+
+    if (options.legacyCipherCompatibilityVersion > 0) {
+        // `PRAGMA cipher_compatibility` is not available until SQLCipher 4.0.1 which corresponds
+        // to this version of sqlite.
+        // https://www.zetetic.net/blog/2018/12/18/sqlcipher-401-release/
+        const NSUInteger sqlCipherVersionSupportingCipherCompatibility = 3026000;
+        if (SQLITE_VERSION_NUMBER < sqlCipherVersionSupportingCipherCompatibility) {
+            YDBLogWarn(@"setting legacyCipherCompatibilityVersion on unsupported SQLCipher version has no effect.");
+        } else {
+            char *errorMsg;
+            NSString *pragmaCommand = [NSString stringWithFormat:@"PRAGMA cipher_compatibility = %lu", (unsigned long)options.legacyCipherCompatibilityVersion];
+
+            if (sqlite3_exec(db, [pragmaCommand UTF8String], NULL, NULL, &errorMsg) != SQLITE_OK) {
+                NSString *errorString = [NSString stringWithFormat:@"failed to set database legacy cipher compatibility version: %s", errorMsg];
+                YDBLogError(@"%@", errorString);
+                YDBErrorWithDescription(errorString);
+            }
+
+            YDBLogVerbose(@"set database legacy cipher compatibility version: %lu", (unsigned long)options.legacyCipherCompatibilityVersion);
+        }
+    }
 
     // -----------------------------------------------------------
     //
