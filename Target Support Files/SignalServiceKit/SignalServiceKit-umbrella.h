@@ -116,7 +116,6 @@
 #import "OWSFingerprintBuilder.h"
 #import "OWSHTTPSecurityPolicy.h"
 #import "OWSRecipientIdentity.h"
-#import "OWSWebsocketSecurityPolicy.h"
 #import "SignalServiceKit.h"
 #import "SSKEnvironment.h"
 #import "OWSPrimaryStorage+Calling.h"
