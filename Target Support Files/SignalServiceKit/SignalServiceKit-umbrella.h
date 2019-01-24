@@ -170,6 +170,7 @@
 #import "OWSDispatch.h"
 #import "OWSError.h"
 #import "OWSFileSystem.h"
+#import "OWSMath.h"
 #import "OWSOperation.h"
 #import "OWSQueues.h"
 #import "OWSSyncManagerProtocol.h"
