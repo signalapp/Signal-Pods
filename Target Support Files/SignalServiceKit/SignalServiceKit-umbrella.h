@@ -142,7 +142,6 @@
 #import "OWSFakeContactsUpdater.h"
 #import "OWSFakeMessageSender.h"
 #import "OWSFakeNetworkManager.h"
-#import "OWSFakeNotificationsManager.h"
 #import "OWSFakeProfileManager.h"
 #import "TestAppContext.h"
 #import "TSConstants.h"
