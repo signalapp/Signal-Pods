@@ -4,6 +4,13 @@
 
 import Foundation
 
+@objc
+public extension NSString {
+    func ows_truncated(toByteCount byteCount: UInt) -> NSString? {
+        return (self as String).truncated(toByteCount: byteCount) as NSString?
+    }
+}
+
 public extension String {
     var stripped: String {
         return (self as NSString).ows_stripped()
