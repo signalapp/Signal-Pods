@@ -10,6 +10,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSString *)digitsOnly;
 
+@property (nonatomic, readonly) BOOL hasAnyASCII;
+@property (nonatomic, readonly) BOOL isOnlyASCII;
+
 - (NSString *)filterStringForDisplay;
 
 - (NSString *)filterFilename;

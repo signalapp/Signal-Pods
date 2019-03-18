@@ -239,6 +239,57 @@ static void *kNSString_SSK_hasExcessiveDiacriticals = &kNSString_SSK_hasExcessiv
     return NO;
 }
 
++ (NSRegularExpression *)anyASCIIRegex
+{
+    static dispatch_once_t onceToken;
+    static NSRegularExpression *regex;
+    dispatch_once(&onceToken, ^{
+        NSError *error;
+        regex = [NSRegularExpression regularExpressionWithPattern:@"[\x00-\x7F]+"
+                                                          options:0
+                                                            error:&error];
+        if (error || !regex) {
+            // crash! it's not clear how to proceed safely, and this regex should never fail.
+            OWSFail(@"could not compile regex: %@", error);
+        }
+    });
+
+    return regex;
+}
+
++ (NSRegularExpression *)onlyASCIIRegex
+{
+    static dispatch_once_t onceToken;
+    static NSRegularExpression *regex;
+    dispatch_once(&onceToken, ^{
+        NSError *error;
+        regex = [NSRegularExpression regularExpressionWithPattern:@"^[\x00-\x7F]*$"
+                                                          options:0
+                                                            error:&error];
+        if (error || !regex) {
+            // crash! it's not clear how to proceed safely, and this regex should never fail.
+            OWSFail(@"could not compile regex: %@", error);
+        }
+    });
+
+    return regex;
+}
+
+
+- (BOOL)isOnlyASCII;
+{
+    return [self.class.onlyASCIIRegex rangeOfFirstMatchInString:self
+                                                        options:0
+                                                          range:NSMakeRange(0, self.length)].location != NSNotFound;
+}
+
+- (BOOL)hasAnyASCII
+{
+    return [self.class.anyASCIIRegex rangeOfFirstMatchInString:self
+                                                       options:0
+                                                         range:NSMakeRange(0, self.length)].location != NSNotFound;
+}
+
 - (BOOL)isValidE164
 {
     NSError *error = nil;
