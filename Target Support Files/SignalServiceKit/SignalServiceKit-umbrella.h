@@ -123,6 +123,7 @@
 #import "OWSPrimaryStorage+PreKeyStore.h"
 #import "OWSPrimaryStorage+SessionStore.h"
 #import "OWSPrimaryStorage+SignedPreKeyStore.h"
+#import "SSKAccessors+SDS.h"
 #import "OWSIncomingMessageFinder.h"
 #import "OWSMediaGalleryFinder.h"
 #import "OWSPrimaryStorage.h"

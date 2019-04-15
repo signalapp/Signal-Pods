@@ -1,0 +1,8 @@
+framework module GRDBCipher {
+    umbrella header "GRDBCipher.h"
+    
+    export *
+    module * { export * }
+    
+    header "grdb_config.h"
+}
