@@ -97,6 +97,7 @@
 #import "PreKeyBundle+jsonDict.h"
 #import "InstalledSticker.h"
 #import "InstalledStickerPack.h"
+#import "StickerInfo.h"
 #import "TSCall.h"
 #import "TSGroupModel.h"
 #import "OWSDeviceProvisioningCodeService.h"
