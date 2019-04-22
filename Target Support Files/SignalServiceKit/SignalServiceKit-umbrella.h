@@ -37,6 +37,7 @@
 #import "OWSReadReceiptsForLinkedDevicesMessage.h"
 #import "OWSReceiptsForSenderMessage.h"
 #import "OWSRecordTranscriptJob.h"
+#import "OWSStickerPackSyncMessage.h"
 #import "OWSVerificationStateSyncMessage.h"
 #import "OWSAttachmentDownloads.h"
 #import "TSAttachment.h"
