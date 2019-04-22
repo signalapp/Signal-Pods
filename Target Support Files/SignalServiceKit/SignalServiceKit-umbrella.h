@@ -105,6 +105,7 @@
 #import "OWSDevicesService.h"
 #import "OWSRequestBuilder.h"
 #import "OWSUploadOperation.h"
+#import "OWSUploadV2.h"
 #import "OWSRequestFactory.h"
 #import "TSRequest.h"
 #import "TSNetworkManager.h"
