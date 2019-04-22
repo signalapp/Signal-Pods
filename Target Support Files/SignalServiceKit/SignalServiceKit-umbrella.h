@@ -94,6 +94,8 @@
 #import "OWSReadTracking.h"
 #import "OWSUnknownContactBlockOfferMessage.h"
 #import "PreKeyBundle+jsonDict.h"
+#import "InstalledSticker.h"
+#import "InstalledStickerPack.h"
 #import "TSCall.h"
 #import "TSGroupModel.h"
 #import "OWSDeviceProvisioningCodeService.h"
