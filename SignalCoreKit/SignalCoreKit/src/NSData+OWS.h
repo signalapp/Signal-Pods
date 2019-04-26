@@ -10,7 +10,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSData *)dataByAppendingData:(NSData *)data;
 
+#pragma mark - Hex
+
 - (NSString *)hexadecimalString;
+
++ (nullable NSData *)dataFromHexString:(NSString *)hexString;
 
 #pragma mark - Base64
 

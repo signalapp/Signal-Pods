@@ -26,6 +26,8 @@ NS_ASSUME_NONNULL_BEGIN
     return [result copy];
 }
 
+#pragma mark - Hex
+
 - (NSString *)hexadecimalString
 {
     /* Returns hexadecimal string of NSData. Empty string if data is empty. */
@@ -41,6 +43,34 @@ NS_ASSUME_NONNULL_BEGIN
         [hexString appendFormat:@"%02x", dataBuffer[i]];
     }
     return [hexString copy];
+}
+
++ (nullable NSData *)dataFromHexString:(NSString *)hexString {
+    NSMutableData *data = [NSMutableData new];
+    
+    if (hexString.length % 2 != 0) {
+        OWSFailDebug(@"Hexadecimal string has unexpected length: %@ (%lu)", hexString, (unsigned long)hexString.length);
+        return nil;
+    }
+    for (NSUInteger i = 0; i + 2 <= hexString.length; i += 2) {
+        NSString *_Nullable byteString = [hexString substringWithRange:NSMakeRange(i, 2)];
+        if (!byteString) {
+            OWSFailDebug(@"Couldn't slice hexadecimal string.");
+            return nil;
+        }
+        unsigned byteValue;
+        if (![[NSScanner scannerWithString:byteString] scanHexInt:&byteValue]) {
+            OWSFailDebug(@"Couldn't parse hex byte: %@.", byteString);
+            return nil;
+        }
+        if (byteValue > 0xff) {
+            OWSFailDebug(@"Invalid hex byte: %@ (%d).", byteString, byteValue);
+            return nil;
+        }
+        uint8_t byte = (uint8_t)(0xff & byteValue);
+        [data appendBytes:&byte length:1];
+    }
+    return [data copy];
 }
 
 #pragma mark - Base64

@@ -93,7 +93,7 @@ typedef NS_ENUM(NSInteger, TSMACType) {
                              withHMACKey:(NSData *)HMACKey
                               truncation:(NSUInteger)truncation;
 
-#pragma mark - Attachments
+#pragma mark - Attachments & Stickers
 
 // Though digest can and will be nil for legacy clients, we now reject attachments lacking a digest.
 + (nullable NSData *)decryptAttachment:(NSData *)dataToDecrypt
@@ -101,6 +101,10 @@ typedef NS_ENUM(NSInteger, TSMACType) {
                                 digest:(nullable NSData *)digest
                           unpaddedSize:(UInt32)unpaddedSize
                                  error:(NSError **)error;
+
++ (nullable NSData *)decryptStickerData:(NSData *)dataToDecrypt
+                                withKey:(NSData *)key
+                                  error:(NSError **)error;
 
 + (nullable NSData *)encryptAttachmentData:(NSData *)attachmentData
                                     outKey:(NSData *_Nonnull *_Nullable)outKey
