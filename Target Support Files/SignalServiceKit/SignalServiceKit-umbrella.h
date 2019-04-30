@@ -96,6 +96,7 @@
 #import "OWSUnknownContactBlockOfferMessage.h"
 #import "PreKeyBundle+jsonDict.h"
 #import "InstalledSticker.h"
+#import "KnownStickerPack.h"
 #import "StickerInfo.h"
 #import "StickerPack.h"
 #import "TSCall.h"
