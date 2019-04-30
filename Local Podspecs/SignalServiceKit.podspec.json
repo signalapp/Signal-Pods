@@ -21,7 +21,8 @@
   "compiler_flags": "-fcxx-modules",
   "prefix_header_file": "SignalServiceKit/src/TSPrefix.h",
   "xcconfig": {
-    "OTHER_CFLAGS": "$(inherited) -DSQLITE_HAS_CODEC"
+    "OTHER_CFLAGS": "$(inherited) -DSQLITE_HAS_CODEC",
+    "USER_HEADER_SEARCH_PATHS": "$(inherited) $(SRCROOT)/libwebp/src"
   },
   "resources": [
     "SignalServiceKit/Resources/Certificates/*"
@@ -72,9 +73,15 @@
     "GRDBCipher": [
 
     ],
+    "libwebp": [
+
+    ],
     "PromiseKit": [
       "~> 6.0"
     ]
+  },
+  "ios": {
+    "vendored_frameworks": "Vendor/WebP.framework"
   },
   "testspecs": [
     {
