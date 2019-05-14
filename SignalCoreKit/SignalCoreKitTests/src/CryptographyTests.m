@@ -52,7 +52,7 @@ NS_ASSUME_NONNULL_BEGIN
     NSData *generatedDigest;
 
     NSData *cipherText =
-        [Cryptography encryptAttachmentData:plainTextData outKey:&generatedKey outDigest:&generatedDigest];
+        [Cryptography encryptAttachmentData:plainTextData shouldPad:YES outKey:&generatedKey outDigest:&generatedDigest];
 
     NSError *error;
     NSData *_Nullable decryptedData = [Cryptography decryptAttachment:cipherText
@@ -77,7 +77,7 @@ NS_ASSUME_NONNULL_BEGIN
     NSData *generatedDigest;
 
     NSData *cipherText =
-        [Cryptography encryptAttachmentData:plainTextData outKey:&generatedKey outDigest:&generatedDigest];
+      [Cryptography encryptAttachmentData:plainTextData shouldPad:YES outKey:&generatedKey outDigest:&generatedDigest];
 
 
     NSError *error;
@@ -102,7 +102,7 @@ NS_ASSUME_NONNULL_BEGIN
     NSData *generatedDigest;
 
     NSData *cipherText =
-        [Cryptography encryptAttachmentData:plainTextData outKey:&generatedKey outDigest:&generatedDigest];
+        [Cryptography encryptAttachmentData:plainTextData shouldPad:YES outKey:&generatedKey outDigest:&generatedDigest];
 
     NSData *badKey = [Cryptography generateRandomBytes:64];
 
@@ -126,7 +126,7 @@ NS_ASSUME_NONNULL_BEGIN
     NSData *generatedDigest;
 
     NSData *_Nullable cipherText =
-        [Cryptography encryptAttachmentData:plainTextData outKey:&generatedKey outDigest:&generatedDigest];
+        [Cryptography encryptAttachmentData:plainTextData shouldPad:YES outKey:&generatedKey outDigest:&generatedDigest];
     XCTAssertNotNil(cipherText);
 
     NSData *badDigest = [Cryptography generateRandomBytes:32];

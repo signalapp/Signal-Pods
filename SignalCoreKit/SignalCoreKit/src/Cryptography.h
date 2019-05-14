@@ -107,6 +107,7 @@ typedef NS_ENUM(NSInteger, TSMACType) {
                                   error:(NSError **)error;
 
 + (nullable NSData *)encryptAttachmentData:(NSData *)attachmentData
+                                 shouldPad:(BOOL)shouldPad
                                     outKey:(NSData *_Nonnull *_Nullable)outKey
                                  outDigest:(NSData *_Nonnull *_Nullable)outDigest;
 
@@ -153,6 +154,8 @@ typedef NS_ENUM(NSInteger, TSMACType) {
 #pragma mark -
 
 + (void)seedRandom;
+
++ (unsigned long)paddedSize:(unsigned long)unpaddedSize NS_SWIFT_NAME(paddedSize(unpaddedSize:));
 
 @end
 

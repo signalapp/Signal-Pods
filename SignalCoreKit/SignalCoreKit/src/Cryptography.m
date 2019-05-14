@@ -560,18 +560,11 @@ const NSUInteger kAES256_KeyByteLength = 32;
 
 + (unsigned long)paddedSize:(unsigned long)unpaddedSize
 {
-    // Don't enable this until clients are sufficiently rolled out.
-    BOOL shouldPad = NO;
-    if (shouldPad) {
-        // Note: This just rounds up to the nearsest power of two,
-        // but the actual padding scheme is TBD
-        return pow(2, ceil( log2( unpaddedSize )));
-    } else {
-        return unpaddedSize;
-    }
+    return MAX(541, floor( pow(1.05, ceil( log(unpaddedSize) / log(1.05)))));
 }
 
 + (nullable NSData *)encryptAttachmentData:(NSData *)attachmentData
+                                 shouldPad:(BOOL)shouldPad
                                     outKey:(NSData *_Nonnull *_Nullable)outKey
                                  outDigest:(NSData *_Nonnull *_Nullable)outDigest
 {
@@ -592,7 +585,13 @@ const NSUInteger kAES256_KeyByteLength = 32;
     *outKey = [attachmentKey copy];
 
     // Apply any padding
-    unsigned long desiredSize = [self paddedSize:attachmentData.length];
+    unsigned long desiredSize;
+    if (shouldPad) {
+        desiredSize = [self paddedSize:attachmentData.length];
+    } else {
+        desiredSize = attachmentData.length;
+    }
+
     NSMutableData *paddedAttachmentData = [attachmentData mutableCopy];
     paddedAttachmentData.length = desiredSize;
 
