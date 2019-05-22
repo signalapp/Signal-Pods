@@ -86,7 +86,7 @@ import Foundation
     @objc public func serialized() throws -> Data {
         let versionByte: UInt8 = UInt8((self.cipherTextVersion << 4 | self.cipherTextVersion) & 0xFF)
         let versionBytes = [versionByte]
-        let versionData = Data(bytes: versionBytes)
+        let versionData = Data(versionBytes)
         let messageData = try toProto().serializedData()
 
         return NSData.join([versionData, messageData])

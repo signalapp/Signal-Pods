@@ -158,7 +158,7 @@ public class SMKDecryptResult: NSObject {
                                           deviceId: Int32,
                                           paddedPlaintext: Data,
                                           senderCertificate: SMKSenderCertificate,
-                                          protocolContext: Any?) throws -> Data {
+                                          protocolContext: SPKProtocolWriteContext?) throws -> Data {
         guard recipientId.count > 0 else {
             throw SMKError.assertionError(description: "\(SMKSecretSessionCipher.logTag) invalid recipientId")
         }
@@ -270,7 +270,7 @@ public class SMKDecryptResult: NSObject {
                                           timestamp: UInt64,
                                           localRecipientId: String,
                                           localDeviceId: Int32,
-                                          protocolContext: Any?) throws -> SMKDecryptResult {
+                                          protocolContext: SPKProtocolWriteContext?) throws -> SMKDecryptResult {
 
         guard timestamp > 0 else {
             throw SMKError.assertionError(description: "\(logTag) invalid timestamp")
@@ -509,7 +509,7 @@ public class SMKDecryptResult: NSObject {
     // throws InvalidVersionException, InvalidMessageException, InvalidKeyException, DuplicateMessageException,
     // InvalidKeyIdException, UntrustedIdentityException, LegacyMessageException, NoSessionException
     private func throwswrapped_decrypt(messageContent: SMKUnidentifiedSenderMessageContent,
-                                    protocolContext: Any?) throws -> Data {
+                                       protocolContext: SPKProtocolWriteContext?) throws -> Data {
 
         // SignalProtocolAddress sender = new SignalProtocolAddress(message.getSenderCertificate().getSender(),
         // message.getSenderCertificate().getSenderDeviceId());

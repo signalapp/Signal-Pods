@@ -45,6 +45,7 @@
 #import "SPKMockProtocolStore.h"
 #import "NSData+keyVersionByte.h"
 #import "SerializationUtilities.h"
+#import "SPKProtocolContext.h"
 
 FOUNDATION_EXPORT double AxolotlKitVersionNumber;
 FOUNDATION_EXPORT const unsigned char AxolotlKitVersionString[];

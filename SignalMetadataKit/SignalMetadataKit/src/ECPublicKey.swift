@@ -43,7 +43,7 @@ import Foundation
 
     @objc public var serialized: Data {
         let typeBytes = [ECPublicKey.keyTypeDJB]
-        let typeData = Data(bytes: typeBytes)
+        let typeData = Data(typeBytes)
         return NSData.join([typeData, keyData])
     }
 
