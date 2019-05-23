@@ -164,6 +164,7 @@
 #import "AppVersion.h"
 #import "ByteParser.h"
 #import "DataSource.h"
+#import "ExperienceUpgrade.h"
 #import "FunctionalUtil.h"
 #import "MIMETypeUtil.h"
 #import "NSArray+OWS.h"
