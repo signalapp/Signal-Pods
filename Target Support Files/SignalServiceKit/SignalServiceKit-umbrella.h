@@ -94,6 +94,7 @@
 #import "OWSReadReceiptManager.h"
 #import "OWSReadTracking.h"
 #import "OWSUnknownContactBlockOfferMessage.h"
+#import "OWSUnknownProtocolVersionMessage.h"
 #import "PreKeyBundle+jsonDict.h"
 #import "InstalledSticker.h"
 #import "KnownStickerPack.h"
