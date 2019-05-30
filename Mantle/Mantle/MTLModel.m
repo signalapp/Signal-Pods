@@ -95,11 +95,11 @@ static void *MTLModelCachedDictionaryValueKeysKey = &MTLModelCachedDictionaryVal
 
 // Returns a set of all property keys for which
 // +storageBehaviorForPropertyWithKey returned MTLPropertyStorageTransitory.
-+ (NSSet *)transitoryPropertyKeys;
++ (NSSet<NSString *> *)transitoryPropertyKeys;
 
 // Returns a set of all property keys for which
 // +storageBehaviorForPropertyWithKey returned MTLPropertyStoragePermanent.
-+ (NSSet *)permanentPropertyKeys;
++ (NSSet<NSString *> *)permanentPropertyKeys;
 
 // Enumerates all properties of the receiver's class hierarchy, starting at the
 // receiver, and continuing up until (but not including) MTLModel.
@@ -115,8 +115,8 @@ static void *MTLModelCachedDictionaryValueKeysKey = &MTLModelCachedDictionaryVal
 #pragma mark Lifecycle
 
 + (void)generateAndCacheStorageBehaviors {
-	NSMutableSet *transitoryKeys = [NSMutableSet set];
-	NSMutableSet *permanentKeys = [NSMutableSet set];
+	NSMutableSet<NSString *> *transitoryKeys = [NSMutableSet set];
+	NSMutableSet<NSString *> *permanentKeys = [NSMutableSet set];
 
 	for (NSString *propertyKey in self.propertyKeys) {
 		switch ([self storageBehaviorForPropertyWithKey:propertyKey]) {
@@ -139,7 +139,7 @@ static void *MTLModelCachedDictionaryValueKeysKey = &MTLModelCachedDictionaryVal
 	objc_setAssociatedObject(self, MTLModelCachedPermanentPropertyKeysKey, permanentKeys, OBJC_ASSOCIATION_COPY);
 }
 
-+ (instancetype)modelWithDictionary:(NSDictionary *)dictionary error:(NSError **)error {
++ (instancetype)modelWithDictionary:(NSDictionary<NSString *, id> *)dictionary error:(NSError **)error {
 	return [[self alloc] initWithDictionary:dictionary error:error];
 }
 
@@ -148,7 +148,7 @@ static void *MTLModelCachedDictionaryValueKeysKey = &MTLModelCachedDictionaryVal
 	return [super init];
 }
 
-- (instancetype)initWithDictionary:(NSDictionary *)dictionary error:(NSError **)error {
+- (instancetype)initWithDictionary:(NSDictionary<NSString *, id> *)dictionary error:(NSError **)error {
 	self = [self init];
 	if (self == nil) return nil;
 
@@ -200,11 +200,11 @@ static void *MTLModelCachedDictionaryValueKeysKey = &MTLModelCachedDictionaryVal
 	}
 }
 
-+ (NSSet *)propertyKeys {
-	NSSet *cachedKeys = objc_getAssociatedObject(self, MTLModelCachedPropertyKeysKey);
++ (NSSet<NSString *> *)propertyKeys {
+	NSSet<NSString *> *cachedKeys = objc_getAssociatedObject(self, MTLModelCachedPropertyKeysKey);
 	if (cachedKeys != nil) return cachedKeys;
 
-	NSMutableSet *keys = [NSMutableSet set];
+	NSMutableSet<NSString *> *keys = [NSMutableSet set];
 
 	[self enumeratePropertiesUsingBlock:^(objc_property_t property, BOOL *stop) {
 		NSString *key = @(property_getName(property));
@@ -221,8 +221,8 @@ static void *MTLModelCachedDictionaryValueKeysKey = &MTLModelCachedDictionaryVal
 	return keys;
 }
 
-+ (NSSet *)transitoryPropertyKeys {
-	NSSet *transitoryPropertyKeys = objc_getAssociatedObject(self, MTLModelCachedTransitoryPropertyKeysKey);
++ (NSSet<NSString *> *)transitoryPropertyKeys {
+	NSSet<NSString *> *transitoryPropertyKeys = objc_getAssociatedObject(self, MTLModelCachedTransitoryPropertyKeysKey);
 
 	if (transitoryPropertyKeys == nil) {
 		[self generateAndCacheStorageBehaviors];
@@ -232,8 +232,8 @@ static void *MTLModelCachedDictionaryValueKeysKey = &MTLModelCachedDictionaryVal
 	return transitoryPropertyKeys;
 }
 
-+ (NSSet *)permanentPropertyKeys {
-	NSSet *permanentPropertyKeys = objc_getAssociatedObject(self, MTLModelCachedPermanentPropertyKeysKey);
++ (NSSet<NSString *> *)permanentPropertyKeys {
+	NSSet<NSString *> *permanentPropertyKeys = objc_getAssociatedObject(self, MTLModelCachedPermanentPropertyKeysKey);
 
 	if (permanentPropertyKeys == nil) {
 		[self generateAndCacheStorageBehaviors];
@@ -253,14 +253,14 @@ static void *MTLModelCachedDictionaryValueKeysKey = &MTLModelCachedDictionaryVal
 + (NSArray<NSString *> *)dictionaryValueKeys {
 	NSArray<NSString *> *dictionaryValueKeys = objc_getAssociatedObject(self, MTLModelCachedDictionaryValueKeysKey);
 	if (!dictionaryValueKeys) {
-		NSSet *keys = [self.class.transitoryPropertyKeys setByAddingObjectsFromSet:self.permanentPropertyKeys];
+		NSSet<NSString *> *keys = [self.class.transitoryPropertyKeys setByAddingObjectsFromSet:self.permanentPropertyKeys];
 		dictionaryValueKeys = keys.allObjects;
 		objc_setAssociatedObject(self, MTLModelCachedDictionaryValueKeysKey, dictionaryValueKeys, OBJC_ASSOCIATION_COPY);
 	}
 	return dictionaryValueKeys;
 }
 
-- (NSDictionary *)dictionaryValue {
+- (NSDictionary<NSString *, id> *)dictionaryValue {
 	NSArray<NSString *> *keys = self.class.dictionaryValueKeys;
 	return [self dictionaryWithValuesForKeys:keys];
 }
@@ -320,7 +320,7 @@ static void *MTLModelCachedDictionaryValueKeysKey = &MTLModelCachedDictionaryVal
 //}
 //
 //- (void)mergeValuesForKeysFromModel:(id<MTLModel>)model {
-//    NSSet *propertyKeys = model.class.propertyKeys;
+//    NSSet<NSString *> *propertyKeys = model.class.propertyKeys;
 //
 //    for (NSString *key in self.class.propertyKeys) {
 //        if (![propertyKeys containsObject:key]) continue;
@@ -362,7 +362,7 @@ static void *MTLModelCachedDictionaryValueKeysKey = &MTLModelCachedDictionaryVal
 #pragma mark NSObject
 
 - (NSString *)description {
-	NSDictionary *permanentProperties = [self dictionaryWithValuesForKeys:self.class.permanentPropertyKeys.allObjects];
+	NSDictionary<NSString *, id> *permanentProperties = [self dictionaryWithValuesForKeys:self.class.permanentPropertyKeys.allObjects];
 
 	return [NSString stringWithFormat:@"<%@: %p> %@", self.class, self, permanentProperties];
 }

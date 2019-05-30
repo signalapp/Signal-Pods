@@ -48,7 +48,7 @@ typedef enum : NSUInteger {
 ///                   (like a KVC validation error).
 ///
 /// Returns an initialized model object, or nil if validation failed.
-+ (instancetype)modelWithDictionary:(NSDictionary *)dictionaryValue error:(NSError **)error;
++ (instancetype)modelWithDictionary:(NSDictionary<NSString *, id> *)dictionaryValue error:(NSError **)error;
 
 /// A dictionary representing the properties of the receiver.
 ///
@@ -56,7 +56,7 @@ typedef enum : NSUInteger {
 /// with any nil values represented by NSNull.
 ///
 /// This property must never be nil.
-@property (nonatomic, copy, readonly) NSDictionary *dictionaryValue;
+@property (nonatomic, copy, readonly) NSDictionary<NSString *, id> *dictionaryValue;
 
 /// Initializes the receiver using key-value coding, setting the keys and values
 /// in the given dictionary.
@@ -74,7 +74,7 @@ typedef enum : NSUInteger {
 ///                   (like a KVC validation error).
 ///
 /// Returns an initialized model object, or nil if validation failed.
-- (instancetype)initWithDictionary:(NSDictionary *)dictionaryValue error:(NSError **)error;
+- (instancetype)initWithDictionary:(NSDictionary<NSString *, id> *)dictionaryValue error:(NSError **)error;
 
 // BEGIN ORM-PERF-1
 // Commented out by mkirk as part of ORM perf optimizations.
@@ -89,7 +89,7 @@ typedef enum : NSUInteger {
 
 /// Returns the keys for all @property declarations, except for `readonly`
 /// properties without ivars, or properties on MTLModel itself.
-+ (NSSet *)propertyKeys;
++ (NSSet<NSString *> *)propertyKeys;
 
 /// Validates the model.
 ///
@@ -120,7 +120,7 @@ typedef enum : NSUInteger {
 ///                   (like a KVC validation error).
 ///
 /// Returns an initialized model object, or nil if validation failed.
-- (instancetype)initWithDictionary:(NSDictionary *)dictionaryValue error:(NSError **)error;
+- (instancetype)initWithDictionary:(NSDictionary<NSString *, id> *)dictionaryValue error:(NSError **)error;
 
 /// Initializes the receiver with default values.
 ///
