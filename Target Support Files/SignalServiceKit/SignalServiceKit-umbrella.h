@@ -188,6 +188,7 @@
 #import "OWSOperation.h"
 #import "OWSQueues.h"
 #import "OWSSyncManagerProtocol.h"
+#import "OWSUserProfile.h"
 #import "SSKAsserts.h"
 #import "UIImage+OWS.h"
 
