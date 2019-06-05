@@ -132,6 +132,7 @@
 #import "OWSPrimaryStorage+PreKeyStore.h"
 #import "OWSPrimaryStorage+SessionStore.h"
 #import "OWSPrimaryStorage+SignedPreKeyStore.h"
+#import "InteractionFinder.h"
 #import "SDSCrossProcess.h"
 #import "SSKAccessors+SDS.h"
 #import "OWSSessionResetJobRecord.h"
