@@ -132,7 +132,6 @@
 #import "OWSPrimaryStorage+PreKeyStore.h"
 #import "OWSPrimaryStorage+SessionStore.h"
 #import "OWSPrimaryStorage+SignedPreKeyStore.h"
-#import "InteractionFinder.h"
 #import "SDSCrossProcess.h"
 #import "SSKAccessors+SDS.h"
 #import "OWSSessionResetJobRecord.h"
@@ -188,6 +187,7 @@
 #import "OWSSyncManagerProtocol.h"
 #import "SSKAsserts.h"
 #import "UIImage+OWS.h"
+#import "YapDatabaseViewTransaction+OWS.h"
 
 FOUNDATION_EXPORT double SignalServiceKitVersionNumber;
 FOUNDATION_EXPORT const unsigned char SignalServiceKitVersionString[];
