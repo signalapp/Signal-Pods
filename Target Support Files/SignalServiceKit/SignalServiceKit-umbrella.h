@@ -191,6 +191,7 @@
 #import "OWSUserProfile.h"
 #import "SSKAsserts.h"
 #import "UIImage+OWS.h"
+#import "YapDatabaseViewTransaction+OWS.h"
 
 FOUNDATION_EXPORT double SignalServiceKitVersionNumber;
 FOUNDATION_EXPORT const unsigned char SignalServiceKitVersionString[];
