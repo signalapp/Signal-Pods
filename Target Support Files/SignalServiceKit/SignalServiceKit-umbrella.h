@@ -32,6 +32,7 @@
 #import "OWSDeviceProvisioner.h"
 #import "OWSGroupsOutputStream.h"
 #import "OWSLinkedDeviceReadReceipt.h"
+#import "OWSPerMessageExpirationReadSyncMessage.h"
 #import "OWSProvisioningCipher.h"
 #import "OWSProvisioningMessage.h"
 #import "OWSReadReceiptsForLinkedDevicesMessage.h"
