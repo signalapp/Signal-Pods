@@ -43,6 +43,7 @@ public func owsFail(_ logMessage: String,
                     file: String = #file,
                     function: String = #function,
                     line: Int = #line) -> Never {
+    OWSSwiftUtils.logStackTrace()
     owsFailDebug(logMessage, file: file, function: function, line: line)
     let formattedMessage = owsFormatLogMessage(logMessage, file: file, function: function, line: line)
     fatalError(formattedMessage)
@@ -56,15 +57,23 @@ public func notImplemented(file: String = #file,
     owsFail("Method not implemented.", file: file, function: function, line: line)
 }
 
-@objc public class OWSSwiftUtils: NSObject {
+@objc
+public class OWSSwiftUtils: NSObject {
     // This method can be invoked from Obj-C to exit the app.
-    @objc public class func owsFail(_ logMessage: String,
-                                    file: String = #file,
-                                    function: String = #function,
-                                    line: Int = #line) -> Never {
+    @objc
+    public class func owsFail(_ logMessage: String,
+                              file: String = #file,
+                              function: String = #function,
+                              line: Int = #line) -> Never {
 
+        logStackTrace()
         owsFailDebug(logMessage, file: file, function: function, line: line)
         let formattedMessage = owsFormatLogMessage(logMessage, file: file, function: function, line: line)
         fatalError(formattedMessage)
+    }
+
+    @objc
+    public class func logStackTrace() {
+        Thread.callStackSymbols.forEach { Logger.error($0) }
     }
 }
