@@ -7,6 +7,8 @@
 #import <SignalCoreKit/OWSAsserts.h>
 #import <SignalCoreKit/SCKExceptionWrapper.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 extern int curve25519_verify(const unsigned char *signature, /* 64 bytes */
     const unsigned char *curve25519_pubkey, /* 32 bytes */
     const unsigned char *msg,
@@ -86,3 +88,5 @@ extern int curve25519_verify(const unsigned char *signature, /* 64 bytes */
 }
 
 @end
+
+NS_ASSUME_NONNULL_END

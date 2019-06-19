@@ -4,6 +4,8 @@
 
 #import <Foundation/Foundation.h>
 
+ NS_ASSUME_NONNULL_BEGIN
+
 @class ECKeyPair;
 
 @interface Ed25519 : NSObject
@@ -54,3 +56,5 @@
                   error:(NSError **)outError NS_REFINED_FOR_SWIFT;
 
 @end
+
+NS_ASSUME_NONNULL_END
