@@ -80,7 +80,7 @@ class MockClient: NSObject {
         let signedPreKeyId: Int32 = Int32(arc4random_uniform(UInt32(INT32_MAX)))
         let keyPair = Curve25519.generateKeyPair()
         let generatedAt = Date()
-        let identityKeyPair = self.identityStore.identityKeyPair(nil)
+        let identityKeyPair = self.identityStore.identityKeyPair(nil)!
         let signature = try! Ed25519.sign((keyPair.publicKey as NSData).prependKeyType() as Data, with: identityKeyPair)
         let signedPreKey = SignedPreKeyRecord(id: signedPreKeyId, keyPair: keyPair, signature: signature, generatedAt: generatedAt)!
         self.signedPreKeyStore.storeSignedPreKey(signedPreKeyId, signedPreKeyRecord: signedPreKey)
