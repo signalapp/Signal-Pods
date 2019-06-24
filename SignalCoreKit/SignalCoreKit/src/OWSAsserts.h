@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "OWSLogs.h"
@@ -10,6 +10,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 #define CONVERT_TO_STRING(X) #X
 #define CONVERT_EXPR_TO_STRING(X) CONVERT_TO_STRING(X)
+
+#define OWSAssertDebugUnlessRunningTests(X)                                                                            \
+    do {                                                                                                               \
+        if (!CurrentAppContext().isRunningTests) {                                                                     \
+            OWSAssertDebug(X);                                                                                         \
+        }                                                                                                              \
+    } while (NO)
 
 #ifdef DEBUG
 

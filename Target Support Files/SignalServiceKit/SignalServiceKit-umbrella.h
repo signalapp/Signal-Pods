@@ -158,6 +158,7 @@
 #import "OWSFakeMessageSender.h"
 #import "OWSFakeNetworkManager.h"
 #import "OWSFakeProfileManager.h"
+#import "SignalProtocolHelper.h"
 #import "TestAppContext.h"
 #import "TSConstants.h"
 #import "TSPrefix.h"
