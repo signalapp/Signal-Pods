@@ -18,6 +18,7 @@
 #import "PhoneNumber.h"
 #import "PhoneNumberUtil.h"
 #import "SignalAccount.h"
+#import "SignalAccountFinder.h"
 #import "SignalRecipient.h"
 #import "TSContactThread.h"
 #import "TSGroupThread.h"
