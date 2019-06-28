@@ -92,6 +92,7 @@ EOM
   esac
 }
 if [[ "$CONFIGURATION" == "Debug" ]]; then
+  install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/CloudFrontDistributionLeaf.crt"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/DigiCertGlobalRootG2.crt"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/DigiCertSHA2HighAssuranceServerCA.crt"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/GIAG2.crt"
@@ -107,6 +108,7 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_resource "${PODS_ROOT}/SAMKeychain/Support/SAMKeychain.bundle"
 fi
 if [[ "$CONFIGURATION" == "App Store Release" ]]; then
+  install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/CloudFrontDistributionLeaf.crt"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/DigiCertGlobalRootG2.crt"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/DigiCertSHA2HighAssuranceServerCA.crt"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/GIAG2.crt"
