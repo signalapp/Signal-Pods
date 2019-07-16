@@ -134,7 +134,6 @@
 #import "SSKPreKeyStore.h"
 #import "SSKSessionStore.h"
 #import "SSKSignedPreKeyStore.h"
-#import "BaseModel.h"
 #import "SDSCrossProcess.h"
 #import "SDSKeyValueStore+ObjC.h"
 #import "SSKAccessors+SDS.h"
