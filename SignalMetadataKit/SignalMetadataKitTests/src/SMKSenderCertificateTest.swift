@@ -29,11 +29,12 @@ class SMKSenderCertificateTest: XCTestCase {
         //     .build()
         //     .toByteArray();
         let signer = try! getServerCertificate(serverKey: serverKey)
-        let certificateData = try! SMKProtoSenderCertificateCertificate.builder(sender: "+14152222222",
-                                                                                senderDevice: 1,
-                                                                                expires: 31337,
-                                                                                identityKey: key.ecPublicKey().serialized,
-                                                                                signer: signer).buildSerializedData()
+        let builder = try! SMKProtoSenderCertificateCertificate.builder(senderDevice: 1,
+                                                                        expires: 31337,
+                                                                        identityKey: key.ecPublicKey().serialized,
+                                                                        signer: signer)
+        builder.setSenderE164("+14152222222")
+        let certificateData = try! builder.buildSerializedData()
 
         // byte[] certificateSignature = Curve.calculateSignature(serverKey.getPrivateKey(), certificateBytes);
         let certificateSignature = try! Ed25519.sign(certificateData, with: serverKey)
@@ -70,11 +71,12 @@ class SMKSenderCertificateTest: XCTestCase {
         //     .build()
         //     .toByteArray();
         let signer = try! getServerCertificate(serverKey: serverKey)
-        let certificateData = try! SMKProtoSenderCertificateCertificate.builder(sender: "+14152222222",
-                                                                                senderDevice: 1,
-                                                                                expires: 31337,
-                                                                                identityKey: key.ecPublicKey().serialized,
-                                                                                signer: signer).buildSerializedData()
+        let builder = try! SMKProtoSenderCertificateCertificate.builder(senderDevice: 1,
+                                                                        expires: 31337,
+                                                                        identityKey: key.ecPublicKey().serialized,
+                                                                        signer: signer)
+        builder.setSenderE164("+14152222222")
+        let certificateData = try! builder.buildSerializedData()
 
         // byte[] certificateSignature = Curve.calculateSignature(serverKey.getPrivateKey(), certificateBytes);
         let certificateSignature = try! Ed25519.sign(certificateData, with: serverKey)
@@ -115,11 +117,12 @@ class SMKSenderCertificateTest: XCTestCase {
         //     .build()
         //     .toByteArray();
         let signer = try! getServerCertificate(serverKey: serverKey)
-        let certificateData = try! SMKProtoSenderCertificateCertificate.builder(sender: "+14152222222",
-                                                                                senderDevice: 1,
-                                                                                expires: 31337,
-                                                                                identityKey: key.ecPublicKey().serialized,
-                                                                                signer: signer).buildSerializedData()
+        let builder = try! SMKProtoSenderCertificateCertificate.builder(senderDevice: 1,
+                                                                        expires: 31337,
+                                                                        identityKey: key.ecPublicKey().serialized,
+                                                                        signer: signer)
+        builder.setSenderE164("+14152222222")
+        let certificateData = try! builder.buildSerializedData()
 
         // byte[] certificateSignature = Curve.calculateSignature(serverKey.getPrivateKey(), certificateBytes);
         let certificateSignature = try! Ed25519.sign(certificateData, with: serverKey)

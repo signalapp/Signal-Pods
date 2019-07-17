@@ -125,15 +125,23 @@ struct SMKProtos_SenderCertificate {
     // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
     // methods supported on all messages.
 
-    /// @required
-    var sender: String {
-      get {return _storage._sender ?? String()}
-      set {_uniqueStorage()._sender = newValue}
+    var senderE164: String {
+      get {return _storage._senderE164 ?? String()}
+      set {_uniqueStorage()._senderE164 = newValue}
     }
-    /// Returns true if `sender` has been explicitly set.
-    var hasSender: Bool {return _storage._sender != nil}
-    /// Clears the value of `sender`. Subsequent reads from it will return its default value.
-    mutating func clearSender() {_uniqueStorage()._sender = nil}
+    /// Returns true if `senderE164` has been explicitly set.
+    var hasSenderE164: Bool {return _storage._senderE164 != nil}
+    /// Clears the value of `senderE164`. Subsequent reads from it will return its default value.
+    mutating func clearSenderE164() {_uniqueStorage()._senderE164 = nil}
+
+    var senderUuid: String {
+      get {return _storage._senderUuid ?? String()}
+      set {_uniqueStorage()._senderUuid = newValue}
+    }
+    /// Returns true if `senderUuid` has been explicitly set.
+    var hasSenderUuid: Bool {return _storage._senderUuid != nil}
+    /// Clears the value of `senderUuid`. Subsequent reads from it will return its default value.
+    mutating func clearSenderUuid() {_uniqueStorage()._senderUuid = nil}
 
     /// @required
     var senderDevice: UInt32 {
@@ -411,7 +419,8 @@ extension SMKProtos_SenderCertificate: SwiftProtobuf.Message, SwiftProtobuf._Mes
 extension SMKProtos_SenderCertificate.Certificate: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = SMKProtos_SenderCertificate.protoMessageName + ".Certificate"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "sender"),
+    1: .same(proto: "senderE164"),
+    6: .same(proto: "senderUuid"),
     2: .same(proto: "senderDevice"),
     3: .same(proto: "expires"),
     4: .same(proto: "identityKey"),
@@ -419,7 +428,8 @@ extension SMKProtos_SenderCertificate.Certificate: SwiftProtobuf.Message, SwiftP
   ]
 
   fileprivate class _StorageClass {
-    var _sender: String? = nil
+    var _senderE164: String? = nil
+    var _senderUuid: String? = nil
     var _senderDevice: UInt32? = nil
     var _expires: UInt64? = nil
     var _identityKey: Data? = nil
@@ -430,7 +440,8 @@ extension SMKProtos_SenderCertificate.Certificate: SwiftProtobuf.Message, SwiftP
     private init() {}
 
     init(copying source: _StorageClass) {
-      _sender = source._sender
+      _senderE164 = source._senderE164
+      _senderUuid = source._senderUuid
       _senderDevice = source._senderDevice
       _expires = source._expires
       _identityKey = source._identityKey
@@ -450,11 +461,12 @@ extension SMKProtos_SenderCertificate.Certificate: SwiftProtobuf.Message, SwiftP
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       while let fieldNumber = try decoder.nextFieldNumber() {
         switch fieldNumber {
-        case 1: try decoder.decodeSingularStringField(value: &_storage._sender)
+        case 1: try decoder.decodeSingularStringField(value: &_storage._senderE164)
         case 2: try decoder.decodeSingularUInt32Field(value: &_storage._senderDevice)
         case 3: try decoder.decodeSingularFixed64Field(value: &_storage._expires)
         case 4: try decoder.decodeSingularBytesField(value: &_storage._identityKey)
         case 5: try decoder.decodeSingularMessageField(value: &_storage._signer)
+        case 6: try decoder.decodeSingularStringField(value: &_storage._senderUuid)
         default: break
         }
       }
@@ -463,7 +475,7 @@ extension SMKProtos_SenderCertificate.Certificate: SwiftProtobuf.Message, SwiftP
 
   func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
-      if let v = _storage._sender {
+      if let v = _storage._senderE164 {
         try visitor.visitSingularStringField(value: v, fieldNumber: 1)
       }
       if let v = _storage._senderDevice {
@@ -478,6 +490,9 @@ extension SMKProtos_SenderCertificate.Certificate: SwiftProtobuf.Message, SwiftP
       if let v = _storage._signer {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 5)
       }
+      if let v = _storage._senderUuid {
+        try visitor.visitSingularStringField(value: v, fieldNumber: 6)
+      }
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -487,7 +502,8 @@ extension SMKProtos_SenderCertificate.Certificate: SwiftProtobuf.Message, SwiftP
       let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
         let _storage = _args.0
         let rhs_storage = _args.1
-        if _storage._sender != rhs_storage._sender {return false}
+        if _storage._senderE164 != rhs_storage._senderE164 {return false}
+        if _storage._senderUuid != rhs_storage._senderUuid {return false}
         if _storage._senderDevice != rhs_storage._senderDevice {return false}
         if _storage._expires != rhs_storage._expires {return false}
         if _storage._identityKey != rhs_storage._identityKey {return false}

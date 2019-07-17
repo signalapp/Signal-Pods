@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 import Foundation
@@ -241,13 +241,19 @@ extension SMKProtoServerCertificate.SMKProtoServerCertificateBuilder {
 
     // MARK: - SMKProtoSenderCertificateCertificateBuilder
 
-    @objc public class func builder(sender: String, senderDevice: UInt32, expires: UInt64, identityKey: Data, signer: SMKProtoServerCertificate) -> SMKProtoSenderCertificateCertificateBuilder {
-        return SMKProtoSenderCertificateCertificateBuilder(sender: sender, senderDevice: senderDevice, expires: expires, identityKey: identityKey, signer: signer)
+    @objc public class func builder(senderDevice: UInt32, expires: UInt64, identityKey: Data, signer: SMKProtoServerCertificate) -> SMKProtoSenderCertificateCertificateBuilder {
+        return SMKProtoSenderCertificateCertificateBuilder(senderDevice: senderDevice, expires: expires, identityKey: identityKey, signer: signer)
     }
 
     // asBuilder() constructs a builder that reflects the proto's contents.
     @objc public func asBuilder() -> SMKProtoSenderCertificateCertificateBuilder {
-        let builder = SMKProtoSenderCertificateCertificateBuilder(sender: sender, senderDevice: senderDevice, expires: expires, identityKey: identityKey, signer: signer)
+        let builder = SMKProtoSenderCertificateCertificateBuilder(senderDevice: senderDevice, expires: expires, identityKey: identityKey, signer: signer)
+        if let _value = senderE164 {
+            builder.setSenderE164(_value)
+        }
+        if let _value = senderUuid {
+            builder.setSenderUuid(_value)
+        }
         return builder
     }
 
@@ -257,18 +263,21 @@ extension SMKProtoServerCertificate.SMKProtoServerCertificateBuilder {
 
         @objc fileprivate override init() {}
 
-        @objc fileprivate init(sender: String, senderDevice: UInt32, expires: UInt64, identityKey: Data, signer: SMKProtoServerCertificate) {
+        @objc fileprivate init(senderDevice: UInt32, expires: UInt64, identityKey: Data, signer: SMKProtoServerCertificate) {
             super.init()
 
-            setSender(sender)
             setSenderDevice(senderDevice)
             setExpires(expires)
             setIdentityKey(identityKey)
             setSigner(signer)
         }
 
-        @objc public func setSender(_ valueParam: String) {
-            proto.sender = valueParam
+        @objc public func setSenderE164(_ valueParam: String) {
+            proto.senderE164 = valueParam
+        }
+
+        @objc public func setSenderUuid(_ valueParam: String) {
+            proto.senderUuid = valueParam
         }
 
         @objc public func setSenderDevice(_ valueParam: UInt32) {
@@ -298,8 +307,6 @@ extension SMKProtoServerCertificate.SMKProtoServerCertificateBuilder {
 
     fileprivate let proto: SMKProtos_SenderCertificate.Certificate
 
-    @objc public let sender: String
-
     @objc public let senderDevice: UInt32
 
     @objc public let expires: UInt64
@@ -308,14 +315,32 @@ extension SMKProtoServerCertificate.SMKProtoServerCertificateBuilder {
 
     @objc public let signer: SMKProtoServerCertificate
 
+    @objc public var senderE164: String? {
+        guard proto.hasSenderE164 else {
+            return nil
+        }
+        return proto.senderE164
+    }
+    @objc public var hasSenderE164: Bool {
+        return proto.hasSenderE164
+    }
+
+    @objc public var senderUuid: String? {
+        guard proto.hasSenderUuid else {
+            return nil
+        }
+        return proto.senderUuid
+    }
+    @objc public var hasSenderUuid: Bool {
+        return proto.hasSenderUuid
+    }
+
     private init(proto: SMKProtos_SenderCertificate.Certificate,
-                 sender: String,
                  senderDevice: UInt32,
                  expires: UInt64,
                  identityKey: Data,
                  signer: SMKProtoServerCertificate) {
         self.proto = proto
-        self.sender = sender
         self.senderDevice = senderDevice
         self.expires = expires
         self.identityKey = identityKey
@@ -333,11 +358,6 @@ extension SMKProtoServerCertificate.SMKProtoServerCertificateBuilder {
     }
 
     fileprivate class func parseProto(_ proto: SMKProtos_SenderCertificate.Certificate) throws -> SMKProtoSenderCertificateCertificate {
-        guard proto.hasSender else {
-            throw SMKProtoError.invalidProtobuf(description: "\(logTag) missing required field: sender")
-        }
-        let sender = proto.sender
-
         guard proto.hasSenderDevice else {
             throw SMKProtoError.invalidProtobuf(description: "\(logTag) missing required field: senderDevice")
         }
@@ -363,7 +383,6 @@ extension SMKProtoServerCertificate.SMKProtoServerCertificateBuilder {
         // MARK: - End Validation Logic for SMKProtoSenderCertificateCertificate -
 
         let result = SMKProtoSenderCertificateCertificate(proto: proto,
-                                                          sender: sender,
                                                           senderDevice: senderDevice,
                                                           expires: expires,
                                                           identityKey: identityKey,

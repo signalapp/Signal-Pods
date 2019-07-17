@@ -9,13 +9,18 @@ import SignalMetadataKit
 // public class SecretSessionCipherTest extends TestCase {
 class SMKSecretSessionCipherTest: XCTestCase {
 
+    override func setUp() {
+        super.setUp()
+        SMKEnvironment.shared = SMKEnvironment(accountIdFinder: MockAccountIdFinder())
+    }
+
     // public void testEncryptDecrypt() throws UntrustedIdentityException, InvalidKeyException, InvalidCertificateException, InvalidProtocolBufferException, InvalidMetadataMessageException, ProtocolDuplicateMessageException, ProtocolUntrustedIdentityException, ProtocolLegacyMessageException, ProtocolInvalidKeyException, InvalidMetadataVersionException, ProtocolInvalidVersionException, ProtocolInvalidMessageException, ProtocolInvalidKeyIdException, ProtocolNoSessionException, SelfSendException {
     func testEncryptDecrypt() {
         // TestInMemorySignalProtocolStore aliceStore = new TestInMemorySignalProtocolStore();
         // TestInMemorySignalProtocolStore bobStore   = new TestInMemorySignalProtocolStore();
         // NOTE: We use MockClient to ensure consistency between of our session state.
-        let aliceMockClient = MockClient(recipientId: "+14159999999", deviceId: 1, registrationId: 1234)
-        let bobMockClient = MockClient(recipientId: "+14158888888", deviceId: 1, registrationId: 1235)
+        let aliceMockClient = MockClient(address: .e164("+14159999999"), deviceId: 1, registrationId: 1234)
+        let bobMockClient = MockClient(address: .e164("+14158888888"), deviceId: 1, registrationId: 1235)
 
         // initializeSessions(aliceStore, bobStore);
         initializeSessions(aliceMockClient: aliceMockClient, bobMockClient: bobMockClient)
@@ -25,7 +30,7 @@ class SMKSecretSessionCipherTest: XCTestCase {
 
         // SenderCertificate   senderCertificate = createCertificateFor(trustRoot, "+14151111111", 1, aliceStore.getIdentityKeyPair().getPublicKey().getPublicKey(), 31337);
         let senderCertificate = createCertificateFor(trustRoot: trustRoot,
-                                                     senderRecipientId: aliceMockClient.recipientId,
+                                                     senderAddress: aliceMockClient.address,
                                                      senderDeviceId: UInt32(aliceMockClient.deviceId),
                                                      identityKey: try! aliceMockClient.identityKeyPair.ecPublicKey(),
                                                      expirationTimestamp: 31337)
@@ -37,7 +42,7 @@ class SMKSecretSessionCipherTest: XCTestCase {
         // senderCertificate, "smert za smert".getBytes());
         // NOTE: The java tests don't bother padding the plaintext.
         let alicePlaintext = "smert za smert".data(using: String.Encoding.utf8)!
-        let ciphertext = try! aliceCipher.throwswrapped_encryptMessage(recipientId: bobMockClient.recipientId,
+        let ciphertext = try! aliceCipher.throwswrapped_encryptMessage(recipientId: bobMockClient.accountId,
                                                                        deviceId: bobMockClient.deviceId,
                                                                        paddedPlaintext: alicePlaintext,
                                                                        senderCertificate: senderCertificate,
@@ -51,7 +56,8 @@ class SMKSecretSessionCipherTest: XCTestCase {
         let bobPlaintext = try! bobCipher.throwswrapped_decryptMessage(certificateValidator: certificateValidator,
                                                                        cipherTextData: ciphertext,
                                                                        timestamp: 31335,
-                                                                       localRecipientId: bobMockClient.recipientId,
+                                                                       localE164: bobMockClient.recipientE164,
+                                                                       localUuid: bobMockClient.recipientUuid,
                                                                        localDeviceId: bobMockClient.deviceId,
                                                                        protocolContext: nil)
 
@@ -59,7 +65,7 @@ class SMKSecretSessionCipherTest: XCTestCase {
         // assertEquals(plaintext.first().getName(), "+14151111111");
         // assertEquals(plaintext.first().getDeviceId(), 1);
         XCTAssertEqual(String(data: bobPlaintext.paddedPayload, encoding: .utf8), "smert za smert")
-        XCTAssertEqual(bobPlaintext.senderRecipientId, aliceMockClient.recipientId)
+        XCTAssertEqual(bobPlaintext.senderAddress, aliceMockClient.address)
         XCTAssertEqual(bobPlaintext.senderDeviceId, Int(aliceMockClient.deviceId))
     }
 
@@ -68,8 +74,8 @@ class SMKSecretSessionCipherTest: XCTestCase {
         // TestInMemorySignalProtocolStore aliceStore = new TestInMemorySignalProtocolStore();
         // TestInMemorySignalProtocolStore bobStore   = new TestInMemorySignalProtocolStore();
         // NOTE: We use MockClient to ensure consistency between of our session state.
-        let aliceMockClient = MockClient(recipientId: "+14159999999", deviceId: 1, registrationId: 1234)
-        let bobMockClient = MockClient(recipientId: "+14158888888", deviceId: 1, registrationId: 1235)
+        let aliceMockClient = MockClient(address: .e164("+14159999999"), deviceId: 1, registrationId: 1234)
+        let bobMockClient = MockClient(address: .e164("+14158888888"), deviceId: 1, registrationId: 1235)
 
         // initializeSessions(aliceStore, bobStore);
         initializeSessions(aliceMockClient: aliceMockClient, bobMockClient: bobMockClient)
@@ -80,7 +86,7 @@ class SMKSecretSessionCipherTest: XCTestCase {
         let falseTrustRoot = Curve25519.generateKeyPair()
         // SenderCertificate   senderCertificate = createCertificateFor(falseTrustRoot, "+14151111111", 1, aliceStore.getIdentityKeyPair().getPublicKey().getPublicKey(), 31337);
         let senderCertificate = createCertificateFor(trustRoot: falseTrustRoot,
-                                                     senderRecipientId: aliceMockClient.recipientId,
+                                                     senderAddress: aliceMockClient.address,
                                                      senderDeviceId: UInt32(aliceMockClient.deviceId),
                                                      identityKey: try! aliceMockClient.identityKeyPair.ecPublicKey(),
                                                      expirationTimestamp: 31337)
@@ -92,7 +98,7 @@ class SMKSecretSessionCipherTest: XCTestCase {
         // senderCertificate, "и вот я".getBytes());
         // NOTE: The java tests don't bother padding the plaintext.
         let alicePlaintext = "и вот я".data(using: String.Encoding.utf8)!
-        let ciphertext = try! aliceCipher.throwswrapped_encryptMessage(recipientId: bobMockClient.recipientId,
+        let ciphertext = try! aliceCipher.throwswrapped_encryptMessage(recipientId: bobMockClient.accountId,
                                                                        deviceId: bobMockClient.deviceId,
                                                                        paddedPlaintext: alicePlaintext,
                                                                        senderCertificate: senderCertificate,
@@ -112,7 +118,8 @@ class SMKSecretSessionCipherTest: XCTestCase {
             _ = try bobCipher.throwswrapped_decryptMessage(certificateValidator: certificateValidator,
                                                            cipherTextData: ciphertext,
                                                            timestamp: 31335,
-                                                           localRecipientId: bobMockClient.recipientId,
+                                                           localE164: bobMockClient.recipientE164,
+                                                           localUuid: bobMockClient.recipientUuid,
                                                            localDeviceId: bobMockClient.deviceId,
                                                            protocolContext: nil)
             XCTFail("Decryption should have failed.")
@@ -129,8 +136,8 @@ class SMKSecretSessionCipherTest: XCTestCase {
         // TestInMemorySignalProtocolStore aliceStore = new TestInMemorySignalProtocolStore();
         // TestInMemorySignalProtocolStore bobStore   = new TestInMemorySignalProtocolStore();
         // NOTE: We use MockClient to ensure consistency between of our session state.
-        let aliceMockClient = MockClient(recipientId: "+14159999999", deviceId: 1, registrationId: 1234)
-        let bobMockClient = MockClient(recipientId: "+14158888888", deviceId: 1, registrationId: 1235)
+        let aliceMockClient = MockClient(address: .e164("+14159999999"), deviceId: 1, registrationId: 1234)
+        let bobMockClient = MockClient(address: .e164("+14158888888"), deviceId: 1, registrationId: 1235)
 
         // initializeSessions(aliceStore, bobStore);
         initializeSessions(aliceMockClient: aliceMockClient, bobMockClient: bobMockClient)
@@ -140,7 +147,7 @@ class SMKSecretSessionCipherTest: XCTestCase {
 
         // SenderCertificate   senderCertificate = createCertificateFor(trustRoot, "+14151111111", 1, aliceStore.getIdentityKeyPair().getPublicKey().getPublicKey(), 31337);
         let senderCertificate = createCertificateFor(trustRoot: trustRoot,
-                                                     senderRecipientId: aliceMockClient.recipientId,
+                                                     senderAddress: aliceMockClient.address,
                                                      senderDeviceId: UInt32(aliceMockClient.deviceId),
                                                      identityKey: try! aliceMockClient.identityKeyPair.ecPublicKey(),
                                                      expirationTimestamp: 31337)
@@ -152,7 +159,7 @@ class SMKSecretSessionCipherTest: XCTestCase {
         //     senderCertificate, "и вот я".getBytes());
         // NOTE: The java tests don't bother padding the plaintext.
         let alicePlaintext = "и вот я".data(using: String.Encoding.utf8)!
-        let ciphertext = try! aliceCipher.throwswrapped_encryptMessage(recipientId: bobMockClient.recipientId,
+        let ciphertext = try! aliceCipher.throwswrapped_encryptMessage(recipientId: bobMockClient.accountId,
                                                                        deviceId: bobMockClient.deviceId,
                                                                        paddedPlaintext: alicePlaintext,
                                                                        senderCertificate: senderCertificate,
@@ -172,7 +179,8 @@ class SMKSecretSessionCipherTest: XCTestCase {
             _ = try bobCipher.throwswrapped_decryptMessage(certificateValidator: certificateValidator,
                                                            cipherTextData: ciphertext,
                                                            timestamp: 31338,
-                                                           localRecipientId: bobMockClient.recipientId,
+                                                           localE164: bobMockClient.recipientE164,
+                                                           localUuid: bobMockClient.recipientUuid,
                                                            localDeviceId: bobMockClient.deviceId,
                                                            protocolContext: nil)
             XCTFail("Decryption should have failed.")
@@ -189,8 +197,8 @@ class SMKSecretSessionCipherTest: XCTestCase {
         // TestInMemorySignalProtocolStore aliceStore = new TestInMemorySignalProtocolStore();
         // TestInMemorySignalProtocolStore bobStore   = new TestInMemorySignalProtocolStore();
         // NOTE: We use MockClient to ensure consistency between of our session state.
-        let aliceMockClient = MockClient(recipientId: "+14159999999", deviceId: 1, registrationId: 1234)
-        let bobMockClient = MockClient(recipientId: "+14158888888", deviceId: 1, registrationId: 1235)
+        let aliceMockClient = MockClient(address: .e164("+14159999999"), deviceId: 1, registrationId: 1234)
+        let bobMockClient = MockClient(address: .e164("+14158888888"), deviceId: 1, registrationId: 1235)
 
         // initializeSessions(aliceStore, bobStore);
         initializeSessions(aliceMockClient: aliceMockClient,
@@ -202,7 +210,7 @@ class SMKSecretSessionCipherTest: XCTestCase {
         let randomKeyPair = Curve25519.generateKeyPair()
         // SenderCertificate   senderCertificate = createCertificateFor(trustRoot, "+14151111111", 1, randomKeyPair.getPublicKey(), 31337);
         let senderCertificate = createCertificateFor(trustRoot: trustRoot,
-                                                     senderRecipientId: aliceMockClient.recipientId,
+                                                     senderAddress: aliceMockClient.address,
                                                      senderDeviceId: UInt32(aliceMockClient.deviceId),
                                                      identityKey: try! randomKeyPair.ecPublicKey(),
                                                      expirationTimestamp: 31337)
@@ -213,7 +221,7 @@ class SMKSecretSessionCipherTest: XCTestCase {
         //    senderCertificate, "smert za smert".getBytes());
         // NOTE: The java tests don't bother padding the plaintext.
         let alicePlaintext = "smert za smert".data(using: String.Encoding.utf8)!
-        let ciphertext = try! aliceCipher.throwswrapped_encryptMessage(recipientId: bobMockClient.recipientId,
+        let ciphertext = try! aliceCipher.throwswrapped_encryptMessage(recipientId: bobMockClient.accountId,
                                                                        deviceId: bobMockClient.deviceId,
                                                                        paddedPlaintext: alicePlaintext,
                                                                        senderCertificate: senderCertificate,
@@ -232,7 +240,8 @@ class SMKSecretSessionCipherTest: XCTestCase {
             _ = try bobCipher.throwswrapped_decryptMessage(certificateValidator: certificateValidator,
                                                            cipherTextData: ciphertext,
                                                            timestamp: 31335,
-                                                           localRecipientId: bobMockClient.recipientId,
+                                                           localE164: bobMockClient.recipientE164,
+                                                           localUuid: bobMockClient.recipientUuid,
                                                            localDeviceId: bobMockClient.deviceId,
                                                            protocolContext: nil)
             XCTFail("Decryption should have failed.")
@@ -252,7 +261,7 @@ class SMKSecretSessionCipherTest: XCTestCase {
     // private SenderCertificate createCertificateFor(ECKeyPair trustRoot, String sender, int deviceId, ECPublicKey identityKey, long expires)
     //     throws InvalidKeyException, InvalidCertificateException, InvalidProtocolBufferException {
     private func createCertificateFor(trustRoot: ECKeyPair,
-                                      senderRecipientId: String,
+                                      senderAddress: SMKAddress,
                                       senderDeviceId: UInt32,
                                       identityKey: ECPublicKey,
                                       expirationTimestamp: UInt64) -> SMKSenderCertificate {
@@ -293,11 +302,18 @@ class SMKSecretSessionCipherTest: XCTestCase {
         //     .toByteArray();
         let senderCertificateData: Data = {
             let signer = try! SMKProtoServerCertificate.parseData(serverCertificate.serializedData)
-            let builder = SMKProtoSenderCertificateCertificate.builder(sender: senderRecipientId,
-                                                                       senderDevice: senderDeviceId,
+            let builder = SMKProtoSenderCertificateCertificate.builder(senderDevice: senderDeviceId,
                                                                        expires: expirationTimestamp,
                                                                        identityKey: identityKey.serialized,
                                                                        signer: signer)
+            if let e164 = senderAddress.e164 {
+                builder.setSenderE164(e164)
+            }
+
+            if let uuid = senderAddress.uuid {
+                builder.setSenderUuid(uuid.uuidString)
+            }
+
             return try! builder.buildSerializedData()
         }()
 

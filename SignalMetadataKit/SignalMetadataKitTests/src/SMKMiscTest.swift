@@ -71,7 +71,7 @@ class SMKTest: XCTestCase {
         XCTAssertEqual(senderCertificate.signer.serializedData, roundTripped.signer.serializedData)
         XCTAssertEqual(senderCertificate.key, roundTripped.key)
         XCTAssertEqual(senderCertificate.senderDeviceId, roundTripped.senderDeviceId)
-        XCTAssertEqual(senderCertificate.senderRecipientId, roundTripped.senderRecipientId)
+        XCTAssertEqual(senderCertificate.senderAddress, roundTripped.senderAddress)
         XCTAssertEqual(senderCertificate.expirationTimestamp, roundTripped.expirationTimestamp)
         XCTAssertEqual(senderCertificate.signatureData, roundTripped.signatureData)
     }
@@ -100,8 +100,8 @@ class SMKTest: XCTestCase {
 
     func testUDSessionCipher_encrypt() {
         // NOTE: We use MockClient to ensure consistency between of our session state.
-        let aliceMockClient = MockClient(recipientId: "+13213214321", deviceId: 456, registrationId: 123)
-        let bobMockClient = MockClient(recipientId: "+13213214322", deviceId: 321, registrationId: 512)
+        let aliceMockClient = MockClient(address: .e164("+13213214321"), deviceId: 456, registrationId: 123)
+        let bobMockClient = MockClient(address: .e164("+13213214322"), deviceId: 321, registrationId: 512)
 
         let certificateValidator = MockCertificateValidator()
 
@@ -125,7 +125,7 @@ class SMKTest: XCTestCase {
         let plaintext = Randomness.generateRandomBytes(200)!
         let paddedPlaintext = (plaintext as NSData).paddedMessageBody()!
         let senderCertificate = try! SMKSenderCertificate(serializedData: try! buildSenderCertificateProto(senderClient: aliceMockClient).serializedData())
-        let encryptedMessage = try! aliceToBobCipher.throwswrapped_encryptMessage(recipientId: bobMockClient.recipientId,
+        let encryptedMessage = try! aliceToBobCipher.throwswrapped_encryptMessage(recipientId: bobMockClient.accountId,
                                                                                   deviceId: bobMockClient.deviceId,
                                                                                   paddedPlaintext: paddedPlaintext,
                                                                                   senderCertificate: senderCertificate,
@@ -137,12 +137,13 @@ class SMKTest: XCTestCase {
         let decryptedMessage = try! bobToAliceCipher.throwswrapped_decryptMessage(certificateValidator: certificateValidator,
                                                                                   cipherTextData: encryptedMessage,
                                                                                   timestamp: messageTimestamp,
-                                                                                  localRecipientId: bobMockClient.recipientId,
+                                                                                  localE164: bobMockClient.recipientE164,
+                                                                                  localUuid: bobMockClient.recipientUuid,
                                                                                   localDeviceId: bobMockClient.deviceId,
                                                                                   protocolContext: nil)
         let payload = (decryptedMessage.paddedPayload as NSData).removePadding()
 
-        XCTAssertEqual(aliceMockClient.recipientId, decryptedMessage.senderRecipientId)
+        XCTAssertEqual(aliceMockClient.address, decryptedMessage.senderAddress)
         XCTAssertEqual(aliceMockClient.deviceId, Int32(decryptedMessage.senderDeviceId))
         XCTAssertEqual(plaintext, payload)
     }
@@ -163,28 +164,37 @@ class SMKTest: XCTestCase {
     }
 
     func buildSenderCertificateProto(senderClient: MockClient? = nil) -> SMKProtoSenderCertificate {
-        let sender: String
+        let senderAddress: SMKAddress
         let senderDevice: UInt32
         let expires = NSDate.ows_millisecondTimeStamp() + kWeekInMs
         let identityKey: ECPublicKey
         let signer = buildServerCertificateProto()
 
         if let senderClient = senderClient {
-            sender = senderClient.recipientId
+            senderAddress = senderClient.address
             senderDevice = UInt32(senderClient.deviceId)
             identityKey = try! senderClient.identityKeyPair.ecPublicKey()
         } else {
-            sender = "+1235551234"
+            senderAddress = .e164("+1235551234")
             senderDevice = 123
             identityKey = try! Curve25519.generateKeyPair().ecPublicKey()
         }
 
-        let certificateData = try! SMKProtoSenderCertificateCertificate.builder(sender: sender,
-                                                                                senderDevice: senderDevice,
-                                                                                expires: expires,
-                                                                                identityKey: identityKey.serialized,
-                                                                                signer: signer)
-            .buildSerializedData()
+        let certificateData: Data = {
+            let builder = SMKProtoSenderCertificateCertificate.builder(senderDevice: senderDevice,
+                                                                       expires: expires,
+                                                                       identityKey: identityKey.serialized,
+                                                                       signer: signer)
+            if let e164 = senderAddress.e164 {
+                builder.setSenderE164(e164)
+            }
+
+            if let uuidString = senderAddress.uuid?.uuidString {
+                builder.setSenderUuid(uuidString)
+            }
+
+            return try! builder.buildSerializedData()
+        }()
 
         let signatureData = Randomness.generateRandomBytes(ECCSignatureLength)!
 

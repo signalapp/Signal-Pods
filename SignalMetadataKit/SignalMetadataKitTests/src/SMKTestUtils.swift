@@ -1,9 +1,10 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 import Foundation
 import SignalMetadataKit
+import AxolotlKit
 
 class MockCertificateValidator: NSObject, SMKCertificateValidator {
 
@@ -18,7 +19,16 @@ class MockCertificateValidator: NSObject, SMKCertificateValidator {
 
 class MockClient: NSObject {
 
-    let recipientId: String
+    var recipientUuid: UUID? {
+        return address.uuid
+    }
+
+    var recipientE164: String? {
+        return address.e164
+    }
+
+    let address: SMKAddress
+
     let deviceId: Int32
     let registrationId: Int32
 
@@ -29,8 +39,8 @@ class MockClient: NSObject {
     let signedPreKeyStore: SPKMockProtocolStore
     let identityStore: SPKMockProtocolStore
 
-    init(recipientId: String, deviceId: Int32, registrationId: Int32) {
-        self.recipientId = recipientId
+    init(address: SMKAddress, deviceId: Int32, registrationId: Int32) {
+        self.address = address
         self.deviceId = deviceId
         self.registrationId = registrationId
         self.identityKeyPair = Curve25519.generateKeyPair()
@@ -48,7 +58,7 @@ class MockClient: NSObject {
                              preKeyStore: preKeyStore,
                              signedPreKeyStore: signedPreKeyStore,
                              identityKeyStore: identityStore,
-                             recipientId: recipientId,
+                             recipientId: accountId,
                              deviceId: deviceId)
     }
 
@@ -64,7 +74,7 @@ class MockClient: NSObject {
                               preKeyStore: preKeyStore,
                               signedPreKeyStore: signedPreKeyStore,
                               identityKeyStore: identityStore,
-                              recipientId: recipient.recipientId,
+                              recipientId: recipient.accountId,
                               deviceId: recipient.deviceId)
     }
 
@@ -86,4 +96,27 @@ class MockClient: NSObject {
         self.signedPreKeyStore.storeSignedPreKey(signedPreKeyId, signedPreKeyRecord: signedPreKey)
         return signedPreKey
     }
+
+    // Each client needs their own accountIdFinder
+    let accountIdFinder = MockAccountIdFinder()
+    var accountId: String {
+        return accountIdFinder.accountId(forUuid: recipientUuid,
+                                         phoneNumber: recipientE164,
+                                         protocolContext: nil)!
+    }
+
+    func storeSession(address: SMKAddress,
+                      deviceId: Int32,
+                      session: SessionRecord,
+                      protocolContext: SPKProtocolWriteContext?) {
+
+        let accountId = accountIdFinder.accountId(forUuid: address.uuid,
+                                                  phoneNumber: address.e164,
+                                                  protocolContext: protocolContext)!
+        sessionStore.storeSession(accountId,
+                                  deviceId: deviceId,
+                                  session: session,
+                                  protocolContext: protocolContext)
+    }
+
 }

@@ -7,27 +7,39 @@ import Foundation
 @objc
 public class SecretSessionKnownSenderError: NSObject, CustomNSError {
     @objc
-    public static let kSenderRecipientIdKey = "kSenderRecipientIdKey"
+    public static let kSenderE164Key = "kSenderE164Key"
+
+    @objc
+    public static let kSenderUuidKey = "kSenderUuidKey"
 
     @objc
     public static let kSenderDeviceIdKey = "kSenderDeviceIdKey"
 
-    public let senderRecipientId: String
+    public let senderAddress: SMKAddress
     public let senderDeviceId: UInt32
     public let underlyingError: Error
 
-    init(senderRecipientId: String, senderDeviceId: UInt32, underlyingError: Error) {
-        self.senderRecipientId = senderRecipientId
+    init(senderAddress: SMKAddress, senderDeviceId: UInt32, underlyingError: Error) {
+        self.senderAddress = senderAddress
         self.senderDeviceId = senderDeviceId
         self.underlyingError = underlyingError
     }
 
     public var errorUserInfo: [String: Any] {
-        return [
-            type(of: self).kSenderRecipientIdKey: self.senderRecipientId,
+        var info: [String: Any] = [
             type(of: self).kSenderDeviceIdKey: self.senderDeviceId,
             NSUnderlyingErrorKey: (underlyingError as NSError)
         ]
+
+        if let e164 = senderAddress.e164 {
+            info[type(of: self).kSenderE164Key] = e164
+        }
+
+        if let uuid = senderAddress.uuid {
+            info[type(of: self).kSenderUuidKey] = uuid
+        }
+
+        return info
     }
 }
 
@@ -108,16 +120,25 @@ private class SMKStaticKeys: NSObject {
 @objc
 public class SMKDecryptResult: NSObject {
 
-    @objc public let senderRecipientId: String
+    public let senderAddress: SMKAddress
+
+    @objc public var senderE164: String? {
+        return senderAddress.e164
+    }
+
+    @objc public var senderUuid: UUID? {
+        return senderAddress.uuid
+    }
+
     @objc public let senderDeviceId: Int
     @objc public let paddedPayload: Data
     @objc public let messageType: SMKMessageType
 
-    init(senderRecipientId: String,
+    init(senderAddress: SMKAddress,
          senderDeviceId: Int,
          paddedPayload: Data,
          messageType: SMKMessageType) {
-        self.senderRecipientId = senderRecipientId
+        self.senderAddress = senderAddress
         self.senderDeviceId = senderDeviceId
         self.paddedPayload = paddedPayload
         self.messageType = messageType
@@ -257,7 +278,8 @@ public class SMKDecryptResult: NSObject {
     public func throwswrapped_decryptMessage(certificateValidator: SMKCertificateValidator,
                                           cipherTextData: Data,
                                           timestamp: UInt64,
-                                          localRecipientId: String,
+                                          localE164: String?,
+                                          localUuid: UUID?,
                                           localDeviceId: Int32,
                                           protocolContext: SPKProtocolWriteContext?) throws -> SMKDecryptResult {
         guard timestamp > 0 else {
@@ -265,6 +287,7 @@ public class SMKDecryptResult: NSObject {
         }
 
         // IdentityKeyPair ourIdentity = signalProtocolStore.getIdentityKeyPair();
+        let localAddress = try SMKAddress(uuid: localUuid, e164: localE164)
         guard let ourIdentityKeyPair = identityStore.identityKeyPair(protocolContext) else {
             throw SMKError.assertionError(description: "\(logTag) Missing our identity key pair.")
         }
@@ -311,10 +334,10 @@ public class SMKDecryptResult: NSObject {
         // content = new UnidentifiedSenderMessageContent(messageBytes);
         let messageContent = try SMKUnidentifiedSenderMessageContent(serializedData: messageBytes)
 
-        let senderRecipientId = messageContent.senderCertificate.senderRecipientId
+        let senderAddress = messageContent.senderCertificate.senderAddress
         let senderDeviceId = messageContent.senderCertificate.senderDeviceId
 
-        guard senderRecipientId != localRecipientId || senderDeviceId != localDeviceId else {
+        guard !senderAddress.matches(localAddress) || senderDeviceId != localDeviceId else {
             Logger.info("Discarding self-sent message")
             throw SMKSecretSessionCipherError.selfSentMessage
         }
@@ -322,7 +345,7 @@ public class SMKDecryptResult: NSObject {
         // validator.validate(content.getSenderCertificate(), timestamp);
 
         let wrapAsKnownSenderError = { (underlyingError: Error) in
-            return SecretSessionKnownSenderError(senderRecipientId: senderRecipientId, senderDeviceId: senderDeviceId, underlyingError: underlyingError)
+            return SecretSessionKnownSenderError(senderAddress: senderAddress, senderDeviceId: senderDeviceId, underlyingError: underlyingError)
         }
 
         do {
@@ -358,7 +381,7 @@ public class SMKDecryptResult: NSObject {
             let underlyingError = SMKError.assertionError(description: "\(logTag) Invalid senderDeviceId.")
             throw wrapAsKnownSenderError(underlyingError)
         }
-        return SMKDecryptResult(senderRecipientId: senderRecipientId,
+        return SMKDecryptResult(senderAddress: senderAddress,
                                 senderDeviceId: Int(senderDeviceId),
                                 paddedPayload: paddedMessagePlaintext,
                                 messageType: messageContent.messageType)
@@ -484,6 +507,10 @@ public class SMKDecryptResult: NSObject {
         return result
     }
 
+    var accountIdFinder: SMKAccountIdFinder {
+        return SMKEnvironment.shared.accountIdFinder
+    }
+
     // MARK: - Decrypt
 
     // private byte[] decrypt(UnidentifiedSenderMessageContent message)
@@ -496,7 +523,7 @@ public class SMKDecryptResult: NSObject {
         // message.getSenderCertificate().getSenderDeviceId());
         //
         // NOTE: We use the sender properties from the sender certificate, not from this class' properties.
-        let senderRecipientId = messageContent.senderCertificate.senderRecipientId
+        let senderAddress = messageContent.senderCertificate.senderAddress
         let senderDeviceId = messageContent.senderCertificate.senderDeviceId
         guard senderDeviceId >= 0 && senderDeviceId <= INT32_MAX else {
             throw SMKError.assertionError(description: "\(logTag) Invalid senderDeviceId.")
@@ -516,11 +543,15 @@ public class SMKDecryptResult: NSObject {
             cipherMessage = try PreKeyWhisperMessage(data: messageContent.contentData)
         }
 
+        guard let accountId = accountIdFinder.accountId(forUuid: senderAddress.uuid, phoneNumber: senderAddress.e164, protocolContext: protocolContext) else {
+            throw SMKError.assertionError(description: "\(logTag) accountId was unexpectedly nil")
+        }
+
         let cipher = SessionCipher(sessionStore: sessionStore,
                                    preKeyStore: preKeyStore,
                                    signedPreKeyStore: signedPreKeyStore,
                                    identityKeyStore: identityStore,
-                                   recipientId: senderRecipientId,
+                                   recipientId: accountId,
                                    deviceId: Int32(senderDeviceId))
 
         let plaintextData = try cipher.decrypt(cipherMessage, protocolContext: protocolContext)

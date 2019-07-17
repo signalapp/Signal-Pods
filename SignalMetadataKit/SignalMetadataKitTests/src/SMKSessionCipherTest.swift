@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 import XCTest
@@ -48,8 +48,8 @@ class SMKSessionCipherTest: XCTestCase {
 //    LegacyMessageException, InvalidMessageException, NoSuchAlgorithmException, NoSessionException, UntrustedIdentityException
     func testBasicSessionV3() {
         // NOTE: We use MockClient to ensure consistency between of our session state.
-        let aliceMockClient = MockClient(recipientId: "+14159999999", deviceId: 1, registrationId: 1234)
-        let bobMockClient = MockClient(recipientId: "+14158888888", deviceId: 1, registrationId: 1235)
+        let aliceMockClient = MockClient(address: .e164("+14159999999"), deviceId: 1, registrationId: 1234)
+        let bobMockClient = MockClient(address: .e164("+14158888888"), deviceId: 1, registrationId: 1235)
 
 //    SessionRecord aliceSessionRecord = new SessionRecord();
 //    SessionRecord bobSessionRecord   = new SessionRecord();
@@ -72,8 +72,8 @@ class SMKSessionCipherTest: XCTestCase {
 //    public void testMessageKeyLimits() throws Exception {
     func testMessageKeyLimits() {
         // NOTE: We use MockClient to ensure consistency between of our session state.
-        let aliceMockClient = MockClient(recipientId: "+14159999999", deviceId: 1, registrationId: 1234)
-        let bobMockClient = MockClient(recipientId: "+14158888888", deviceId: 1, registrationId: 1235)
+        let aliceMockClient = MockClient(address: .e164("+14159999999"), deviceId: 1, registrationId: 1234)
+        let bobMockClient = MockClient(address: .e164("+14158888888"), deviceId: 1, registrationId: 1235)
 
         //    SessionRecord aliceSessionRecord = new SessionRecord();
 //    SessionRecord bobSessionRecord   = new SessionRecord();
@@ -91,8 +91,14 @@ class SMKSessionCipherTest: XCTestCase {
 //    
 //    aliceStore.storeSession(new SignalProtocolAddress("+14159999999", 1), aliceSessionRecord);
 //    bobStore.storeSession(new SignalProtocolAddress("+14158888888", 1), bobSessionRecord);
-        aliceMockClient.sessionStore.storeSession(aliceMockClient.recipientId, deviceId: aliceMockClient.deviceId, session: aliceSessionRecord, protocolContext: nil)
-        bobMockClient.sessionStore.storeSession(bobMockClient.recipientId, deviceId: bobMockClient.deviceId, session: bobSessionRecord, protocolContext: nil)
+        aliceMockClient.storeSession(address: aliceMockClient.address,
+                                     deviceId: aliceMockClient.deviceId,
+                                     session: aliceSessionRecord,
+                                     protocolContext: nil)
+        bobMockClient.storeSession(address: bobMockClient.address,
+                                   deviceId: bobMockClient.deviceId,
+                                   session: bobSessionRecord,
+                                   protocolContext: nil)
 
 //    SessionCipher aliceCipher    = new SessionCipher(aliceStore, new SignalProtocolAddress("+14159999999", 1));
 //    SessionCipher     bobCipher      = new SessionCipher(bobStore, new SignalProtocolAddress("+14158888888", 1));
@@ -134,16 +140,22 @@ class SMKSessionCipherTest: XCTestCase {
 //    private void runInteraction(SessionRecord aliceSessionRecord, SessionRecord bobSessionRecord)
 //    throws DuplicateMessageException, LegacyMessageException, InvalidMessageException, NoSuchAlgorithmException, NoSessionException, UntrustedIdentityException {
     private func runInteraction(aliceSessionRecord: SessionRecord,
-                        bobSessionRecord: SessionRecord,
-                        aliceMockClient: MockClient,
-                        bobMockClient: MockClient) {
+                                bobSessionRecord: SessionRecord,
+                                aliceMockClient: MockClient,
+                                bobMockClient: MockClient) {
 //    SignalProtocolStore aliceStore = new TestInMemorySignalProtocolStore();
 //    SignalProtocolStore bobStore   = new TestInMemorySignalProtocolStore();
 
 //    aliceStore.storeSession(new SignalProtocolAddress("+14159999999", 1), aliceSessionRecord);
 //    bobStore.storeSession(new SignalProtocolAddress("+14158888888", 1), bobSessionRecord);
-        aliceMockClient.sessionStore.storeSession(aliceMockClient.recipientId, deviceId: aliceMockClient.deviceId, session: aliceSessionRecord, protocolContext: nil)
-        bobMockClient.sessionStore.storeSession(bobMockClient.recipientId, deviceId: bobMockClient.deviceId, session: bobSessionRecord, protocolContext: nil)
+        aliceMockClient.storeSession(address: aliceMockClient.address,
+                                     deviceId: aliceMockClient.deviceId,
+                                     session: aliceSessionRecord,
+                                     protocolContext: nil)
+        bobMockClient.storeSession(address: bobMockClient.address,
+                                   deviceId: bobMockClient.deviceId,
+                                   session: bobSessionRecord,
+                                   protocolContext: nil)
 
 //    SessionCipher     aliceCipher    = new SessionCipher(aliceStore, new SignalProtocolAddress("+14159999999", 1));
 //    SessionCipher     bobCipher      = new SessionCipher(bobStore, new SignalProtocolAddress("+14158888888", 1));

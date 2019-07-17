@@ -17,7 +17,7 @@ public class SMKSenderCertificate: NSObject {
     public let signer: SMKServerCertificate
     public let key: ECPublicKey
     public let senderDeviceId: UInt32
-    public let senderRecipientId: String
+    public let senderAddress: SMKAddress
     public let expirationTimestamp: UInt64
 
     // private final byte[] serialized;
@@ -44,12 +44,22 @@ public class SMKSenderCertificate: NSObject {
 
         // this.signer         = new ServerCertificate(certificate.getSigner().toByteArray());
         // this.key            = Curve.decodePoint(certificate.getIdentityKey().toByteArray(), 0);
-        // this.sender         = certificate.getSender();
-        // this.senderDeviceId = certificate.getSenderDevice();
-        // this.expiration     = certificate.getExpires();
         self.signer = try SMKServerCertificate(serializedData: certificateProto.signer.serializedData())
         self.key = try ECPublicKey(serializedKeyData: certificateProto.identityKey)
-        self.senderRecipientId = certificateProto.sender
+
+        // this.sender         = certificate.getSender();
+        let senderE164 = certificateProto.senderE164
+        let senderUuid: UUID?
+        if let senderUuidString = certificateProto.senderUuid {
+            senderUuid = UUID(uuidString: senderUuidString)
+            assert(senderUuid != nil)
+        } else {
+            senderUuid = nil
+        }
+        self.senderAddress = try SMKAddress(uuid: senderUuid, e164: senderE164)
+
+        // this.senderDeviceId = certificate.getSenderDevice();
+        // this.expiration     = certificate.getExpires();
         self.senderDeviceId = certificateProto.senderDevice
         self.expirationTimestamp = certificateProto.expires
 
