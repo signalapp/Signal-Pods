@@ -172,7 +172,7 @@
 #import "MIMETypeUtil.h"
 #import "NSArray+OWS.h"
 #import "NSData+Image.h"
-#import "NSError+MessageSending.h"
+#import "NSError+OWSOperation.h"
 #import "NSNotificationCenter+OWS.h"
 #import "NSTimer+OWS.h"
 #import "NSURLSessionDataTask+StatusCode.h"
