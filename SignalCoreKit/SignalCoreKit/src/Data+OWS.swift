@@ -19,4 +19,8 @@ extension Data {
     public func ows_constantTimeIsEqual(to other: Data) -> Bool {
         return (self as NSData).ows_constantTimeIsEqual(to: other)
     }
+
+    public static func join(_ dataList: [Data]) -> Data {
+        return NSData.join(dataList)
+    }
 }

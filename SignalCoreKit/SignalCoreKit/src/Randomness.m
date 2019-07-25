@@ -4,6 +4,8 @@
 
 #import "Randomness.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @implementation Randomness
 
 + (NSData *)generateRandomBytes:(int)numberBytes
@@ -17,7 +19,13 @@
     if (err != noErr || randomBytes.length != numberBytes) {
         OWSFail(@"Could not generate random bytes.");
     }
-    return [randomBytes copy];
+    NSData *copy = [randomBytes copy];
+
+    OWSAssert(copy != nil);
+    OWSAssert(copy.length == numberBytes);
+    return copy;
 }
 
 @end
+
+NS_ASSUME_NONNULL_END

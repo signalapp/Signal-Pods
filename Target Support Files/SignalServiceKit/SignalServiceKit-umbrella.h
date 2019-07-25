@@ -14,6 +14,7 @@
 #import "TSPreKeyManager.h"
 #import "Contact.h"
 #import "ContactsUpdater.h"
+#import "OWSContactQuery.h"
 #import "OWSDisappearingMessagesConfiguration.h"
 #import "PhoneNumber.h"
 #import "PhoneNumberUtil.h"

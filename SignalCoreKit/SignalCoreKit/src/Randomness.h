@@ -4,6 +4,8 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface Randomness : NSObject
 
 /**
@@ -16,5 +18,6 @@
 
 + (NSData *)generateRandomBytes:(int)numberBytes;
 
-
 @end
+
+NS_ASSUME_NONNULL_END
