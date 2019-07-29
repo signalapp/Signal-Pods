@@ -18,14 +18,14 @@ class SMKTest: XCTestCase {
     }
 
     func testECPrivateKey() {
-        let keyData = Randomness.generateRandomBytes(Int32(ECCKeyLength))!
+        let keyData = Randomness.generateRandomBytes(Int32(ECCKeyLength))
         let key = try! ECPrivateKey(keyData: keyData)
         let key2 = try! ECPrivateKey(keyData: keyData)
         XCTAssertEqual(key, key2)
     }
 
     func testECPublicKey() {
-        let keyData = Randomness.generateRandomBytes(Int32(ECCKeyLength))!
+        let keyData = Randomness.generateRandomBytes(Int32(ECCKeyLength))
         let key = try! ECPublicKey(keyData: keyData)
         XCTAssertEqual(key.keyData, keyData)
 
@@ -35,10 +35,10 @@ class SMKTest: XCTestCase {
     }
 
     func testUDMessage() {
-        let keyData = Randomness.generateRandomBytes(Int32(ECCKeyLength))!
+        let keyData = Randomness.generateRandomBytes(Int32(ECCKeyLength))
         let ephemeralKey = try! ECPublicKey(keyData: keyData)
-        let encryptedStatic = Randomness.generateRandomBytes(100)!
-        let encryptedMessage = Randomness.generateRandomBytes(200)!
+        let encryptedStatic = Randomness.generateRandomBytes(100)
+        let encryptedMessage = Randomness.generateRandomBytes(200)
 
         let message = try! SMKUnidentifiedSenderMessage(ephemeralKey: ephemeralKey,
                                                         encryptedStatic: encryptedStatic,
@@ -80,7 +80,7 @@ class SMKTest: XCTestCase {
         let senderCertificateProto = buildSenderCertificateProto()
         let senderCertificate = try! SMKSenderCertificate(serializedData: try! senderCertificateProto.serializedData())
 
-        let contentData = Randomness.generateRandomBytes(200)!
+        let contentData = Randomness.generateRandomBytes(200)
         let serializedData: Data = {
             let builder =  SMKProtoUnidentifiedSenderMessageMessage.builder(senderCertificate: senderCertificateProto,
                                                                             content: contentData)
@@ -122,7 +122,7 @@ class SMKTest: XCTestCase {
 
         let aliceToBobCipher = try! aliceMockClient.createSecretSessionCipher()
 
-        let plaintext = Randomness.generateRandomBytes(200)!
+        let plaintext = Randomness.generateRandomBytes(200)
         let paddedPlaintext = (plaintext as NSData).paddedMessageBody()!
         let senderCertificate = try! SMKSenderCertificate(serializedData: try! buildSenderCertificateProto(senderClient: aliceMockClient).serializedData())
         let encryptedMessage = try! aliceToBobCipher.throwswrapped_encryptMessage(recipientId: bobMockClient.accountId,
@@ -155,7 +155,7 @@ class SMKTest: XCTestCase {
         let certificateData = try! SMKProtoServerCertificateCertificate.builder(id: 123,
                                                                                 key: serverKey ).buildSerializedData()
 
-        let signatureData = Randomness.generateRandomBytes(ECCSignatureLength)!
+        let signatureData = Randomness.generateRandomBytes(ECCSignatureLength)
 
         let wrapperProto = SMKProtoServerCertificate.builder(certificate: certificateData,
                                                              signature: signatureData)
@@ -196,7 +196,7 @@ class SMKTest: XCTestCase {
             return try! builder.buildSerializedData()
         }()
 
-        let signatureData = Randomness.generateRandomBytes(ECCSignatureLength)!
+        let signatureData = Randomness.generateRandomBytes(ECCSignatureLength)
 
         let wrapperProto = try! SMKProtoSenderCertificate.builder(certificate: certificateData,
                                                                   signature: signatureData).build()
