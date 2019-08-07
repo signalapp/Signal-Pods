@@ -147,7 +147,6 @@
 #import "SSKMessageSenderJobRecord.h"
 #import "TSDatabaseSecondaryIndexes.h"
 #import "TSDatabaseView.h"
-#import "TSStorageHeaders.h"
 #import "TSStorageKeys.h"
 #import "TSYapDatabaseObject.h"
 #import "YapDatabaseTransaction+OWS.h"
