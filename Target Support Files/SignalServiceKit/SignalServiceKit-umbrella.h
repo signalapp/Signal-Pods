@@ -145,6 +145,7 @@
 #import "OWSStorage+Subclass.h"
 #import "OWSStorage.h"
 #import "SSKMessageSenderJobRecord.h"
+#import "StorageCoordinator.h"
 #import "TSDatabaseSecondaryIndexes.h"
 #import "TSDatabaseView.h"
 #import "TSStorageKeys.h"
