@@ -138,6 +138,7 @@
 #import "SDSCrossProcess.h"
 #import "SDSKeyValueStore+ObjC.h"
 #import "SSKAccessors+SDS.h"
+#import "OWSBroadcastMediaMessageJobRecord.h"
 #import "OWSSessionResetJobRecord.h"
 #import "SSKJobRecord.h"
 #import "OWSIncomingMessageFinder.h"
