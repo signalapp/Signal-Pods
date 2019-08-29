@@ -126,6 +126,21 @@ if [[ "$CONFIGURATION" == "App Store Release" ]]; then
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/textsecure.cer"
   install_resource "${PODS_ROOT}/SAMKeychain/Support/SAMKeychain.bundle"
 fi
+if [[ "$CONFIGURATION" == "Testable Release" ]]; then
+  install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/DigiCertGlobalRootG2.crt"
+  install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/DigiCertSHA2HighAssuranceServerCA.crt"
+  install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/GIAG2.crt"
+  install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/GSR2.crt"
+  install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/GSR4.crt"
+  install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/GTSR1.crt"
+  install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/GTSR2.crt"
+  install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/GTSR3.crt"
+  install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/GTSR4.crt"
+  install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/ias-root.cer"
+  install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/SFSRootCAG2.crt"
+  install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/textsecure.cer"
+  install_resource "${PODS_ROOT}/SAMKeychain/Support/SAMKeychain.bundle"
+fi
 
 mkdir -p "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}"
 rsync -avr --copy-links --no-relative --exclude '*/.svn/*' --files-from="$RESOURCES_TO_COPY" / "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}"
