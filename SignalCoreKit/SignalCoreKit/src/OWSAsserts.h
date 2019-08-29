@@ -155,7 +155,7 @@ __attribute__((annotate("returns_localized_nsstring"))) static inline NSString *
 
 #define OWSRaiseException(name, formatParam, ...)                                                                      \
     do {                                                                                                               \
-        OWSLogError(@"Exception: %@ %@", name, [NSString stringWithFormat:formatParam, ##__VA_ARGS__]);                \
+        OWSLogWarn(@"Exception: %@ %@", name, [NSString stringWithFormat:formatParam, ##__VA_ARGS__]);                 \
         OWSLogFlush();                                                                                                 \
         @throw [NSException exceptionWithName:name                                                                     \
                                        reason:[NSString stringWithFormat:formatParam, ##__VA_ARGS__]                   \
@@ -164,7 +164,7 @@ __attribute__((annotate("returns_localized_nsstring"))) static inline NSString *
 
 #define OWSRaiseExceptionWithUserInfo(name, userInfoParam, formatParam, ...)                                           \
     do {                                                                                                               \
-        OWSLogError(                                                                                                   \
+        OWSLogWarn(                                                                                                    \
             @"Exception: %@ %@ %@", name, userInfoParam, [NSString stringWithFormat:formatParam, ##__VA_ARGS__]);      \
         OWSLogFlush();                                                                                                 \
         @throw [NSException exceptionWithName:name                                                                     \
