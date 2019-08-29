@@ -51,6 +51,7 @@
 #import "OWSSyncGroupsRequestMessage.h"
 #import "OWSContact+Private.h"
 #import "OWSContact.h"
+#import "OWSContactOffersInteraction.h"
 #import "OWSDisappearingConfigurationUpdateInfoMessage.h"
 #import "OWSDisappearingMessagesConfigurationMessage.h"
 #import "OWSDynamicOutgoingMessage.h"
