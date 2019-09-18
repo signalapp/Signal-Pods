@@ -194,6 +194,7 @@
 #import "OWSSyncManagerProtocol.h"
 #import "OWSUserProfile.h"
 #import "SSKAsserts.h"
+#import "TestModel.h"
 #import "UIImage+OWS.h"
 #import "YapDatabaseViewTransaction+OWS.h"
 
