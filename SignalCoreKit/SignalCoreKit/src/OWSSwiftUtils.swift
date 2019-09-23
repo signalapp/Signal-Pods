@@ -15,8 +15,7 @@ public func assertOnQueue(_ queue: DispatchQueue) {
     }
 }
 
-// Once we're on Swift4.2 we can mark this as inlineable
-// @inlinable
+@inlinable
 public func AssertIsOnMainThread(file: String = #file,
                                  function: String = #function,
                                  line: Int = #line) {
@@ -25,8 +24,7 @@ public func AssertIsOnMainThread(file: String = #file,
     }
 }
 
-// Once we're on Swift4.2 we can mark this as inlineable
-// @inlinable
+@inlinable
 public func owsFailDebug(_ logMessage: String,
                          file: String = #file,
                          function: String = #function,
@@ -37,8 +35,7 @@ public func owsFailDebug(_ logMessage: String,
     assertionFailure(formattedMessage)
 }
 
-// Once we're on Swift4.2 we can mark this as inlineable
-// @inlinable
+@inlinable
 public func owsFail(_ logMessage: String,
                     file: String = #file,
                     function: String = #function,
@@ -49,8 +46,7 @@ public func owsFail(_ logMessage: String,
     fatalError(formattedMessage)
 }
 
-// Once we're on Swift4.2 we can mark this as inlineable
-// @inlinable
+@inlinable
 public func notImplemented(file: String = #file,
                            function: String = #function,
                            line: Int = #line) -> Never {

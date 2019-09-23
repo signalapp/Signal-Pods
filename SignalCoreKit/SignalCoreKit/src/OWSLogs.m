@@ -10,27 +10,27 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (void)verbose:(NSString *)logString
 {
-    DDLogVerbose(@"%@", logString);
+    DDLogVerbose(@"💙 %@", logString);
 }
 
 + (void)debug:(NSString *)logString
 {
-    DDLogDebug(@"%@", logString);
+    DDLogDebug(@"💚 %@", logString);
 }
 
 + (void)info:(NSString *)logString
 {
-    DDLogInfo(@"%@", logString);
+    DDLogInfo(@"💛 %@", logString);
 }
 
 + (void)warn:(NSString *)logString
 {
-    DDLogWarn(@"%@", logString);
+    DDLogWarn(@"🧡 %@", logString);
 }
 
 + (void)error:(NSString *)logString
 {
-    DDLogError(@"%@", logString);
+    DDLogError(@"❤️ %@", logString);
 }
 
 + (void)flush

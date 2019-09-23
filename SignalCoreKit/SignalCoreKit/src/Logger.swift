@@ -4,8 +4,7 @@
 
 import Foundation
 
-// Once we're on Swift4.2 we can mark this as inlineable
-// @inlinable
+@inlinable
 public func owsFormatLogMessage(_ logString: String,
                                 file: String = #file,
                                 function: String = #function,
