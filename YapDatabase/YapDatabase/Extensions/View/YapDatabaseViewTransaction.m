@@ -2980,18 +2980,19 @@
 	
 	for (YapDatabaseViewPageMetadata *pageMetadata in pagesMetadataForGroup)
 	{
-		YapDatabaseViewPage *page = [self pageForPageKey:pageMetadata->pageKey];
-		
-		[page enumerateRowidsUsingBlock:^(int64_t rowid, NSUInteger idx, BOOL *innerStop) {
-			
-			block(rowid, pageOffset+idx, &stop);
-			
-			if (stop || [self->parentConnection->mutatedGroups containsObject:group]) *innerStop = YES;
-		}];
-		
-		if (stop || [parentConnection->mutatedGroups containsObject:group]) break;
-		
-		pageOffset += pageMetadata->count;
+        @autoreleasepool {
+            YapDatabaseViewPage *page = [self pageForPageKey:pageMetadata->pageKey];
+            [page enumerateRowidsUsingBlock:^(int64_t rowid, NSUInteger idx, BOOL *innerStop) {
+                
+                block(rowid, pageOffset+idx, &stop);
+                
+                if (stop || [self->parentConnection->mutatedGroups containsObject:group]) *innerStop = YES;
+            }];
+            
+            if (stop || [parentConnection->mutatedGroups containsObject:group]) break;
+            
+            pageOffset += pageMetadata->count;
+        }
 	}
 	
 	if (!stop && [parentConnection->mutatedGroups containsObject:group])

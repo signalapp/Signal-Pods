@@ -911,12 +911,16 @@ static int connectionBusyHandler(void *ptr, int count)
 		
 	#pragma clang diagnostic pop
 	};
-	
-	if (dispatch_get_specific(IsOnConnectionQueueKey))
-		block();
-	else
-		dispatch_sync(connectionQueue, block);
-	
+	 
+    if (self.ignoreQueues) {
+        block();
+    } else {
+        if (dispatch_get_specific(IsOnConnectionQueueKey))
+            block();
+        else
+            dispatch_sync(connectionQueue, block);
+    }
+    
 	return result;
 }
 
@@ -5136,11 +5140,15 @@ static int connectionBusyHandler(void *ptr, int count)
 	#pragma clang diagnostic pop
 	};
 	
-	if (dispatch_get_specific(IsOnConnectionQueueKey))
-		block();
-	else
-		dispatch_sync(connectionQueue, block);
-	
+    // NOTE: This should only be used during the migration, when we're already on the correct queue.
+    if (self.ignoreQueues) {
+        block();
+    } else {
+        if (dispatch_get_specific(IsOnConnectionQueueKey))
+            block();
+        else
+            dispatch_sync(connectionQueue, block);
+    }
 	return extConnection;
 }
 
