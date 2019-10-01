@@ -26,7 +26,7 @@
 #pragma unused(ydbLogLevel)
 
 typedef BOOL (^YapBoolBlock)(void);
-const NSUInteger kDefaultBatchSize = 10 * 1000;
+const NSUInteger kDefaultBatchSize = 1000;
 
 @implementation YapDatabaseReadTransaction
 
