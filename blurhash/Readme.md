@@ -1,0 +1,179 @@
+# [BlurHash](http://blurha.sh)
+
+BlurHash is a compact representation of a placeholder for an image.
+
+## Why would you want this?
+
+Does your designer cry every time you load their beautifully designed screen, and it is full of empty boxes because all the
+images have not loaded yet? Does your database engineer cry when you want to solve this by trying to cram little thumbnail
+images into your data to show as placeholders?
+
+BlurHash will solve your problems! How? Like this:
+
+<img src="Media/WhyBlurHash.png" width="600">
+
+You can also see nice examples and try it out yourself at [blurha.sh](http://blurha.sh/)!
+
+## How does it work?
+
+In short, BlurHash takes an image, and gives you a short string (only 20-30 characters!) that represents the placeholder for this
+image. You do this on the backend of your service, and store the string along with the image. When you send data to your
+client, you send both the URL to the image, and the BlurHash string. Your client then takes the string, and decodes it into an
+image that it shows while the real image is loading over the network. The string is short enough that it comfortably fits into
+whatever data format you use. For instance, it can easily be added as a field in a JSON object.
+
+In summary:
+
+<img src="Media/HowItWorks1.jpg" width="250">&nbsp;&nbsp;&nbsp;<img src="Media/HowItWorks2.jpg" width="250">
+
+Want to know all the gory technical details? Read the [algorithm description](Algorithm.md).
+
+Implementing the algorithm is actually quite easy! Implementations are short and easily ported to your favourite language or
+platform.
+
+## Implementations
+
+So far, we have created these implementations:
+
+* [C](C) - An encoder implemenation in portable C code.
+* [Swift](Swift) - Encoder and decoder implementations, and a larger library offering advanced features.
+  There is also an example app to play around with the algorithm.
+* [Kotlin](Kotlin) - A decoder implementation for Android.
+* [TypeScript](TypeScript) - Encoder and decoder implementations, and an example page to test.
+* [Python](https://github.com/woltapp/blurhash-python) - Integration of the C encoder code into Python.
+
+These cover our use cases, but could probably use polishing, extending and improving. There are also these third party implementations that we know of:
+
+* [Pure Python](https://github.com/halcy/blurhash-python) - Implementation of both the encoder and decoder in pure Python.
+* [One version in Go](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=1&cad=rja&uact=8&ved=2ahUKEwjJ9ueT9pXjAhXRw6YKHfrGBNcQFjAAegQIABAB&url=https%3A%2F%2Fgithub.com%2Fbbrks%2Fgo-blurhash&usg=AOvVaw2alZSHvT7HbublYbpNn9fY), and [another version in Go](https://github.com/buckket/go-blurhash).
+* [PHP](https://github.com/kornrunner/php-blurhash) - Encoder and decoder implementations in pure PHP.
+* [Java](https://github.com/hsch/blurhash-java) - Encoder implementation in Java.
+* [Clojure](https://github.com/siili-core/blurhash) - Encoder and decoder implementations in Clojure.
+* [Nim](https://github.com/SolitudeSF/blurhash) - Encoder and decoder implementation in pure Nim.
+* [Rust and WebAssembly](https://github.com/fpapado/blurhash-rust-wasm) - Encoder and decoder implementations in Rust. Distributed as both native Rust and WebAssembly packages.
+
+Perhaps you'd like to help extend this list? Which brings us to...
+
+## Contributing
+
+We'd love contributions! The algorithm is [very simple](Algorithm.md) - less than two hundred lines of code - and can easily be
+ported to your platform of choice. And having support for more platforms would be wonderful! So, Java decoder? Golang encoder?
+Haskell? Rust? We want them all!
+
+We will also try to tag any issues on our [issue tracker](https://github.com/woltapp/blurhash/issues) that we'd love help with, so
+if you just want to dip in, go have a look.
+
+You can file a pull request with us, or you can start your own repo and project if you want to run everything yourself, we don't mind.
+
+If you do want to contribute to this project, we have a [code of conduct](CodeOfConduct.md).
+
+## Users
+
+Who uses BlurHash? Here are some projects we know about:
+
+* [Wolt](http://wolt.com/) - We are of course using it ourselves. BlurHashes are used in the mobile clients on iOS and Android, as well as on the web, as placeholders during image loading.
+* [Mastodon](https://github.com/tootsuite/mastodon) - The Mastodon decentralised social media network uses BlurHashes both as loading placeholders, as well as for hiding media marked as sensitive.
+
+## Good Questions
+
+### How fast is encoding? Decoding?
+
+These implementations are not very optimised. Running them on very large images can be a bit slow. The performance of
+the encoder and decoder are about the same for the same input or output size, so decoding very large placeholders, especially
+on your UI thread, can also be a bit slow.
+
+However! The trick to using the algorithm efficiently is to not run it on full-sized data. The fine detail of an image is all thrown away,
+so you should scale your images down before running BlurHash on them. If you are creating thumbnails, run BlurHash on those
+instead of the full images.
+
+Similarly, when displaying the placeholders, very small images work very well when scaled up. We usually decode placeholders
+that are 32 or even 20 pixels wide, and then let the UI layer scale them up, which is indistinguishable from decoding them at full size.
+
+### How do I pick the number of X and Y components?
+
+It depends a bit on taste. The more components you pick, the more information is retained in the placeholder, but the longer
+the BlurHash string will be. Also, it doesn't always look good with too many components. We usually go with 4 by 3, which
+seems to strike a nice balance.
+
+However, you should adjust the number of components depending on the aspect ratio of your images. For instance, very wide
+images should have more X components and fewer Y components.
+
+The Swift example project contains a test app where you can play around with the parameters and see the results.
+
+### What is the `punch` parameter in some of these implementations?
+
+It is a parameter that adjusts the contrast on the decoded image. 1 means normal, smaller values will make the effect more subtle,
+and larger values will make it stronger. This is basically a design parameter, which lets you adjust the look.
+
+Technically, what it does is scale the AC components up or down.
+
+### Is this only useful as an image loading placeholder?
+
+Well, that is what it was designed for originally, but it turns out to be useful for a few other things:
+
+* Masking images without having to use expensive blurs - [Mastodon](http://github.com/tootsuite/mastodon) uses it for this.
+* The data representation makes it quite easy to extract colour averages of the image for different areas. You can easily find approximations of things like the average colour of the top edge of the image, or of a corner. There is some code in the Swift BlurHashKit implementation to experiment with this. Also, the average colour of the entire image is just the DC component and can be decoded even without implementing any of the more complicated DCT stuff.
+* We have been meaning to try to implement tinted drop shadows for UI elements by using the BlurHash and extending the borders. Haven't actually had time to implement this yet though.
+
+### Why base 83?
+
+First, 83 seems to be about how many low-ASCII characters you can find that are safe for use in all of JSON, HTML and shells.
+
+Secondly, 83 * 83 is very close to, and a little more than, 19 * 19 * 19, making it ideal for encoding three AC components in two
+characters.
+
+### What about using the full Unicode character set to get a more efficient encoding?
+
+We haven't looked into how much overehead UTF-8 encoding would introduce versus base 83 in single-byte characters, but
+the encoding and decoding would probably be a lot more complicated, so in the spirit of minimalism BlurHash uses the simpler
+option. It might also be awkward to copy-paste, depending on OS capabilities.
+
+If you think it can be done and is worth it, though, do make your own version and show us! We'd love to see it in action.
+
+### What about other basis representations than DCT?
+
+This is something we'd *love* to try. The DCT looks quite ugly when you increase the number of components, probably because
+the shape of the basis functions becomes too visible. Using a different basis with more aesthetically pleasing shape might be
+a big win.
+
+However, we have not managed come up with one. Some experimenting with a [Fourier-Bessel base](https://en.wikipedia.org/wiki/Fourier–Bessel_series),
+targeted at images that are going to be cropped into circles has been done, but without much success. Here again we'd love
+to see what you can come up with!
+
+## Authors
+
+* [Dag Ågren](https://github.com/DagAgren) - Original algorithm design, Swift and C implementations
+* [Mykhailo Shchurov](https://github.com/shchurov) - Kotlin decoder implementation
+* [Hang Duy Khiem](https://github.com/hangduykhiem) - Android demo app
+* [Olli Mahlamäki](https://github.com/omahlama) - TypeScript decoder and encoder implementations
+* [Atte Lautanala](https://github.com/lautat) - Python integration
+* [Lorenz Diener](https://github.com/halcy) - Pure Python implementation
+* [Boris Momčilović](https://github.com/kornrunner) - Pure PHP implementation
+* [Hendrik Schnepel](https://github.com/hsch) - Java encoder implementation
+* [Tuomo Virolainen](https://github.com/tvirolai) - Clojure implementation
+* [Fotis Papadogeorgopoulos](https://github.com/fpapado) - Rust and WebAssembly implementation
+* _Your name here?_
+
+## License
+
+All of these implemenations are licensed under the MIT license:
+
+Copyright (c) 2018 Wolt Enterprises
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
