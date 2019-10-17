@@ -1,9 +1,10 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "Cryptography.h"
 #import "NSData+OWS.h"
+#import "SCKError.h"
 #import <CommonCrypto/CommonCryptor.h>
 #import <CommonCrypto/CommonHMAC.h>
 #import <SignalCoreKit/Randomness.h>
@@ -15,17 +16,6 @@ NS_ASSUME_NONNULL_BEGIN
 #define HMAC256_OUTPUT_LENGTH 32
 #define AES_CBC_IV_LENGTH 16
 #define AES_KEY_SIZE 32
-
-NSString *const SignalCoreKitErrorDomain = @"SignalCoreKitErrorDomain";
-
-const NSUInteger SCKErrorCodeFailedToDecryptMessage = 100;
-
-NSError *SCKErrorWithCodeDescription(NSUInteger code, NSString *description)
-{
-    return [NSError errorWithDomain:SignalCoreKitErrorDomain
-                               code:code
-                           userInfo:@{ NSLocalizedDescriptionKey: description }];
-}
 
 // Returned by many OpenSSL functions - indicating success
 const int kOpenSSLSuccess = 1;
@@ -483,7 +473,7 @@ const NSUInteger kAES256_KeyByteLength = 32;
     if (digest.length <= 0) {
         // This *could* happen with sufficiently outdated clients.
         OWSLogError(@"Refusing to decrypt attachment without a digest.");
-        *error = SCKErrorWithCodeDescription(SCKErrorCodeFailedToDecryptMessage,
+        *error = SCKErrorWithCodeDescription(SCKErrorCode_FailedToDecryptMessage,
                                              NSLocalizedString(@"ERROR_MESSAGE_ATTACHMENT_FROM_OLD_CLIENT",
                                                                @"Error message when unable to receive an attachment because the sending client is too old."));
         return nil;
@@ -516,7 +506,7 @@ const NSUInteger kAES256_KeyByteLength = 32;
     if (([dataToDecrypt length] < AES_CBC_IV_LENGTH + HMAC256_OUTPUT_LENGTH) ||
         ([key length] < AES_KEY_SIZE + HMAC256_KEY_LENGTH)) {
         OWSLogError(@"Message shorter than crypto overhead!");
-        *error = SCKErrorWithCodeDescription(SCKErrorCodeFailedToDecryptMessage, NSLocalizedString(@"ERROR_MESSAGE_INVALID_MESSAGE", @""));
+        *error = SCKErrorWithCodeDescription(SCKErrorCode_FailedToDecryptMessage, NSLocalizedString(@"ERROR_MESSAGE_INVALID_MESSAGE", @""));
         return nil;
     }
 
@@ -545,7 +535,7 @@ const NSUInteger kAES256_KeyByteLength = 32;
                                                               digest:digest];
     if (!paddedPlainText) {
         OWSFailDebug(@"couldn't decrypt attachment.");
-        *error = SCKErrorWithCodeDescription(SCKErrorCodeFailedToDecryptMessage, NSLocalizedString(@"ERROR_MESSAGE_INVALID_MESSAGE", @""));
+        *error = SCKErrorWithCodeDescription(SCKErrorCode_FailedToDecryptMessage, NSLocalizedString(@"ERROR_MESSAGE_INVALID_MESSAGE", @""));
         return nil;
     } else if (unpaddedSize == 0) {
         // Work around for legacy iOS client's which weren't setting padding size.
@@ -554,7 +544,7 @@ const NSUInteger kAES256_KeyByteLength = 32;
         return paddedPlainText;
     } else {
         if (unpaddedSize > paddedPlainText.length) {
-            *error = SCKErrorWithCodeDescription(SCKErrorCodeFailedToDecryptMessage, NSLocalizedString(@"ERROR_MESSAGE_INVALID_MESSAGE", @""));
+            *error = SCKErrorWithCodeDescription(SCKErrorCode_FailedToDecryptMessage, NSLocalizedString(@"ERROR_MESSAGE_INVALID_MESSAGE", @""));
             return nil;
         }
 

@@ -48,32 +48,6 @@ public enum SMKSecretSessionCipherError: Int, Error {
     case selfSentMessage
 }
 
-// See:
-// https://github.com/signalapp/libsignal-metadata-java/blob/master/java/src/main/java/org/signal/libsignal/metadata/SecretSessionCipher.java
-
-public extension ECKeyPair {
-
-    // TODO: Rename to publicKey(), rename existing publicKey() method to publicKeyData().
-    func ecPublicKey() throws -> ECPublicKey {
-        guard publicKey.count == ECCKeyLength else {
-            throw SMKError.assertionError(description: "\(logTag) public key has invalid length")
-        }
-
-        // NOTE: we don't use ECPublicKey(serializedKeyData:) since the
-        // key data should not have a type byte.
-        return try ECPublicKey(keyData: publicKey)
-    }
-
-    // TODO: Rename to privateKey(), rename existing privateKey() method to privateKeyData().
-    func ecPrivateKey() throws -> ECPrivateKey {
-        guard privateKey.count == ECCKeyLength else {
-            throw SMKError.assertionError(description: "\(logTag) private key has invalid length")
-        }
-
-        return try ECPrivateKey(keyData: privateKey)
-    }
-}
-
 // MARK: -
 
 private class SMKSecretKeySpec: NSObject {

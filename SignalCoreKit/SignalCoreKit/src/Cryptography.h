@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 NS_ASSUME_NONNULL_BEGIN
@@ -7,8 +7,6 @@ NS_ASSUME_NONNULL_BEGIN
 extern const NSUInteger kAES256_KeyByteLength;
 extern const NSUInteger kAESGCM256_IVLength;
 extern const NSUInteger kAES256CTR_IVLength;
-
-extern const NSUInteger SCKErrorCodeFailedToDecryptMessage;
 
 /// Key appropriate for use in AES256-GCM
 @interface OWSAES256Key : NSObject <NSSecureCoding>

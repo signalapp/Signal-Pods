@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "Curve25519.h"
@@ -8,6 +8,9 @@
 #import <SignalCoreKit/SCKExceptionWrapper.h>
 
 NS_ASSUME_NONNULL_BEGIN
+
+
+NSErrorDomain const Curve25519KitErrorDomain = @"Curve25519KitErrorDomain";
 
 NSString *const TSECKeyPairPublicKey = @"TSECKeyPairPublicKey";
 NSString *const TSECKeyPairPrivateKey = @"TSECKeyPairPrivateKey";
@@ -36,35 +39,54 @@ extern int curve25519_sign(unsigned char *signature_out, /* 64 bytes */
 
 - (nullable instancetype)initWithCoder:(NSCoder *)coder
 {
-    self = [super init];
-    if (self) {
-        NSUInteger returnedLength = 0;
-        const uint8_t *returnedBuffer = NULL;
-        // De-serialize public key
-        returnedBuffer = [coder decodeBytesForKey:TSECKeyPairPublicKey returnedLength:&returnedLength];
-        if (returnedLength != ECCKeyLength) {
-            return nil;
-        }
-        _publicKey = [NSData dataWithBytes:returnedBuffer length:returnedLength];
+    NSUInteger returnedLength = 0;
+    const uint8_t *returnedBuffer = NULL;
 
-        // De-serialize private key
-        returnedBuffer = [coder decodeBytesForKey:TSECKeyPairPrivateKey returnedLength:&returnedLength];
-        if (returnedLength != ECCKeyLength) {
-            return nil;
-        }
-        _privateKey = [NSData dataWithBytes:returnedBuffer length:returnedLength];
+    // De-serialize public key
+    returnedBuffer = [coder decodeBytesForKey:TSECKeyPairPublicKey returnedLength:&returnedLength];
+    if (returnedLength != ECCKeyLength) {
+        OWSFailDebug(@"failure: wrong length for public key.");
+        return nil;
     }
-    return self;
+    NSData *publicKeyData = [NSData dataWithBytes:returnedBuffer length:returnedLength];
+
+    // De-serialize private key
+    returnedBuffer = [coder decodeBytesForKey:TSECKeyPairPrivateKey returnedLength:&returnedLength];
+    if (returnedLength != ECCKeyLength) {
+        OWSFailDebug(@"failure: wrong length for private key.");
+        return nil;
+    }
+    NSData *privateKeyData = [NSData dataWithBytes:returnedBuffer length:returnedLength];
+
+    NSError *error;
+    ECKeyPair *keyPair = [self initWithPublicKeyData:publicKeyData
+                                      privateKeyData:privateKeyData
+                                               error:&error];
+    if (error != nil) {
+        OWSFailDebug(@"error: %@", error);
+        return nil;
+    }
+
+    return keyPair;
 }
 
-- (nullable id)initWithPublicKey:(NSData *)publicKey privateKey:(NSData *)privateKey
+/**
+ * Build a keypair from existing key data.
+ * If you need a *new* keypair, user `generateKeyPair` instead.
+ */
+- (nullable instancetype)initWithPublicKeyData:(NSData *)publicKeyData
+                                privateKeyData:(NSData *)privateKeyData
+                                         error:(NSError **)error
 {
     if (self = [super init]) {
-        if (publicKey.length != ECCKeyLength || privateKey.length != ECCKeyLength) {
+        if (publicKeyData.length != ECCKeyLength || privateKeyData.length != ECCKeyLength) {
+            *error = [NSError errorWithDomain:Curve25519KitErrorDomain
+                                         code:Curve25519KitError_InvalidKeySize
+                                     userInfo:nil];
             return nil;
         }
-        _publicKey = publicKey;
-        _privateKey = privateKey;
+        _publicKey = publicKeyData;
+        _privateKey = privateKeyData;
     }
     return self;
 }
@@ -88,7 +110,12 @@ extern int curve25519_sign(unsigned char *signature_out, /* 64 bytes */
 
     curve25519_donna(publicKey.mutableBytes, privateKey.mutableBytes, basepoint);
 
-    return [[ECKeyPair alloc] initWithPublicKey:[publicKey copy] privateKey:[privateKey copy]];
+    ECKeyPair *keyPair = [[ECKeyPair alloc] initWithPublicKeyData:[publicKey copy]
+                                                   privateKeyData:[privateKey copy]
+                                                            error:nil];
+    OWSAssert(keyPair != nil);
+
+    return keyPair;
 }
 
 - (NSData *)throws_sign:(NSData *)data

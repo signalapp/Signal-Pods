@@ -1,8 +1,9 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 import Foundation
+import SignalCoreKit
 
 // See:
 // https://github.com/signalapp/libsignal-protocol-java/blob/87fae0f98332e98a32bbb82515428b4edeb4181f/java/src/main/java/org/whispersystems/libsignal/ecc/ECPrivateKey.java
@@ -14,7 +15,7 @@ import Foundation
     @objc
     public init(keyData: Data) throws {
         guard keyData.count == ECCKeyLength else {
-            throw SMKError.assertionError(description: "\(ECPrivateKey.logTag) key has invalid length")
+            throw OWSAssertionError("\(ECPrivateKey.logTag) key has invalid length")
         }
 
         self.keyData = keyData
