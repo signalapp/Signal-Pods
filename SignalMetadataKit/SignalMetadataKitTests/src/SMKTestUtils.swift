@@ -81,7 +81,7 @@ class MockClient: NSObject {
     func generateMockPreKey() -> PreKeyRecord {
         let preKeyId: Int32 = Int32(arc4random_uniform(UInt32(INT32_MAX)))
         let keyPair = Curve25519.generateKeyPair()
-        let preKey = PreKeyRecord(id: preKeyId, keyPair: keyPair)!
+        let preKey = PreKeyRecord(id: preKeyId, keyPair: keyPair, createdAt: Date())!
         self.preKeyStore.storePreKey(preKeyId, preKeyRecord: preKey)
         return preKey
     }

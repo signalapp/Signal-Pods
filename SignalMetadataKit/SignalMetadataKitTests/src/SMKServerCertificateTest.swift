@@ -172,6 +172,9 @@ class SMKServerCertificateTest: XCTestCase {
                 } catch SMKError.assertionError {
                     // Some bad certificates will fail to parse.
                     continue
+                } catch ECKeyError.assertionError {
+                    // Some bad certificates will fail to parse.
+                    continue
                 } catch {
                     XCTFail("Unexpected parsing error: \(error)")
                     continue

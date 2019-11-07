@@ -5,6 +5,10 @@
 import Foundation
 import SignalCoreKit
 
+public enum ECKeyError: Error {
+    case assertionError(description: String)
+}
+
 // See:
 // https://github.com/signalapp/libsignal-protocol-java/blob/87fae0f98332e98a32bbb82515428b4edeb4181f/java/src/main/java/org/whispersystems/libsignal/ecc/DjbECPublicKey.java
 @objc public class ECPublicKey: NSObject {
@@ -18,7 +22,7 @@ import SignalCoreKit
     @objc
     public init(keyData: Data) throws {
         guard keyData.count == ECCKeyLength else {
-            throw OWSAssertionError("\(ECPublicKey.logTag) key has invalid length")
+            throw ECKeyError.assertionError(description: "\(ECPublicKey.logTag) key has invalid length")
         }
 
         self.keyData = keyData
@@ -31,12 +35,12 @@ import SignalCoreKit
 
         let typeByte = try parser.nextByte(name: "type byte")
         guard typeByte == ECPublicKey.keyTypeDJB else {
-            throw OWSAssertionError("\(ECPublicKey.logTag) key data has invalid type byte")
+            throw ECKeyError.assertionError(description: "\(ECPublicKey.logTag) key data has invalid type byte")
         }
 
         let keyData = try parser.remainder(name: "key data")
         guard keyData.count == ECCKeyLength else {
-            throw OWSAssertionError("\(ECPublicKey.logTag) key has invalid length")
+            throw ECKeyError.assertionError(description: "\(ECPublicKey.logTag) key has invalid length")
         }
 
         self.keyData = keyData
