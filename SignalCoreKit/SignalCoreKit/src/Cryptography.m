@@ -538,10 +538,36 @@ const NSUInteger kAES256_KeyByteLength = 32;
         *error = SCKErrorWithCodeDescription(SCKErrorCode_FailedToDecryptMessage, NSLocalizedString(@"ERROR_MESSAGE_INVALID_MESSAGE", @""));
         return nil;
     } else if (unpaddedSize == 0) {
-        // Work around for legacy iOS client's which weren't setting padding size.
-        // Since we know those clients pre-date attachment padding we return the entire data.
-        OWSLogWarn(@"Decrypted attachment with unspecified size.");
-        return paddedPlainText;
+        // Legacy iOS clients didn't set the unpaddedSize on attachments.
+        // So an unpaddedSize of 0 could mean one of two things:
+        // [case 1] receiving a legacy attachment from before padding was introduced
+        // [case 2] receiving a modern attachment of length 0 that just has some null padding (e.g. an empty group sync)
+        __block BOOL foundNonNullByte = NO;
+        [paddedPlainText enumerateByteRangesUsingBlock:^(const void * _Nonnull bytes, NSRange byteRange, BOOL * _Nonnull stop) {
+            for (NSUInteger i = 0; i < byteRange.length; ++i) {
+                if (((uint8_t*)bytes)[i] != 0x00) {
+                    foundNonNullByte = YES;
+                    *stop = YES;
+                }
+            }
+        }];
+
+        if (foundNonNullByte) {
+            // [case 1] There was something besides 0 in our data, assume it wasn't padding.
+            return paddedPlainText;
+        } else {
+            // [case 2] The bytes were all 0's. We assume it was all padding and the actual
+            // attachment data was indeed empty. The downside here would be if a legacy client
+            // was intentionally sending an attachment consisting of just 0's. This seems unlikely,
+            // and would only affect iOS clients from before commit:
+            //
+            //      6eeb78157a044e632adc3daf6254aceacd53e335
+            //      Author: Michael Kirk <michael.code@endoftheworl.de>
+            //      Date:   Thu Oct 26 15:08:25 2017 -0700
+            //
+            //      Include size in attachment pointer
+            return [NSData new];
+        }
     } else {
         if (unpaddedSize > paddedPlainText.length) {
             *error = SCKErrorWithCodeDescription(SCKErrorCode_FailedToDecryptMessage, NSLocalizedString(@"ERROR_MESSAGE_INVALID_MESSAGE", @""));
