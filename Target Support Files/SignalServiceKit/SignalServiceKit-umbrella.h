@@ -97,8 +97,6 @@
 #import "OWSUnknownContactBlockOfferMessage.h"
 #import "OWSUnknownProtocolVersionMessage.h"
 #import "PreKeyBundle+jsonDict.h"
-#import "OWSOutgoingReactionMessage.h"
-#import "OWSReaction.h"
 #import "InstalledSticker.h"
 #import "KnownStickerPack.h"
 #import "StickerInfo.h"
