@@ -1,0 +1,47 @@
+{
+  "name": "SignalRingRTC",
+  "version": "0.2.0",
+  "summary": "A Swift & Objective-C library used by the Signal iOS app for WebRTC interactions.",
+  "description": "A Swift & Objective-C library used by the Signal iOS app for WebRTC interactions.\"",
+  "license": "GPLv3",
+  "homepage": "https://github.com/signalapp/ringrtc",
+  "source": {
+    "git": "https://github.com/signalapp/ringrtc.git",
+    "tag": "v0.2.0"
+  },
+  "authors": {
+    "iOS Team": "ios@signal.org"
+  },
+  "social_media_url": "https://twitter.com/signalapp",
+  "platforms": {
+    "ios": "10.0"
+  },
+  "requires_arc": true,
+  "source_files": [
+    "RingRTC/src/ios/SignalRingRTC/SignalRingRTC/**/*.{h,m,swift}",
+    "WebRTC/Build/libringrtc/**/*.h"
+  ],
+  "public_header_files": "RingRTC/src/ios/SignalRingRTC/SignalRingRTC/**/*.h",
+  "private_header_files": "WebRTC/Build/libringrtc/*.h",
+  "vendored_libraries": "WebRTC/Build/libringrtc/libringrtc.a",
+  "libraries": "ringrtc",
+  "module_map": "RingRTC/src/ios/SignalRingRTC/SignalRingRTC/SignalRingRTC.modulemap",
+  "dependencies": {
+    "SignalCoreKit": [
+
+    ]
+  },
+  "testspecs": [
+    {
+      "name": "Tests",
+      "test_type": "unit",
+      "source_files": "RingRTC/src/ios/SignalRingRTC/SignalRingRTCTests/**/*.{h,m,swift}"
+    }
+  ],
+  "subspecs": [
+    {
+      "name": "WebRTC",
+      "vendored_frameworks": "WebRTC/Build/WebRTC.framework"
+    }
+  ]
+}
