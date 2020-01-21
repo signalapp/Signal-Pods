@@ -116,6 +116,7 @@
 #import "OWSCensorshipConfiguration.h"
 #import "OWSCountryMetadata.h"
 #import "OWSSignalService.h"
+#import "GroupsV2MessageProcessor.h"
 #import "SSKMessageDecryptJobRecord.h"
 #import "YAPDBMessageContentJobFinder.h"
 #import "OWSWebSocket.h"
