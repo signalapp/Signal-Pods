@@ -149,7 +149,7 @@ public class Argon2 {
     ///     - salt: The salt to use for hashing
     ///     - desiredLength: The desired length of the resulting hash
     ///     - variant: The argon2 variant to use
-    ///     - version: The argon2 version to use, defaults to `latest`
+    ///     - version: The argon2 version to use
     ///
     /// - Returns: A tuple containing the raw hash value and encoded hash for the given input parameters.
     /// - Throws: `Argon2.Error` if the input parameters are invalid or hashing fails.
@@ -161,7 +161,7 @@ public class Argon2 {
         salt: Data,
         desiredLength: Int,
         variant: Variant,
-        version: Version = .latest
+        version: Version
     ) throws -> (raw: Data, encoded: String) {
         let passwordBytes = password.withUnsafeBytes { [UInt8]($0) }
         let saltBytes = salt.withUnsafeBytes { [UInt8]($0) }

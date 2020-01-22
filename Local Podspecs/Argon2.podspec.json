@@ -32,25 +32,25 @@
   "osx": {
     "source_files": [
       "phc-winner-argon2/src/opt.c",
-      "phc-winner-argon2/src/blamka-round-opt.h"
+      "phc-winner-argon2/src/blake2/blamka-round-opt.h"
     ]
   },
   "ios": {
     "source_files": [
       "phc-winner-argon2/src/ref.c",
-      "phc-winner-argon2/src/blamka-round-ref.h"
+      "phc-winner-argon2/src/blake2/blamka-round-ref.h"
     ]
   },
   "tvos": {
     "source_files": [
       "phc-winner-argon2/src/ref.c",
-      "phc-winner-argon2/src/blamka-round-ref.h"
+      "phc-winner-argon2/src/blake2/blamka-round-ref.h"
     ]
   },
   "watchos": {
     "source_files": [
       "phc-winner-argon2/src/ref.c",
-      "phc-winner-argon2/src/blamka-round-ref.h"
+      "phc-winner-argon2/src/blake2/blamka-round-ref.h"
     ]
   },
   "public_header_files": "phc-winner-argon2/include/**/*.h",
