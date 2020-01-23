@@ -32,7 +32,7 @@ iOS Usage
 Add the following line to your Podfile:
 
 ```ruby
-pod 'Argon2', git: 'https://github.com/signalapp/Argon2.git'
+pod 'Argon2', git: 'https://github.com/signalapp/Argon2.git', submodules: true
 ```
 
 ```swift
@@ -43,6 +43,7 @@ let (rawHash, encodedHash) = Argon2.hash(
     password: password,
     salt: salt,
     desiredLength: 32,
-    variant: .id
+    variant: .id,
+    version: .v13
 )
 ```
