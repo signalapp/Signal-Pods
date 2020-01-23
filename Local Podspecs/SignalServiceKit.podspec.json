@@ -85,13 +85,17 @@
     ],
     "blurhash": [
 
+    ],
+    "Argon2": [
+
     ]
   },
   "testspecs": [
     {
       "name": "Tests",
       "test_type": "unit",
-      "source_files": "SignalServiceKit/tests/**/*.{h,m,swift}"
+      "source_files": "SignalServiceKit/tests/**/*.{h,m,swift}",
+      "resources": "SignalServiceKit/tests/**/*.json"
     }
   ]
 }
