@@ -174,7 +174,7 @@
 #import "AppReadiness.h"
 #import "AppVersion.h"
 #import "ByteParser.h"
-#import "DarwinNotification.h"
+#import "DarwinNotificationCenter.h"
 #import "DataSource.h"
 #import "ExperienceUpgrade.h"
 #import "FunctionalUtil.h"
