@@ -125,6 +125,24 @@ extension String {
 		}
 		return value
 	}
+
+    var averageLinearRgb: (Float, Float, Float)? {
+        guard count >= 6 else { return nil }
+
+        let sizeFlag = String(self[0]).decode83()
+        let numY = (sizeFlag / 9) + 1
+        let numX = (sizeFlag % 9) + 1
+
+        guard count == 4 + 2 * numX * numY else { return nil }
+
+        return decodeDC(String(self[2 ..< 6]).decode83())
+    }
+
+    // https://github.com/signalapp/blurhash/blob/addPodspec/Swift/BlurHashKit/ColourProbes.swift#L59
+    public var isDarkBlurHash: Bool? {
+        guard let rgb = averageLinearRgb else { return nil }
+        return rgb.0 * 0.299 + rgb.1 * 0.587 + rgb.2 * 0.114 < 0.5
+    }
 }
 
 private extension String {
