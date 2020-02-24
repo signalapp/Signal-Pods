@@ -250,11 +250,11 @@ NS_ASSUME_NONNULL_BEGIN
     OWSAES256Key *key = [OWSAES256Key new];
 
     AES25GCMEncryptionResult *_Nullable result =
-        [Cryptography encryptAESGCMWithData:plainTextData additionalAuthenticatedData:nil key:key];
+    [Cryptography encryptAESGCMWithData:plainTextData initializationVectorLength:16 additionalAuthenticatedData:nil key:key];
     XCTAssertNotNil(result);
     XCTAssertTrue(result.ciphertext.length > 0);
     XCTAssertTrue(result.authTag.length > 0);
-    XCTAssertTrue(result.initializationVector.length == kAESGCM256_IVLength);
+    XCTAssertTrue(result.initializationVector.length == 16);
 
     NSData *_Nullable decryptedData = [Cryptography decryptAESGCMWithInitializationVector:result.initializationVector
                                                                                ciphertext:result.ciphertext
@@ -267,10 +267,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)testAESGCM_randomIV
 {
+    NSUInteger ivLength = 12;
     NSString *plainText = @"Super🔥secret🔥test🔥data🏁🏁";
     NSData *plainTextData = [plainText dataUsingEncoding:NSUTF8StringEncoding];
-    NSData *initializationVector = [Cryptography generateRandomBytes:kAESGCM256_IVLength];
-    XCTAssertTrue(initializationVector.length == kAESGCM256_IVLength);
+    NSData *initializationVector = [Cryptography generateRandomBytes:ivLength];
+    XCTAssertTrue(initializationVector.length == ivLength);
 
     OWSAES256Key *key = [OWSAES256Key new];
 
@@ -281,7 +282,7 @@ NS_ASSUME_NONNULL_BEGIN
     XCTAssertNotNil(result);
     XCTAssertTrue(result.ciphertext.length > 0);
     XCTAssertTrue(result.authTag.length > 0);
-    XCTAssertTrue(result.initializationVector.length == kAESGCM256_IVLength);
+    XCTAssertTrue(result.initializationVector.length == ivLength);
     XCTAssertEqualObjects(initializationVector, result.initializationVector);
 
     NSData *_Nullable decryptedData = [Cryptography decryptAESGCMWithInitializationVector:result.initializationVector
@@ -293,12 +294,27 @@ NS_ASSUME_NONNULL_BEGIN
     XCTAssertEqualObjects(plainTextData, decryptedData);
 }
 
-- (void)testAESGCM_allZeroIV
+- (void)testAESGCM_concatenatedEncryptDecrypt
 {
     NSString *plainText = @"Super🔥secret🔥test🔥data🏁🏁";
     NSData *plainTextData = [plainText dataUsingEncoding:NSUTF8StringEncoding];
-    NSMutableData *initializationVector = [NSMutableData dataWithLength:kAESGCM256_IVLength];
-    XCTAssertTrue(initializationVector.length == kAESGCM256_IVLength);
+    OWSAES256Key *key = [OWSAES256Key new];
+
+    for (NSUInteger ivLength = kAESGCM256_DefaultIVLength; ivLength <= 64; ivLength++) {
+        NSData *ivAndCipher = [Cryptography encryptAESGCMWithDataAndConcatenateResults:plainTextData initializationVectorLength:ivLength key:key];
+        NSData *decryptedData = [Cryptography decryptAESGCMConcatenatedData:ivAndCipher initializationVectorLength:ivLength key:key];
+
+        XCTAssertEqualObjects(plainTextData, decryptedData);
+    }
+}
+
+- (void)testAESGCM_allZeroIV
+{
+    NSUInteger ivLength = 32;
+    NSString *plainText = @"Super🔥secret🔥test🔥data🏁🏁";
+    NSData *plainTextData = [plainText dataUsingEncoding:NSUTF8StringEncoding];
+    NSMutableData *initializationVector = [NSMutableData dataWithLength:ivLength];
+    XCTAssertTrue(initializationVector.length == ivLength);
     const uint8_t *ivBytes = initializationVector.bytes;
     for (NSUInteger i = 0; i < initializationVector.length; i++) {
         XCTAssertEqual(ivBytes[i], 0);
@@ -313,7 +329,7 @@ NS_ASSUME_NONNULL_BEGIN
     XCTAssertNotNil(result);
     XCTAssertTrue(result.ciphertext.length > 0);
     XCTAssertTrue(result.authTag.length > 0);
-    XCTAssertTrue(result.initializationVector.length == kAESGCM256_IVLength);
+    XCTAssertTrue(result.initializationVector.length == ivLength);
     XCTAssertEqualObjects(initializationVector, result.initializationVector);
 
     NSData *_Nullable decryptedData = [Cryptography decryptAESGCMWithInitializationVector:result.initializationVector
