@@ -5,7 +5,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 extern const NSUInteger kAES256_KeyByteLength;
-extern const NSUInteger kAESGCM256_IVLength;
+extern const NSUInteger kAESGCM256_DefaultIVLength;
 extern const NSUInteger kAES256CTR_IVLength;
 
 /// Key appropriate for use in AES256-GCM
@@ -112,9 +112,10 @@ typedef NS_ENUM(NSInteger, TSMACType) {
 #pragma mark - AES-GCM
 
 + (nullable AES25GCMEncryptionResult *)encryptAESGCMWithData:(NSData *)plaintext
+                                  initializationVectorLength:(NSUInteger)initializationVectorLength
                                  additionalAuthenticatedData:(nullable NSData *)additionalAuthenticatedData
                                                          key:(OWSAES256Key *)key
-    NS_SWIFT_NAME(encryptAESGCM(plainTextData:additionalAuthenticatedData:key:));
+    NS_SWIFT_NAME(encryptAESGCM(plainTextData:initializationVectorLength:additionalAuthenticatedData:key:));
 
 + (nullable AES25GCMEncryptionResult *)encryptAESGCMWithData:(NSData *)plaintext
                                         initializationVector:(NSData *)initializationVector
@@ -128,6 +129,16 @@ typedef NS_ENUM(NSInteger, TSMACType) {
                                                    authTag:(NSData *)authTagFromEncrypt
                                                        key:(OWSAES256Key *)key
     NS_SWIFT_NAME(decryptAESGCM(withInitializationVector:ciphertext:additionalAuthenticatedData:authTag:key:));
+
++ (nullable NSData *)encryptAESGCMWithDataAndConcatenateResults:(NSData *)plaintext
+                                     initializationVectorLength:(NSUInteger)initializationVectorLength
+                                                            key:(OWSAES256Key *)key
+    NS_SWIFT_NAME(encryptAESGCMWithDataAndConcatenateResults(plainTextData:initializationVectorLength:key:));
+
++ (nullable NSData *)decryptAESGCMConcatenatedData:(NSData *)concatenatedData
+                        initializationVectorLength:(NSUInteger)initializationVectorLength
+                                               key:(OWSAES256Key *)key
+    NS_SWIFT_NAME(decryptAESGCMConcatenatedData(encryptedData:initializationVectorLength:key:));
 
 #pragma mark - Profiles
 

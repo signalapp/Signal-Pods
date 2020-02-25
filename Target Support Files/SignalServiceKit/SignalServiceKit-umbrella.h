@@ -50,6 +50,7 @@
 #import "OWSSyncFetchLatestMessage.h"
 #import "OWSSyncGroupsMessage.h"
 #import "OWSSyncKeysMessage.h"
+#import "OWSSyncMessageRequestResponseMessage.h"
 #import "OWSSyncRequestMessage.h"
 #import "OWSContact+Private.h"
 #import "OWSContact.h"
