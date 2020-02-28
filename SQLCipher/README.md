@@ -2,7 +2,7 @@
 
 SQLCipher extends the [SQLite](https://www.sqlite.org) database library to add security enhancements that make it more suitable for encrypted local data storage such as on-the-fly encryption, tamper evidence, and key derivation. Based on SQLite, SQLCipher closely tracks SQLite and periodically integrates stable SQLite release features.
 
-SQLCipher is maintained by Zetetic, LLC, the official site can be found [here](https://www.zetetic.net/sqlcipher/).
+SQLCipher is maintained by Zetetic, LLC, and additional information and documentation is available on the official [SQLCipher site](https://www.zetetic.net/sqlcipher/).
 
 ## Features
 
@@ -13,9 +13,15 @@ SQLCipher is maintained by Zetetic, LLC, the official site can be found [here](h
 - Algorithms provided by the peer reviewed OpenSSL crypto library.
 - Configurable crypto providers
 
+## Compatibility
+
+SQLCipher maintains database format compatibility within the same major version number so an application on any platform can open databases created by any other application provided the major version of SQLCipher is the same between them. However, major version updates (e.g. from 3.x to 4.x) often include changes to default settings. This means that newer major versions of SQLCipher will not open databases created by older versions without using special settings. For example, SQLCipher 4 introduces many new performance and security enhancements. The new default algorithms, increased KDF iterations, and larger page size mean that SQLCipher 4 will not open databases created by SQLCipher 1.x, 2.x, or 3.x by default. Instead, an application would either need to migrate the older databases to use the new format or enable a special backwards-compatibility mode. The available options are described in SQLCipher's [upgrade documentation](https://discuss.zetetic.net/t/upgrading-to-sqlcipher-4/3283). 
+
+SQLCipher is also compatible with standard SQLite databases. When a key is not provided, SQLCipher will behave just like the standard SQLite library. It is also possible to convert from a plaintext database (standard SQLite) to an encrypted SQLCipher database using [ATTACH and the sqlcipher_export() convenience function](https://discuss.zetetic.net/t/how-to-encrypt-a-plaintext-sqlite-database-to-use-sqlcipher-and-avoid-file-is-encrypted-or-is-not-a-database-errors/868).
+
 ## Contributions
 
-We welcome contributions, to contribute to SQLCipher, a [contributor agreement](https://www.zetetic.net/contributions/) needs to be submitted.  All submissions should be based on the `prerelease` branch.
+The SQLCipher team welcomes contributions to the core library. All contributions including pull requests and patches should be based on the `prerelease` branch, and must be accompanied by a [contributor agreement](https://www.zetetic.net/contributions/). For large changes we strongly encourage [discussion](https://discuss.zetetic.net/c/sqlcipher) of the proposed change prior to development and submission.
 
 ## Compiling
 
@@ -130,16 +136,28 @@ This repository contains the complete source code for the
 are also included.  However, many other test scripts
 and most of the documentation are managed separately.
 
-SQLite [does not use Git](https://sqlite.org/whynotgit.html).
-If you are reading this on GitHub, then you are looking at an
-unofficial mirror. See <https://sqlite.org/src> for the official
-repository.
-
-## Obtaining The Code
+## Version Control
 
 SQLite sources are managed using the
 [Fossil](https://www.fossil-scm.org/), a distributed version control system
-that was specifically designed to support SQLite development.
+that was specifically designed and written to support SQLite development.
+The [Fossil repository](https://sqlite.org/src/timeline) contains the urtext.
+
+If you are reading this on GitHub or some other Git repository or service,
+then you are looking at a mirror.  The names of check-ins and
+other artifacts in a Git mirror are different from the official
+names for those objects.  The offical names for check-ins are
+found in a footer on the check-in comment for authorized mirrors.
+The official check-in name can also be seen in the `manifest.uuid` file
+in the root of the tree.  Always use the official name, not  the
+Git-name, when communicating about an SQLite check-in.
+
+If you pulled your SQLite source code from a secondary source and want to
+verify its integrity, there are hints on how to do that in the
+[Verifying Code Authenticity](#vauth) section below.
+
+## Obtaining The Code
+
 If you do not want to use Fossil, you can download tarballs or ZIP
 archives or [SQLite archives](https://sqlite.org/cli.html#sqlar) as follows:
 
@@ -154,7 +172,7 @@ archives or [SQLite archives](https://sqlite.org/cli.html#sqlar) as follows:
      [SQLite-archive](https://www.sqlite.org/src/sqlar/sqlite.sqlar?r=release).
 
   *  For other check-ins, substitute an appropriate branch name or
-     tag or hash prefix for "release" in the URLs of the previous
+     tag or hash prefix in place of "release" in the URLs of the previous
      bullet.  Or browse the [timeline](https://www.sqlite.org/src/timeline)
      to locate the check-in desired, click on its information page link,
      then click on the "Tarball" or "ZIP Archive" links on the information
@@ -288,11 +306,8 @@ the src/parse.y file.  The conversion of "parse.y" into "parse.c" is done
 by the [lemon](./doc/lemon.html) LALR(1) parser generator.  The source code
 for lemon is at tool/lemon.c.  Lemon uses the tool/lempar.c file as a
 template for generating its parser.
-
 Lemon also generates the **parse.h** header file, at the same time it
-generates parse.c. But the parse.h header file is
-modified further (to add additional symbols) using the ./addopcodes.tcl
-Tcl script.
+generates parse.c.
 
 The **opcodes.h** header file contains macros that define the numbers
 corresponding to opcodes in the "VDBE" virtual machine.  The opcodes.h
@@ -419,10 +434,25 @@ Key files:
 There are many other source files.  Each has a succinct header comment that
 describes its purpose and role within the larger system.
 
+<a name="vauth"></a>
+## Verifying Code Authenticity
+
+The `manifest` file at the root directory of the source tree
+contains either a SHA3-256 hash (for newer files) or a SHA1 hash (for 
+older files) for every source file in the repository.
+The SHA3-256 hash of the `manifest`
+file itself is the official name of the version of the source tree that you
+have. The `manifest.uuid` file should contain the SHA3-256 hash of the
+`manifest` file. If all of the above hash comparisons are correct, then
+you can be confident that your source tree is authentic and unadulterated.
+
+The format of the `manifest` file should be mostly self-explanatory, but
+if you want details, they are available
+[here](https://fossil-scm.org/fossil/doc/trunk/www/fileformat.wiki#manifest).
 
 ## Contacts
 
-The main SQLite webpage is [http://www.sqlite.org/](http://www.sqlite.org/)
+The main SQLite website is [http://www.sqlite.org/](http://www.sqlite.org/)
 with geographically distributed backups at
 [http://www2.sqlite.org/](http://www2.sqlite.org) and
 [http://www3.sqlite.org/](http://www3.sqlite.org).
