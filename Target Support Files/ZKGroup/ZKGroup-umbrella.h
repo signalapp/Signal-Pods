@@ -10,6 +10,7 @@
 #endif
 #endif
 
+#import "zkgroup.h"
 #import "ZKGroup.h"
 
 FOUNDATION_EXPORT double ZKGroupVersionNumber;

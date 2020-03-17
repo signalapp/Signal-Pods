@@ -1,13 +1,10 @@
-//
-//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
-//
 
-public class ZKGUuid: ByteArray {
+public class ZKGUuid : ByteArray {
 
   static let SIZE: Int = 16
 
-  public init(contents: [UInt8]) throws {
-    fatalError("Not implemented.")
+  public init(contents: [UInt8]) throws  {
+    try super.init(newContents: contents, expectedLength: ZKGUuid.SIZE)
   }
 
   public func serialize() -> [UInt8] {

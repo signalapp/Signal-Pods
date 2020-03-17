@@ -3,3 +3,11 @@
 //
 
 import Foundation
+import libzkgroup
+
+public class Native {
+  static let FFI_RETURN_OK             = 0;
+  static let FFI_RETURN_INTERNAL_ERROR = 1; // ZkGroupError
+  static let FFI_RETURN_INPUT_ERROR    = 2;
+  static let RANDOM_LENGTH = 32;
+}

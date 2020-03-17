@@ -3939,6 +3939,12 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 ## ZKGroup
 
+This software is provided under:
+
+    SPDX-License-Identifier: GPL-3.0-only
+
+The complete license text:
+
                     GNU GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
 
@@ -4560,6 +4566,7 @@ Program, unless a warranty or assumption of liability accompanies a
 copy of the Program in return for a fee.
 
                      END OF TERMS AND CONDITIONS
+
 
 
 ## blurhash

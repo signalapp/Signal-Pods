@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import libzkgroup
 
 public class ByteArray {
     let contents: [UInt8]
@@ -13,4 +14,10 @@ public class ByteArray {
         }
         contents = newContents
     }
+
+  func getInternalContentsForFFI() -> [UInt8] {
+    return contents
+  }
+
+    
 }

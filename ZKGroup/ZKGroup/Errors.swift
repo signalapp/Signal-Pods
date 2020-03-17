@@ -3,8 +3,9 @@
 //
 
 import Foundation
+import libzkgroup
 
-public enum ZkGroupException: Error {
+public enum ZkGroupException : Error {
     case InvalidInput
     case VerificationFailed
     case ZkGroupError

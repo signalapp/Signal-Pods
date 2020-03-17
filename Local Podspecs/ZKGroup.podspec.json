@@ -1,6 +1,6 @@
 {
   "name": "ZKGroup",
-  "version": "0.0.1",
+  "version": "0.4.0",
   "summary": "Swift API for the Rust zkgroup crate.",
   "homepage": "https://signal.org/",
   "license": {
@@ -12,12 +12,19 @@
   },
   "source": {
     "git": "https://github.com/signalapp/signal-groupzk-swift.git",
-    "tag": "0.0.1"
+    "tag": "0.4.0"
   },
   "platforms": {
-    "ios": "8.0"
+    "ios": "10.0"
+  },
+  "ios": {
+    "vendored_libraries": "ZKGroup/libzkgroup/libzkgroup_ios.a"
   },
   "source_files": "ZKGroup/**/*.{h,swift}",
+  "preserve_paths": "ZKGroup/libzkgroup/module.modulemap",
+  "pod_target_xcconfig": {
+    "SWIFT_INCLUDE_PATHS": "$(PODS_TARGET_SRCROOT)/ZKGroup/libzkgroup"
+  },
   "requires_arc": true,
   "testspecs": [
     {
