@@ -26,7 +26,7 @@ public class ServerSecretParams : ByteArray {
   public static func generate(randomness: [UInt8]) throws  -> ServerSecretParams {
     var newContents: [UInt8] = Array(repeating: 0, count: ServerSecretParams.SIZE)
 
-    let ffi_return = FFI_ServerSecretParams_generateDeterministic(randomness, UInt64(randomness.count), &newContents, UInt64(newContents.count))
+    let ffi_return = FFI_ServerSecretParams_generateDeterministic(randomness, UInt32(randomness.count), &newContents, UInt32(newContents.count))
 
     if (ffi_return != Native.FFI_RETURN_OK) {
       throw ZkGroupException.ZkGroupError
@@ -43,7 +43,7 @@ public class ServerSecretParams : ByteArray {
     try super.init(newContents: contents, expectedLength: ServerSecretParams.SIZE, unrecoverable: true)
 
     
-    let ffi_return = FFI_ServerSecretParams_checkValidContents(self.contents, UInt64(self.contents.count))
+    let ffi_return = FFI_ServerSecretParams_checkValidContents(self.contents, UInt32(self.contents.count))
 
     if (ffi_return == Native.FFI_RETURN_INPUT_ERROR) {
       throw ZkGroupException.IllegalArgument
@@ -57,7 +57,7 @@ public class ServerSecretParams : ByteArray {
   public func getPublicParams() throws  -> ServerPublicParams {
     var newContents: [UInt8] = Array(repeating: 0, count: Int(ServerPublicParams.SIZE))
 
-    let ffi_return = FFI_ServerSecretParams_getPublicParams(self.contents, UInt64(self.contents.count), &newContents, UInt64(newContents.count))
+    let ffi_return = FFI_ServerSecretParams_getPublicParams(self.contents, UInt32(self.contents.count), &newContents, UInt32(newContents.count))
 
     if (ffi_return != Native.FFI_RETURN_OK) {
       throw ZkGroupException.ZkGroupError
@@ -79,7 +79,7 @@ public class ServerSecretParams : ByteArray {
   public func sign(randomness: [UInt8], message: [UInt8]) throws  -> NotarySignature {
     var newContents: [UInt8] = Array(repeating: 0, count: NotarySignature.SIZE)
 
-    let ffi_return = FFI_ServerSecretParams_signDeterministic(self.contents, UInt64(self.contents.count), randomness, UInt64(randomness.count), message, UInt64(message.count), &newContents, UInt64(newContents.count))
+    let ffi_return = FFI_ServerSecretParams_signDeterministic(self.contents, UInt32(self.contents.count), randomness, UInt32(randomness.count), message, UInt32(message.count), &newContents, UInt32(newContents.count))
 
     if (ffi_return != Native.FFI_RETURN_OK) {
       throw ZkGroupException.ZkGroupError

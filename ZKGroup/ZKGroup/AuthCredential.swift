@@ -17,7 +17,7 @@ public class AuthCredential : ByteArray {
     try super.init(newContents: contents, expectedLength: AuthCredential.SIZE)
 
     
-    let ffi_return = FFI_AuthCredential_checkValidContents(self.contents, UInt64(self.contents.count))
+    let ffi_return = FFI_AuthCredential_checkValidContents(self.contents, UInt32(self.contents.count))
 
     if (ffi_return == Native.FFI_RETURN_INPUT_ERROR) {
       throw ZkGroupException.InvalidInput

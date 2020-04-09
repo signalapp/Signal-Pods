@@ -24,7 +24,7 @@ public class ServerZkProfileOperations {
   public func issueProfileKeyCredential(randomness: [UInt8], profileKeyCredentialRequest: ProfileKeyCredentialRequest, uuid: ZKGUuid, profileKeyCommitment: ProfileKeyCommitment) throws  -> ProfileKeyCredentialResponse {
     var newContents: [UInt8] = Array(repeating: 0, count: ProfileKeyCredentialResponse.SIZE)
 
-    let ffi_return = FFI_ServerSecretParams_issueProfileKeyCredentialDeterministic(serverSecretParams.getInternalContentsForFFI(), UInt64(serverSecretParams.getInternalContentsForFFI().count), randomness, UInt64(randomness.count), profileKeyCredentialRequest.getInternalContentsForFFI(), UInt64(profileKeyCredentialRequest.getInternalContentsForFFI().count), uuid.getInternalContentsForFFI(), UInt64(uuid.getInternalContentsForFFI().count), profileKeyCommitment.getInternalContentsForFFI(), UInt64(profileKeyCommitment.getInternalContentsForFFI().count), &newContents, UInt64(newContents.count))
+    let ffi_return = FFI_ServerSecretParams_issueProfileKeyCredentialDeterministic(serverSecretParams.getInternalContentsForFFI(), UInt32(serverSecretParams.getInternalContentsForFFI().count), randomness, UInt32(randomness.count), profileKeyCredentialRequest.getInternalContentsForFFI(), UInt32(profileKeyCredentialRequest.getInternalContentsForFFI().count), uuid.getInternalContentsForFFI(), UInt32(uuid.getInternalContentsForFFI().count), profileKeyCommitment.getInternalContentsForFFI(), UInt32(profileKeyCommitment.getInternalContentsForFFI().count), &newContents, UInt32(newContents.count))
     if (ffi_return == Native.FFI_RETURN_INPUT_ERROR) {
       throw ZkGroupException.VerificationFailed
     }
@@ -42,7 +42,7 @@ public class ServerZkProfileOperations {
   }
 
   public func verifyProfileKeyCredentialPresentation(groupPublicParams: GroupPublicParams, profileKeyCredentialPresentation: ProfileKeyCredentialPresentation) throws {
-    let ffi_return = FFI_ServerSecretParams_verifyProfileKeyCredentialPresentation(serverSecretParams.getInternalContentsForFFI(), UInt64(serverSecretParams.getInternalContentsForFFI().count), groupPublicParams.getInternalContentsForFFI(), UInt64(groupPublicParams.getInternalContentsForFFI().count), profileKeyCredentialPresentation.getInternalContentsForFFI(), UInt64(profileKeyCredentialPresentation.getInternalContentsForFFI().count))
+    let ffi_return = FFI_ServerSecretParams_verifyProfileKeyCredentialPresentation(serverSecretParams.getInternalContentsForFFI(), UInt32(serverSecretParams.getInternalContentsForFFI().count), groupPublicParams.getInternalContentsForFFI(), UInt32(groupPublicParams.getInternalContentsForFFI().count), profileKeyCredentialPresentation.getInternalContentsForFFI(), UInt32(profileKeyCredentialPresentation.getInternalContentsForFFI().count))
     if (ffi_return == Native.FFI_RETURN_INPUT_ERROR) {
       throw ZkGroupException.VerificationFailed
     }

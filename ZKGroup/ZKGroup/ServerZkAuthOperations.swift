@@ -24,7 +24,7 @@ public class ServerZkAuthOperations {
   public func issueAuthCredential(randomness: [UInt8], uuid: ZKGUuid, redemptionTime: UInt32) throws  -> AuthCredentialResponse {
     var newContents: [UInt8] = Array(repeating: 0, count: AuthCredentialResponse.SIZE)
 
-    let ffi_return = FFI_ServerSecretParams_issueAuthCredentialDeterministic(serverSecretParams.getInternalContentsForFFI(), UInt64(serverSecretParams.getInternalContentsForFFI().count), randomness, UInt64(randomness.count), uuid.getInternalContentsForFFI(), UInt64(uuid.getInternalContentsForFFI().count), redemptionTime, &newContents, UInt64(newContents.count))
+    let ffi_return = FFI_ServerSecretParams_issueAuthCredentialDeterministic(serverSecretParams.getInternalContentsForFFI(), UInt32(serverSecretParams.getInternalContentsForFFI().count), randomness, UInt32(randomness.count), uuid.getInternalContentsForFFI(), UInt32(uuid.getInternalContentsForFFI().count), redemptionTime, &newContents, UInt32(newContents.count))
 
     if (ffi_return != Native.FFI_RETURN_OK) {
       throw ZkGroupException.ZkGroupError
@@ -39,7 +39,7 @@ public class ServerZkAuthOperations {
   }
 
   public func verifyAuthCredentialPresentation(groupPublicParams: GroupPublicParams, authCredentialPresentation: AuthCredentialPresentation) throws {
-    let ffi_return = FFI_ServerSecretParams_verifyAuthCredentialPresentation(serverSecretParams.getInternalContentsForFFI(), UInt64(serverSecretParams.getInternalContentsForFFI().count), groupPublicParams.getInternalContentsForFFI(), UInt64(groupPublicParams.getInternalContentsForFFI().count), authCredentialPresentation.getInternalContentsForFFI(), UInt64(authCredentialPresentation.getInternalContentsForFFI().count))
+    let ffi_return = FFI_ServerSecretParams_verifyAuthCredentialPresentation(serverSecretParams.getInternalContentsForFFI(), UInt32(serverSecretParams.getInternalContentsForFFI().count), groupPublicParams.getInternalContentsForFFI(), UInt32(groupPublicParams.getInternalContentsForFFI().count), authCredentialPresentation.getInternalContentsForFFI(), UInt32(authCredentialPresentation.getInternalContentsForFFI().count))
     if (ffi_return == Native.FFI_RETURN_INPUT_ERROR) {
       throw ZkGroupException.VerificationFailed
     }

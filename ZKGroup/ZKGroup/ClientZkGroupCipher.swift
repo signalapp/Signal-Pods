@@ -14,7 +14,7 @@ public class ClientZkGroupCipher {
   public func encryptUuid(uuid: ZKGUuid) throws  -> UuidCiphertext {
     var newContents: [UInt8] = Array(repeating: 0, count: UuidCiphertext.SIZE)
 
-    let ffi_return = FFI_GroupSecretParams_encryptUuid(groupSecretParams.getInternalContentsForFFI(), UInt64(groupSecretParams.getInternalContentsForFFI().count), uuid.getInternalContentsForFFI(), UInt64(uuid.getInternalContentsForFFI().count), &newContents, UInt64(newContents.count))
+    let ffi_return = FFI_GroupSecretParams_encryptUuid(groupSecretParams.getInternalContentsForFFI(), UInt32(groupSecretParams.getInternalContentsForFFI().count), uuid.getInternalContentsForFFI(), UInt32(uuid.getInternalContentsForFFI().count), &newContents, UInt32(newContents.count))
 
     if (ffi_return != Native.FFI_RETURN_OK) {
       throw ZkGroupException.ZkGroupError
@@ -31,7 +31,7 @@ public class ClientZkGroupCipher {
   public func decryptUuid(uuidCiphertext: UuidCiphertext) throws  -> ZKGUuid {
     var newContents: [UInt8] = Array(repeating: 0, count: ZKGUuid.SIZE)
 
-    let ffi_return = FFI_GroupSecretParams_decryptUuid(groupSecretParams.getInternalContentsForFFI(), UInt64(groupSecretParams.getInternalContentsForFFI().count), uuidCiphertext.getInternalContentsForFFI(), UInt64(uuidCiphertext.getInternalContentsForFFI().count), &newContents, UInt64(newContents.count))
+    let ffi_return = FFI_GroupSecretParams_decryptUuid(groupSecretParams.getInternalContentsForFFI(), UInt32(groupSecretParams.getInternalContentsForFFI().count), uuidCiphertext.getInternalContentsForFFI(), UInt32(uuidCiphertext.getInternalContentsForFFI().count), &newContents, UInt32(newContents.count))
     if (ffi_return == Native.FFI_RETURN_INPUT_ERROR) {
       throw ZkGroupException.VerificationFailed
     }
@@ -61,7 +61,7 @@ public class ClientZkGroupCipher {
   public func encryptProfileKey(randomness: [UInt8], profileKey: ProfileKey, uuid: ZKGUuid) throws  -> ProfileKeyCiphertext {
     var newContents: [UInt8] = Array(repeating: 0, count: ProfileKeyCiphertext.SIZE)
 
-    let ffi_return = FFI_GroupSecretParams_encryptProfileKeyDeterministic(groupSecretParams.getInternalContentsForFFI(), UInt64(groupSecretParams.getInternalContentsForFFI().count), randomness, UInt64(randomness.count), profileKey.getInternalContentsForFFI(), UInt64(profileKey.getInternalContentsForFFI().count), uuid.getInternalContentsForFFI(), UInt64(uuid.getInternalContentsForFFI().count), &newContents, UInt64(newContents.count))
+    let ffi_return = FFI_GroupSecretParams_encryptProfileKeyDeterministic(groupSecretParams.getInternalContentsForFFI(), UInt32(groupSecretParams.getInternalContentsForFFI().count), randomness, UInt32(randomness.count), profileKey.getInternalContentsForFFI(), UInt32(profileKey.getInternalContentsForFFI().count), uuid.getInternalContentsForFFI(), UInt32(uuid.getInternalContentsForFFI().count), &newContents, UInt32(newContents.count))
 
     if (ffi_return != Native.FFI_RETURN_OK) {
       throw ZkGroupException.ZkGroupError
@@ -78,7 +78,7 @@ public class ClientZkGroupCipher {
   public func decryptProfileKey(profileKeyCiphertext: ProfileKeyCiphertext, uuid: ZKGUuid) throws  -> ProfileKey {
     var newContents: [UInt8] = Array(repeating: 0, count: ProfileKey.SIZE)
 
-    let ffi_return = FFI_GroupSecretParams_decryptProfileKey(groupSecretParams.getInternalContentsForFFI(), UInt64(groupSecretParams.getInternalContentsForFFI().count), profileKeyCiphertext.getInternalContentsForFFI(), UInt64(profileKeyCiphertext.getInternalContentsForFFI().count), uuid.getInternalContentsForFFI(), UInt64(uuid.getInternalContentsForFFI().count), &newContents, UInt64(newContents.count))
+    let ffi_return = FFI_GroupSecretParams_decryptProfileKey(groupSecretParams.getInternalContentsForFFI(), UInt32(groupSecretParams.getInternalContentsForFFI().count), profileKeyCiphertext.getInternalContentsForFFI(), UInt32(profileKeyCiphertext.getInternalContentsForFFI().count), uuid.getInternalContentsForFFI(), UInt32(uuid.getInternalContentsForFFI().count), &newContents, UInt32(newContents.count))
     if (ffi_return == Native.FFI_RETURN_INPUT_ERROR) {
       throw ZkGroupException.VerificationFailed
     }
@@ -108,7 +108,7 @@ public class ClientZkGroupCipher {
   public func encryptBlob(randomness: [UInt8], plaintext: [UInt8]) throws  -> [UInt8] {
     var newContents: [UInt8] = Array(repeating: 0, count: Int(plaintext.count+28))
 
-    let ffi_return = FFI_GroupSecretParams_encryptBlobDeterministic(groupSecretParams.getInternalContentsForFFI(), UInt64(groupSecretParams.getInternalContentsForFFI().count), randomness, UInt64(randomness.count), plaintext, UInt64(plaintext.count), &newContents, UInt64(newContents.count))
+    let ffi_return = FFI_GroupSecretParams_encryptBlobDeterministic(groupSecretParams.getInternalContentsForFFI(), UInt32(groupSecretParams.getInternalContentsForFFI().count), randomness, UInt32(randomness.count), plaintext, UInt32(plaintext.count), &newContents, UInt32(newContents.count))
     if (ffi_return == Native.FFI_RETURN_INPUT_ERROR) {
       throw ZkGroupException.VerificationFailed
     }
@@ -123,7 +123,7 @@ public class ClientZkGroupCipher {
   public func decryptBlob(blobCiphertext: [UInt8]) throws  -> [UInt8] {
     var newContents: [UInt8] = Array(repeating: 0, count: Int(blobCiphertext.count-28))
 
-    let ffi_return = FFI_GroupSecretParams_decryptBlob(groupSecretParams.getInternalContentsForFFI(), UInt64(groupSecretParams.getInternalContentsForFFI().count), blobCiphertext, UInt64(blobCiphertext.count), &newContents, UInt64(newContents.count))
+    let ffi_return = FFI_GroupSecretParams_decryptBlob(groupSecretParams.getInternalContentsForFFI(), UInt32(groupSecretParams.getInternalContentsForFFI().count), blobCiphertext, UInt32(blobCiphertext.count), &newContents, UInt32(newContents.count))
     if (ffi_return == Native.FFI_RETURN_INPUT_ERROR) {
       throw ZkGroupException.VerificationFailed
     }

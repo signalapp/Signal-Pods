@@ -17,7 +17,7 @@ public class ProfileKeyCredentialPresentation : ByteArray {
     try super.init(newContents: contents, expectedLength: ProfileKeyCredentialPresentation.SIZE)
 
     
-    let ffi_return = FFI_ProfileKeyCredentialPresentation_checkValidContents(self.contents, UInt64(self.contents.count))
+    let ffi_return = FFI_ProfileKeyCredentialPresentation_checkValidContents(self.contents, UInt32(self.contents.count))
 
     if (ffi_return == Native.FFI_RETURN_INPUT_ERROR) {
       throw ZkGroupException.InvalidInput
@@ -31,7 +31,7 @@ public class ProfileKeyCredentialPresentation : ByteArray {
   public func getUuidCiphertext() throws  -> UuidCiphertext {
     var newContents: [UInt8] = Array(repeating: 0, count: UuidCiphertext.SIZE)
 
-    let ffi_return = FFI_ProfileKeyCredentialPresentation_getUuidCiphertext(self.contents, UInt64(self.contents.count), &newContents, UInt64(newContents.count))
+    let ffi_return = FFI_ProfileKeyCredentialPresentation_getUuidCiphertext(self.contents, UInt32(self.contents.count), &newContents, UInt32(newContents.count))
 
     if (ffi_return != Native.FFI_RETURN_OK) {
       throw ZkGroupException.ZkGroupError
@@ -48,7 +48,7 @@ public class ProfileKeyCredentialPresentation : ByteArray {
   public func getProfileKeyCiphertext() throws  -> ProfileKeyCiphertext {
     var newContents: [UInt8] = Array(repeating: 0, count: ProfileKeyCiphertext.SIZE)
 
-    let ffi_return = FFI_ProfileKeyCredentialPresentation_getProfileKeyCiphertext(self.contents, UInt64(self.contents.count), &newContents, UInt64(newContents.count))
+    let ffi_return = FFI_ProfileKeyCredentialPresentation_getProfileKeyCiphertext(self.contents, UInt32(self.contents.count), &newContents, UInt32(newContents.count))
 
     if (ffi_return != Native.FFI_RETURN_OK) {
       throw ZkGroupException.ZkGroupError

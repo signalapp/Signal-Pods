@@ -17,7 +17,7 @@ public class ServerPublicParams : ByteArray {
     try super.init(newContents: contents, expectedLength: ServerPublicParams.SIZE, unrecoverable: true)
 
     
-    let ffi_return = FFI_ServerPublicParams_checkValidContents(self.contents, UInt64(self.contents.count))
+    let ffi_return = FFI_ServerPublicParams_checkValidContents(self.contents, UInt32(self.contents.count))
 
     if (ffi_return == Native.FFI_RETURN_INPUT_ERROR) {
       throw ZkGroupException.IllegalArgument
@@ -29,7 +29,7 @@ public class ServerPublicParams : ByteArray {
   }
 
   public func verifySignature(message: [UInt8], notarySignature: NotarySignature) throws {
-    let ffi_return = FFI_ServerPublicParams_verifySignature(self.contents, UInt64(self.contents.count), message, UInt64(message.count), notarySignature.getInternalContentsForFFI(), UInt64(notarySignature.getInternalContentsForFFI().count))
+    let ffi_return = FFI_ServerPublicParams_verifySignature(self.contents, UInt32(self.contents.count), message, UInt32(message.count), notarySignature.getInternalContentsForFFI(), UInt32(notarySignature.getInternalContentsForFFI().count))
     if (ffi_return == Native.FFI_RETURN_INPUT_ERROR) {
       throw ZkGroupException.VerificationFailed
     }

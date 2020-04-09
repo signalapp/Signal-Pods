@@ -26,7 +26,7 @@ public class GroupSecretParams : ByteArray {
   public static func generate(randomness: [UInt8]) throws  -> GroupSecretParams {
     var newContents: [UInt8] = Array(repeating: 0, count: GroupSecretParams.SIZE)
 
-    let ffi_return = FFI_GroupSecretParams_generateDeterministic(randomness, UInt64(randomness.count), &newContents, UInt64(newContents.count))
+    let ffi_return = FFI_GroupSecretParams_generateDeterministic(randomness, UInt32(randomness.count), &newContents, UInt32(newContents.count))
 
     if (ffi_return != Native.FFI_RETURN_OK) {
       throw ZkGroupException.ZkGroupError
@@ -42,7 +42,7 @@ public class GroupSecretParams : ByteArray {
   public static func deriveFromMasterKey(groupMasterKey: GroupMasterKey) throws  -> GroupSecretParams {
     var newContents: [UInt8] = Array(repeating: 0, count: GroupSecretParams.SIZE)
 
-    let ffi_return = FFI_GroupSecretParams_deriveFromMasterKey(groupMasterKey.getInternalContentsForFFI(), UInt64(groupMasterKey.getInternalContentsForFFI().count), &newContents, UInt64(newContents.count))
+    let ffi_return = FFI_GroupSecretParams_deriveFromMasterKey(groupMasterKey.getInternalContentsForFFI(), UInt32(groupMasterKey.getInternalContentsForFFI().count), &newContents, UInt32(newContents.count))
 
     if (ffi_return != Native.FFI_RETURN_OK) {
       throw ZkGroupException.ZkGroupError
@@ -59,7 +59,7 @@ public class GroupSecretParams : ByteArray {
     try super.init(newContents: contents, expectedLength: GroupSecretParams.SIZE, unrecoverable: true)
 
     
-    let ffi_return = FFI_GroupSecretParams_checkValidContents(self.contents, UInt64(self.contents.count))
+    let ffi_return = FFI_GroupSecretParams_checkValidContents(self.contents, UInt32(self.contents.count))
 
     if (ffi_return == Native.FFI_RETURN_INPUT_ERROR) {
       throw ZkGroupException.IllegalArgument
@@ -73,7 +73,7 @@ public class GroupSecretParams : ByteArray {
   public func getMasterKey() throws  -> GroupMasterKey {
     var newContents: [UInt8] = Array(repeating: 0, count: GroupMasterKey.SIZE)
 
-    let ffi_return = FFI_GroupSecretParams_getMasterKey(self.contents, UInt64(self.contents.count), &newContents, UInt64(newContents.count))
+    let ffi_return = FFI_GroupSecretParams_getMasterKey(self.contents, UInt32(self.contents.count), &newContents, UInt32(newContents.count))
 
     if (ffi_return != Native.FFI_RETURN_OK) {
       throw ZkGroupException.ZkGroupError
@@ -90,7 +90,7 @@ public class GroupSecretParams : ByteArray {
   public func getPublicParams() throws  -> GroupPublicParams {
     var newContents: [UInt8] = Array(repeating: 0, count: GroupPublicParams.SIZE)
 
-    let ffi_return = FFI_GroupSecretParams_getPublicParams(self.contents, UInt64(self.contents.count), &newContents, UInt64(newContents.count))
+    let ffi_return = FFI_GroupSecretParams_getPublicParams(self.contents, UInt32(self.contents.count), &newContents, UInt32(newContents.count))
 
     if (ffi_return != Native.FFI_RETURN_OK) {
       throw ZkGroupException.ZkGroupError
@@ -117,7 +117,7 @@ public class GroupSecretParams : ByteArray {
   public func sign(randomness: [UInt8], message: [UInt8]) throws  -> ChangeSignature {
     var newContents: [UInt8] = Array(repeating: 0, count: ChangeSignature.SIZE)
 
-    let ffi_return = FFI_GroupSecretParams_signDeterministic(self.contents, UInt64(self.contents.count), randomness, UInt64(randomness.count), message, UInt64(message.count), &newContents, UInt64(newContents.count))
+    let ffi_return = FFI_GroupSecretParams_signDeterministic(self.contents, UInt32(self.contents.count), randomness, UInt32(randomness.count), message, UInt32(message.count), &newContents, UInt32(newContents.count))
 
     if (ffi_return != Native.FFI_RETURN_OK) {
       throw ZkGroupException.ZkGroupError

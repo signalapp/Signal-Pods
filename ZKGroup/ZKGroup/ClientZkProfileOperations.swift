@@ -24,7 +24,7 @@ public class ClientZkProfileOperations {
   public func createProfileKeyCredentialRequestContext(randomness: [UInt8], uuid: ZKGUuid, profileKey: ProfileKey) throws  -> ProfileKeyCredentialRequestContext {
     var newContents: [UInt8] = Array(repeating: 0, count: ProfileKeyCredentialRequestContext.SIZE)
 
-    let ffi_return = FFI_ServerPublicParams_createProfileKeyCredentialRequestContextDeterministic(serverPublicParams.getInternalContentsForFFI(), UInt64(serverPublicParams.getInternalContentsForFFI().count), randomness, UInt64(randomness.count), uuid.getInternalContentsForFFI(), UInt64(uuid.getInternalContentsForFFI().count), profileKey.getInternalContentsForFFI(), UInt64(profileKey.getInternalContentsForFFI().count), &newContents, UInt64(newContents.count))
+    let ffi_return = FFI_ServerPublicParams_createProfileKeyCredentialRequestContextDeterministic(serverPublicParams.getInternalContentsForFFI(), UInt32(serverPublicParams.getInternalContentsForFFI().count), randomness, UInt32(randomness.count), uuid.getInternalContentsForFFI(), UInt32(uuid.getInternalContentsForFFI().count), profileKey.getInternalContentsForFFI(), UInt32(profileKey.getInternalContentsForFFI().count), &newContents, UInt32(newContents.count))
 
     if (ffi_return != Native.FFI_RETURN_OK) {
       throw ZkGroupException.ZkGroupError
@@ -41,7 +41,7 @@ public class ClientZkProfileOperations {
   public func receiveProfileKeyCredential(profileKeyCredentialRequestContext: ProfileKeyCredentialRequestContext, profileKeyCredentialResponse: ProfileKeyCredentialResponse) throws  -> ProfileKeyCredential {
     var newContents: [UInt8] = Array(repeating: 0, count: ProfileKeyCredential.SIZE)
 
-    let ffi_return = FFI_ServerPublicParams_receiveProfileKeyCredential(serverPublicParams.getInternalContentsForFFI(), UInt64(serverPublicParams.getInternalContentsForFFI().count), profileKeyCredentialRequestContext.getInternalContentsForFFI(), UInt64(profileKeyCredentialRequestContext.getInternalContentsForFFI().count), profileKeyCredentialResponse.getInternalContentsForFFI(), UInt64(profileKeyCredentialResponse.getInternalContentsForFFI().count), &newContents, UInt64(newContents.count))
+    let ffi_return = FFI_ServerPublicParams_receiveProfileKeyCredential(serverPublicParams.getInternalContentsForFFI(), UInt32(serverPublicParams.getInternalContentsForFFI().count), profileKeyCredentialRequestContext.getInternalContentsForFFI(), UInt32(profileKeyCredentialRequestContext.getInternalContentsForFFI().count), profileKeyCredentialResponse.getInternalContentsForFFI(), UInt32(profileKeyCredentialResponse.getInternalContentsForFFI().count), &newContents, UInt32(newContents.count))
     if (ffi_return == Native.FFI_RETURN_INPUT_ERROR) {
       throw ZkGroupException.VerificationFailed
     }
@@ -71,7 +71,7 @@ public class ClientZkProfileOperations {
   public func createProfileKeyCredentialPresentation(randomness: [UInt8], groupSecretParams: GroupSecretParams, profileKeyCredential: ProfileKeyCredential) throws  -> ProfileKeyCredentialPresentation {
     var newContents: [UInt8] = Array(repeating: 0, count: ProfileKeyCredentialPresentation.SIZE)
 
-    let ffi_return = FFI_ServerPublicParams_createProfileKeyCredentialPresentationDeterministic(serverPublicParams.getInternalContentsForFFI(), UInt64(serverPublicParams.getInternalContentsForFFI().count), randomness, UInt64(randomness.count), groupSecretParams.getInternalContentsForFFI(), UInt64(groupSecretParams.getInternalContentsForFFI().count), profileKeyCredential.getInternalContentsForFFI(), UInt64(profileKeyCredential.getInternalContentsForFFI().count), &newContents, UInt64(newContents.count))
+    let ffi_return = FFI_ServerPublicParams_createProfileKeyCredentialPresentationDeterministic(serverPublicParams.getInternalContentsForFFI(), UInt32(serverPublicParams.getInternalContentsForFFI().count), randomness, UInt32(randomness.count), groupSecretParams.getInternalContentsForFFI(), UInt32(groupSecretParams.getInternalContentsForFFI().count), profileKeyCredential.getInternalContentsForFFI(), UInt32(profileKeyCredential.getInternalContentsForFFI().count), &newContents, UInt32(newContents.count))
 
     if (ffi_return != Native.FFI_RETURN_OK) {
       throw ZkGroupException.ZkGroupError

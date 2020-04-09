@@ -17,7 +17,7 @@ public class GroupPublicParams : ByteArray {
     try super.init(newContents: contents, expectedLength: GroupPublicParams.SIZE)
 
     
-    let ffi_return = FFI_GroupPublicParams_checkValidContents(self.contents, UInt64(self.contents.count))
+    let ffi_return = FFI_GroupPublicParams_checkValidContents(self.contents, UInt32(self.contents.count))
 
     if (ffi_return == Native.FFI_RETURN_INPUT_ERROR) {
       throw ZkGroupException.InvalidInput
@@ -31,7 +31,7 @@ public class GroupPublicParams : ByteArray {
   public func getGroupIdentifier() throws  -> GroupIdentifier {
     var newContents: [UInt8] = Array(repeating: 0, count: GroupIdentifier.SIZE)
 
-    let ffi_return = FFI_GroupPublicParams_getGroupIdentifier(self.contents, UInt64(self.contents.count), &newContents, UInt64(newContents.count))
+    let ffi_return = FFI_GroupPublicParams_getGroupIdentifier(self.contents, UInt32(self.contents.count), &newContents, UInt32(newContents.count))
 
     if (ffi_return != Native.FFI_RETURN_OK) {
       throw ZkGroupException.ZkGroupError
@@ -46,7 +46,7 @@ public class GroupPublicParams : ByteArray {
   }
 
   public func verifySignature(message: [UInt8], changeSignature: ChangeSignature) throws {
-    let ffi_return = FFI_GroupPublicParams_verifySignature(self.contents, UInt64(self.contents.count), message, UInt64(message.count), changeSignature.getInternalContentsForFFI(), UInt64(changeSignature.getInternalContentsForFFI().count))
+    let ffi_return = FFI_GroupPublicParams_verifySignature(self.contents, UInt32(self.contents.count), message, UInt32(message.count), changeSignature.getInternalContentsForFFI(), UInt32(changeSignature.getInternalContentsForFFI().count))
     if (ffi_return == Native.FFI_RETURN_INPUT_ERROR) {
       throw ZkGroupException.VerificationFailed
     }

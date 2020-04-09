@@ -17,7 +17,7 @@ public class ProfileKeyCredentialRequest : ByteArray {
     try super.init(newContents: contents, expectedLength: ProfileKeyCredentialRequest.SIZE)
 
     
-    let ffi_return = FFI_ProfileKeyCredentialRequest_checkValidContents(self.contents, UInt64(self.contents.count))
+    let ffi_return = FFI_ProfileKeyCredentialRequest_checkValidContents(self.contents, UInt32(self.contents.count))
 
     if (ffi_return == Native.FFI_RETURN_INPUT_ERROR) {
       throw ZkGroupException.InvalidInput
