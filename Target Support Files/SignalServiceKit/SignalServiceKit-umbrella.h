@@ -66,6 +66,7 @@
 #import "TSInfoMessage.h"
 #import "TSInteraction.h"
 #import "TSMessage.h"
+#import "TSOutgoingDeleteMessage.h"
 #import "TSOutgoingMessage.h"
 #import "TSQuotedMessage.h"
 #import "TSUnreadIndicatorInteraction.h"
