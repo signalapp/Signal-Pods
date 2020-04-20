@@ -11,7 +11,7 @@ import libzkgroup
 
 public class GroupPublicParams : ByteArray {
 
-  public static let SIZE: Int = 128
+  public static let SIZE: Int = 96
 
   public init(contents: [UInt8]) throws  {
     try super.init(newContents: contents, expectedLength: GroupPublicParams.SIZE)
@@ -43,17 +43,6 @@ public class GroupPublicParams : ByteArray {
       throw ZkGroupException.AssertionError
     }
 
-  }
-
-  public func verifySignature(message: [UInt8], changeSignature: ChangeSignature) throws {
-    let ffi_return = FFI_GroupPublicParams_verifySignature(self.contents, UInt32(self.contents.count), message, UInt32(message.count), changeSignature.getInternalContentsForFFI(), UInt32(changeSignature.getInternalContentsForFFI().count))
-    if (ffi_return == Native.FFI_RETURN_INPUT_ERROR) {
-      throw ZkGroupException.VerificationFailed
-    }
-
-    if (ffi_return != Native.FFI_RETURN_OK) {
-      throw ZkGroupException.ZkGroupError
-    }
   }
 
   public func serialize() -> [UInt8] {

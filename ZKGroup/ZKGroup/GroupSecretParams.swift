@@ -11,7 +11,7 @@ import libzkgroup
 
 public class GroupSecretParams : ByteArray {
 
-  public static let SIZE: Int = 384
+  public static let SIZE: Int = 352
 
   public static func generate() throws  -> GroupSecretParams {
     var randomness: [UInt8] = Array(repeating: 0, count: Int(32))
@@ -98,33 +98,6 @@ public class GroupSecretParams : ByteArray {
 
     do {
       return try GroupPublicParams(contents: newContents)
-    } catch ZkGroupException.InvalidInput {
-      throw ZkGroupException.AssertionError
-    }
-
-  }
-
-  public func sign(message: [UInt8]) throws  -> ChangeSignature {
-    var randomness: [UInt8] = Array(repeating: 0, count: Int(32))
-    let result = SecRandomCopyBytes(kSecRandomDefault, randomness.count, &randomness)
-    guard result == errSecSuccess else {
-      throw ZkGroupException.AssertionError
-    }
-
-    return try sign(randomness: randomness, message: message)
-  }
-
-  public func sign(randomness: [UInt8], message: [UInt8]) throws  -> ChangeSignature {
-    var newContents: [UInt8] = Array(repeating: 0, count: ChangeSignature.SIZE)
-
-    let ffi_return = FFI_GroupSecretParams_signDeterministic(self.contents, UInt32(self.contents.count), randomness, UInt32(randomness.count), message, UInt32(message.count), &newContents, UInt32(newContents.count))
-
-    if (ffi_return != Native.FFI_RETURN_OK) {
-      throw ZkGroupException.ZkGroupError
-    }
-
-    do {
-      return try ChangeSignature(contents: newContents)
     } catch ZkGroupException.InvalidInput {
       throw ZkGroupException.AssertionError
     }

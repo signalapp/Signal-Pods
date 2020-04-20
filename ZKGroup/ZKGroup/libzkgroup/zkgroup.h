@@ -3,6 +3,12 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+#define AESGCM_NONCE_LEN 12
+
+#define AESGCM_TAG_LEN 12
+
+#define AES_KEY_LEN 32
+
 #define AUTH_CREDENTIAL_LEN 404
 
 #define AUTH_CREDENTIAL_PRESENTATION_LEN 620
@@ -21,9 +27,9 @@
 
 #define GROUP_MASTER_KEY_LEN 32
 
-#define GROUP_PUBLIC_PARAMS_LEN 128
+#define GROUP_PUBLIC_PARAMS_LEN 96
 
-#define GROUP_SECRET_PARAMS_LEN 384
+#define GROUP_SECRET_PARAMS_LEN 352
 
 #define NUM_AUTH_CRED_ATTRIBUTES 4
 
@@ -88,13 +94,6 @@ int32_t FFI_GroupPublicParams_getGroupIdentifier(const uint8_t *groupPublicParam
                                                  uint8_t *groupIdentifierOut,
                                                  uint32_t groupIdentifierLen);
 
-int32_t FFI_GroupPublicParams_verifySignature(const uint8_t *groupPublicParams,
-                                              uint32_t groupPublicParamsLen,
-                                              const uint8_t *message,
-                                              uint32_t messageLen,
-                                              const uint8_t *changeSignature,
-                                              uint32_t changeSignatureLen);
-
 int32_t FFI_GroupSecretParams_checkValidContents(const uint8_t *groupSecretParams,
                                                  uint32_t groupSecretParamsLen);
 
@@ -135,16 +134,14 @@ int32_t FFI_GroupSecretParams_encryptBlobDeterministic(const uint8_t *groupSecre
                                                        uint8_t *blobCiphertextOut,
                                                        uint32_t blobCiphertextLen);
 
-int32_t FFI_GroupSecretParams_encryptProfileKeyDeterministic(const uint8_t *groupSecretParams,
-                                                             uint32_t groupSecretParamsLen,
-                                                             const uint8_t *randomness,
-                                                             uint32_t randomnessLen,
-                                                             const uint8_t *profileKey,
-                                                             uint32_t profileKeyLen,
-                                                             const uint8_t *uuid,
-                                                             uint32_t uuidLen,
-                                                             uint8_t *profileKeyCiphertextOut,
-                                                             uint32_t profileKeyCiphertextLen);
+int32_t FFI_GroupSecretParams_encryptProfileKey(const uint8_t *groupSecretParams,
+                                                uint32_t groupSecretParamsLen,
+                                                const uint8_t *profileKey,
+                                                uint32_t profileKeyLen,
+                                                const uint8_t *uuid,
+                                                uint32_t uuidLen,
+                                                uint8_t *profileKeyCiphertextOut,
+                                                uint32_t profileKeyCiphertextLen);
 
 int32_t FFI_GroupSecretParams_encryptUuid(const uint8_t *groupSecretParams,
                                           uint32_t groupSecretParamsLen,
@@ -168,25 +165,11 @@ int32_t FFI_GroupSecretParams_getPublicParams(const uint8_t *groupSecretParams,
                                               uint8_t *groupPublicParamsOut,
                                               uint32_t groupPublicParamsLen);
 
-int32_t FFI_GroupSecretParams_signDeterministic(const uint8_t *groupSecretParams,
-                                                uint32_t groupSecretParamsLen,
-                                                const uint8_t *randomness,
-                                                uint32_t randomnessLen,
-                                                const uint8_t *message,
-                                                uint32_t messageLen,
-                                                uint8_t *changeSignatureOut,
-                                                uint32_t changeSignatureLen);
-
 int32_t FFI_ProfileKeyCiphertext_checkValidContents(const uint8_t *profileKeyCiphertext,
                                                     uint32_t profileKeyCiphertextLen);
 
 int32_t FFI_ProfileKeyCommitment_checkValidContents(const uint8_t *profileKeyCommitment,
                                                     uint32_t profileKeyCommitmentLen);
-
-int32_t FFI_ProfileKeyCommitment_getProfileKeyVersion(const uint8_t *profileKeyCommitment,
-                                                      uint32_t profileKeyCommitmentLen,
-                                                      uint8_t *profileKeyVersionOut,
-                                                      uint32_t profileKeyVersionLen);
 
 int32_t FFI_ProfileKeyCredentialPresentation_checkValidContents(const uint8_t *profileKeyCredentialPresentation,
                                                                 uint32_t profileKeyCredentialPresentationLen);
