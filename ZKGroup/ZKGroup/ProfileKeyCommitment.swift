@@ -28,23 +28,6 @@ public class ProfileKeyCommitment : ByteArray {
     }
   }
 
-  public func getProfileKeyVersion() throws  -> ProfileKeyVersion {
-    var newContents: [UInt8] = Array(repeating: 0, count: ProfileKeyVersion.SIZE)
-
-    let ffi_return = FFI_ProfileKeyCommitment_getProfileKeyVersion(self.contents, UInt32(self.contents.count), &newContents, UInt32(newContents.count))
-
-    if (ffi_return != Native.FFI_RETURN_OK) {
-      throw ZkGroupException.ZkGroupError
-    }
-
-    do {
-      return try ProfileKeyVersion(contents: newContents)
-    } catch ZkGroupException.InvalidInput {
-      throw ZkGroupException.AssertionError
-    }
-
-  }
-
   public func serialize() -> [UInt8] {
     return contents
   }
