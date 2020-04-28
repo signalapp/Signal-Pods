@@ -11,7 +11,7 @@ import libzkgroup
 
 public class ProfileKeyCredentialPresentation : ByteArray {
 
-  public static let SIZE: Int = 936
+  public static let SIZE: Int = 713
 
   public init(contents: [UInt8]) throws  {
     try super.init(newContents: contents, expectedLength: ProfileKeyCredentialPresentation.SIZE)

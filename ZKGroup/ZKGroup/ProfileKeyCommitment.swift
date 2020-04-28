@@ -11,7 +11,7 @@ import libzkgroup
 
 public class ProfileKeyCommitment : ByteArray {
 
-  public static let SIZE: Int = 96
+  public static let SIZE: Int = 97
 
   public init(contents: [UInt8]) throws  {
     try super.init(newContents: contents, expectedLength: ProfileKeyCommitment.SIZE)
