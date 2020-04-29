@@ -11,7 +11,7 @@ import libzkgroup
 
 public class AuthCredentialPresentation : ByteArray {
 
-  public static let SIZE: Int = 620
+  public static let SIZE: Int = 493
 
   public init(contents: [UInt8]) throws  {
     try super.init(newContents: contents, expectedLength: AuthCredentialPresentation.SIZE)

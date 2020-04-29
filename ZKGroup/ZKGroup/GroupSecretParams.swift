@@ -11,7 +11,7 @@ import libzkgroup
 
 public class GroupSecretParams : ByteArray {
 
-  public static let SIZE: Int = 352
+  public static let SIZE: Int = 289
 
   public static func generate() throws  -> GroupSecretParams {
     var randomness: [UInt8] = Array(repeating: 0, count: Int(32))

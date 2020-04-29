@@ -98,7 +98,7 @@ public class ClientZkGroupCipher {
   public func encryptBlob(randomness: [UInt8], plaintext: [UInt8]) throws  -> [UInt8] {
     let paddedPlaintext = Array(repeating:0, count: 4) + plaintext
 
-    var newContents: [UInt8] = Array(repeating: 0, count: Int(paddedPlaintext.count+28))
+    var newContents: [UInt8] = Array(repeating: 0, count: Int(paddedPlaintext.count+29))
 
     let ffi_return = FFI_GroupSecretParams_encryptBlobDeterministic(groupSecretParams.getInternalContentsForFFI(), UInt32(groupSecretParams.getInternalContentsForFFI().count), randomness, UInt32(randomness.count), paddedPlaintext, UInt32(paddedPlaintext.count), &newContents, UInt32(newContents.count))
     if (ffi_return == Native.FFI_RETURN_INPUT_ERROR) {
@@ -113,7 +113,7 @@ public class ClientZkGroupCipher {
   }
 
   public func decryptBlob(blobCiphertext: [UInt8]) throws  -> [UInt8] {
-    var newContents: [UInt8] = Array(repeating: 0, count: Int(blobCiphertext.count-28))
+    var newContents: [UInt8] = Array(repeating: 0, count: Int(blobCiphertext.count-29))
 
     let ffi_return = FFI_GroupSecretParams_decryptBlob(groupSecretParams.getInternalContentsForFFI(), UInt32(groupSecretParams.getInternalContentsForFFI().count), blobCiphertext, UInt32(blobCiphertext.count), &newContents, UInt32(newContents.count))
 
