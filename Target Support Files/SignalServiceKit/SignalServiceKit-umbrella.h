@@ -61,7 +61,6 @@
 #import "OWSEndSessionMessage.h"
 #import "OWSVerificationStateChangeMessage.h"
 #import "TSErrorMessage.h"
-#import "TSErrorMessage_privateConstructor.h"
 #import "TSIncomingMessage.h"
 #import "TSInfoMessage.h"
 #import "TSInteraction.h"
