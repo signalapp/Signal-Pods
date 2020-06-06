@@ -142,6 +142,7 @@
 #import "SSKSignedPreKeyStore.h"
 #import "BaseModel.h"
 #import "SDSCrossProcess.h"
+#import "SDSDatabaseStorage+Objc.h"
 #import "SDSKeyValueStore+ObjC.h"
 #import "SSKAccessors+SDS.h"
 #import "OWSBroadcastMediaMessageJobRecord.h"
