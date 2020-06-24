@@ -12,3 +12,12 @@ public struct OWSAssertionError: Error {
         self.description = description
     }
 }
+
+// An error that won't assert.
+public struct OWSGenericError: Error {
+    public let errorCode: Int = SCKError.Code.genericError.rawValue
+    public let description: String
+    public init(_ description: String) {
+        self.description = description
+    }
+}
