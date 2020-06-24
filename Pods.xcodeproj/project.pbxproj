@@ -18172,6 +18172,60 @@
 			};
 			name = Release;
 		};
+		4325EE52F76E81A1378A9AB1DAF23446 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9F44674FD0F91467F8D876B082DD976F /* SignalRingRTC.debug.xcconfig */;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				ENABLE_TESTABILITY = YES;
+				GCC_PREFIX_HEADER = "Target Support Files/SignalRingRTC/SignalRingRTC-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"TESTABLE_BUILD=1",
+				);
+				INFOPLIST_FILE = "Target Support Files/SignalRingRTC/SignalRingRTC-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MODULEMAP_FILE = "Target Support Files/SignalRingRTC/SignalRingRTC.modulemap";
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-DTESTABLE_BUILD",
+				);
+				OTHER_SWIFT_FLAGS = "$(inherited) -DTESTABLE_BUILD";
+				PRODUCT_MODULE_NAME = SignalRingRTC;
+				PRODUCT_NAME = SignalRingRTC;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+				WARNING_CFLAGS = (
+					"$(inherited)",
+					"-Werror=incompatible-pointer-types",
+					"-Werror=protocol",
+					"-Werror=incomplete-implementation",
+					"-Werror=objc-literal-conversion",
+					"-Werror=objc-property-synthesis",
+					"-Werror=objc-protocol-property-synthesis",
+				);
+			};
+			name = Debug;
+		};
 		4482E277BBC5519209ADF2E0586EC72A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -19115,6 +19169,50 @@
 			};
 			name = Release;
 		};
+		5C814EADEF324FCAA84A0E17F622AB30 /* App Store Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = EF8F4EEAFB3E6E5EBD9F6B5D0B698654 /* SignalRingRTC.release.xcconfig */;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/SignalRingRTC/SignalRingRTC-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/SignalRingRTC/SignalRingRTC-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MODULEMAP_FILE = "Target Support Files/SignalRingRTC/SignalRingRTC.modulemap";
+				PRODUCT_MODULE_NAME = SignalRingRTC;
+				PRODUCT_NAME = SignalRingRTC;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+				WARNING_CFLAGS = (
+					"$(inherited)",
+					"-Werror=incompatible-pointer-types",
+					"-Werror=protocol",
+					"-Werror=incomplete-implementation",
+					"-Werror=objc-literal-conversion",
+					"-Werror=objc-property-synthesis",
+					"-Werror=objc-protocol-property-synthesis",
+				);
+			};
+			name = "App Store Release";
+		};
 		5F6D9EFA885FCE2E8C24FB12C52EF237 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 359C7281EA9862BB7AA003B4AEC115F5 /* Curve25519Kit.debug.xcconfig */;
@@ -19553,49 +19651,6 @@
 			};
 			name = "App Store Release";
 		};
-		67F9C3E30047220E5A2B3F479AABB78F /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_BITCODE = NO;
-				GCC_PREFIX_HEADER = "Target Support Files/SignalRingRTC/SignalRingRTC-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/SignalRingRTC/SignalRingRTC-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MODULEMAP_FILE = "Target Support Files/SignalRingRTC/SignalRingRTC.modulemap";
-				PRODUCT_MODULE_NAME = SignalRingRTC;
-				PRODUCT_NAME = SignalRingRTC;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-				WARNING_CFLAGS = (
-					"$(inherited)",
-					"-Werror=incompatible-pointer-types",
-					"-Werror=protocol",
-					"-Werror=incomplete-implementation",
-					"-Werror=objc-literal-conversion",
-					"-Werror=objc-property-synthesis",
-					"-Werror=objc-protocol-property-synthesis",
-				);
-			};
-			name = Release;
-		};
 		69291E14D5E7DCB1BB5D9108AD994EA1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -19640,61 +19695,6 @@
 				);
 			};
 			name = Release;
-		};
-		6966E3DB34C6C4B93BB00E9896938021 /* Testable Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = EF8F4EEAFB3E6E5EBD9F6B5D0B698654 /* SignalRingRTC.release.xcconfig */;
-			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_BITCODE = NO;
-				ENABLE_TESTABILITY = YES;
-				GCC_PREFIX_HEADER = "Target Support Files/SignalRingRTC/SignalRingRTC-prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"TESTABLE_BUILD=1",
-				);
-				INFOPLIST_FILE = "Target Support Files/SignalRingRTC/SignalRingRTC-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MODULEMAP_FILE = "Target Support Files/SignalRingRTC/SignalRingRTC.modulemap";
-				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = (
-					"$(inherited)",
-					"-DTESTABLE_BUILD",
-				);
-				OTHER_SWIFT_FLAGS = "$(inherited) -DTESTABLE_BUILD";
-				PRODUCT_MODULE_NAME = SignalRingRTC;
-				PRODUCT_NAME = SignalRingRTC;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-				WARNING_CFLAGS = (
-					"$(inherited)",
-					"-Werror=incompatible-pointer-types",
-					"-Werror=protocol",
-					"-Werror=incomplete-implementation",
-					"-Werror=objc-literal-conversion",
-					"-Werror=objc-property-synthesis",
-					"-Werror=objc-protocol-property-synthesis",
-				);
-			};
-			name = "Testable Release";
 		};
 		6C9274EFC0ED5DC02C33706E606454B9 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -19876,6 +19876,61 @@
 				);
 			};
 			name = "App Store Release";
+		};
+		71B4C5AC931584E3565E54384E8252F1 /* Testable Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = EF8F4EEAFB3E6E5EBD9F6B5D0B698654 /* SignalRingRTC.release.xcconfig */;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				ENABLE_TESTABILITY = YES;
+				GCC_PREFIX_HEADER = "Target Support Files/SignalRingRTC/SignalRingRTC-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"TESTABLE_BUILD=1",
+				);
+				INFOPLIST_FILE = "Target Support Files/SignalRingRTC/SignalRingRTC-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MODULEMAP_FILE = "Target Support Files/SignalRingRTC/SignalRingRTC.modulemap";
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-DTESTABLE_BUILD",
+				);
+				OTHER_SWIFT_FLAGS = "$(inherited) -DTESTABLE_BUILD";
+				PRODUCT_MODULE_NAME = SignalRingRTC;
+				PRODUCT_NAME = SignalRingRTC;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+				WARNING_CFLAGS = (
+					"$(inherited)",
+					"-Werror=incompatible-pointer-types",
+					"-Werror=protocol",
+					"-Werror=incomplete-implementation",
+					"-Werror=objc-literal-conversion",
+					"-Werror=objc-property-synthesis",
+					"-Werror=objc-protocol-property-synthesis",
+				);
+			};
+			name = "Testable Release";
 		};
 		755E26E62791D50ADEE62271D85E1D71 /* Testable Release */ = {
 			isa = XCBuildConfiguration;
@@ -21284,60 +21339,6 @@
 			};
 			name = "Testable Release";
 		};
-		A60FBC4FBFF9F5292D1C97BCC3E052DB /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9F44674FD0F91467F8D876B082DD976F /* SignalRingRTC.debug.xcconfig */;
-			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_BITCODE = NO;
-				ENABLE_TESTABILITY = YES;
-				GCC_PREFIX_HEADER = "Target Support Files/SignalRingRTC/SignalRingRTC-prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"TESTABLE_BUILD=1",
-				);
-				INFOPLIST_FILE = "Target Support Files/SignalRingRTC/SignalRingRTC-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MODULEMAP_FILE = "Target Support Files/SignalRingRTC/SignalRingRTC.modulemap";
-				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = (
-					"$(inherited)",
-					"-DTESTABLE_BUILD",
-				);
-				OTHER_SWIFT_FLAGS = "$(inherited) -DTESTABLE_BUILD";
-				PRODUCT_MODULE_NAME = SignalRingRTC;
-				PRODUCT_NAME = SignalRingRTC;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-				WARNING_CFLAGS = (
-					"$(inherited)",
-					"-Werror=incompatible-pointer-types",
-					"-Werror=protocol",
-					"-Werror=incomplete-implementation",
-					"-Werror=objc-literal-conversion",
-					"-Werror=objc-property-synthesis",
-					"-Werror=objc-protocol-property-synthesis",
-				);
-			};
-			name = Debug;
-		};
 		A6E39768013C80B7CEE9037050DC5995 /* Testable Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = C0491FF320C4CC15ACDC6D9C0849FC7C /* SignalMetadataKit.unit-tests.release.xcconfig */;
@@ -22333,50 +22334,6 @@
 				);
 			};
 			name = Release;
-		};
-		C81480E236CAEF98ADD98B4B22D290A9 /* App Store Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = EF8F4EEAFB3E6E5EBD9F6B5D0B698654 /* SignalRingRTC.release.xcconfig */;
-			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_BITCODE = NO;
-				GCC_PREFIX_HEADER = "Target Support Files/SignalRingRTC/SignalRingRTC-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/SignalRingRTC/SignalRingRTC-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MODULEMAP_FILE = "Target Support Files/SignalRingRTC/SignalRingRTC.modulemap";
-				PRODUCT_MODULE_NAME = SignalRingRTC;
-				PRODUCT_NAME = SignalRingRTC;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-				WARNING_CFLAGS = (
-					"$(inherited)",
-					"-Werror=incompatible-pointer-types",
-					"-Werror=protocol",
-					"-Werror=incomplete-implementation",
-					"-Werror=objc-literal-conversion",
-					"-Werror=objc-property-synthesis",
-					"-Werror=objc-protocol-property-synthesis",
-				);
-			};
-			name = "App Store Release";
 		};
 		CAA923AAA1E9F20EB264C397CF4C980B /* Testable Release */ = {
 			isa = XCBuildConfiguration;
@@ -23416,6 +23373,49 @@
 			};
 			name = "Testable Release";
 		};
+		F3F8E9E4987B752FB686F2243265705D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/SignalRingRTC/SignalRingRTC-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/SignalRingRTC/SignalRingRTC-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MODULEMAP_FILE = "Target Support Files/SignalRingRTC/SignalRingRTC.modulemap";
+				PRODUCT_MODULE_NAME = SignalRingRTC;
+				PRODUCT_NAME = SignalRingRTC;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+				WARNING_CFLAGS = (
+					"$(inherited)",
+					"-Werror=incompatible-pointer-types",
+					"-Werror=protocol",
+					"-Werror=incomplete-implementation",
+					"-Werror=objc-literal-conversion",
+					"-Werror=objc-property-synthesis",
+					"-Werror=objc-protocol-property-synthesis",
+				);
+			};
+			name = Release;
+		};
 		F831A4F2EE6CE87EF5ACFC7DAA057BDD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -23786,10 +23786,10 @@
 		0A290C1DE9C9683E91D164AB9774DA3D /* Build configuration list for PBXNativeTarget "SignalRingRTC" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				C81480E236CAEF98ADD98B4B22D290A9 /* App Store Release */,
-				A60FBC4FBFF9F5292D1C97BCC3E052DB /* Debug */,
-				67F9C3E30047220E5A2B3F479AABB78F /* Release */,
-				6966E3DB34C6C4B93BB00E9896938021 /* Testable Release */,
+				5C814EADEF324FCAA84A0E17F622AB30 /* App Store Release */,
+				4325EE52F76E81A1378A9AB1DAF23446 /* Debug */,
+				F3F8E9E4987B752FB686F2243265705D /* Release */,
+				71B4C5AC931584E3565E54384E8252F1 /* Testable Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
