@@ -199,6 +199,7 @@
 #import "OWSMath.h"
 #import "OWSOperation.h"
 #import "OWSQueues.h"
+#import "OWSUnfairLock.h"
 #import "OWSUserProfile.h"
 #import "SSKAsserts.h"
 #import "TestModel.h"
