@@ -1,8 +1,6 @@
 # zkgroup
 
-This is some incomplete code used for testing.  
+Library for the Signal Private Group System.
 
-Most of the cryptography is not implemented so the code is COMPLETELY INSECURE and must not be used.
-
-
+Work in progress.  Subject to change without notice, use outside Signal not yet recommended.
 

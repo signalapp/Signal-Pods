@@ -100,10 +100,10 @@ PODS:
     - HKDFKit
     - SignalCoreKit
     - SwiftProtobuf
-  - SignalRingRTC (1.2.0):
+  - SignalRingRTC (2.3.1):
     - SignalCoreKit
-    - SignalRingRTC/WebRTC (= 1.2.0)
-  - SignalRingRTC/WebRTC (1.2.0):
+    - SignalRingRTC/WebRTC (= 2.3.1)
+  - SignalRingRTC/WebRTC (2.3.1):
     - SignalCoreKit
   - SignalServiceKit (0.9.0):
     - AFNetworking/NSURLSession
@@ -222,8 +222,8 @@ PODS:
   - YYImage/Core (1.0.4)
   - YYImage/WebP (1.0.4):
     - YYImage/Core
-  - ZKGroup (0.5.0)
-  - ZKGroup/Tests (0.5.0)
+  - ZKGroup (0.7.1)
+  - ZKGroup/Tests (0.7.1)
   - ZXingObjC (3.6.5):
     - ZXingObjC/All (= 3.6.5)
   - ZXingObjC/All (3.6.5)
@@ -257,6 +257,7 @@ DEPENDENCIES:
   - SQLCipher (>= 4.0.1)
   - SSZipArchive
   - Starscream (from `https://github.com/signalapp/Starscream.git`, branch `signal-release`)
+  - SwiftProtobuf (= 1.7.0)
   - YapDatabase/SQLCipher (from `https://github.com/signalapp/YapDatabase.git`, branch `signal-release`)
   - YYImage
   - ZKGroup (from `https://github.com/signalapp/signal-zkgroup-swift`)
@@ -264,7 +265,7 @@ DEPENDENCIES:
   - ZXingObjC (from `https://github.com/zxingify/zxingify-objc.git`)
 
 SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
+  https://github.com/CocoaPods/Specs.git:
     - AFNetworking
     - CocoaLumberjack
     - GRDB.swift
@@ -349,7 +350,7 @@ CHECKOUT OPTIONS:
     :commit: b72c2d1e6132501db906de2cffa8ded7803c54f4
     :git: https://github.com/signalapp/Mantle
   SignalCoreKit:
-    :commit: 215afc41654f182bececd949e2410b4a819fbbfb
+    :commit: f167fa109ea5e02ea3cbc0eeae5d70beb849599f
     :git: https://github.com/signalapp/SignalCoreKit.git
   SignalMetadataKit:
     :commit: 3fcb31137b80518607ceed7107516ecabe857699
@@ -361,7 +362,7 @@ CHECKOUT OPTIONS:
     :commit: e43ab163b2dcb4c817339c819b07dac545f05fea
     :git: https://github.com/signalapp/YapDatabase.git
   ZKGroup:
-    :commit: 82ce7ef9c5afdf50ab33ba664b049917a893ed3b
+    :commit: 0ea29d4a20f90464023d4e1fd38551c1b478da2a
     :git: https://github.com/signalapp/signal-zkgroup-swift
   ZXingObjC:
     :commit: fce3786177fd7032c62b230df8beeb206722d38e
@@ -387,17 +388,17 @@ SPEC CHECKSUMS:
   SAMKeychain: 483e1c9f32984d50ca961e26818a534283b4cd5c
   SignalCoreKit: 4562b2bbd9830077439ca003f952a798457d4ea5
   SignalMetadataKit: a7aacedf262d947c22e2c619f0fd217163d2a637
-  SignalRingRTC: d6a8f36f67a36f2df01a9bc97ed0fbc204786558
-  SignalServiceKit: cb2f67a0d53d0aebf588058e96f155eb5c8e6b75
+  SignalRingRTC: 5b10a95625621360f582d57e7cab5c443e95ac0d
+  SignalServiceKit: 2adac6fb54ddf719e17c1adaf5b6bfa01cdfdde1
   SQLCipher: d305a7bd9af4b64f095c79bdc1a1fa50f2a15116
   SSZipArchive: 41455d4b8d2b6ab93990820b50dc697c2554a322
   Starscream: 8aaf1a7feb805c816d0e7d3190ef23856f6665b9
   SwiftProtobuf: 4fd9645e69b72cbae6ec8da5be0cdd20ca6565dd
   YapDatabase: b418a4baa6906e8028748938f9159807fd039af4
   YYImage: 1e1b62a9997399593e4b9c4ecfbbabbf1d3f3b54
-  ZKGroup: 098a169564ee862f794daa4b8de49d22b17322cd
+  ZKGroup: 15a08eed5870a44b9dd14af0824ac95f6eed7380
   ZXingObjC: fdbb269f25dd2032da343e06f10224d62f537bdb
 
-PODFILE CHECKSUM: 6ac96ed037cb6453c2c66281ff1ffbbfefe565dd
+PODFILE CHECKSUM: dab5026e19ce384ecc5d8b2925d52f9e16cb38b4
 
-COCOAPODS: 1.7.5
+COCOAPODS: 1.9.2

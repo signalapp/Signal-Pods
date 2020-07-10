@@ -11,7 +11,7 @@ import libzkgroup
 
 public class UuidCiphertext : ByteArray {
 
-  public static let SIZE: Int = 64
+  public static let SIZE: Int = 65
 
   public init(contents: [UInt8]) throws  {
     try super.init(newContents: contents, expectedLength: UuidCiphertext.SIZE)

@@ -11,7 +11,7 @@ import libzkgroup
 
 public class AuthCredentialResponse : ByteArray {
 
-  public static let SIZE: Int = 392
+  public static let SIZE: Int = 361
 
   public init(contents: [UInt8]) throws  {
     try super.init(newContents: contents, expectedLength: AuthCredentialResponse.SIZE)

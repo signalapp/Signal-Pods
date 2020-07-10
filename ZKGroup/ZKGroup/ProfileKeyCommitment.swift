@@ -11,7 +11,7 @@ import libzkgroup
 
 public class ProfileKeyCommitment : ByteArray {
 
-  public static let SIZE: Int = 96
+  public static let SIZE: Int = 97
 
   public init(contents: [UInt8]) throws  {
     try super.init(newContents: contents, expectedLength: ProfileKeyCommitment.SIZE)
@@ -26,23 +26,6 @@ public class ProfileKeyCommitment : ByteArray {
     if (ffi_return != Native.FFI_RETURN_OK) {
       throw ZkGroupException.ZkGroupError
     }
-  }
-
-  public func getProfileKeyVersion() throws  -> ProfileKeyVersion {
-    var newContents: [UInt8] = Array(repeating: 0, count: ProfileKeyVersion.SIZE)
-
-    let ffi_return = FFI_ProfileKeyCommitment_getProfileKeyVersion(self.contents, UInt32(self.contents.count), &newContents, UInt32(newContents.count))
-
-    if (ffi_return != Native.FFI_RETURN_OK) {
-      throw ZkGroupException.ZkGroupError
-    }
-
-    do {
-      return try ProfileKeyVersion(contents: newContents)
-    } catch ZkGroupException.InvalidInput {
-      throw ZkGroupException.AssertionError
-    }
-
   }
 
   public func serialize() -> [UInt8] {

@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2020 Open Whisper Systems. All rights reserved.
 //
 
 #import "NSString+OWS.h"
@@ -43,8 +43,26 @@ static void *kNSString_SSK_hasExcessiveDiacriticals = &kNSString_SSK_hasExcessiv
 
 @implementation NSString (OWS)
 
++ (NSCharacterSet *)nonPrintingCharacterSet
+{
+    static NSCharacterSet *result = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        NSMutableCharacterSet *characterSet = NSCharacterSet.whitespaceAndNewlineCharacterSet.mutableCopy;
+        [characterSet formUnionWithCharacterSet:NSCharacterSet.controlCharacterSet];
+        // Left-to-right and Right-to-left marks.
+        [characterSet addCharactersInString:@"\u8206\u8207"];
+        result = [characterSet copy];
+    });
+    return result;
+}
+
 - (NSString *)ows_stripped
 {
+    if ([self stringByTrimmingCharactersInSet:[NSString nonPrintingCharacterSet]].length < 1) {
+        // If string has no printing characters, consider it empty.
+        return @"";
+    }
     return [self stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 }
 

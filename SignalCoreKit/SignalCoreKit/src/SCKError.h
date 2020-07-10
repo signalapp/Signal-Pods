@@ -9,7 +9,8 @@ NS_ASSUME_NONNULL_BEGIN
 extern NSErrorDomain const SCKErrorDomain;
 
 typedef NS_ERROR_ENUM(SCKErrorDomain, SCKErrorCode){
-    SCKErrorCode_AssertionError = 31,
+    SCKErrorCode_AssertionError = 31, 
+    SCKErrorCode_GenericError = 32,
     SCKErrorCode_FailedToDecryptMessage = 100
 };
 

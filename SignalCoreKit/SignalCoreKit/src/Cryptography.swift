@@ -121,6 +121,46 @@ public extension Cryptography {
 
         return decryptedData
     }
+
+    // SHA-256
+
+    /// Generates the SHA256 digest for a file.
+    class func computeSHA256DigestOfFile(at url: URL) -> Data? {
+        let bufferSize = 1024 * 1024
+
+        let file: FileHandle
+
+        do {
+            file = try FileHandle(forReadingFrom: url)
+        } catch {
+            owsFailDebug("Cannot open file: \(error.localizedDescription)")
+            return nil
+        }
+
+        defer { file.closeFile() }
+
+        var context = CC_SHA256_CTX()
+        CC_SHA256_Init(&context)
+
+        // Read up to `bufferSize` bytes, until EOF is reached, and update SHA256 context
+        while autoreleasepool(invoking: {
+            let data = file.readData(ofLength: bufferSize)
+            if data.count > 0 {
+                data.withUnsafeBytes {
+                    _ = CC_SHA256_Update(&context, $0.baseAddress, numericCast(data.count))
+                }
+                return true // Continue
+            } else {
+                return false // End of file
+            }
+        }) { }
+
+        // Compute the SHA256 digest
+        var digest = [UInt8](repeating: 0, count: Int(CC_SHA256_DIGEST_LENGTH))
+        _ = CC_SHA256_Final(&digest, &context)
+
+        return Data(digest)
+    }
 }
 
 extension Data {
