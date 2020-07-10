@@ -47,6 +47,32 @@ public func owsFail(_ logMessage: String,
 }
 
 @inlinable
+public func owsAssertDebug(_ condition: Bool,
+                           _ message: @autoclosure () -> String = String(),
+                           file: String = #file,
+                           function: String = #function,
+                           line: Int = #line) {
+    if !condition {
+        let message: String = message()
+        owsFailDebug(message.isEmpty ? "Assertion failed." : message,
+                     file: file, function: function, line: line)
+    }
+}
+
+@inlinable
+public func owsAssert(_ condition: Bool,
+                      _ message: @autoclosure () -> String = String(),
+                      file: String = #file,
+                      function: String = #function,
+                      line: Int = #line) {
+    if !condition {
+        let message: String = message()
+        owsFail(message.isEmpty ? "Assertion failed." : message,
+                file: file, function: function, line: line)
+    }
+}
+
+@inlinable
 public func notImplemented(file: String = #file,
                            function: String = #function,
                            line: Int = #line) -> Never {
