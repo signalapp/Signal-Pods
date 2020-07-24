@@ -43,16 +43,17 @@
 		01C202B009D50769D048E45CEB022010 /* AxolotlKitSwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0767476095F0D3A91709DDEF2577D9B3 /* AxolotlKitSwiftTests.swift */; };
 		01D985E766DC2AF139D0B7914E87A002 /* yuv_sse2.c in Sources */ = {isa = PBXBuildFile; fileRef = 3FA3259FFFD148F2F88C2970D267AD24 /* yuv_sse2.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
 		01E2EDC15205515659616B2631028C23 /* YapDatabaseConnectionPool.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC5BF5D2659F719466F59A4E631B7CB /* YapDatabaseConnectionPool.m */; };
+		0209BBA8B5289ADD4A7A82D156E83F3F /* OWSOperationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAE47E08B0732EE3FE80B08D723D196E /* OWSOperationTest.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		0237ED085D4B9BE7C8E7780C6069BEAD /* filters.c in Sources */ = {isa = PBXBuildFile; fileRef = 15116D98E3FA71F8D24A9E445ABF9678 /* filters.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
 		02B1CD295470134591F5AA1946613A91 /* lossless_enc_mips_dsp_r2.c in Sources */ = {isa = PBXBuildFile; fileRef = 659A1FF8615F4077F6CFA07C429D2991 /* lossless_enc_mips_dsp_r2.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
 		02BEC49581BB5FB6E8951DC40607155D /* GradientFillNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0CB772E5842F4D3530DE5E2F8F8F494 /* GradientFillNode.swift */; };
 		02D145528EA7F8DB0364C352D92C63A2 /* Cursor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C19A05126558EF169CA7C0EA19BC0DF /* Cursor.swift */; };
-		02D29F59D2533785689B520F79FDD767 /* SignalServiceAddressTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C8635F459D0E21E9312603179F4457E /* SignalServiceAddressTest.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		02F157E7378E755D98500AAA6F1567F8 /* YapDatabaseCrossProcessNotificationConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = B77C798A610F3C1998EEC9C3A1E9B286 /* YapDatabaseCrossProcessNotificationConnection.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		02FB379AC1203C94D015C49B5FA2EEBF /* filters_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = EF518C1D0F868FE84510477CE4F9ED57 /* filters_utils.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
 		035EC5AE92E005D2A884241980A2B602 /* StatementColumnConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167D787037D5812E2FB29C318CBB38A5 /* StatementColumnConvertible.swift */; };
 		0397F09191EC837FC1415976A6B2C041 /* CallManagerInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = E492BC614C5E78EA4BE6C3E4653035FB /* CallManagerInterface.swift */; };
 		03C67973EEAE200935CAFB5DBA76F7D2 /* OWSProvisioningCipher.h in Headers */ = {isa = PBXBuildFile; fileRef = 82B38245251E8553B90F3579A604D97A /* OWSProvisioningCipher.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		03D6197B89B91A1ABD8ADD2D436C3BE2 /* OWSDisappearingMessagesConfigurationTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 9E5AFD2A56B3D1B1C3D4B7E547275C70 /* OWSDisappearingMessagesConfigurationTest.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		03DAF13B2D0BD50498672B324FE7CBBB /* YapDatabaseFilteredViewTransaction.h in Headers */ = {isa = PBXBuildFile; fileRef = 404EAC14BF3224AD0F657A20A51827D9 /* YapDatabaseFilteredViewTransaction.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		03E6AF960D81A8C5C3AB2EBF6B3E3062 /* OWSMessageSender.h in Headers */ = {isa = PBXBuildFile; fileRef = D5CA08D907628FFB9F9CCE5CFB372008 /* OWSMessageSender.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		040CD23358A5C5628CF805A7F870CD69 /* YapDatabaseFilteredViewTypes.m in Sources */ = {isa = PBXBuildFile; fileRef = DE3B4DE5B76A4F22F73CE4F6C8443B99 /* YapDatabaseFilteredViewTypes.m */; };
@@ -65,6 +66,7 @@
 		0543D2AB50B04EEBDC63F8D31FB2E209 /* lossless_enc_neon.c in Sources */ = {isa = PBXBuildFile; fileRef = 8D544A26AF3279C5696C7FD5DEB22B80 /* lossless_enc_neon.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
 		056BEBCBE026A190AE775149FB158AD9 /* NSArray+NBAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 920E151DD10BB82291708486F3ECC6EA /* NSArray+NBAdditions.m */; };
 		057891FACA8CE19FFD4F164D7A40EECD /* ALView+PureLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 16B81B242F1BE02B266D2B5A7D170E2F /* ALView+PureLayout.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
+		0582152D633DDC898A45364A6A016322 /* DispatchQueue+OWSTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D2DE5E170C7C08E155B43E22A4B3CC9 /* DispatchQueue+OWSTest.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		05983D1075C5A29A92373D926D0F00C2 /* OWSMessageHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 80269E80EC5B0AD19596DDF60097C833 /* OWSMessageHandler.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		05A92BEB5D94D55174AE0632F27B00FB /* ContactsUpdater.h in Headers */ = {isa = PBXBuildFile; fileRef = 41CC1A8427EABF0B02ABDCEA557997F3 /* ContactsUpdater.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		05A949B110E4A31571E7A3CEC6723608 /* BinaryEncodingSizeVisitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D74E30AB9BA9E42E5225CD3C7386D6D /* BinaryEncodingSizeVisitor.swift */; };
@@ -84,6 +86,7 @@
 		071260A5D3E7A7E3BACD785E2ABD9798 /* vp8li_dec.h in Headers */ = {isa = PBXBuildFile; fileRef = 65D124D545B2013F40CCA9EB6AD416AF /* vp8li_dec.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		0721C1D1F35A4FA895829DFA8BFBC28A /* TSInvalidIdentityKeyReceivingErrorMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 80EB96EFC3DBFE70097640693F9859D2 /* TSInvalidIdentityKeyReceivingErrorMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		072E4826945D62A6B5CCF2D6BCEE1080 /* JSONEncodingError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 830EF9A1B95284963218F0F2870DF2AE /* JSONEncodingError.swift */; };
+		0765FF2F8C6D589433ADABE54AEBDA1C /* OWSAnalyticsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 74F5D7F954382EB535B1A8F4468AA273 /* OWSAnalyticsTests.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		07C4378BB14460343E26B90A002D198C /* NSArray+OWS.h in Headers */ = {isa = PBXBuildFile; fileRef = 75B6A238B670FE8D8AD1BEBA9A68A5D3 /* NSArray+OWS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		07E1B922C804AEB30D6BDA4D29F31291 /* Star.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A25A514842333EF79EBCDAD1FBE8FD9 /* Star.swift */; };
 		07E416C51B6E97622CD06D3B4D66B3E2 /* NSLayoutConstraint+PureLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = DF543FDA8FCD7C7C33DB625CCFD15D2E /* NSLayoutConstraint+PureLayout.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
@@ -115,7 +118,6 @@
 		0BCA304F1B6D77A9146B9C948D13C01D /* sqlite3.h in Headers */ = {isa = PBXBuildFile; fileRef = C0D144545E48A6DD67F8C79C5322C564 /* sqlite3.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		0BF2E27773F4F1016DAB1B2298431F4D /* tree_dec.c in Sources */ = {isa = PBXBuildFile; fileRef = 8827BE71736E06E9298B192285F67C9E /* tree_dec.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
 		0C0E26073C56C7AF9003C153C38C4038 /* OWSError.m in Sources */ = {isa = PBXBuildFile; fileRef = 34C10DC29529AFDCAD19C81C00AE48FC /* OWSError.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
-		0C3E789713B79D96BEDD2014A3866C12 /* MessageProcessingIntegrationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC6AD7CAD96C6BF376D5281641A87C21 /* MessageProcessingIntegrationTest.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		0C6BF3C7726A67E0F5DFBE3338943BC0 /* Starscream-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 5244DA65D2FE863DBFAC80E7234AEA46 /* Starscream-dummy.m */; };
 		0C71927511285E310BB46A0AC6D3C3CF /* YapDatabaseCloudCoreOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 77E7E6FD2D1FDB1E87031FF3EF7F85F1 /* YapDatabaseCloudCoreOperation.m */; };
 		0C92C78C85DE105324E4D565C2D2369E /* SignalServiceProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 826130E6761BEEA58D1507DE7607E940 /* SignalServiceProfile.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
@@ -159,7 +161,6 @@
 		10EC486AA936655B42C5BEA1D03A6A93 /* FakeStorageServiceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB923A4F9C85A7ECD5E3790C1FA5593 /* FakeStorageServiceManager.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		112FAD14A09D36A70C9A85ECD6C2A9C2 /* WhisperMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 190FB989323AE4345F12D19BC31D6604 /* WhisperMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		113AE02A881D8F8A989F62D976AE9997 /* Asset.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7B6BED1657BD42BD94F05C32819F566 /* Asset.swift */; };
-		1192C788562B0E77767786638F04FBC1 /* SignalRecipientTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 63C9A910A2721490721F371AF7ED77F0 /* SignalRecipientTest.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		11A7667666F535F47E26455A874675E1 /* NSData+Image.m in Sources */ = {isa = PBXBuildFile; fileRef = 705F092F3E0DDED932C014CD3D57216C /* NSData+Image.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		120541F7BE6A18CB1E153758B1FB2644 /* OWSSyncConfigurationMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E79A504BADEA22D6DA39584575305A4 /* OWSSyncConfigurationMessage.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		120DBA97581C334AFFA2CFCD63797BC2 /* UuidCiphertext.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB06F546EEF03B243AAC4C5287E0D07F /* UuidCiphertext.swift */; };
@@ -176,7 +177,6 @@
 		1326A72F26100303E768338F816AB20F /* ge_sub.h in Headers */ = {isa = PBXBuildFile; fileRef = 843354256F776EF4845B029A65E5D825 /* ge_sub.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		135CF3F4A5AF6DE9DC9C7A3AED409878 /* TextFormatDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67FEA2DFCE5422D6406F56CE4082E337 /* TextFormatDecoder.swift */; };
 		136B8D596B24990012CF1F3590316D4F /* YapDatabaseViewChange.m in Sources */ = {isa = PBXBuildFile; fileRef = 2E195AC165D139C483C40FC9F83B709C /* YapDatabaseViewChange.m */; };
-		13757EDE9DAE350D19F60BCF52C0DD8D /* SSKSwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F43F4FB6B73D62D548AF24E84EC9B75 /* SSKSwiftTests.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		13C9B0B00707AA487272B931AB4B355D /* SPKProtocolContext.h in Headers */ = {isa = PBXBuildFile; fileRef = DA5194438308F6075CB03D715D0886F0 /* SPKProtocolContext.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1411483FD7BA1BEFD60228DB9CB5F448 /* IncomingGroupsV2MessageJob+SDS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BCBB9C70B15FBF61B9F80370387C44E /* IncomingGroupsV2MessageJob+SDS.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		14188AE3A57C37CA9D232969A66BE0A3 /* kbs_vectors.json in Resources */ = {isa = PBXBuildFile; fileRef = E64C74E3BF395DD6C10252FCFD00C9D0 /* kbs_vectors.json */; };
@@ -192,6 +192,7 @@
 		14B696BAB531B703D8B0C190955198DB /* GroupMembership.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61681B1ACCE2B4606D2FC2745BC8137E /* GroupMembership.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		14B90E26B8AD0505F2E2895E7D97C3BB /* TSIncomingMessage+Builder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F612CAFD0EE96DA3F5006BE808A9F51 /* TSIncomingMessage+Builder.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		154495AA9687A776471AECE0DD4D6472 /* ByteArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41CC9C13CF021E133F792EAC7269B162 /* ByteArray.swift */; };
+		1552FBA0D8831B618EBC8D35F7B1A32B /* MessagePipelineSupervisorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 068F41282AB2AE3F2643B7F7E8DC8F2F /* MessagePipelineSupervisorTest.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		15588215F01D1602D48C3B4F3047DDBE /* dec.c in Sources */ = {isa = PBXBuildFile; fileRef = 19DCC2C7A439619A9D202ED0E99212A8 /* dec.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
 		1572DD9DABF414EF28A829B9B492AC55 /* OWSFailedAttachmentDownloadsJob.h in Headers */ = {isa = PBXBuildFile; fileRef = D2ABCEB7039EA4E5494FB03AC7284610 /* OWSFailedAttachmentDownloadsJob.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		15A394F22755A520E64C12388DDF02B1 /* aesopt.h in Headers */ = {isa = PBXBuildFile; fileRef = 050C395015BA3936A8F8786EE0615543 /* aesopt.h */; settings = {ATTRIBUTES = (Project, ); }; };
@@ -207,7 +208,6 @@
 		169D5EEF05E9DA20AD1357426DE82F2A /* YapCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 03B0A03590748E9EC97EF0E7DE5E5675 /* YapCache.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		16A6647BA584057D289E800CC2BE194C /* OWSVerificationStateChangeMessage+SDS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A296B030F138CCA8007B43C7C180AE8 /* OWSVerificationStateChangeMessage+SDS.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		16A9465D940DCC10DE4B607672B28266 /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = 6C96D88090C563CFDCB5820F813F3361 /* unzip.c */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0 -w -Xanalyzer -analyzer-disable-all-checks"; }; };
-		16C9DC7216101BF79CE2300A68CD7867 /* PhoneNumberUtilTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 189B3BE258633BF726C5FE54799A2967 /* PhoneNumberUtilTest.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		16F72DB40F2FC2B54FC35753AC35DAFA /* OWSFingerprintBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B90F230111A556D9CDCCDC13F852AAF /* OWSFingerprintBuilder.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		17016C1D0F13B9A13D89124F9483527F /* YapDatabaseExtensionConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = CC0586725F52599200997986D900A381 /* YapDatabaseExtensionConnection.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		17123D938C96D89DB1C393AB47125774 /* InteractionFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50065C7829BD570C3097C492F1F26939 /* InteractionFinder.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
@@ -292,6 +292,7 @@
 		2150CEEC5E95571B7504ADAEBC3E3996 /* vp8l_enc.c in Sources */ = {isa = PBXBuildFile; fileRef = A062E0AFCB5DE1E936406AD1ED57B0E8 /* vp8l_enc.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
 		216511BAD770BD6C84A3DF5BEEDEFE2D /* TextFormatEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A33079CD485320E2BDCCE16FFFC8E90 /* TextFormatEncoder.swift */; };
 		2186A975C137C85DE03C0B633CBF0E98 /* yuv.c in Sources */ = {isa = PBXBuildFile; fileRef = BC52CE4BFA930DF7E727F37F5C929888 /* yuv.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
+		219F503F8315C15B593AD4795C0093C0 /* TSContactThreadTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CFC554CE90997656ED7F510B30FC7EFA /* TSContactThreadTest.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		21D5970AEC79E8BB0DD798D02053E146 /* ReverseDispatchQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C1943AC70D41F70BACFBC83050C0227 /* ReverseDispatchQueue.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		21DD3176966BF07A7AE99BCE22FF81DD /* SMKSecretSessionCipherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3961F6C305F57C4D9FCC7C574499092 /* SMKSecretSessionCipherTest.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		21FAF1D0AD75AB8C24C6E898D8F9D0DA /* OWSSessionResetJobRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = 0256256C48BB47C2AB8EF952FFA7040D /* OWSSessionResetJobRecord.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -343,7 +344,6 @@
 		27513F1A68BF174C668C59D78E147557 /* YapDatabaseViewState.m in Sources */ = {isa = PBXBuildFile; fileRef = 9892134466ED18903821C17CC433EE1A /* YapDatabaseViewState.m */; };
 		2766D94C91C671F9C0536D337633797B /* lossless.h in Headers */ = {isa = PBXBuildFile; fileRef = E830667E555549CA7719D5939A50ECE1 /* lossless.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		277A7537324E404F208FCAFDA86BA522 /* AppVersion.h in Headers */ = {isa = PBXBuildFile; fileRef = 7D24C750BC0CD499216B79DF336A4DF5 /* AppVersion.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		27A21394E838AEB90FCB5FA4CC623147 /* TSGroupThreadTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 0602EC19D24660EF3FA9FF538599A695 /* TSGroupThreadTest.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		27B00E339CE211A03EA122AF2E84E196 /* YapDatabaseOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5362E995C2E83C3AA25B6D06A4A36562 /* YapDatabaseOptions.m */; };
 		27DA0D3F5A99FFF5951AE4C511F34271 /* SSKSessionStore.m in Sources */ = {isa = PBXBuildFile; fileRef = B102CAD6EEDAFF33FD732C3874C3B032 /* SSKSessionStore.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		2810DC71261B31506031912870D24751 /* OWSAddToProfileWhitelistOfferMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 273AFC41882AE977C3D09E9ABBF28F97 /* OWSAddToProfileWhitelistOfferMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -399,11 +399,11 @@
 		2D25AA1F4B4E8760B5E98949C08BF173 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4FFEF32630AF91FA18DD1FA364D66DF3 /* Foundation.framework */; };
 		2D5270EFC80617080BC131C5B4EF9584 /* SSKEnvironment.m in Sources */ = {isa = PBXBuildFile; fileRef = DD2CEAB190CD325F92D3C890F070D4E4 /* SSKEnvironment.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		2D5688221E32D701E278A2D0A8DB3EB3 /* SMKServerCertificate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7174855291028D25A0A7B194951F6A1 /* SMKServerCertificate.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
+		2D8C1708ADC0773B7B76A88C64AAB680 /* PhoneNumberTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FEAB443D67D3E9310F56BDA286519E8 /* PhoneNumberTest.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		2DA880FB805D8BEE08627C190589EE55 /* OWSReaction+SDS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 735E296088B7D0AE1781F1C3D0EAC7E7 /* OWSReaction+SDS.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		2DB32B1CA43E354F8EAD64405F9C0C32 /* YapWhitelistBlacklist.m in Sources */ = {isa = PBXBuildFile; fileRef = 25D47E4CCF9063CB6FEE363EC5364ACB /* YapWhitelistBlacklist.m */; };
 		2DB658A1A78AAD38801D9905D4A09FF7 /* YapDatabaseFullTextSearchSnippetOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = EC47E8F119A0B791349D88DE68C1A2A5 /* YapDatabaseFullTextSearchSnippetOptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2DCB3BA36D43362853A94B3A00F0CB5E /* ProfileKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37E05E1E7E1DC007E4D1D5EBC95715BE /* ProfileKey.swift */; };
-		2DF20F715E93AF00F6E0B8D2D1074D1E /* TSThreadTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 05E17226F14A45A69550E4EEA09D4213 /* TSThreadTest.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		2E06C896D64ACFE39DD6A1737705F4B7 /* Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FAD8CDDF4F388824A18F3EFFC06308 /* Group.swift */; };
 		2E0C672C93ECCB85DB714BCBA391D6E3 /* MessageExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC2E4755B38A41DA8D1553FA6E26C0CF /* MessageExtension.swift */; };
 		2E4E5691A58623E96A331810CB39E7FA /* AnimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A432BFC3C4D4E484B61199FFC6B2778 /* AnimationView.swift */; };
@@ -428,6 +428,7 @@
 		2FB7BF99B1193ACCBD73BF7A4FEE5DC6 /* NSData+keyVersionByte.m in Sources */ = {isa = PBXBuildFile; fileRef = CECF35D621147603C3B41998F05437B7 /* NSData+keyVersionByte.m */; };
 		2FE051560184952A76836425102C9E60 /* FTS5Pattern.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF32A353AD30CE5E0903F91966AFCFB /* FTS5Pattern.swift */; };
 		2FE543AC580A3C0A295E579357393260 /* PrecompAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37E343ADF52453CE1B63B8FF058BF687 /* PrecompAsset.swift */; };
+		300C1D0DE3C7A7815FD2543B7154AAC4 /* SDSKeyValueStoreTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E567A97B47670BAADE7BFC0D4E60D72 /* SDSKeyValueStoreTest.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		30111A052BA4D58503C9D82449C8D735 /* DatabaseValueConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1550126AA9412C2E44A9DCC5D01144A1 /* DatabaseValueConvertible.swift */; };
 		30504C3A9B108386AEDF0F868F090305 /* SignalRingRTC.h in Headers */ = {isa = PBXBuildFile; fileRef = 05970BA3293D77F6B1A5AE805A64C143 /* SignalRingRTC.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		305FD60CB41E19590575E8706841EE9D /* MTLTransformerErrorHandling.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F83E3E2EE83CB7ED761BF3312BFCE56 /* MTLTransformerErrorHandling.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -436,7 +437,6 @@
 		30A83E2078A62F4005FB5780FE57C244 /* PMKUIKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D3B40C5F0EF9AF8642FD1405C91DA62 /* PMKUIKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		30B86186260AD755A0807C6D63630053 /* OWSBlockingManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 24DA1DE85406DF86833A95BD78BB1EE7 /* OWSBlockingManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		30C278B1DADF931217D6E4D23D7E6A4C /* PureLayout-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 1055CD034A36714A40625217F070C86A /* PureLayout-dummy.m */; };
-		30E90002E913DD14BB8B3B75087B88E2 /* UnfairLockTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AF0CC5D5BC1B56858A0B9AF5E800ECE /* UnfairLockTest.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		311E8CCBA8DC3CA586F8A2757183CF92 /* AFCompatibilityMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = B107E58EDEEA656344FC78514B325666 /* AFCompatibilityMacros.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3130710626221B23BAE02AC499014C31 /* NSObject+MTLComparisonAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = BE01ADABAE10D5F4B7C83FC8BEE38D97 /* NSObject+MTLComparisonAdditions.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		3156637344E654412DDD7AF160101F31 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF2AD5A5ED3B7202A192BA2A14CEB665 /* UIKit.framework */; };
@@ -446,13 +446,13 @@
 		31903AFA76B087F78E9D37FB2F86C701 /* quant.h in Headers */ = {isa = PBXBuildFile; fileRef = 2805D7CB2A11988F58251664D0F37142 /* quant.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		31EC64BC6F91F778605D9D6A73EE812A /* Native.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FBBEC0857D1277C7134A05B6E14809F /* Native.swift */; };
 		320A08A4418BDB0D4300019DDBD73ACE /* Randomness.m in Sources */ = {isa = PBXBuildFile; fileRef = EBEBE0AD0831E1E6C9A0DFFED1EEB8F3 /* Randomness.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
-		320EBA38A9DD06E1979C5F461425D4D4 /* InteractionFinderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 625FEFECEA193AF57F5F886BF0733759 /* InteractionFinderTest.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		322E67311F5D0FAD176D7472A8803BB1 /* BobAxolotlParameters.m in Sources */ = {isa = PBXBuildFile; fileRef = 6176BE934F17D77F6FBF798A9B160A5E /* BobAxolotlParameters.m */; };
 		323FD0BDD748A78AAFD02053C341C779 /* Reachability.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18F588CA8608DD9F073A6D11B7119C34 /* Reachability.framework */; };
 		324D4574FEBC5E8548D8464F0E7DB0C4 /* Google_Protobuf_Wrappers+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8FEEA93C87008C06B92BFAA46DFEA53 /* Google_Protobuf_Wrappers+Extensions.swift */; };
 		325523557176031E7447645B1B8FDDB1 /* PreKeyBundle+jsonDict.m in Sources */ = {isa = PBXBuildFile; fileRef = 496BE7E880C8267F8201227CA2EDD994 /* PreKeyBundle+jsonDict.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		326AA663172C218F137052759B6C0024 /* YapRowidSet.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2C566DF9A0490134775CD93BFA87C114 /* YapRowidSet.mm */; };
 		32AB694F23714C46E8BDC28248C02CEE /* buffer_dec.c in Sources */ = {isa = PBXBuildFile; fileRef = 8F678C9F1EC0F6F9A32C9C0D83446DA3 /* buffer_dec.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
+		32ACD2DF17806BD4E94281DCE9881C2E /* OWSDisappearingMessageFinderTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 9EB4BE0FE64075E4F91541805C4E9FD1 /* OWSDisappearingMessageFinderTest.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		32B2C6E601F7FD4747047EEB87761589 /* SwiftProtobuf-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 9E70195698B06CB19C32D2D2993870D9 /* SwiftProtobuf-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		33086E1AAEE696A3A7148DCE80331407 /* fileenc.c in Sources */ = {isa = PBXBuildFile; fileRef = 6DE8C49A33BC2BD096BC3EF32DD904B2 /* fileenc.c */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0 -w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		33207D1AA0021AE56F363931096A5CC6 /* TSInvalidIdentityKeySendingErrorMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = F925B9C93EBC39FB41F825DB4614566C /* TSInvalidIdentityKeySendingErrorMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -469,7 +469,6 @@
 		3505F6F164EF0FF5F6FFD0C7A39F74BD /* AxolotlKit-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 29F62B6522E13680C01E43C380CE032D /* AxolotlKit-dummy.m */; };
 		3508D5549EED1D0FD2CD544394A08B21 /* SMKError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6263EDE15DD7F35D2C69B132110BCA62 /* SMKError.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		3513E2111454F40E8FD328585FB1BF5A /* YapDatabaseRTreeIndexOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = C55CABB372FEC6E601ADB28E4B500240 /* YapDatabaseRTreeIndexOptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		351AAEC72A77DC1C5BA06DF9BDED1C45 /* MessageSenderJobRecordTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35889553BFA0B9D1A621DF653A7BD32F /* MessageSenderJobRecordTest.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		3521348ADDE94B653156F359428470DC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4FFEF32630AF91FA18DD1FA364D66DF3 /* Foundation.framework */; };
 		35352EFD91A41C3D770A4F60B08BBDDA /* OWSHTTPSecurityPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = A33F314C893CA6FEACB7E9C5E7861ABF /* OWSHTTPSecurityPolicy.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		35513CAD1DC131CDA7E0ED493985C5BB /* when.m in Sources */ = {isa = PBXBuildFile; fileRef = DE1F7EAC14974B4EE45F50FC4FAF9852 /* when.m */; };
@@ -515,12 +514,13 @@
 		3A1669F2E987FE163AE63AAE3DD4EA67 /* OWSProfileKeyMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = E3CE656AD3E78383D5EC58B6A9113216 /* OWSProfileKeyMessage.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		3A281E472F3C7BF60230896DB26C3637 /* HKDFKit-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = AAAE995790A70952ED05EC46BBF1B517 /* HKDFKit-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3A72ADCCC3C9CD846C1C062D55121D77 /* HKDFKitSwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A6BCD182CB2A50AAC39F6C7700F0F77 /* HKDFKitSwiftTests.swift */; };
+		3A746A2DCA5A15D5D0758D1CB5EB3370 /* SignedPreKeyDeletionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F9E1318D91161E4D08DC4688D358B2E /* SignedPreKeyDeletionTests.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		3A800DA5CB27F72BE408E3917AAB4C44 /* YapDatabaseActionManagerTransaction.m in Sources */ = {isa = PBXBuildFile; fileRef = 6ADC957705081F5F6A26683B9933834E /* YapDatabaseActionManagerTransaction.m */; };
 		3AA256AFEB20183933B3FE5451FAE9E8 /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D1863046EA27215B684A67BE8B416CE /* CocoaLumberjack.framework */; };
 		3AAEAB6A6B30ACA5E399D4D38277335C /* OWSCountryMetadata.m in Sources */ = {isa = PBXBuildFile; fileRef = A087DD5E25FB94539D2A1F6408B7C2E4 /* OWSCountryMetadata.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		3B41BED7D8489699E72A4C02687FD65A /* KeyframeInterpolator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EF4BCEC9967736B4CD989CB3D0C6C4D /* KeyframeInterpolator.swift */; };
 		3B421F345F780117BEEB3C08D6699ACE /* OWSFakeMessageSender.m in Sources */ = {isa = PBXBuildFile; fileRef = 1C2F56257F0CCD6E71600D3D7A8BC045 /* OWSFakeMessageSender.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
-		3B5CB83AA0C5478262D447FE1277E051 /* OWSDisappearingMessagesJobTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 563E3C1124878EB3CBA39EE098689D45 /* OWSDisappearingMessagesJobTest.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
+		3B424DB21123F17AB21C4A5F7AB6BAEF /* TSMessageTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 00C2323FB449CC78D6A75FEE4EAFC2BB /* TSMessageTest.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		3B6148314FA2734A5B0E1261D3DD3A1B /* YapDatabaseViewTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 81E398857D5509F90063B8D9101D83C3 /* YapDatabaseViewTypes.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3B7EE76256379D2E6DD8DF855D85B303 /* lossless_neon.c in Sources */ = {isa = PBXBuildFile; fileRef = D1F329F173B61B22EF1649D2DB0209F4 /* lossless_neon.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
 		3C105D5674CAF6283A2D89A3A871D0C0 /* AFNetworkReachabilityManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 84F73DBB23F542B6634005E8903AA344 /* AFNetworkReachabilityManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -542,7 +542,6 @@
 		3D124B398692FA5ABE963BD8E8541E7B /* OWSGroupsOutputStream.m in Sources */ = {isa = PBXBuildFile; fileRef = 9707F29DD3E8AC991D49E77F8563ED9A /* OWSGroupsOutputStream.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		3D1432893C9A20F23D84E1CB9D90B591 /* filters_sse2.c in Sources */ = {isa = PBXBuildFile; fileRef = 8ADEC98949B29B029A5EB95635500348 /* filters_sse2.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
 		3D260E30F452D25E6C05BEB09DA7835E /* YDBCKChangeRecord.m in Sources */ = {isa = PBXBuildFile; fileRef = 4323CFBB71D2AE997DA6A5FD09FC7003 /* YDBCKChangeRecord.m */; };
-		3D35C42779C56BF09820C7D1FFC954FA /* OWSDisappearingMessagesConfigurationTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DE7A99E82BAE284FD56930B3B5469B17 /* OWSDisappearingMessagesConfigurationTest.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		3D5A2B766AC0B585AFCDD79AF398FAC6 /* open.c in Sources */ = {isa = PBXBuildFile; fileRef = 265F1189EE35CFB6E1400571EA8FCB28 /* open.c */; };
 		3D5B25A93BACA2C5B443E327607684A4 /* ProfileKeyCredentialRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22E6C398833C5469E1E5B995924EF5B9 /* ProfileKeyCredentialRequest.swift */; };
 		3D5BDB8328FC52843F061759602C5E3C /* AppExpiry.swift in Sources */ = {isa = PBXBuildFile; fileRef = F92F4413E149436ED031E61EE4CD31DE /* AppExpiry.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
@@ -576,8 +575,10 @@
 		40EEF8D457D87F2B39BEDD7804E4A3B7 /* OWSReaction.m in Sources */ = {isa = PBXBuildFile; fileRef = 55D8D4F33FA9A2883DF33792BA7281F0 /* OWSReaction.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		410526B3BC992B2FCF71CE88FBF1F98C /* ProfileFetcherJob.swift in Sources */ = {isa = PBXBuildFile; fileRef = F61872BF01B6FA3741680C29CFEFADD2 /* ProfileFetcherJob.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		410BF45D273025309A33B8ED2D914F97 /* OWSFakeNetworkManager.h in Headers */ = {isa = PBXBuildFile; fileRef = E40D12A19595D1B912AF1C5953017137 /* OWSFakeNetworkManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		41102089AE20DA0C58773EFFA0955449 /* UUIDBackfillTaskTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81C10B37D5FCF2582386C25CE61B48CD /* UUIDBackfillTaskTest.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		411D8623286FD41CAD221AE05B98F668 /* YapDatabaseActionManagerConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 6216FF88EB8F2A4AD1638C97917769B6 /* YapDatabaseActionManagerConnection.m */; };
 		4123D68288A50FC9864D999A85B1DC4A /* OWSIdentityManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 988E85BAF66459B5F0AF2124B5DE5B35 /* OWSIdentityManager.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
+		413ADD79191AF823C37B277308A48B70 /* SSKSwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F43F4FB6B73D62D548AF24E84EC9B75 /* SSKSwiftTests.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		4166C7A5C3729EA3704A55CC5460170C /* MediaGalleryFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AB3D9AAD8000544B94BED32DA53DE57 /* MediaGalleryFinder.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		41968D3C6083C77322A2AB718BCF0D0D /* dec_msa.c in Sources */ = {isa = PBXBuildFile; fileRef = 132DA1C638D9DFF85242240EE53536E4 /* dec_msa.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
 		41ACDCAD1C100C2A84144CBEB909A794 /* SignalRecipientFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7CD0D4435C48D12BD282A915E25F9ED /* SignalRecipientFinder.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
@@ -611,6 +612,7 @@
 		4562E27E5D1DE0B20684B3D460D762B1 /* fe_tobytes.c in Sources */ = {isa = PBXBuildFile; fileRef = 061452A10C4B57FEAAE8FF6334B66E3C /* fe_tobytes.c */; };
 		456EDC620A06D679FBDC71A76860885F /* OWSOutgoingCallMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = DBDF1C259F62205A3629F2326F14DDFA /* OWSOutgoingCallMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4582B7B9DFACA3A3A00CBDE5452FFE6D /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6171BA4AC130B531F441115D054A9252 /* Accelerate.framework */; };
+		4583BE5B5C7BC5E0FEC11F31F8B8354B /* OWSDeviceProvisionerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BF4A029D82B85C6809494A6269A3680 /* OWSDeviceProvisionerTest.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		4596028AF3EDF07EAC4CC8659F5E7501 /* SDSDatabaseQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C527B4146FB3125A252472D4CDE482 /* SDSDatabaseQueue.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		45B0B63411D414A1F33DA75A4ED103B0 /* YapDatabaseManualViewTransaction.m in Sources */ = {isa = PBXBuildFile; fileRef = 6AD34870F43F851F6C5F9FDD7D17AF38 /* YapDatabaseManualViewTransaction.m */; };
 		45F3916951D1955EA2B3C99A55031472 /* TSOutgoingDeleteMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 803E64FD49092857A3F2A25806C010AA /* TSOutgoingDeleteMessage.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
@@ -621,7 +623,6 @@
 		46759F1480D74057A2778494C2292531 /* OWSDevicesService.h in Headers */ = {isa = PBXBuildFile; fileRef = 679127F60A0BB259B052F74A7A2B067E /* OWSDevicesService.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		468A74CA29E999DDFD32B27F5555DE74 /* TSGroupModelBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9BB3D96420ACE796205B96B56588172 /* TSGroupModelBuilder.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		46B8FF7012DE06DD172CFF75A7EDFC25 /* SCKError.h in Headers */ = {isa = PBXBuildFile; fileRef = 229FB939EE6B18C4869F1A7EC64E7EA6 /* SCKError.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		46C65A576D390F6613AD0AD995645FEF /* SignedPreKeyDeletionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F9E1318D91161E4D08DC4688D358B2E /* SignedPreKeyDeletionTests.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		470B4801DE3F829F257B86145B2E0E5E /* yap_vfs_shim.m in Sources */ = {isa = PBXBuildFile; fileRef = 16FBA9F9EAEB4B97D4DB0FDDE9528939 /* yap_vfs_shim.m */; };
 		4738C6D292B001D4461A834489A57ED3 /* fe_sq.c in Sources */ = {isa = PBXBuildFile; fileRef = 1DD879FED812BD3B52BF28A39E4CDA83 /* fe_sq.c */; };
 		47C550BCFCAE680CF63CEC7539331D37 /* NSDictionary+MTLMappingAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 68629143DC5179605FEDAED41691DA75 /* NSDictionary+MTLMappingAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -640,6 +641,7 @@
 		48EA0417EF2A7CD7AF35D16633576A92 /* EXTKeyPathCoding.h in Headers */ = {isa = PBXBuildFile; fileRef = DFE501FE15DFB5C77663A1CA1FB623A6 /* EXTKeyPathCoding.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		48F329D32FA29CB96061EDF2FDC799A0 /* SMKObjCTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 9601076BA9C1E1890D9D21246A34DBED /* SMKObjCTest.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		4951BB1CA724A95CA37DBA96AFBAE6F8 /* NodePropertyMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A637A0395519F4EBD8394A1C656F61A /* NodePropertyMap.swift */; };
+		49B36D689D3FAB6293A587BAF5925FEB /* OWSProvisioningCipherTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 350EC6C6A1CE00B5CF2203D8A07A708B /* OWSProvisioningCipherTest.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		49BD0209829D262DDC2914EE911E117A /* OWSBlockedPhoneNumbersMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = E922A72EE95F6B62BBF9CFFA3E666E53 /* OWSBlockedPhoneNumbersMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		49C64216E5CFDAF77828F12B629FE125 /* YapDatabaseActionManagerTransaction.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C602EFB9DF994AE54E893CE916F80FE /* YapDatabaseActionManagerTransaction.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4A02771CAA087BF6D37FEBEF88BD0541 /* crypto_verify_32.h in Headers */ = {isa = PBXBuildFile; fileRef = 6D40BAF2F6A1FBE223C0F8AFA82091ED /* crypto_verify_32.h */; settings = {ATTRIBUTES = (Project, ); }; };
@@ -670,7 +672,6 @@
 		4C3984CBF58D7A1CE32293BD5D86465B /* OWSIncomingMessageFinder.h in Headers */ = {isa = PBXBuildFile; fileRef = E2CC3F08EC55C435C84B22A507829A4B /* OWSIncomingMessageFinder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4C42E4F3CB1314B9016252D54B21A312 /* SyncManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 967B09C28F6F4322856173369BE38135 /* SyncManagerProtocol.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		4C4A08A85BAD7295F63E059A0582A9AA /* DatabaseValueConvertible+RawRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB4B176886AD1EB7A97D022B78675CC /* DatabaseValueConvertible+RawRepresentable.swift */; };
-		4C6EB28D885642B2548C96A6E010DBEA /* KeyBackupServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC40B0EB8149E1982C32B1084989565D /* KeyBackupServiceTests.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		4C74A455993462B91E94947D0613DFF3 /* BulkProfileFetch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6910B75B776B17371E02B7596CE0ADB2 /* BulkProfileFetch.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		4C81D1FCC1B4882B4A6189546AEF7C9E /* SDSKeyValueStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C682A24C44B51B9EF721A42D7A585A /* SDSKeyValueStore.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		4CBB0462F3B7CCC319CCD3B6ACA3763E /* kbs_storage_service_encryption_vectors.json in Resources */ = {isa = PBXBuildFile; fileRef = F2B5E562AD6C04636609FF58FCD231DF /* kbs_storage_service_encryption_vectors.json */; };
@@ -702,7 +703,6 @@
 		50AE1B17C37AA3A1A5B3D71FA5C97562 /* MaskContainerLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FD740E2E5AD575EF69DF4B190AE3D85 /* MaskContainerLayer.swift */; };
 		511971255DB3D2344AFCA0B3453CA7D7 /* ExperienceUpgrade.h in Headers */ = {isa = PBXBuildFile; fileRef = F1D1BBF7F2263CC1DCEA7373BCD2204C /* ExperienceUpgrade.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5124BE4121CEA2006ABBE003C6C59376 /* SSKProtos.swift in Sources */ = {isa = PBXBuildFile; fileRef = A103F4AE8C8292173CBE27C216F8C0A1 /* SSKProtos.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
-		5132FF3CB74C49217F4063C67231F21B /* OWSMessageSenderTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A821F559AACA7F380EFC21A88F66E13C /* OWSMessageSenderTest.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		513445138FBB0F1CCDEDE2E091285290 /* MathUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9D130895003626570093831B5AD20AF /* MathUtils.swift */; };
 		51427D4943547DC447DC03CB890C8ADB /* SMKEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 087F150C0C5CBCE3A6C0E7C44AAEA96B /* SMKEnvironment.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		519389F218C4CDE13E6A7E134DFC2216 /* KeyedDecodingContainerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A655107A25BA7B1E1D0DB86AB3A0F324 /* KeyedDecodingContainerExtensions.swift */; };
@@ -711,12 +711,9 @@
 		51CAD54AD5D0FE5C7347E8F964247D0B /* OrderedDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D2596B0BAB294331345EC6CF23F00C0 /* OrderedDictionary.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		51E856122D62631EC38E5D2A465523C7 /* FTS5TokenizerDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AFB4B06E3651A7330506BA80ABAAA91 /* FTS5TokenizerDescriptor.swift */; };
 		51F486A38120D3FCB8AC53E809FC7BFC /* YYAnimatedImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = C43E62F3DA66A977D793263270967309 /* YYAnimatedImageView.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
-		51FDBEA9F170ADEAB43EE8AF76B83725 /* DispatchQueue+OWSTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D2DE5E170C7C08E155B43E22A4B3CC9 /* DispatchQueue+OWSTest.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		520066A685158A8A39BC3581DAABA4E1 /* Randomness.h in Headers */ = {isa = PBXBuildFile; fileRef = 73271E486A78B6D71D27512FDEB54FF5 /* Randomness.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		52031E763D935D694169C9316F7285AA /* UIView+Promise.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30FB4836076035658F993F6F9F31F004 /* UIView+Promise.swift */; };
 		5221F771A0E9704B7E3C05F179C3D28A /* OWSDisappearingMessagesConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = BA94A83DB24668448AAF6DF12D724C67 /* OWSDisappearingMessagesConfiguration.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
-		52470FF131DA54B1B497D9C0AB22830A /* OWSDeviceProvisionerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BF4A029D82B85C6809494A6269A3680 /* OWSDeviceProvisionerTest.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
-		5247D1C8B0A28C42F1A3624DA49AEF2D /* JobQueueTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20CF4B3A711F24A5272AE6341A43F6A1 /* JobQueueTest.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		52528466ED9A1923945EB7062A5A99C7 /* NBPhoneMetaData.h in Headers */ = {isa = PBXBuildFile; fileRef = C85EC165A248A31A90B376CEBBB691B2 /* NBPhoneMetaData.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5253C9D2346BDF5CA0C611CBFEE006C7 /* Data+SMKTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07315AABAE1FDF0A1EFFEAE1898D874B /* Data+SMKTests.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		525CE8A0E515ACADCE29C6E24E7DD4AC /* YapDatabaseSecondaryIndexConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 74DDAD150ECC8DA45265A6001C367EF2 /* YapDatabaseSecondaryIndexConnection.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -724,15 +721,12 @@
 		5277AC7BAF1C85ACE4AA6AA6270E54CB /* ECKeyPair+ECKeyPairTesting.m in Sources */ = {isa = PBXBuildFile; fileRef = 4E48CB4B5577FD8A991F02BD749C6776 /* ECKeyPair+ECKeyPairTesting.m */; };
 		528CF3D3628A333B6CE1E1B54E891239 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E88DFDE3A19FDA7F41095AFE7D1E21FC /* MobileCoreServices.framework */; };
 		529A5E8D6173AF438175F8E602F89C0D /* OWSFakeMessageSender.h in Headers */ = {isa = PBXBuildFile; fileRef = 4C36D380AB5D16C2BC55E657BF5D2964 /* OWSFakeMessageSender.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		52BDB0E8F5F577630D19A43D0AD920CF /* DeviceNamesTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3279699D59F74815D14098DFAF33BDC /* DeviceNamesTest.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		52C3F8DB3D263895FBA35542A1FCE604 /* lossless_enc_sse41.c in Sources */ = {isa = PBXBuildFile; fileRef = 00CD08EAA86936AE1579E8C34FBF09AD /* lossless_enc_sse41.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
 		52F1A6244A39594342A60940A37B6CDB /* Pods-SignalMessaging-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 8870C8802576E059BC9436D12ADC6060 /* Pods-SignalMessaging-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		52FCC75E808F74BC7A2EB64648EB2385 /* OWSIncomingMessageFinderTest.m in Sources */ = {isa = PBXBuildFile; fileRef = B0C38C74C8FABF629FB1F84B7758BA47 /* OWSIncomingMessageFinderTest.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		53077C550B5909DFAE30E521E3CB78C1 /* YapWhitelistBlacklist.h in Headers */ = {isa = PBXBuildFile; fileRef = 414EC50190BB712ED04FAD38E6BCD6C8 /* YapWhitelistBlacklist.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5326927054FF63FC35875FD3B7614BFC /* OWSBackupFragment.m in Sources */ = {isa = PBXBuildFile; fileRef = C6DF552E13224D72F22A28EAEC9742F5 /* OWSBackupFragment.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		533AB5E70A6ED005224FE98888DF738B /* DownloadStickerOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E726BCF613FBB7A4558EE72E8E3CCD44 /* DownloadStickerOperation.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		5350B046867D0F4CA7AE907DDDDEE3B4 /* SignalAccount+SDS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46597D91ACCD6D23C4AEEA2761A5D672 /* SignalAccount+SDS.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
-		538606D0A0C3B723B827FCAF54D1EE4A /* TSMessageTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 00C2323FB449CC78D6A75FEE4EAFC2BB /* TSMessageTest.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		538B5D97F9BB3171308ADF5BBD5E0E01 /* fe_isnegative.c in Sources */ = {isa = PBXBuildFile; fileRef = B8612B9F8EA5B1DD9560F3F6E75D5B3F /* fe_isnegative.c */; };
 		5396EE5039CC84539D7F00ED13E7187C /* YYAnimatedImageView.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C6735713917A51E37AF38BCB9327959 /* YYAnimatedImageView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		53CA38A8A155DC1CC9D05A64CEE079D0 /* filter_enc.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BF805ED63AF6BD594EBD69F7657B11A /* filter_enc.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
@@ -746,6 +740,7 @@
 		54581D94860899E92BF3D8BDC176DB80 /* TestProtocolRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F3CE5B4E4E7010F4AC165FED2FD1C51 /* TestProtocolRunner.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		54651D3E1373C70A62EB8C24780AE1AC /* unzip.h in Headers */ = {isa = PBXBuildFile; fileRef = C90EA269F8EDD02B46B2D52DB5540A03 /* unzip.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		54984657BB7846300C97A33DF53A9E04 /* animi.h in Headers */ = {isa = PBXBuildFile; fileRef = 128715ACC4DCCB69A44E9505EBB22F2C /* animi.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5505C0EDF43B4EE277FC6FA19B69AC49 /* SignalServiceAddressTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C8635F459D0E21E9312603179F4457E /* SignalServiceAddressTest.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		5521333DE605439C433534ED7C68664F /* ServerZkProfileOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = A656AF0258B2C6E0555ABE2CA2C5D9C3 /* ServerZkProfileOperations.swift */; };
 		5584F20C3853D7D10BA406110DAA5212 /* OWSBroadcastMediaMessageJobRecord+SDS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BD5F534E7980432D8A99625428BA162 /* OWSBroadcastMediaMessageJobRecord+SDS.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		55EB5773B964B853B1931C61EBD57A45 /* OWSWebSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = F02FDC578F92E177A93CE341BDC50CB7 /* OWSWebSocket.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
@@ -761,7 +756,9 @@
 		5730A2BF1D196DE6C999EB6EFECEBBFF /* EXTRuntimeExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 03CEF30E0CEE8DB728176E6B8E6F9B40 /* EXTRuntimeExtensions.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		574C4513EE1E79BB8CB3C5B552BEDD61 /* ProtoUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 981651A3E5EB83E6C1D301A429049C19 /* ProtoUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5794684C21850C433FD24EAE11761D2C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4FFEF32630AF91FA18DD1FA364D66DF3 /* Foundation.framework */; };
+		57B1BAC7811F313F86D5172070B3A835 /* TestModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4F4DEE342051BA56F0DC09E9406A03 /* TestModelTests.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		57CF33326A5BDF9AD821A792EED3768D /* upsampling_neon.c in Sources */ = {isa = PBXBuildFile; fileRef = D3DF7B315AE2727523BD1FDCC00A6DBB /* upsampling_neon.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
+		58057476538D9AEF460675BDB219F793 /* OWSMessageManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = D10882E1CF7C83AE892DE0BE968FF9EA /* OWSMessageManagerTest.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		580F4DDA958DD7D05CCBEB9515228DBD /* SSKMessageSenderJobRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = B6A81A218041399639D0BC329A4E5886 /* SSKMessageSenderJobRecord.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		586402E91ACF59D7018173A850AC1896 /* ge_p2_0.c in Sources */ = {isa = PBXBuildFile; fileRef = 7166E20D7AFE98CA571621064E93CE42 /* ge_p2_0.c */; };
 		58C08E243F7CEE6749674EFE889191F4 /* GroupOutputNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = A167A949F88ECEFD03DEF5D611F19FE5 /* GroupOutputNode.swift */; };
@@ -769,6 +766,7 @@
 		58E34BD2EBB85F978CDBE7BDD69439FB /* OutageDetection.swift in Sources */ = {isa = PBXBuildFile; fileRef = E30F93F76FE25A63E89B050CD868D5A8 /* OutageDetection.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		58FB6179DF96E7E341DC39929F78B203 /* OWSUnknownContactBlockOfferMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 227E179C9B16030066AB8EF059DB992D /* OWSUnknownContactBlockOfferMessage.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		5901732DD1BCA22FCC0AD93C3EF5273A /* NBPhoneNumber.m in Sources */ = {isa = PBXBuildFile; fileRef = E3661032EC7CA3234B596F7F68305E0A /* NBPhoneNumber.m */; };
+		590C6DC55C39918EBF56E8BF9F85F3EC /* OWSIncomingMessageFinderTest.m in Sources */ = {isa = PBXBuildFile; fileRef = B0C38C74C8FABF629FB1F84B7758BA47 /* OWSIncomingMessageFinderTest.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		595801C87A31E59449B28DF74B483D60 /* SSKSessionStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 9C07F36BDCDCBBB1855CE34304C1D0AB /* SSKSessionStore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5964E5052CF5734FF97D255D459E2F4A /* SSKSignedPreKeyStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 157E4F3B3F216277C0C4F9FDB77DDC65 /* SSKSignedPreKeyStore.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		5974C25DA88428F6A4F23DE14FC1118E /* NSNotificationCenter+Promise.swift in Sources */ = {isa = PBXBuildFile; fileRef = 828D4C3FCA6872587FCC31FF15BAB785 /* NSNotificationCenter+Promise.swift */; };
@@ -796,7 +794,6 @@
 		5C1C794C9F3F8C727F84D2535BB0DB2F /* OWSReadTracking.h in Headers */ = {isa = PBXBuildFile; fileRef = E2E5515987E246995D170463FED0B1F4 /* OWSReadTracking.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5C2451F352657BB699E37CC5617B1B7E /* Argon2-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 58D23971476E083D73C29DD214491EF1 /* Argon2-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5C3395BEF266A03298D3B1436D090482 /* NSNull.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08CE3D7A131289795FE785E461603488 /* NSNull.swift */; };
-		5C38013FEB31F7F930182F524B5514B2 /* SSKPreKeyStoreTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A235700CA0836B5D5F2D3C32F596746 /* SSKPreKeyStoreTests.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		5C5F242A3221425FEE2EC873D9C71D4D /* SwiftSingletons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 138DF2AF73AA20B42157612519D01514 /* SwiftSingletons.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		5C71A140AA01DCBBECA7756D1C0D8EC6 /* AttachmentFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58981D668DF7BA954B952B3E76DA2A92 /* AttachmentFinder.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		5C96951D4E9B6670C3CE691F21C1E12B /* d.h in Headers */ = {isa = PBXBuildFile; fileRef = EE143F64E5A335C226B03DB9A13D58C5 /* d.h */; settings = {ATTRIBUTES = (Project, ); }; };
@@ -812,7 +809,6 @@
 		5E3B3672644EE43C89DD490C5C338DA3 /* OWSOutgoingSyncMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = DD73E3D4105B42AABF54A0287F0B5E5A /* OWSOutgoingSyncMessage.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		5E47F8BF4E1262666EA5057D5C8D5E27 /* StrokeNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C1E3BD3B30019FEF785D8B06DF9FDF4 /* StrokeNode.swift */; };
 		5E523A93D28F0CA37290205A1A24AD2A /* OWS2FAManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 4216DECF7341A8053BC0FD44F58C5AC4 /* OWS2FAManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5E58997C6CCD10C39DF1AD56B6124798 /* OWSAnalyticsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 74F5D7F954382EB535B1A8F4468AA273 /* OWSAnalyticsTests.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		5E63D713A51FA7356B34FB986F4073B3 /* YapDatabaseCloudKitTransaction.m in Sources */ = {isa = PBXBuildFile; fileRef = DB2DA109D6E2023C0F004871B5A03FC3 /* YapDatabaseCloudKitTransaction.m */; };
 		5E953CCB3DD5ACC4E4DDDB023A922FEB /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C6FA44EE2490635838AEC72BAE3237B /* Security.framework */; };
 		5EA69A35E04B1CF666F03EB29D42A740 /* DoubleParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4152DF89BDE25A3E65832BBC377DEEE1 /* DoubleParser.swift */; };
@@ -826,7 +822,9 @@
 		5F8E3AFC6E290765D783E68369A4828A /* TSGroupThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 8241CC95C178757789477B4EBC9E77EC /* TSGroupThread.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		5FB22232A208FECF3A5086889A0F2BC6 /* blocks.c in Sources */ = {isa = PBXBuildFile; fileRef = AEC11482130E6CEFB1F4AF4725DE2B97 /* blocks.c */; };
 		5FB38212DC0C2BBC2D60B0A9AA191672 /* UUIDBackfillTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C24674112E0ECDD16D1C40EDD042BC5 /* UUIDBackfillTask.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
+		5FBB88E3A5DDFD79D0A996EA7C912018 /* OWSDisappearingMessagesJobTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 563E3C1124878EB3CBA39EE098689D45 /* OWSDisappearingMessagesJobTest.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		5FBE00BBC96173BCE9EE6A94A6452D4D /* fe_invert.c in Sources */ = {isa = PBXBuildFile; fileRef = 1D5CC583983CD1A9F205510A0E30EA79 /* fe_invert.c */; };
+		5FC1600EE97ED84DEEB38CD4047C6784 /* TSOutgoingMessageTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A72AA9328A7F197478B7CDEC3CDDAC3 /* TSOutgoingMessageTest.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		60126CD5F30117DFA9DCE45D6C6032B8 /* demux.c in Sources */ = {isa = PBXBuildFile; fileRef = 57B178CA5FB907BFF61ECC7309CBF475 /* demux.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
 		60175C1D83F0AEAD1A9C98A7F40D9B00 /* FieldTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEACD74671F7D658D783023B07AC57BB /* FieldTypes.swift */; };
 		603D4966782CACA90036E6AE1A8DA962 /* CustomJSONCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 532DEF170DCB0565D71A8040ABF0045A /* CustomJSONCodable.swift */; };
@@ -834,11 +832,11 @@
 		6097A949F69DE875D95BA92F1AB6C50A /* MessageProcessing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187861F9395C095E02BAE7A29E62410C /* MessageProcessing.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		609ADABE0979335A531CB42483F4FD8D /* config_enc.c in Sources */ = {isa = PBXBuildFile; fileRef = A233C3C11BDD68C53F2E108D5C3AC095 /* config_enc.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
 		60D8411DD81788B45076610C43BE259F /* DDOSLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = F1DCD9AD55B5779250F5FD0D7CC05695 /* DDOSLogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		60E7901D50805468A4144CE54108A18B /* TSThreadTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4EEDA35B65CDC8E93DA7B2C909503314 /* TSThreadTest.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		60E9C3AA28B891AA9997B7A57CD005E7 /* NBPhoneNumberDefines.m in Sources */ = {isa = PBXBuildFile; fileRef = 80892B5FC998C728F7046EE5A383DF36 /* NBPhoneNumberDefines.m */; };
 		60EE2B2920C884A3397B02E434C2EFE6 /* ByteParser.h in Headers */ = {isa = PBXBuildFile; fileRef = B7254437217E70ADB407324C0C1510DD /* ByteParser.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6106957104EEE87F4AAB443CA0DB28F8 /* EllipseNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32DBA91E8644C7AE17864F5422482AB1 /* EllipseNode.swift */; };
 		61160B378AE9589BE73C0F4D6CAC148B /* NBRegExMatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = E66333F4F38FB15416C2E6758E8D6550 /* NBRegExMatcher.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		612495A59019C8CC8A4D4241C393C331 /* OWSSignalAddressTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA1489E1F9B932D266A832F70CAFCA42 /* OWSSignalAddressTest.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		6127B86271E4B70AE6F6C831F1AA8D58 /* SSKMessageSenderJobRecord.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AF9C8C65AAE95009B53406E70A0259B /* SSKMessageSenderJobRecord.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		6165A434ABED21F612D98D2A4C194819 /* YapDatabaseAutoView.h in Headers */ = {isa = PBXBuildFile; fileRef = EA97CCF2F8C84124687CFD0DF8AC8C95 /* YapDatabaseAutoView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		61C997D24D4E1F6BA10E7E6341AA1CEF /* sqrtm1.h in Headers */ = {isa = PBXBuildFile; fileRef = E71E3F2679752073AE8B5BA58C18512B /* sqrtm1.h */; settings = {ATTRIBUTES = (Project, ); }; };
@@ -936,6 +934,7 @@
 		6DFAE80061D56171919D33B93B29F778 /* thread.h in Headers */ = {isa = PBXBuildFile; fileRef = 339F60C598DBE2F8E860CDD48C24454E /* thread.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		6E0EA4402934C61AFB5DD10625310199 /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ACB7A962797CE7EF28830679BB18572 /* StringExtensions.swift */; };
 		6E0FAE896531AA7BC5913647E7351277 /* UnknownStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC266EEAE648F0097F65394A02B05F5E /* UnknownStorage.swift */; };
+		6ECEA3D1CC0F20E1E4FAE2A567E35E90 /* ContactSortingTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 8532169324CEE3E8203927A9A6D4987B /* ContactSortingTest.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		6EDF9A604B7DFB28E9B52AB9DB0EBE58 /* WebSocketProto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E6B0404F19A5B13E52286C2262DC9DA /* WebSocketProto.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		6F0CA2BAA982A3CFF7FC6045E92427F1 /* SwiftProtobuf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6F2266690C2708281A098206B24CB1F9 /* SwiftProtobuf.framework */; };
 		6F1EA9AFEC77603645867949EDB63FB4 /* thread_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 809D13BF0C5E5C62E5030FD3FD1558D0 /* thread_utils.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1002,7 +1001,6 @@
 		7754FB692907DEBDAB97284EAF4B56AE /* SignalCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC88FC99209DFE459EA32CA6873ECAD9 /* SignalCoreKit.framework */; };
 		7773B625366E58E780321407B9FCED9C /* PureLayout-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 524711FE82278F349D45EE7C708AC978 /* PureLayout-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7779999338EC8250B28F4DAA9276DC30 /* TSAccountManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 19F7A401DB6AC3E95532880054D933CA /* TSAccountManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		7792E39D49BAAE2F030636FF002D87B8 /* SSKBaseTestObjC.m in Sources */ = {isa = PBXBuildFile; fileRef = C770C68C60ED7545032291B294FB1C79 /* SSKBaseTestObjC.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		779F32ABD25DE4E7D2B89991A8B8ADFF /* OWSContactsOutputStream.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A768C0648C1DF1885DD761632911A50 /* OWSContactsOutputStream.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		77F4ED9B526FCB3854BABF08F9B854E3 /* TSAttachmentStream.m in Sources */ = {isa = PBXBuildFile; fileRef = 61BD61C1FBA9579749B1932E24EA3716 /* TSAttachmentStream.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		78025A8348F3766315F1496EF892801F /* fe_sub.c in Sources */ = {isa = PBXBuildFile; fileRef = B0D42FD9BAE03ED8C4F90AA1FA96BB54 /* fe_sub.c */; };
@@ -1024,6 +1022,7 @@
 		79A8779946CA541B0AA494CCBB0A9AB0 /* encoding.c in Sources */ = {isa = PBXBuildFile; fileRef = 3ECC0FED0DE0DEF8AE0AD201F4D1D865 /* encoding.c */; };
 		79F84935EBE1A2E496EA0E70DF3FBD21 /* EarlyMessageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 989271C9DE5BD5B6B30265B8B9C42EE9 /* EarlyMessageManager.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		79FFD300D32D567D999102A1EAC69B3F /* BinaryDelimited.swift in Sources */ = {isa = PBXBuildFile; fileRef = B809D79FB9F4DD219CF07BCF372A250A /* BinaryDelimited.swift */; };
+		7A17CF0AB0B5058F57F37AC4879DA834 /* MessageSenderJobRecordTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35889553BFA0B9D1A621DF653A7BD32F /* MessageSenderJobRecordTest.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		7A1D24AAB9821F75CEC93C04B81D7AFB /* SignalServiceClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52FE0476690532CF43A180F1B3931063 /* SignalServiceClient.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		7A1F5A34EDE6C30A0981A75DA40CF8F8 /* OWSIncomingGroupSyncJobRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = CE7E05E04DAF75ACC896294FA8283A3D /* OWSIncomingGroupSyncJobRecord.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7A1FE89AEE7E2680BA6D31309ED22CEE /* Marker.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5B7E17FA75F537152F51C249AE6950F /* Marker.swift */; };
@@ -1031,7 +1030,6 @@
 		7A87B8CAB827ABC0DB9E24353953ED20 /* Threading.m in Sources */ = {isa = PBXBuildFile; fileRef = 17307CFD3A009E31B21AD32C20B12721 /* Threading.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		7A8EBCC611EAE108467E4DEF2807322A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4FFEF32630AF91FA18DD1FA364D66DF3 /* Foundation.framework */; };
 		7ADC1500B601B588181357E6587499DB /* ExtensionFields.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABE04E634D2871F09E5270E66E468361 /* ExtensionFields.swift */; };
-		7B1C7A267D1124D45E090AEEDC7B3062 /* TSContactThreadTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 24E0CF41112417F0EA4614370F758212 /* TSContactThreadTest.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		7B5D446F159F6574B55536E9BB73EDC9 /* SAMKeychain.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64FD9707AC20BD0A9CEDBA06335B452F /* SAMKeychain.framework */; };
 		7B6F1158A594A6167200C55747B8BB79 /* vp8i_enc.h in Headers */ = {isa = PBXBuildFile; fileRef = 69941BCDDEC15BD3B469444352B43C78 /* vp8i_enc.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7BA3734AB157501FBDB7BCD6E4649CD6 /* AFURLResponseSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B0326068F437FB8B80FF6CBCCA8DBCC /* AFURLResponseSerialization.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
@@ -1048,6 +1046,7 @@
 		7CE83848269E6732EED406D13D513718 /* YapDatabaseRelationshipNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F4F0053E4685CBBC82C8724D8055D15 /* YapDatabaseRelationshipNode.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7CED58BE513A214A0E62FD09AC081C60 /* SignedPrekeyRecord.m in Sources */ = {isa = PBXBuildFile; fileRef = 18EE2ED569CC1B6561F43F036BAAE5A1 /* SignedPrekeyRecord.m */; };
 		7D039E8293849A6791038C5A536A76EA /* SMKServerCertificateTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A5EA543CE499A34310F08F845CB651E /* SMKServerCertificateTest.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
+		7D0E0623E77A101A0FFAE7FDCC017322 /* OWSSignalAddressTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA1489E1F9B932D266A832F70CAFCA42 /* OWSSignalAddressTest.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		7D1474DDF0D5CF0389D3EBDE563B8C02 /* SMKTestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16372890CF2B7E1B01C4E274CA5F0F05 /* SMKTestUtils.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		7D42C82499C24841889144272CD0CCFC /* SCKExceptionWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = AFBA8097A078FB21D2CAF9F6D46D28D7 /* SCKExceptionWrapper.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7D49EFF0278DB439820BB99433C31EB9 /* YapDatabaseViewTransaction.h in Headers */ = {isa = PBXBuildFile; fileRef = 08BEE60496BAED3C06274F92EDDC25FA /* YapDatabaseViewTransaction.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1062,6 +1061,7 @@
 		7E74566B27FCEF3F9D854185D47BEF2F /* ContactsUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33AA08870E2FFCD846D3B95879BB369F /* ContactsUpdater.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		7E76078F0DEB55615F238682B9698257 /* YapActionItem.h in Headers */ = {isa = PBXBuildFile; fileRef = BD0D40AA1C007EE4B99BC4899B360B49 /* YapActionItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7EAC95A53B6597A8EB55A6E71293E838 /* OWSUDManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9CD8B152817C29F476A30590340B65D /* OWSUDManager.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
+		7ECE5FD70ECA20BADCFAF24D987A34A2 /* SignalRecipientTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DEB900147EDDEEECA6FF9B299CCC035 /* SignalRecipientTest.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		7EF3CC1A1047766D8CB21571E969EF1E /* ge_p3_tobytes.c in Sources */ = {isa = PBXBuildFile; fileRef = C7664013F386B308FB08F1B450DD6B71 /* ge_p3_tobytes.c */; };
 		7EF479D9C4A120DC4D211F7201802B32 /* TSErrorMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 742469756D7AE34235AE5CEB54F917F6 /* TSErrorMessage.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		7F323553D7139B6235024E97F894C55E /* SignalCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC88FC99209DFE459EA32CA6873ECAD9 /* SignalCoreKit.framework */; };
@@ -1124,6 +1124,7 @@
 		85C1D27F85033C6B32B731C23A3C7FFE /* PreCompositionLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B60A9D9815E9EC7C87A8BEEC4FDBBD43 /* PreCompositionLayer.swift */; };
 		85F32E7E9CEF59574782070C46CA820B /* DatabaseReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4BB44601BFF25E1F77D17CA50CFC9F2 /* DatabaseReader.swift */; };
 		86009DACB24AE7A6215BDF0F19270E5A /* PromiseKit-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = C4A12C93EC81F8174175FE1DDF2F3B9D /* PromiseKit-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		86367521C23C954BC6EF09B902C522C7 /* SDSDatabaseStorageTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8155D7A348F981651942AEC60F7E08C /* SDSDatabaseStorageTest.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		8646665F480EB5D3488E63377999D86A /* SDSDeserialization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67008B4CFD278C94B432ECE454178BCC /* SDSDeserialization.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		8650FD04825253E2817D996F05812774 /* OWSOutgoingNullMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ECBB11CD5F5901A2212DDC00F7F7E37 /* OWSOutgoingNullMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		867143BA61712EB98E96A6D1387E5BC3 /* OWSContact+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C381F923086D116C0B84B8375DCE29E /* OWSContact+Private.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1161,9 +1162,11 @@
 		8AE08BAB7770F284B484AE5DEE0E375E /* Animation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31F202CA4B4CA152DF99FFDB2DAC2203 /* Animation.swift */; };
 		8AF0494A7E408811C5D1B153E3DDF3FC /* SwiftProtobuf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6F2266690C2708281A098206B24CB1F9 /* SwiftProtobuf.framework */; };
 		8AF84F5BD6A03D9D2A377462B21287C3 /* ge_frombytes.c in Sources */ = {isa = PBXBuildFile; fileRef = 9317DBF785B2050E3E89012D59D56E38 /* ge_frombytes.c */; };
+		8AF969DBE1834EB80A33D8EAEA138ADA /* TSGroupThreadTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 80EA8A34EF6BEE69240D6CDFAB4DEA8D /* TSGroupThreadTest.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		8B10D25A7D1272A9332A56B174C9A664 /* Contact.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BB3E9ED7A61BBC50B395156DBCE6A08 /* Contact.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8B11119F57C93B20A00E93B066A83DFB /* OWSProvisioningCipher.m in Sources */ = {isa = PBXBuildFile; fileRef = 37624FFC74EFD0C321AA1A021BA652B1 /* OWSProvisioningCipher.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		8B153782B2085D556C72F1C74E735A93 /* YapDatabaseRelationshipOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 2547D375D0C589FB7F053E39501B9E39 /* YapDatabaseRelationshipOptions.m */; };
+		8B792496B1E5F243E1914AC0323AF07D /* OWSMessageSenderTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A821F559AACA7F380EFC21A88F66E13C /* OWSMessageSenderTest.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		8B9D5D83EACCB556E35C88D53B28A25F /* OWSMockSyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B6A491C81D4D15094E85283E36CDD6A /* OWSMockSyncManager.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		8BA0D1EB323A71D2C260A3DED8BED788 /* FillRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08799CECB02E4FF9B7991712B715A557 /* FillRenderer.swift */; };
 		8BB7BC3903C9F75DB6F1CC77D47E04B0 /* YYImage-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = EC90A8CF10C1898E52574C26E1E87652 /* YYImage-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1178,7 +1181,6 @@
 		8CA865F434117541291076A0CFDA4DD6 /* ECKeyPair.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70A343343AB0DFC063AD0D7786534CC9 /* ECKeyPair.swift */; };
 		8CB43CA4D89659170EA71B6ECF6BF768 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4FFEF32630AF91FA18DD1FA364D66DF3 /* Foundation.framework */; };
 		8CCE794FC2E294D277EE025FA682DCC1 /* TextFormatEncodingOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A89874EE704E303B27720426E150AA36 /* TextFormatEncodingOptions.swift */; };
-		8CD1122D741EAE8F6CA34D11DB67F4D3 /* SDSDatabaseStorageTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8155D7A348F981651942AEC60F7E08C /* SDSDatabaseStorageTest.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		8CDBF6E9281E9FD7DC7C24B0B595EDF3 /* YapDatabaseFullTextSearchConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = F47CB3045DE76AA7046DE0F434F06B2B /* YapDatabaseFullTextSearchConnection.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8CEC0AD16A07FEA6A767C9FE0925D9AA /* YapDatabaseHooksPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 087530E3D02D61E9DA529A5369E96E8A /* YapDatabaseHooksPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8D09315619696A05DEDA4CC514F82088 /* PromiseKit-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E3BFCC700901FEC1FBD3CED51410A2B /* PromiseKit-dummy.m */; };
@@ -1202,6 +1204,7 @@
 		8F8179B9AE2A3A210280812D4A8CC898 /* NSDictionary+MTLManipulationAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 975DE7E8D07211B3AAE24D3B94F50232 /* NSDictionary+MTLManipulationAdditions.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		8FBF4A64A3431D77C998136C02F4D618 /* Process+Promise.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BBFC223DE02D4AD24C6F929CDA4BE74 /* Process+Promise.swift */; };
 		8FCF72CE9F61471A269995EF99DF2BB2 /* SDSKeyValueStore+ObjC.m in Sources */ = {isa = PBXBuildFile; fileRef = D479A244D84C91A35786A7F3520479A5 /* SDSKeyValueStore+ObjC.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
+		8FE0D1ABC775F5AF9E3C6C665B7851F9 /* KeyBackupServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC40B0EB8149E1982C32B1084989565D /* KeyBackupServiceTests.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		8FFEDA980315AFAE8BBFB588B8BD9B68 /* Weak.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D95824329CD1B0E87F03EA2EA695EAB /* Weak.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		9013E345733D5F54025FC20CA5E0EE34 /* metamacros.h in Headers */ = {isa = PBXBuildFile; fileRef = FD47FA5DC146C3FF29967C7189BAC33F /* metamacros.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		903994E9BCBE4A67BBE45F273D751913 /* ProfileKeyCredentialPresentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC6122EBED3842D34A1921CB4019C89F /* ProfileKeyCredentialPresentation.swift */; };
@@ -1210,12 +1213,12 @@
 		908FB80DD5BF862C2EC7D15F907F491D /* mux.h in Headers */ = {isa = PBXBuildFile; fileRef = D3C28A9532F83DB867784D5173B163AB /* mux.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		90A43DC4327553E08827E71F6FDFC880 /* YapProxyObject.m in Sources */ = {isa = PBXBuildFile; fileRef = AD8AB48537B57CEFBC463E78854B3F05 /* YapProxyObject.m */; };
 		90C8EFDCAB5A6990B52DEB2EE7ACF242 /* DarwinNotificationCenter.h in Headers */ = {isa = PBXBuildFile; fileRef = A611C5C848BDF8CCCD8CB51AFEAF30DA /* DarwinNotificationCenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		90E92CDA6736BEADE76F252968983487 /* PhoneNumberTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 0E634391C0E5531872F56F753A6813C8 /* PhoneNumberTest.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		90EF840E90ABC4818940FA032B802047 /* OWSSwiftUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6C172B8DD41FB6B770035F0B6A560C1 /* OWSSwiftUtils.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		912797DC3E30BE543CD02F635DF99B25 /* afterlife.swift in Sources */ = {isa = PBXBuildFile; fileRef = A22A50181C779DBF30FC02599266B049 /* afterlife.swift */; };
 		914A918A69939F7393EEB73B28AA4DC7 /* hmac.h in Headers */ = {isa = PBXBuildFile; fileRef = 057EE2EFF4017D8575493B310C23EDDC /* hmac.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		91607E17EB0658310A2622B203484FBB /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D95B7C8CFDAC1C7877836D603AD47EA /* CoreGraphics.framework */; };
 		91691834A8320FE847A000B92C70EA01 /* curve_sigs.h in Headers */ = {isa = PBXBuildFile; fileRef = 93BF7C5772F484476028A791811FD57E /* curve_sigs.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		916F83D8144A545B584C41FF14E0DFB9 /* OWSIdentityManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 42FBA445484F2B99EB670908ACD75462 /* OWSIdentityManagerTests.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		9194FC52884ACCB0D3B9FA2130472C0F /* ExperienceUpgrade+SDS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7031839D88EEA60B683204C069DADD18 /* ExperienceUpgrade+SDS.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		91ADCEB653CE31D94377C0E554A7DF47 /* IncomingGroupsV2MessageJob.h in Headers */ = {isa = PBXBuildFile; fileRef = FE1B42CB62AD4EDCC3B0963C0B7224BF /* IncomingGroupsV2MessageJob.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		92246D22AF2F4A096835EF91DF3F816E /* ViewOnceMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38CBD32016D6E5552E51D5CC63FCD5E2 /* ViewOnceMessages.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
@@ -1294,6 +1297,7 @@
 		9A2B88A734ADA9ACA0F64B32F244F8E8 /* anim_decode.c in Sources */ = {isa = PBXBuildFile; fileRef = 09B25265BDCBD2FACFAD00C9497B8530 /* anim_decode.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
 		9A331E099C6E77306DA5526878E2E006 /* webp_dec.c in Sources */ = {isa = PBXBuildFile; fileRef = 23367C7FAD3A7E65224346C08B4ED951 /* webp_dec.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
 		9A4CEF7C6DD7CB9C3D24223A784832A8 /* DDLog.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D4D7F0E0D8D8AB88990E8130E27000 /* DDLog.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		9A505EC6BF610BD1E74C94B2F1D7AE85 /* OWSUDManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B96839AA35172193A6788BA69B0B0A /* OWSUDManagerTest.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		9A51B3206125E8041A4117369DE5D27D /* libwebp-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = E81CCA3DACB2767E1A17130FC2C898A2 /* libwebp-dummy.m */; };
 		9A725C56E0227809A990DD613B272EE0 /* MTLValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 812D89BA5E757961631F8001E594BA44 /* MTLValueTransformer.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		9A846E9DAC7B71EC05A57CE163DAB803 /* muxread.c in Sources */ = {isa = PBXBuildFile; fileRef = B90F379E9C6C48FEBBFC94E821195B29 /* muxread.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
@@ -1306,6 +1310,7 @@
 		9AE8BB4BA1AF38CC7553620EAE8D5CEF /* dsp.h in Headers */ = {isa = PBXBuildFile; fileRef = E2F6A79ADF88C0A69F7058104A6D2216 /* dsp.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9B24E14FF84C82D90F3ABA0450C905D8 /* ChainKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 07472E471ABD7E507C9ECBBA137E2174 /* ChainKey.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9B37AE9BF29BF862CF4F692AC719238F /* predictor_enc.c in Sources */ = {isa = PBXBuildFile; fileRef = 5DCCA272A182900B6E99C83D335B3729 /* predictor_enc.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
+		9B501911F6EC7B8E2976D352C1A912E7 /* StickerManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E161C872CD99D85F678021682F756B8 /* StickerManagerTest.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		9B6CB7368EE9DFD5758371844AC5D07B /* ProvisioningSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28C14174BFA1526E59BDA2369DB11893 /* ProvisioningSocket.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		9BA73C9D90BF163550E30B39AEA83FFB /* SAMKeychainQuery.m in Sources */ = {isa = PBXBuildFile; fileRef = EC26E440C039346E8233490BFE5CC9B0 /* SAMKeychainQuery.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		9BA87B83DAC6C40A46D28DE808DED71F /* ShapeItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C83A18B132087A492C8E245C9AD582D /* ShapeItem.swift */; };
@@ -1339,7 +1344,6 @@
 		A013C699BFA082CD9FC3EF1D17024368 /* AFNetworkReachabilityManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A430790D8E1377F4D894B78A36FF3D81 /* AFNetworkReachabilityManager.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		A01FEC8010107A71A821136BD1696CB8 /* AnyThreadFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52492953E6373157E1CE367AD4FD1C8A /* AnyThreadFinder.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		A03132DFFBFC66F4DD0402D4A3603CB9 /* OWSOutgoingReceiptManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 8E8BEA6D1DCC73DA26110046BEBE417D /* OWSOutgoingReceiptManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A0412B696CC55B01FD2A9F97B0A7623E /* OWSOperationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAE47E08B0732EE3FE80B08D723D196E /* OWSOperationTest.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		A04360B762CC3B8973AD2BDFC5E2EBB5 /* OWSFingerprintBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 4EB64D3B33F0AFD785BC23729FA2BA37 /* OWSFingerprintBuilder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A06A449133FEC950619473CA31A384B3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4FFEF32630AF91FA18DD1FA364D66DF3 /* Foundation.framework */; };
 		A0990F3760E85CCBAEA8C6A458B90E18 /* EXTScope.h in Headers */ = {isa = PBXBuildFile; fileRef = E62BABD2037A33D77E2836B5876EC714 /* EXTScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1350,6 +1354,7 @@
 		A1168EE170CDA1C060BC694D97D17F47 /* OWSUserProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = A5EB6A1E96E99F10F60D82E487C2ABF2 /* OWSUserProfile.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A1330469B8ED4E94DDC313603F5104CD /* OWSOutgoingReceiptManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EFA301BAE0ECF807FA38B17F761C819 /* OWSOutgoingReceiptManager.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		A152D03E3266460C909DC882FA59E841 /* OWSSyncMessageRequestResponseMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 72A7BA08B01DA68584767CEF989232EF /* OWSSyncMessageRequestResponseMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A17C863972E3FE7ED61A39D6ED3DA8DC /* JobQueueTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20CF4B3A711F24A5272AE6341A43F6A1 /* JobQueueTest.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		A180228518A69593202E8A20F5BEE199 /* ServerZkAuthOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA1D55F663E73AC41C87BD0B28722A8 /* ServerZkAuthOperations.swift */; };
 		A1A2A8F3253F9EB47D95B528E7C2CC7A /* Visitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D3E391F8A4ED674409F753C78DC73CE /* Visitor.swift */; };
 		A1A7122902217CD2335932DE7DFA984E /* GTSR3.crt in Resources */ = {isa = PBXBuildFile; fileRef = F374B4C27292A78F3E7260EB0A161E00 /* GTSR3.crt */; };
@@ -1399,6 +1404,7 @@
 		A6BD6C40621CFD9FF89647DEF7DA04AF /* ShapeNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1C474E90E857D333AB6187EEB32E087 /* ShapeNode.swift */; };
 		A7038026EB7E915DCEAE8111A8D6415E /* OWSDynamicOutgoingMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D06763518BA1DF9740EFD298D2FABA7 /* OWSDynamicOutgoingMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7130F0F12BD85892429F71C0139F5CB /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DAE37E5C7E2FB09D7A40E252DE0EDA1 /* Utils.swift */; };
+		A723206A6509B5E3206A899E9CFE2A7B /* MessageProcessingIntegrationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC6AD7CAD96C6BF376D5281641A87C21 /* MessageProcessingIntegrationTest.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		A741269B1B2CA46E2822D77492FC64E2 /* FunctionalUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D5FBFC0784215F7F33DDA48CB6BF0EC /* FunctionalUtil.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		A754E57C6BD5DE138418CEE752D5994D /* TextDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4316124F79A0AFBF51D5B09A3AF8B2E /* TextDocument.swift */; };
 		A76C5190966D8F203674F02740025727 /* GroupInterpolator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6D421AE3B60A64A60F8E8542B72C6FB /* GroupInterpolator.swift */; };
@@ -1410,7 +1416,6 @@
 		A8ED1D24E6F0CB875213BA8D593D3351 /* lottie-ios-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 4747FBC474487DDE98BCBCA5BD0653C7 /* lottie-ios-dummy.m */; };
 		A91B16C82524E1647437AAA25B26D91E /* YDBCKChangeQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BEB185A356E0018E5E5BE54AD54990B /* YDBCKChangeQueue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A9281F4EC9EA286E0AA29C8CAC78EADD /* YapDatabaseViewConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 06658C08AB6ABA456B9E6124AC1DDFC2 /* YapDatabaseViewConnection.m */; };
-		A946AD9C223B6612801CC52E5574FDEF /* ContactSortingTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 542927405F384895F7D720560B8A4EB7 /* ContactSortingTest.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		A9CC4C65203BC352C2A6F4388D0DEF54 /* ProfileKeyCredentialRequestContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = E836526F944798B7B1F2BB05AE7C373B /* ProfileKeyCredentialRequestContext.swift */; };
 		A9D27CB9AC13D550F1B01862E53473FA /* SDSDatabaseStorage+Objc.h in Headers */ = {isa = PBXBuildFile; fileRef = 80EFF70F15997E5FD900599CBB567E72 /* SDSDatabaseStorage+Objc.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A9E818DE369EF2986F4D7FD441A3D0F1 /* SPKMockProtocolStore.m in Sources */ = {isa = PBXBuildFile; fileRef = C87D8D20D0C493C791D296FB14AD3804 /* SPKMockProtocolStore.m */; };
@@ -1435,7 +1440,6 @@
 		AC2FA8009F68BAF783D801CEE44285D2 /* YapDatabaseHooksTransaction.h in Headers */ = {isa = PBXBuildFile; fileRef = BFBAAEBA7941E58A93CCAEAC05FF1723 /* YapDatabaseHooksTransaction.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		AC551EB37445C71E8BE7BDF714C290F8 /* OWSDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F57AF00B418EAC92C1C2A6E467CC79D /* OWSDevice.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		AC7996F500DBDD90864783FA6113996B /* sha1.h in Headers */ = {isa = PBXBuildFile; fileRef = 5663E296D1F486466B6B59A8C8834B37 /* sha1.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		AC9EC259C8F7AE355657AF11B0E8BD7D /* OWSFingerprintTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 37E752026DFD1ABD4CE07ECC46372466 /* OWSFingerprintTest.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		ACE04496F45B0B0C6C1956D08F3C0AD7 /* OWSGroupInfoRequestMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 907F291961570E613ECF53582029B307 /* OWSGroupInfoRequestMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		AD344839DE1DF20BBA757D417BB82690 /* AFHTTPSessionManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 1583A18309E5B636A2CCDBB9D7A37FA2 /* AFHTTPSessionManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		AD399A5D64D6C6BB7374792EC29FEA80 /* OWSBackupFragment+SDS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C556B1919E6DCCA2BE36403716661AA /* OWSBackupFragment+SDS.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
@@ -1475,10 +1479,12 @@
 		B10C24E04A45D01A776BEE2E89791E4E /* YapDatabaseRTreeIndexHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 7C03E3610A1804EB1FFA3186817F394C /* YapDatabaseRTreeIndexHandler.m */; };
 		B1487C0A9638F86A78DA5794B589BB82 /* TSDerivedSecrets.m in Sources */ = {isa = PBXBuildFile; fileRef = 75319EF62B7933CFE440DF0A6023F114 /* TSDerivedSecrets.m */; };
 		B15AE7677DA49B9E66E7319E7E45B069 /* DDAbstractDatabaseLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = 99E0E4A355C5FF827F31627986762574 /* DDAbstractDatabaseLogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B15DE8C6246B8DF03D89808BD117A843 /* DeviceNamesTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3279699D59F74815D14098DFAF33BDC /* DeviceNamesTest.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		B1635B9FC9FB009D98DAA7C44DACAECF /* YapDatabaseTransaction+OWS.m in Sources */ = {isa = PBXBuildFile; fileRef = FFF1B38ED62D3A6548C55F56EF6C3D96 /* YapDatabaseTransaction+OWS.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		B191ACF02FEF0E8C3FF6E995843A8303 /* OWSUnfairLock.h in Headers */ = {isa = PBXBuildFile; fileRef = 577338DD6599027F5FE1517B88107C6B /* OWSUnfairLock.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B192DFF7FBED47DD9BB928938F1B79F7 /* Migration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C3EE5D13D62096247B226ABCC5FC49F /* Migration.swift */; };
 		B1AD24CC69856B000E8D73864ED1CDDF /* SignedPrekeyRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = 60C6B425FBE07EFEF8EFE9CB55F92D8A /* SignedPrekeyRecord.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B1B9B277EF259673E9B9C21AE3F89C0A /* SSKPreKeyStoreTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A235700CA0836B5D5F2D3C32F596746 /* SSKPreKeyStoreTests.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		B1C60F83EDAF67E77D5CAB1D0E212A7E /* Internal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3204D38E477C603F0F17DD099D44FA0C /* Internal.swift */; };
 		B1C8921B4CF0D848149BEB9D4EDFA11E /* TSThread.m in Sources */ = {isa = PBXBuildFile; fileRef = D0FB29FA3AD4CA92B8E014DF3F32E4ED /* TSThread.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		B1D5B53AF2BB69C7A88620AC0F4A3821 /* ge_madd.c in Sources */ = {isa = PBXBuildFile; fileRef = 7589BE593C991F7222696E824A1D47F9 /* ge_madd.c */; };
@@ -1487,7 +1493,6 @@
 		B226D63EE2E43BF2D68225B1F436CA86 /* picture_rescale_enc.c in Sources */ = {isa = PBXBuildFile; fileRef = 88217B3E5E47313A4A6B295C50078DDC /* picture_rescale_enc.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
 		B22AF8901FAF26E1793470393DF450FE /* YapProxyObjectPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 3DC6D90A41F06DF2C560391663DFEA6F /* YapProxyObjectPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B26A6FA0D265534B2370E55DF4C65453 /* SignalRecipient+SDS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49DB2084D3FF912E7545FB277B521EF9 /* SignalRecipient+SDS.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
-		B2878C63B3EFCE7AC3A447CA8F52528F /* OWSIdentityManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 42FBA445484F2B99EB670908ACD75462 /* OWSIdentityManagerTests.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		B29814AFFD18BA922831FD17F96B5205 /* BaseModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 9E8BAA3D4EED2D726FEC861F3DAEA7ED /* BaseModel.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B2B0A95D79878E9A2CB3A507252A8858 /* GradientFill.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5878C6129CEE74A7C89D4FEBB1A90C9 /* GradientFill.swift */; };
 		B2E62229AC9FA2D082E2D2DE16D08875 /* TSAttachmentStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 555F8E603B91F575B972E853ED3A6A52 /* TSAttachmentStream.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1515,7 +1520,6 @@
 		B5297F8D7B6AFB0B010F02894B33D2C0 /* OWSSessionResetJobRecord.m in Sources */ = {isa = PBXBuildFile; fileRef = A29E424E84EFC0A362F1781EB8E61FB7 /* OWSSessionResetJobRecord.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		B52E6C5CEAEE4E0CC8A95BC0005BB6F2 /* YYSpriteSheetImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D4A230761DA3A433D03DD58AACD1702 /* YYSpriteSheetImage.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		B539186139C0EE08A06A98E60F4432BA /* alpha_processing_mips_dsp_r2.c in Sources */ = {isa = PBXBuildFile; fileRef = 72399C004C6B0C04089DF35427EFB8F3 /* alpha_processing_mips_dsp_r2.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
-		B542197A119AC588957216303927A457 /* SDSKeyValueStoreTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E567A97B47670BAADE7BFC0D4E60D72 /* SDSKeyValueStoreTest.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		B54442C412895A0ECBBED1DDD44A2A32 /* DigiCertSHA2HighAssuranceServerCA.crt in Resources */ = {isa = PBXBuildFile; fileRef = 371A14419AC9172054EEB18337C9CCDE /* DigiCertSHA2HighAssuranceServerCA.crt */; };
 		B54F28891C6C39F7379CD3F320A15170 /* YapDatabaseRTreeIndexConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 7988DEB2C8AC5BA42820AF3447463190 /* YapDatabaseRTreeIndexConnection.m */; };
 		B560798823586260F0F3A101E8E055C3 /* DeepCopy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71662D920781E398DFA306FF6A7A7446 /* DeepCopy.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
@@ -1524,7 +1528,6 @@
 		B5CA534F04A92B99DD5706C783DD1BD0 /* PreKeyRecord.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D69B6C42083984833AA8296135D2354 /* PreKeyRecord.m */; };
 		B5CFF9DFEFC6013D18BB320F2D6453D4 /* EXTRuntimeExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = EB73BF94FC56449C87FF464A41549097 /* EXTRuntimeExtensions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B5DA4117815A4EB1CAEEE5D34B14A0AB /* OWSSyncContactsMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = ACF619DED791685FF5A6C8FDDB17BF3C /* OWSSyncContactsMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B5EC8837052A8CF31E34EC986A6175F1 /* SDSDatabaseStorageObservationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ED6667F41595ED337D889B16A79E463 /* SDSDatabaseStorageObservationTest.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		B62278B54811105F31C6F6AF793E7E61 /* OWSVerificationStateChangeMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BC45BCA75C9559A013531586D2FD958 /* OWSVerificationStateChangeMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B6812AA0F95B40A96DE62CF058AD0228 /* OWSAnalytics.h in Headers */ = {isa = PBXBuildFile; fileRef = B0F781A82C376DE85F7D313DFC0A2A7A /* OWSAnalytics.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B6954D4629D07A785E86B7131F41F6DF /* ExtensionFieldValueSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7437493DA3157F98EBA85116AAE8D1F /* ExtensionFieldValueSet.swift */; };
@@ -1577,9 +1580,9 @@
 		BCB7BC659DF3FE3F260C4CBE9AC86FB9 /* StarNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AC50C8228B1341D13299152DDE4B747 /* StarNode.swift */; };
 		BCCBAB3904A2128FE2A1CB7D6520032F /* TSErrorMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = C6E8D61C00BC4C7D9BA100A6CA9C1583 /* TSErrorMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BCEA057BDB0E11AA7ACE01E2E092E7FD /* ge_madd.h in Headers */ = {isa = PBXBuildFile; fileRef = C930A9FA8199178B47C069C1BB085E6D /* ge_madd.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		BD0486C1C1CF5A375FB294BE37D8B27D /* OWSUDManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B96839AA35172193A6788BA69B0B0A /* OWSUDManagerTest.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		BD0F45D1C44C291CCA0298F79FA95616 /* DDMultiFormatter.h in Headers */ = {isa = PBXBuildFile; fileRef = EFEBC61A3E28C3199BC1DC0264B54F6C /* DDMultiFormatter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BD167192A77E6CCAE338F4B31E6BE023 /* AFNetworking-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 8BBD6EC9AB2C476A656D852E32B4C8EC /* AFNetworking-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BD284121C1A3417C81813652481C3D0A /* PhoneNumberUtilTest.m in Sources */ = {isa = PBXBuildFile; fileRef = EB4816CDAF5EE80CC5579462F6E5FE3A /* PhoneNumberUtilTest.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		BD5BF67E4179ABFC0FDD7FE1E5B3F86D /* OWSAnalyticsEvents.h in Headers */ = {isa = PBXBuildFile; fileRef = 633CFFC746F1FDA935935B977689C53E /* OWSAnalyticsEvents.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BD7515E6BB8CB4BAE36743B0AC909BAF /* SQLExpressible.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15E6B2D4FA421E7725F6B2ECCF8D0B10 /* SQLExpressible.swift */; };
 		BD8D39D3B38F0F1B435607F0A028F478 /* YapDatabaseViewRangeOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = A87CAD6414EDDE5822C84BE9AF48FFD9 /* YapDatabaseViewRangeOptions.m */; };
@@ -1619,6 +1622,7 @@
 		C290E6CE36B28120F427A05312C7F90A /* quant_levels_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 2FFC0626D3FBBBD0DAF308548F49C5AA /* quant_levels_utils.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
 		C2AC8FCD667A1B85C6C979F75290CA15 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4FFEF32630AF91FA18DD1FA364D66DF3 /* Foundation.framework */; };
 		C2C87B6699EC0FD2FEBA4FF9C9A7AAD8 /* ge_msub.h in Headers */ = {isa = PBXBuildFile; fileRef = 5767799CE7740B1C9390BECE9C161C4A /* ge_msub.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		C3500A35F37F887D34755E9A1D786A71 /* SDSDatabaseStorageObservationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ED6667F41595ED337D889B16A79E463 /* SDSDatabaseStorageObservationTest.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		C3682A84BE1EED17DE53ADCEA8F90BAA /* thread.c in Sources */ = {isa = PBXBuildFile; fileRef = 9E75A978CC25B4AB358AD2C189657733 /* thread.c */; };
 		C3B63EF98DDD88C6A0793C1085F3DA9C /* IncomingGroupsV2MessageJob.m in Sources */ = {isa = PBXBuildFile; fileRef = 4143395F763EB3CACD1A57B807A06086 /* IncomingGroupsV2MessageJob.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		C3BA3D8419C73FC1A3A71E758E0A9F8B /* InvertedMatteLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CAB04A7A4D21FD8E79575D668214D09 /* InvertedMatteLayer.swift */; };
@@ -1634,10 +1638,11 @@
 		C4E529AF224F343763649C023C962DCC /* YapDatabaseFullTextSearch.h in Headers */ = {isa = PBXBuildFile; fileRef = 444AAA9E7EC2BC69E7C5EB9D85B6C273 /* YapDatabaseFullTextSearch.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C50C75E790CDBEBDA8897E182BC6721E /* OWSSyncFetchLatestMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 7047A5DEA9D5FF3E06BCB99A32844D16 /* OWSSyncFetchLatestMessage.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		C512E98139E44EB9851D924598820EC7 /* YapDatabaseViewRangeOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FE998E6B1DE640ECEBEF94F097F1C46 /* YapDatabaseViewRangeOptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C523B700F0C3EE7794E9C3A4B2925277 /* MessageSendJobQueueTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1CA7EAE42F038E8B8F21C7D8EB8987B /* MessageSendJobQueueTest.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		C5265C7C9586090A4FAA5BFA9FD4F977 /* CompositionLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD8DAC8DC43F7D5AE1190A39A8139698 /* CompositionLayer.swift */; };
+		C52753081C627CD5F490D552130C8106 /* TSMessageStorageTests.m in Sources */ = {isa = PBXBuildFile; fileRef = DF824C68114D187216A7A551A3D5B12D /* TSMessageStorageTests.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		C5524BAE4A3FC093B2EBEB07D4B988B4 /* SMKUnidentifiedSenderMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4109F35175FF329FE9C1B0611F8E208 /* SMKUnidentifiedSenderMessage.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		C58507F91AF6D866CB88C292811A3428 /* MTLModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B74ACA73F804D15882C1317D093DB5B /* MTLModel.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		C59C984DDB6BD03B763A7C1A0EBEFFEF /* OWSDisappearingMessageFinderTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 9EB4BE0FE64075E4F91541805C4E9FD1 /* OWSDisappearingMessageFinderTest.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		C5B73D3B82420018A998BEE3CCFB7D41 /* ge_p1p1_to_p3.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C55C96F878FC9FF74258458DF9C0449 /* ge_p1p1_to_p3.c */; };
 		C5DFCCA838C0A2E3D62E9F7550800712 /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D1863046EA27215B684A67BE8B416CE /* CocoaLumberjack.framework */; };
 		C6073278F59F100EF03F43D77DB28313 /* OWSDeviceProvisioningService.m in Sources */ = {isa = PBXBuildFile; fileRef = 873A5B47F809644DAD739DCF27523582 /* OWSDeviceProvisioningService.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
@@ -1663,7 +1668,6 @@
 		C964568BCAC49B391F6CA11ABDB0F038 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4FFEF32630AF91FA18DD1FA364D66DF3 /* Foundation.framework */; };
 		C9843DFE75CEAE9CDD0EDB105ACBBD14 /* sc_muladd.c in Sources */ = {isa = PBXBuildFile; fileRef = B4AA744C14EAF56CAA5307D0704D0B0C /* sc_muladd.c */; };
 		C99008E3B464468C0EBC92CD44CEEA5B /* enc_msa.c in Sources */ = {isa = PBXBuildFile; fileRef = CD3BE9E5DA8B163F853BC5E400709B69 /* enc_msa.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
-		C9E34AF80AE776B65CE5D3A133BE90B9 /* TestModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4F4DEE342051BA56F0DC09E9406A03 /* TestModelTests.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		C9EB3A6C2C744BD13717405F11622F23 /* YapDatabaseCloudCoreOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 6C1499DEAC6889679683165D1C97A376 /* YapDatabaseCloudCoreOptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C9FA6BD3FE60A9695120392737C1F9ED /* OWSLinkedDeviceReadReceipt.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DBB91ECC0342707795D1A78C60FE608 /* OWSLinkedDeviceReadReceipt.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		CA0FC32ABC9CFDFD048C41DD833ED0F8 /* FTS5.swift in Sources */ = {isa = PBXBuildFile; fileRef = B06DD415F56A311A8C0FDC7C7F23DA49 /* FTS5.swift */; };
@@ -1689,7 +1693,6 @@
 		CD3A6F968A60E5EEDE4F5E4C8AA7CCAC /* webpi_dec.h in Headers */ = {isa = PBXBuildFile; fileRef = FCAA6B89B34F614457F01F181111D205 /* webpi_dec.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD56361EB164EE3C21920C6A2344F1AB /* CallKitIdStore.m in Sources */ = {isa = PBXBuildFile; fileRef = C5841FD9FAF50EA1D65431D0718995A8 /* CallKitIdStore.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		CD67B8AE903E7D860F9EB2C46C5E9354 /* ChainAndIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = 04DCA9FF226528CC34A97CBCEA6A9C67 /* ChainAndIndex.m */; };
-		CD6CF8DE1AD37B6793E4803792CAFD6F /* TSOutgoingMessageTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A72AA9328A7F197478B7CDEC3CDDAC3 /* TSOutgoingMessageTest.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		CD8F6B57CCC13386ADC5F635DAF3FF60 /* NSDate+OWS.mm in Sources */ = {isa = PBXBuildFile; fileRef = C51D6EB4B7BB101ECF505DB6CAEBE7C0 /* NSDate+OWS.mm */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		CDBE7C573F19F5C7FD5FF8AE175F22AC /* YapDatabaseViewMappings.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F7B1A677FF525C746FDB3357C43EF8A /* YapDatabaseViewMappings.m */; };
 		CDC48DF1EDAE78F1FD74C7AE88B688DD /* UIView+AnyPromise.m in Sources */ = {isa = PBXBuildFile; fileRef = 18BDA752DD280D1CE6874E3C87FBF064 /* UIView+AnyPromise.m */; };
@@ -1709,7 +1712,6 @@
 		CF204296935F32018F3EEE8D7EC481E7 /* OWSLinkPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = E551E67469B6804CE8D3D107809050F9 /* OWSLinkPreview.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		CF2869E6D3887C26206F810DB9A90E46 /* TSAttachment.m in Sources */ = {isa = PBXBuildFile; fileRef = 8C2528790C03D340AC965F63D818253F /* TSAttachment.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		CF3710EA8459DD0687E225E153926A0A /* YapDatabaseRelationshipTransaction.m in Sources */ = {isa = PBXBuildFile; fileRef = D9799A0F16783E83610F79ED5942BB2C /* YapDatabaseRelationshipTransaction.m */; };
-		CF5D01DD79799BA4A7724D2C88DBEBAB /* PhoneNumberTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 172D5631C70BB25E4D13BE4DF2685791 /* PhoneNumberTest.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		CFBF1A9D6E40D51EA6212C607AB7921E /* OWSUploadV2.m in Sources */ = {isa = PBXBuildFile; fileRef = 56C9480ECA773AD578A76A156AE02B00 /* OWSUploadV2.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		CFC8B6A0B256EBC8952B77AFAE05D1DB /* YapDatabaseViewPageMetadata.m in Sources */ = {isa = PBXBuildFile; fileRef = 8697F3885CB83A994A5E75E4D0012F21 /* YapDatabaseViewPageMetadata.m */; };
 		CFE2D3100EF276D85131B8DF522132EC /* SimpleExtensionMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1781646E871A34F5143B25DD5D762CE /* SimpleExtensionMap.swift */; };
@@ -1719,19 +1721,19 @@
 		D0606087145CAD549EBB8CA3990E78A7 /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D1863046EA27215B684A67BE8B416CE /* CocoaLumberjack.framework */; };
 		D0AC2DF838E6381B595D7DD51ECB719B /* StorageCoordinator.m in Sources */ = {isa = PBXBuildFile; fileRef = EFC09E35CD92A02B5DDFB79C7EE85065 /* StorageCoordinator.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		D0B14BBA15B355D909537542AF571D1A /* YDBCKRecordInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 851D8342B73A3B7246C1E666A644DA43 /* YDBCKRecordInfo.m */; };
-		D0D658284903DBCFC160A3157161918F /* TSMessageStorageTests.m in Sources */ = {isa = PBXBuildFile; fileRef = DF824C68114D187216A7A551A3D5B12D /* TSMessageStorageTests.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
+		D10A94575EFE4B5B9D6A42BE98120090 /* UnfairLockTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AF0CC5D5BC1B56858A0B9AF5E800ECE /* UnfairLockTest.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		D135516E137D89936D95438B02564C3E /* YapDatabaseViewTransaction+OWS.h in Headers */ = {isa = PBXBuildFile; fileRef = 29D41E76EB7B231A8B67E2BD289E7DD7 /* YapDatabaseViewTransaction+OWS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D14DCC2F460479E332A823170FE17770 /* BidirectionalDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED5CF014D30E445DC4FBF19E409603CA /* BidirectionalDictionary.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		D16AB859B9E0D082784D7C0019A989EF /* upsampling_sse2.c in Sources */ = {isa = PBXBuildFile; fileRef = 1142A8F4C0108ACBA91A47570ADD5A54 /* upsampling_sse2.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
 		D170F884505F96648387DB75A3ADFDB0 /* NSData+messagePadding.h in Headers */ = {isa = PBXBuildFile; fileRef = BF7D72B345C17C0DD81657680AE334F0 /* NSData+messagePadding.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D18CED783B9C3AE3F3F575908B85E615 /* curve25519-donna.c in Sources */ = {isa = PBXBuildFile; fileRef = 7061C75AA6990176013E4D7F9F4CDD75 /* curve25519-donna.c */; };
 		D1CDE6AC00FF604886178D4065043F00 /* dec_neon.c in Sources */ = {isa = PBXBuildFile; fileRef = B56C0009205CFE405F4596BDDA516987 /* dec_neon.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
+		D1F586B19FACF5CED72A30CB0345094A /* OWSLinkPreviewTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B2FC2DB3371DFF82A8432D2E5BDFA5D /* OWSLinkPreviewTest.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		D1FAE0CC83DF4F9BD3F9091B8BDBC3FE /* blurhash.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 840714284A33E1A2EB5C381C22C234F3 /* blurhash.framework */; };
 		D202F0EE93A8AF523EBC3F1E4719A0F3 /* argon2.h in Headers */ = {isa = PBXBuildFile; fileRef = 6C62269514E0E27895D22AEB1980A9E4 /* argon2.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D25A36CFF0669AC69D45B1F39527B763 /* Cryptography.m in Sources */ = {isa = PBXBuildFile; fileRef = C367F16BD15250C17E30A7AF387C7175 /* Cryptography.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		D262F6D17674DBC78753499DD7DC23C8 /* minishared.c in Sources */ = {isa = PBXBuildFile; fileRef = 6DEBEF1FD968094287E38B1B48EE4D60 /* minishared.c */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0 -w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		D291F6552004DDA613DDD089110F688E /* Curve25519Kit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F0F1E8FD3204116CAFFA7656AB70F03 /* Curve25519Kit.framework */; };
-		D2944FC1C62013264365DA6373CAAB3B /* OWSMessageManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = D10882E1CF7C83AE892DE0BE968FF9EA /* OWSMessageManagerTest.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		D29B4AFB97321421D3782D53DFDFD313 /* LogEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9693E4EB0BCAAB5B47CDAA852414B1FD /* LogEvent.swift */; };
 		D29DF87EDE0889458C4F650813E0826E /* YapDatabaseLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = 80EEB82CEBEC8BD340628872BC509C79 /* YapDatabaseLogging.m */; };
 		D2C101FD2C96EC270729E7F27E499D44 /* ContactsManagerProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 629862F4912C40E9F32B69A30AD7EA67 /* ContactsManagerProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1739,7 +1741,6 @@
 		D2E60F875E453C5F2E624B4318BCF6EE /* YYFrameImage.m in Sources */ = {isa = PBXBuildFile; fileRef = E9D24B102452E2B2DC351D2A22795662 /* YYFrameImage.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		D3116716421490FEBA5FD014BE87DF10 /* LayerTransformNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 468169FBCDC93B3DF21E70E90E258727 /* LayerTransformNode.swift */; };
 		D3293AC4A115DFAD09BAB56A97F2EF72 /* quant_levels_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 370EAF6F979349CE0B8F0D66005A801B /* quant_levels_utils.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		D34B0D34DDD83D59C8B824020DC093F9 /* MessagePipelineSupervisorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 068F41282AB2AE3F2643B7F7E8DC8F2F /* MessagePipelineSupervisorTest.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		D34ED87430F37027BDD8B5554CED7C7C /* TrimPathNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90B24F22FA215D25821EA458EB4217A7 /* TrimPathNode.swift */; };
 		D35C7ECFC3FE9A476E29EC21DF50937A /* KeyBackup.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 610D754827FD0570F1C58AF31BBCA8F2 /* KeyBackup.pb.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		D3DB69E0BC79C8B962101EDF1E150E9F /* Merge.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14D0A45F78943692898F1B1EF9448E9 /* Merge.swift */; };
@@ -1776,6 +1777,7 @@
 		D7D695389BE992A33C421DF1492BB928 /* OWSEndSessionMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = B9E194FEC188D6B4B986B6A2FC03E456 /* OWSEndSessionMessage.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		D7E87A4D841CA3629B8ED71F5CE4C0F2 /* MTLReflection.m in Sources */ = {isa = PBXBuildFile; fileRef = EF7DC3A18C30E556670435D3D8C16ED9 /* MTLReflection.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		D7F02C5ECDCDBFBF0D082C0B3A914308 /* HasOneThroughAssociation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93106960FCA0F020F83994D8D8703578 /* HasOneThroughAssociation.swift */; };
+		D7F25E41B44E620920DF3511B4CF3F36 /* ViewOnceMessagesTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F1133437627FFE6045F80DB27A23A52 /* ViewOnceMessagesTest.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		D7F9DE3530B7202440889C9E89666697 /* HKDFKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B0F3264669B6DF97CB20CA2CDC776ED6 /* HKDFKit.framework */; };
 		D848D43AA4AC13E85111988494A90ADB /* ge_double_scalarmult.c in Sources */ = {isa = PBXBuildFile; fileRef = 4E64E374BF3B1AF53D204E330391CE23 /* ge_double_scalarmult.c */; };
 		D84B93F52F00A1CD71889CB499F1175D /* field_mask.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5F202BD22FD04C6861D8CC9502DE8F /* field_mask.pb.swift */; };
@@ -1804,7 +1806,6 @@
 		DA210F555D25E6FF385DEE8ED64D56BF /* TableDefinition.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE7078A63508FA2A8F404C29EACF8CC9 /* TableDefinition.swift */; };
 		DA4035834E82D1F75251D8CC0504B13D /* Row.swift in Sources */ = {isa = PBXBuildFile; fileRef = 734FC0207811AAAC8C0CA9227692B0B6 /* Row.swift */; };
 		DA5583B46EE280A3EB26A153D13281EA /* cost_enc.c in Sources */ = {isa = PBXBuildFile; fileRef = 6B4D44625F4A757F5063972DF5CA2B35 /* cost_enc.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
-		DA73C255334DF6BED53B26DC0F7D2A8D /* SSKBaseTestSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21BB1D93795577132D0118EB25EAE523 /* SSKBaseTestSwift.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		DAB9E78010F68B8761B2B7B1E4F54DEE /* bit_reader_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = B968C27812EB60CBAF4EE0FFBE91B4CB /* bit_reader_utils.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
 		DADCEB50732D032E7D537E395C1DFCF4 /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D1863046EA27215B684A67BE8B416CE /* CocoaLumberjack.framework */; };
 		DAF524102F2FF99A9C34B74FD7E4E9C6 /* YapDatabaseExtensionPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = A534D3669CBDBCD9ED9E8D07D648507F /* YapDatabaseExtensionPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1861,7 +1862,6 @@
 		DEB843337B9014A844AFE07E5960EF7D /* YapDatabaseConnectionPool.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F9BFAA44953052CC34B61446332CD0A /* YapDatabaseConnectionPool.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DED1BF900B929174CDB2BBE2708CD039 /* SMKProto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BFF6767256DE58A4875251AE8635670 /* SMKProto.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		DF02D86C975E22C6EC75A8702F600D8A /* NSNotificationCenter+AnyPromise.h in Headers */ = {isa = PBXBuildFile; fileRef = 4C5869A5D109B02CB2D797A926CFB217 /* NSNotificationCenter+AnyPromise.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DF104579B953044D355B5F8FAAFCBB41 /* UUIDBackfillTaskTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE9A01A5F217F5F6AEDC52A83B992ABB /* UUIDBackfillTaskTest.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		DF29C63F76275817748CE65B951E7B96 /* TSCall.h in Headers */ = {isa = PBXBuildFile; fileRef = 796C4C3651CD8B24A6EB0FF9EBF2B899 /* TSCall.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DF56E35F085AE0FF471931F336A4B2AD /* Mantle-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 53417C1297AE510BE7FB9AE3282E5B2B /* Mantle-dummy.m */; };
 		DF643914A9AF21930F79F046086ED4AB /* YapDatabaseCrossProcessNotification.m in Sources */ = {isa = PBXBuildFile; fileRef = F80A12CF8C7EF12D1DF886466AD3E307 /* YapDatabaseCrossProcessNotification.m */; };
@@ -1877,6 +1877,7 @@
 		E169296B3E8E818B37A85AF82C478E6F /* YapDatabaseCrossProcessNotificationConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = BE9022115C88A35F7490EE3A2A7D1320 /* YapDatabaseCrossProcessNotificationConnection.m */; };
 		E18F653CE5C2B8AAE184B7EB152232EA /* HKDFKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B0F3264669B6DF97CB20CA2CDC776ED6 /* HKDFKit.framework */; };
 		E1988ED5330BDAA9CDDA8484AB86CFB5 /* SSLClientCertificate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C1C3229E8F7D975A6ABD1F2EF4F298 /* SSLClientCertificate.swift */; };
+		E1F32AD5F8D46420A671D9B1BEC34B26 /* OWSFingerprintTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 37E752026DFD1ABD4CE07ECC46372466 /* OWSFingerprintTest.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		E1F585C1D98D9CE9C6C3D1297C5033A9 /* ClientZkProfileOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21F86AF6DE09FA5F6BBA06D72BF00444 /* ClientZkProfileOperations.swift */; };
 		E2049B95B5707A328328BD002953395D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4FFEF32630AF91FA18DD1FA364D66DF3 /* Foundation.framework */; };
 		E225E8E086669CB489E03C0DFB6255E5 /* CocoaLumberjack-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 453B41A70EBF7043CC4C5EEF5B697C54 /* CocoaLumberjack-dummy.m */; };
@@ -1896,6 +1897,7 @@
 		E397B2390AB7F12AD9ACF67C02E74CA3 /* base.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A847D7D05B02E7CE01BE80F52EBF5F4 /* base.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		E3A24108940D6BD5F34FA04504BFCEE9 /* FetchableRecord+Decodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A4818511BCA2B6D30F002037478EC4 /* FetchableRecord+Decodable.swift */; };
 		E3AE9378643102DB3085CAF34EDB172E /* syntax_enc.c in Sources */ = {isa = PBXBuildFile; fileRef = BB293D34D722382520E0CC9EE1D2671A /* syntax_enc.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
+		E3CF670D2DADDDAAB756439B8713AA2C /* InteractionFinderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 625FEFECEA193AF57F5F886BF0733759 /* InteractionFinderTest.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		E3CFB75C1C266E58AC4376AE1994EFC9 /* TSConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9A9917816FD79E2E53DA28636823779 /* TSConstants.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		E3FE880DBAF2C970EDE88C2AA1EE5AFC /* GTSR1.crt in Resources */ = {isa = PBXBuildFile; fileRef = 1155DD1AAE4D0447FCD41759D8F2BF1D /* GTSR1.crt */; };
 		E411FBB343217F7BF573E8A6DC1D6F2D /* YapDatabaseFilteredView.m in Sources */ = {isa = PBXBuildFile; fileRef = F5B02EEBBF156502329F8996FF48B38A /* YapDatabaseFilteredView.m */; };
@@ -1907,7 +1909,6 @@
 		E4DC4665F267B63718804FE9EAD57613 /* YapDatabaseCloudKitTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = C90F11382E32A82D09936EFCEE313AD4 /* YapDatabaseCloudKitTypes.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E541F924EB8F17A69487E1773177144E /* Batching.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047F8CF2D475B5696E230B397E17A82F /* Batching.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		E5766F54BDC80B15B520904DC3C95D07 /* TSDatabaseSecondaryIndexes.h in Headers */ = {isa = PBXBuildFile; fileRef = E899D4010E94A628778242B433B8D8A9 /* TSDatabaseSecondaryIndexes.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		E57CDE44C9E141AC87A291DA187FFC62 /* TestProtocolRunnerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2412D99C80187A03933B67C84F5B8BD /* TestProtocolRunnerTest.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		E58DA06DF5FDCA3AE96C59A853521841 /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D1863046EA27215B684A67BE8B416CE /* CocoaLumberjack.framework */; };
 		E596992E03EC7DC91FEF0AF3CCFEDD37 /* YapDatabaseViewPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 647E6C0C832D5707A4F9166C2E47ED99 /* YapDatabaseViewPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E5C522184ACE3AFCD8FA45433B49629D /* YDBCKChangeQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = DB96E863669FE7E63D24241AAB4004F2 /* YDBCKChangeQueue.m */; };
@@ -1928,7 +1929,6 @@
 		E787D39BC2FBF622CF765E9C27AD374D /* NSURLSessionDataTask+StatusCode.m in Sources */ = {isa = PBXBuildFile; fileRef = 07A082AC67B28F2EE7CCDFC7509FB4BD /* NSURLSessionDataTask+StatusCode.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		E7BE96E4A816E9510E676784C8A6E52D /* YYImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D4EBE856A5A45893A2C671E8E828BEC /* YYImage.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		E7BF033A2BAC0095E2CD758C02B7BA7C /* GroupManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE63A6423E96E4D1F72809651CBDDE23 /* GroupManager.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
-		E7C1E62E1E10CFAE16F20C552855C423 /* ViewOnceMessagesTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F1133437627FFE6045F80DB27A23A52 /* ViewOnceMessagesTest.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		E7C757538C8032676BA21114B5ED6230 /* DDFileLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = 14D60F8A64B112CC4064C3D9E316AA16 /* DDFileLogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E7FA8474B7E7045164FB92CF5D77A88B /* SignalCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC88FC99209DFE459EA32CA6873ECAD9 /* SignalCoreKit.framework */; };
 		E81C3306BFDACB4A682829B3682FAD52 /* muxinternal.c in Sources */ = {isa = PBXBuildFile; fileRef = A857E1FE9D575C73A4A9D2518569F36D /* muxinternal.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
@@ -1937,6 +1937,7 @@
 		E84DCA1FAED8709324A9308376AB13C6 /* FullTextSearchFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19D7AFC35B2CCC2CE6C36A1D304F8A58 /* FullTextSearchFinder.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		E87587A4F8488F3BE6EB66DCBE0F10C2 /* Deprecations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B288ADC8B4F678F4027942BC2A11E1F /* Deprecations.swift */; };
 		E899D0D3C5B740A1E84ED96608AF5078 /* ge_msub.c in Sources */ = {isa = PBXBuildFile; fileRef = 37D2374167C14B99126A03DE9E1E3215 /* ge_msub.c */; };
+		E8A360DCD0F2C0CEE1C74ADA80E2645E /* SSKBaseTestObjC.m in Sources */ = {isa = PBXBuildFile; fileRef = C770C68C60ED7545032291B294FB1C79 /* SSKBaseTestObjC.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		E8E834948C8C05C0596F9C14D985D060 /* YapDatabaseViewLocator.m in Sources */ = {isa = PBXBuildFile; fileRef = B25B98D860BC07328953A4444CA45595 /* YapDatabaseViewLocator.m */; };
 		E8E94D1A604FB5E8754A3FE5C7F8076E /* SQLExpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8696E1AB00240A2BE535D86192E68E04 /* SQLExpression.swift */; };
 		E8F80333426893B0468D166ACBB2FDE6 /* SSKProto+OWS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4423A9198BDFB6EE1EAED2AB60DA3EA5 /* SSKProto+OWS.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
@@ -1981,6 +1982,7 @@
 		EE675C9ED62260FD269807CAAECBAF30 /* NSData+Image.h in Headers */ = {isa = PBXBuildFile; fileRef = F79F8247CD6E13FE95E26689677A35F0 /* NSData+Image.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		EE75AD3D57A378F4104C90B37B461998 /* BulkUUIDLookup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6169B2B092BC2102C86B8B4EE38DDE3E /* BulkUUIDLookup.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		EEBB1171DF51DC3E1E473735A334893D /* YapDatabaseSecondaryIndexPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BD5A8674123FF357D2CA837285F8D9E /* YapDatabaseSecondaryIndexPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		EEDB6375597C68BA3FEE9132700DD8CA /* TestProtocolRunnerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2412D99C80187A03933B67C84F5B8BD /* TestProtocolRunnerTest.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		EF0A876027107268DD861A8E90B47047 /* ECPublicKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7815E705E2B9B1A4C42B435B1276E1B0 /* ECPublicKey.swift */; };
 		EF12D3AF53CECFA19F623FFB329DDDBF /* OWSUploadOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 53DE76B09F577E0E4686731423A8512B /* OWSUploadOperation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		EF14D4F01FC75398AC5592A2BFBD2E04 /* YapSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 280618C0766F44650644D3CFD55F97B2 /* YapSet.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -2045,10 +2047,8 @@
 		F56DF6EBF0ED86CD8E9D70BA218F72FE /* StrokeRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B86287AF12A50CAFBFC3AA8584CAD98F /* StrokeRenderer.swift */; };
 		F5D0BBFB9F1B6036B830CE6972122F3E /* OWSContact.m in Sources */ = {isa = PBXBuildFile; fileRef = 6CDED255FC596383120C00B80A652A3B /* OWSContact.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		F5DFA63B0EE02EE98D9ACBFE0C806468 /* NSValueTransformer+MTLInversionAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = EEDC448E8513E285976C9848E2A0AAE3 /* NSValueTransformer+MTLInversionAdditions.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
-		F5EF979F0DBA54CB19165B6F21A16CE2 /* MessageSendJobQueueTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1CA7EAE42F038E8B8F21C7D8EB8987B /* MessageSendJobQueueTest.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		F60384266C37AC47F3BFC3309F4E5D6B /* quant_levels_dec_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = DD016A92307F8442FB2248BD515F2058 /* quant_levels_dec_utils.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
 		F6194E4D01CF20511D53EC8B4A7149AB /* DDAssertMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 2699EDC1CE84F0F18D5FA42EC6AC490C /* DDAssertMacros.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F64B1951F0CA7F65C783F1DAFD9F193A /* StickerManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E161C872CD99D85F678021682F756B8 /* StickerManagerTest.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		F656E4922E91321DD570AB2F75A885F0 /* DatabaseValueConvertible+Decodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47233D354372152419139E8173D46791 /* DatabaseValueConvertible+Decodable.swift */; };
 		F65726473D062E8BBBEAD717609C0CB1 /* Atomics.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAB12B97E919A1048DDB6DBE9DB29637 /* Atomics.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		F65C1EDABD66041C65FC1DD8F9AFD993 /* ZKGroup-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 542B5FF2F1D74C4D81D1F980F86D3EE6 /* ZKGroup-dummy.m */; };
@@ -2064,7 +2064,6 @@
 		F7988B4EAF9E532C27AD22D3E7E90353 /* YapDatabaseSecondaryIndexOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D7C0F2919910D09C2189CFF86EE53E9 /* YapDatabaseSecondaryIndexOptions.m */; };
 		F7DCC1FA48D63FF5BF776137EFCB6252 /* DDASLLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = A1710DC8E7D0118EEB58B1C37EFC520D /* DDASLLogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F7F5213BED2CE3787D0448D33A1EA729 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4FFEF32630AF91FA18DD1FA364D66DF3 /* Foundation.framework */; };
-		F80F894D609893670AFF58035EBEF7ED /* OWSLinkPreviewTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B2FC2DB3371DFF82A8432D2E5BDFA5D /* OWSLinkPreviewTest.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		F82FB784E96700A93BB6D5A064C80C39 /* AnimatedButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = C81936949E3AD3B28C44E8F8D7F387C6 /* AnimatedButton.swift */; };
 		F84F36F7496B4EF0683C8A34C6A8C9EC /* YapDatabaseCloudCoreConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 9C85E8ACC439412051D2766C59B35752 /* YapDatabaseCloudCoreConnection.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F86E4F7545A698B57ECC327CA58CACC5 /* ReachabilityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E851178B681515599D888F37F1692EC9 /* ReachabilityManager.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
@@ -2079,7 +2078,7 @@
 		F93A567CD2BC49711C3533C59489D855 /* DatabaseResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E4CED8F1DD942D7EA70FB8E87750D00 /* DatabaseResult.swift */; };
 		F9527B829F849232412E7010B4A47F7A /* TSAttachmentStream+SDS.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00E892DC21E3044B598CD3DD3C2660C /* TSAttachmentStream+SDS.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		F9528ECA8F58F5F9E0AB3E384228521F /* crypt.c in Sources */ = {isa = PBXBuildFile; fileRef = D0CBD1E38F29207B7C0530D9D023515F /* crypt.c */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0 -w -Xanalyzer -analyzer-disable-all-checks"; }; };
-		F960D92115E1C1AB6BBA1432DE1599D8 /* OWSProvisioningCipherTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 350EC6C6A1CE00B5CF2203D8A07A708B /* OWSProvisioningCipherTest.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
+		F96BD9581502CF3A81D96CACA1B74896 /* SSKBaseTestSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21BB1D93795577132D0118EB25EAE523 /* SSKBaseTestSwift.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		F9B5181141EE5FD334BE441C785654F4 /* YapDatabaseStatement.m in Sources */ = {isa = PBXBuildFile; fileRef = 69080F9DFFAA6671EC900CAFEC918523 /* YapDatabaseStatement.m */; };
 		FA045AEA3F9F0CB08854944B8B71B57D /* IdentityKeyStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 13749612FEA5473CCD5018428DBD135A /* IdentityKeyStore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		FA581A66017C959968F71D47DEDA1D70 /* TSInvalidIdentityKeySendingErrorMessage+SDS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33F998BDD75502A681B553D328A860F2 /* TSInvalidIdentityKeySendingErrorMessage+SDS.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
@@ -2116,6 +2115,7 @@
 		FE4137580B089E57CAFD39818C7587C4 /* OWSError.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EB3DA59864DA51152B21624107C7998 /* OWSError.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		FE66F8358D9EDAAF9B14F1E8C0FF73BE /* Thenable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E31F82252554D95555376D25BA1AFCA2 /* Thenable.swift */; };
 		FE6EAF1B098CB092701D6E6B632D9F1C /* YapDatabaseRelationshipEdge.h in Headers */ = {isa = PBXBuildFile; fileRef = 66CA5E38B0553E37E228B2449E19FCD0 /* YapDatabaseRelationshipEdge.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FE71274A070A71DF40F62E35B42588CA /* PhoneNumberTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A475FB507D2512BEF1058F973C351F2E /* PhoneNumberTest.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		FE7B551A490123B62F3CC23BCCC686F9 /* ContentProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAFC592771C282F149ECA07B04EEF9CE /* ContentProxy.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		FE8B8964C6C560739097B6E4668E1988 /* AuthCredentialPresentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F15B183BCAEA1264FFADFAF0A8B52F /* AuthCredentialPresentation.swift */; };
 		FEC98A41118D389565A9A46F78F23DF9 /* YapDatabaseViewLocator.h in Headers */ = {isa = PBXBuildFile; fileRef = D4EC3238EBD2F2F799432E952E2FCF92 /* YapDatabaseViewLocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3696,9 +3696,7 @@
 		054F029320089BD38F3841BFE5C0133A /* Pods-NotificationServiceExtension-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-NotificationServiceExtension-dummy.m"; sourceTree = "<group>"; };
 		057EE2EFF4017D8575493B310C23EDDC /* hmac.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = hmac.h; path = SSZipArchive/minizip/aes/hmac.h; sourceTree = "<group>"; };
 		05970BA3293D77F6B1A5AE805A64C143 /* SignalRingRTC.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = SignalRingRTC.h; sourceTree = "<group>"; };
-		05E17226F14A45A69550E4EEA09D4213 /* TSThreadTest.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = TSThreadTest.m; sourceTree = "<group>"; };
 		05F1268D24B986CF68296B938FBB7E91 /* LRUAnimationCache.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = LRUAnimationCache.swift; path = "lottie-swift/src/Public/AnimationCache/LRUAnimationCache.swift"; sourceTree = "<group>"; };
-		0602EC19D24660EF3FA9FF538599A695 /* TSGroupThreadTest.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = TSGroupThreadTest.m; sourceTree = "<group>"; };
 		061452A10C4B57FEAAE8FF6334B66E3C /* fe_tobytes.c */ = {isa = PBXFileReference; includeInIndex = 1; name = fe_tobytes.c; path = Sources/ed25519/fe_tobytes.c; sourceTree = "<group>"; };
 		06658C08AB6ABA456B9E6124AC1DDFC2 /* YapDatabaseViewConnection.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = YapDatabaseViewConnection.m; path = YapDatabase/Extensions/View/YapDatabaseViewConnection.m; sourceTree = "<group>"; };
 		068F41282AB2AE3F2643B7F7E8DC8F2F /* MessagePipelineSupervisorTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MessagePipelineSupervisorTest.swift; sourceTree = "<group>"; };
@@ -3771,7 +3769,6 @@
 		0E54F50E1707EBB08D45BAA5E09EEA6E /* AnyMessageStorage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AnyMessageStorage.swift; path = Sources/SwiftProtobuf/AnyMessageStorage.swift; sourceTree = "<group>"; };
 		0E58F257DE72CD65F307DD837B805FF8 /* PointValueProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PointValueProvider.swift; path = "lottie-swift/src/Public/DynamicProperties/ValueProviders/PointValueProvider.swift"; sourceTree = "<group>"; };
 		0E5F1B665F337139FA42C276FDA608FF /* dispatch_promise.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = dispatch_promise.m; path = Sources/dispatch_promise.m; sourceTree = "<group>"; };
-		0E634391C0E5531872F56F753A6813C8 /* PhoneNumberTest.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = PhoneNumberTest.m; sourceTree = "<group>"; };
 		0E811E0ECA87C90C31F21BE20677D6AC /* AppContext.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = AppContext.m; sourceTree = "<group>"; };
 		0F1C3F5149ED16049332A85DBD253BF4 /* DDDispatchQueueLogFormatter.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = DDDispatchQueueLogFormatter.h; path = Sources/CocoaLumberjack/include/DDDispatchQueueLogFormatter.h; sourceTree = "<group>"; };
 		0F277628870AD36042F3D3FAC96973EF /* YapDatabaseRTreeIndex.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = YapDatabaseRTreeIndex.m; path = YapDatabase/Extensions/RTreeIndex/YapDatabaseRTreeIndex.m; sourceTree = "<group>"; };
@@ -3861,7 +3858,6 @@
 		1719D1F26E1D5ECB18C8DCE3B2A957B1 /* OWSWebSocket.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = OWSWebSocket.h; sourceTree = "<group>"; };
 		172321CEB48D291E8B1ABF318682E2A1 /* YapDatabaseCloudCoreConnection.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = YapDatabaseCloudCoreConnection.m; path = YapDatabase/Extensions/CloudCore/YapDatabaseCloudCoreConnection.m; sourceTree = "<group>"; };
 		1723A323E8124E6AD548AA479B45B3DC /* YapDatabaseRelationshipPrivate.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = YapDatabaseRelationshipPrivate.h; path = YapDatabase/Extensions/Relationships/Internal/YapDatabaseRelationshipPrivate.h; sourceTree = "<group>"; };
-		172D5631C70BB25E4D13BE4DF2685791 /* PhoneNumberTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PhoneNumberTest.swift; sourceTree = "<group>"; };
 		17307CFD3A009E31B21AD32C20B12721 /* Threading.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = Threading.m; path = SignalCoreKit/src/Threading.m; sourceTree = "<group>"; };
 		1750CFEC9093DA8E049D52C075AC54EF /* RemoteAttestation.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = RemoteAttestation.m; sourceTree = "<group>"; };
 		179FBA91C588CB54DEFC92BF786375FB /* WhisperMessage.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = WhisperMessage.m; path = AxolotlKit/Classes/CipherMessage/WhisperMessage.m; sourceTree = "<group>"; };
@@ -3875,7 +3871,6 @@
 		1831BFAC543F3545AF3F38FB91434ACE /* FieldTag.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FieldTag.swift; path = Sources/SwiftProtobuf/FieldTag.swift; sourceTree = "<group>"; };
 		187861F9395C095E02BAE7A29E62410C /* MessageProcessing.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MessageProcessing.swift; sourceTree = "<group>"; };
 		1893A1CF8F0FFD273CCC434D77AE7B84 /* FTS5+QueryInterface.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "FTS5+QueryInterface.swift"; path = "GRDB/QueryInterface/FTS5+QueryInterface.swift"; sourceTree = "<group>"; };
-		189B3BE258633BF726C5FE54799A2967 /* PhoneNumberUtilTest.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = PhoneNumberUtilTest.m; sourceTree = "<group>"; };
 		18BDA752DD280D1CE6874E3C87FBF064 /* UIView+AnyPromise.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "UIView+AnyPromise.m"; path = "Extensions/UIKit/Sources/UIView+AnyPromise.m"; sourceTree = "<group>"; };
 		18C9B601CC01D9D740A91F6AB7C4188C /* OWSOutgoingSentMessageTranscript.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = OWSOutgoingSentMessageTranscript.h; sourceTree = "<group>"; };
 		18EA76C22DBB38914B0B09A7ED0CDC37 /* AxolotlKit.unit-tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "AxolotlKit.unit-tests.release.xcconfig"; sourceTree = "<group>"; };
@@ -3938,6 +3933,7 @@
 		1DDAA5EF8E34293F2D888E36E3A787CE /* SQLInterpolation+QueryInterface.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "SQLInterpolation+QueryInterface.swift"; path = "GRDB/QueryInterface/SQLInterpolation+QueryInterface.swift"; sourceTree = "<group>"; };
 		1DE24A9DC23F6F46D0BCAE42E8F6E372 /* TextAnimatorNode.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TextAnimatorNode.swift; path = "lottie-swift/src/Private/NodeRenderSystem/Nodes/Text/TextAnimatorNode.swift"; sourceTree = "<group>"; };
 		1DE72C651A364A978BA4E40E5B732CAA /* NSArray+PureLayout.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "NSArray+PureLayout.m"; path = "PureLayout/PureLayout/NSArray+PureLayout.m"; sourceTree = "<group>"; };
+		1DEB900147EDDEEECA6FF9B299CCC035 /* SignalRecipientTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SignalRecipientTest.swift; sourceTree = "<group>"; };
 		1DF14AEAC23C30906724C2D7105EE109 /* SignalServiceKit-Unit-Tests-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "SignalServiceKit-Unit-Tests-Info.plist"; sourceTree = "<group>"; };
 		1E1101D1F44D073A40EDEF55EF99A33B /* YapActionItemPrivate.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = YapActionItemPrivate.h; path = YapDatabase/Extensions/ActionManager/Internal/YapActionItemPrivate.h; sourceTree = "<group>"; };
 		1E567A97B47670BAADE7BFC0D4E60D72 /* SDSKeyValueStoreTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SDSKeyValueStoreTest.swift; sourceTree = "<group>"; };
@@ -3997,7 +3993,6 @@
 		24C10F77A05A63B7054039C17281E71E /* YapDatabaseManualViewConnection.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = YapDatabaseManualViewConnection.m; path = YapDatabase/Extensions/ManualView/YapDatabaseManualViewConnection.m; sourceTree = "<group>"; };
 		24D5DB87F21BBDE9D395FD3414A81663 /* TestModel.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = TestModel.m; sourceTree = "<group>"; };
 		24DA1DE85406DF86833A95BD78BB1EE7 /* OWSBlockingManager.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = OWSBlockingManager.h; sourceTree = "<group>"; };
-		24E0CF41112417F0EA4614370F758212 /* TSContactThreadTest.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = TSContactThreadTest.m; sourceTree = "<group>"; };
 		24F095A6AE73554FF058B43B07470626 /* vp8_dec.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = vp8_dec.h; path = src/dec/vp8_dec.h; sourceTree = "<group>"; };
 		2547D375D0C589FB7F053E39501B9E39 /* YapDatabaseRelationshipOptions.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = YapDatabaseRelationshipOptions.m; path = YapDatabase/Extensions/Relationships/YapDatabaseRelationshipOptions.m; sourceTree = "<group>"; };
 		25752D06266F34EF1F217E6193AED160 /* NSURLSession+AnyPromise.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "NSURLSession+AnyPromise.h"; path = "Extensions/Foundation/Sources/NSURLSession+AnyPromise.h"; sourceTree = "<group>"; };
@@ -4385,6 +4380,7 @@
 		4EBD98871606BE95B9AE2C532D18F29D /* ssim.c */ = {isa = PBXFileReference; includeInIndex = 1; name = ssim.c; path = src/dsp/ssim.c; sourceTree = "<group>"; };
 		4ECCDC7FC820DBBFBA26AB98D809F10F /* Errors.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Errors.swift; path = ZKGroup/Errors.swift; sourceTree = "<group>"; };
 		4EED9383C7F583CA5CF2E4929F704DCF /* SQLFunctions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SQLFunctions.swift; path = GRDB/QueryInterface/SQL/SQLFunctions.swift; sourceTree = "<group>"; };
+		4EEDA35B65CDC8E93DA7B2C909503314 /* TSThreadTest.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = TSThreadTest.m; sourceTree = "<group>"; };
 		4F0D6F42041F20ED6AC6AE877186E91C /* StorageService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StorageService.swift; sourceTree = "<group>"; };
 		4F1BD2411B4CBD1EA3AC3C71360127EA /* ProfileKeyVersion.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ProfileKeyVersion.swift; path = ZKGroup/ProfileKeyVersion.swift; sourceTree = "<group>"; };
 		4F44963F943BB28F7756FCF959655121 /* YapDatabaseViewConnection.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = YapDatabaseViewConnection.h; path = YapDatabase/Extensions/View/YapDatabaseViewConnection.h; sourceTree = "<group>"; };
@@ -4433,7 +4429,6 @@
 		53DE76B09F577E0E4686731423A8512B /* OWSUploadOperation.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = OWSUploadOperation.h; sourceTree = "<group>"; };
 		53F256057908B139EEC19B3912E115CD /* cost_mips_dsp_r2.c */ = {isa = PBXFileReference; includeInIndex = 1; name = cost_mips_dsp_r2.c; path = src/dsp/cost_mips_dsp_r2.c; sourceTree = "<group>"; };
 		53F9D4E4E8DCD3398BE7E61AC987245E /* Shape.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Shape.swift; path = "lottie-swift/src/Private/Model/ShapeItems/Shape.swift"; sourceTree = "<group>"; };
-		542927405F384895F7D720560B8A4EB7 /* ContactSortingTest.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = ContactSortingTest.m; sourceTree = "<group>"; };
 		542B5FF2F1D74C4D81D1F980F86D3EE6 /* ZKGroup-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "ZKGroup-dummy.m"; sourceTree = "<group>"; };
 		542E958B9ACDC3EDC078206625A16049 /* DatabaseRegion.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DatabaseRegion.swift; path = GRDB/Core/DatabaseRegion.swift; sourceTree = "<group>"; };
 		543D7E56B08991FF32C843DD30DBDBC1 /* SignalIOSProto.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SignalIOSProto.swift; sourceTree = "<group>"; };
@@ -4545,6 +4540,7 @@
 		5FC27DE78D204C976964C65A59467377 /* TSMessage.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = TSMessage.h; sourceTree = "<group>"; };
 		5FC56D189551F15FFC471E1C21917CB7 /* struct.pb.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = struct.pb.swift; path = Sources/SwiftProtobuf/struct.pb.swift; sourceTree = "<group>"; };
 		5FD740E2E5AD575EF69DF4B190AE3D85 /* MaskContainerLayer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MaskContainerLayer.swift; path = "lottie-swift/src/Private/LayerContainers/CompLayers/MaskContainerLayer.swift"; sourceTree = "<group>"; };
+		5FEAB443D67D3E9310F56BDA286519E8 /* PhoneNumberTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PhoneNumberTest.swift; sourceTree = "<group>"; };
 		6005E2D24C584C45BADC3823B382CC6F /* ZipArchive.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ZipArchive.h; path = SSZipArchive/ZipArchive.h; sourceTree = "<group>"; };
 		60165B64205634C70D85A91FEA94DC8B /* AxolotlKit-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "AxolotlKit-Info.plist"; sourceTree = "<group>"; };
 		60380D7B41B0E423B08038C89B4503B3 /* AnyPromise.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AnyPromise.swift; path = Sources/AnyPromise.swift; sourceTree = "<group>"; };
@@ -4592,7 +4588,6 @@
 		6354E2FCE85522B0A6914A720E4D5D39 /* YapDatabaseViewPage.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = YapDatabaseViewPage.h; path = YapDatabase/Extensions/View/Internal/YapDatabaseViewPage.h; sourceTree = "<group>"; };
 		638F5C7E373A57C459636EB83A66F636 /* rescaler_neon.c */ = {isa = PBXFileReference; includeInIndex = 1; name = rescaler_neon.c; path = src/dsp/rescaler_neon.c; sourceTree = "<group>"; };
 		63C39DBD1726BEDA510167F77F8EB67C /* SignalMetadataKit-Unit-Tests-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "SignalMetadataKit-Unit-Tests-prefix.pch"; sourceTree = "<group>"; };
-		63C9A910A2721490721F371AF7ED77F0 /* SignalRecipientTest.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = SignalRecipientTest.m; sourceTree = "<group>"; };
 		63D61BD3CB20B1F7195DA40CD01EADAA /* YapDatabaseViewOptions.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = YapDatabaseViewOptions.h; path = YapDatabase/Extensions/View/YapDatabaseViewOptions.h; sourceTree = "<group>"; };
 		642256C0849139296539CE570FB67CCE /* TSGroupModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TSGroupModel.swift; sourceTree = "<group>"; };
 		647E6C0C832D5707A4F9166C2E47ED99 /* YapDatabaseViewPrivate.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = YapDatabaseViewPrivate.h; path = YapDatabase/Extensions/View/Internal/YapDatabaseViewPrivate.h; sourceTree = "<group>"; };
@@ -4860,6 +4855,7 @@
 		80892B5FC998C728F7046EE5A383DF36 /* NBPhoneNumberDefines.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = NBPhoneNumberDefines.m; path = libPhoneNumber/NBPhoneNumberDefines.m; sourceTree = "<group>"; };
 		808CAB18AF184C8CB721C617DC7EA284 /* NSURLSessionDataTask+StatusCode.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "NSURLSessionDataTask+StatusCode.h"; sourceTree = "<group>"; };
 		809D13BF0C5E5C62E5030FD3FD1558D0 /* thread_utils.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = thread_utils.h; path = src/utils/thread_utils.h; sourceTree = "<group>"; };
+		80EA8A34EF6BEE69240D6CDFAB4DEA8D /* TSGroupThreadTest.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = TSGroupThreadTest.m; sourceTree = "<group>"; };
 		80EB96EFC3DBFE70097640693F9859D2 /* TSInvalidIdentityKeyReceivingErrorMessage.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = TSInvalidIdentityKeyReceivingErrorMessage.h; sourceTree = "<group>"; };
 		80EEB82CEBEC8BD340628872BC509C79 /* YapDatabaseLogging.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = YapDatabaseLogging.m; path = YapDatabase/Internal/YapDatabaseLogging.m; sourceTree = "<group>"; };
 		80EFF70F15997E5FD900599CBB567E72 /* SDSDatabaseStorage+Objc.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "SDSDatabaseStorage+Objc.h"; sourceTree = "<group>"; };
@@ -4872,6 +4868,7 @@
 		8184876AA4A954958FA51E016BC09027 /* TSPrefix.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = TSPrefix.h; path = SignalServiceKit/src/TSPrefix.h; sourceTree = "<group>"; };
 		818AA17A1D8F4A43DE6FEF8935999C6A /* Pods-SignalPerformanceTests.app store release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-SignalPerformanceTests.app store release.xcconfig"; sourceTree = "<group>"; };
 		819A39CF2ADECB7BF6A5355B1D41B7AC /* OWSRecipientIdentity.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = OWSRecipientIdentity.h; sourceTree = "<group>"; };
+		81C10B37D5FCF2582386C25CE61B48CD /* UUIDBackfillTaskTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = UUIDBackfillTaskTest.swift; sourceTree = "<group>"; };
 		81C9F61F826CFB11E88DEF267D78083C /* YapDatabaseHooks.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = YapDatabaseHooks.h; path = YapDatabase/Extensions/Hooks/YapDatabaseHooks.h; sourceTree = "<group>"; };
 		81CC0AA65A4689DA7C8C596F5F9CC287 /* Database+Statements.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "Database+Statements.swift"; path = "GRDB/Core/Database+Statements.swift"; sourceTree = "<group>"; };
 		81DAAEFCB10757D56FCEB30030DF98FE /* wrappers.pb.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = wrappers.pb.swift; path = Sources/SwiftProtobuf/wrappers.pb.swift; sourceTree = "<group>"; };
@@ -4911,6 +4908,7 @@
 		84DAA013B199857B933FC21D13B8C41A /* NSTask+AnyPromise.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "NSTask+AnyPromise.h"; path = "Extensions/Foundation/Sources/NSTask+AnyPromise.h"; sourceTree = "<group>"; };
 		84F73DBB23F542B6634005E8903AA344 /* AFNetworkReachabilityManager.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = AFNetworkReachabilityManager.h; path = AFNetworking/AFNetworkReachabilityManager.h; sourceTree = "<group>"; };
 		851D8342B73A3B7246C1E666A644DA43 /* YDBCKRecordInfo.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = YDBCKRecordInfo.m; path = YapDatabase/Extensions/CloudKit/Utilities/YDBCKRecordInfo.m; sourceTree = "<group>"; };
+		8532169324CEE3E8203927A9A6D4987B /* ContactSortingTest.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = ContactSortingTest.m; sourceTree = "<group>"; };
 		8532201572C0C53D392E6603D960E690 /* YapDatabaseSearchResultsViewOptions.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = YapDatabaseSearchResultsViewOptions.h; path = YapDatabase/Extensions/SearchResultsView/YapDatabaseSearchResultsViewOptions.h; sourceTree = "<group>"; };
 		85810B3F662E53D93D53B5499600D9C5 /* NBPhoneNumberDesc.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = NBPhoneNumberDesc.h; path = libPhoneNumber/NBPhoneNumberDesc.h; sourceTree = "<group>"; };
 		85B112CE67B8A1D2B98B657E0A26A3AF /* LayerImageProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = LayerImageProvider.swift; path = "lottie-swift/src/Private/LayerContainers/Utility/LayerImageProvider.swift"; sourceTree = "<group>"; };
@@ -5114,6 +5112,7 @@
 		9D9455B8D3810B48F79B3B37C29C0606 /* Fetch.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Fetch.swift; path = GRDB/ValueObservation/ValueReducer/Fetch.swift; sourceTree = "<group>"; };
 		9D95824329CD1B0E87F03EA2EA695EAB /* Weak.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Weak.swift; sourceTree = "<group>"; };
 		9D9B94A2045099469F9ACF5F4FBB00BE /* NBPhoneNumber.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = NBPhoneNumber.h; path = libPhoneNumber/NBPhoneNumber.h; sourceTree = "<group>"; };
+		9E5AFD2A56B3D1B1C3D4B7E547275C70 /* OWSDisappearingMessagesConfigurationTest.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = OWSDisappearingMessagesConfigurationTest.m; sourceTree = "<group>"; };
 		9E6FFBBBA4ED89EFE0648AAD3443C3A7 /* Argon2-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Argon2-Info.plist"; sourceTree = "<group>"; };
 		9E70195698B06CB19C32D2D2993870D9 /* SwiftProtobuf-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "SwiftProtobuf-umbrella.h"; sourceTree = "<group>"; };
 		9E75A978CC25B4AB358AD2C189657733 /* thread.c */ = {isa = PBXFileReference; includeInIndex = 1; name = thread.c; path = "phc-winner-argon2/src/thread.c"; sourceTree = "<group>"; };
@@ -5169,6 +5168,7 @@
 		A41FE17F32D8C77DC92F9079C44A426C /* FetchedRecordsController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FetchedRecordsController.swift; path = GRDB/Record/FetchedRecordsController.swift; sourceTree = "<group>"; };
 		A430790D8E1377F4D894B78A36FF3D81 /* AFNetworkReachabilityManager.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = AFNetworkReachabilityManager.m; path = AFNetworking/AFNetworkReachabilityManager.m; sourceTree = "<group>"; };
 		A44DA7D82F63306FA80CDF02AFAD84A1 /* SignalMetadataKit-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "SignalMetadataKit-umbrella.h"; sourceTree = "<group>"; };
+		A475FB507D2512BEF1058F973C351F2E /* PhoneNumberTest.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = PhoneNumberTest.m; sourceTree = "<group>"; };
 		A4D66EC2A582BD448DFE39D828800DD7 /* YDBCKChangeRecord.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = YDBCKChangeRecord.h; path = YapDatabase/Extensions/CloudKit/Internal/YDBCKChangeRecord.h; sourceTree = "<group>"; };
 		A4FA15D44DF6BAC7550EDEED10862AA3 /* AFNetworking.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = AFNetworking.framework; path = AFNetworking.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A4FA88F95CCCD5F87143FBDA0EED0AD9 /* SignalRecipient.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = SignalRecipient.h; sourceTree = "<group>"; };
@@ -5524,6 +5524,7 @@
 		CF5F202BD22FD04C6861D8CC9502DE8F /* field_mask.pb.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = field_mask.pb.swift; path = Sources/SwiftProtobuf/field_mask.pb.swift; sourceTree = "<group>"; };
 		CFA8892157287F047EF38019CD0545F9 /* common_sse2.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = common_sse2.h; path = src/dsp/common_sse2.h; sourceTree = "<group>"; };
 		CFBA7B3B27CE403907BD4E25FC03FCB7 /* GRKOpenSSLFramework.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = GRKOpenSSLFramework.release.xcconfig; sourceTree = "<group>"; };
+		CFC554CE90997656ED7F510B30FC7EFA /* TSContactThreadTest.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = TSContactThreadTest.m; sourceTree = "<group>"; };
 		CFE1AD60417334DB5AF6F2D59BFD644D /* GRKOpenSSLFramework.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = GRKOpenSSLFramework.debug.xcconfig; sourceTree = "<group>"; };
 		D00E892DC21E3044B598CD3DD3C2660C /* TSAttachmentStream+SDS.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "TSAttachmentStream+SDS.swift"; sourceTree = "<group>"; };
 		D02FFE4F7C3E634E24189BF073B9C118 /* bit_reader_inl_utils.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = bit_reader_inl_utils.h; path = src/utils/bit_reader_inl_utils.h; sourceTree = "<group>"; };
@@ -5662,9 +5663,7 @@
 		DE3B4DE5B76A4F22F73CE4F6C8443B99 /* YapDatabaseFilteredViewTypes.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = YapDatabaseFilteredViewTypes.m; path = YapDatabase/Extensions/FilteredView/YapDatabaseFilteredViewTypes.m; sourceTree = "<group>"; };
 		DE5496FBF2598322E8285C5506D9D2F3 /* AnimationKeypath.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AnimationKeypath.swift; path = "lottie-swift/src/Public/DynamicProperties/AnimationKeypath.swift"; sourceTree = "<group>"; };
 		DE63A6423E96E4D1F72809651CBDDE23 /* GroupManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GroupManager.swift; sourceTree = "<group>"; };
-		DE7A99E82BAE284FD56930B3B5469B17 /* OWSDisappearingMessagesConfigurationTest.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = OWSDisappearingMessagesConfigurationTest.m; sourceTree = "<group>"; };
 		DE84CDAF4321014CF56B8B5C2234D3E4 /* Pods-NotificationServiceExtension.app store release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-NotificationServiceExtension.app store release.xcconfig"; sourceTree = "<group>"; };
-		DE9A01A5F217F5F6AEDC52A83B992ABB /* UUIDBackfillTaskTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = UUIDBackfillTaskTest.swift; sourceTree = "<group>"; };
 		DEC3974A8A85A9248B1E033E11FB5625 /* OWSSyncMessageRequestResponseMessage.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = OWSSyncMessageRequestResponseMessage.m; sourceTree = "<group>"; };
 		DED890B3D1C83FC0B19BAD12C03B400F /* YapDatabaseView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = YapDatabaseView.m; path = YapDatabase/Extensions/View/YapDatabaseView.m; sourceTree = "<group>"; };
 		DEEDC1312D43B33D7AB4CB6A8F5B3C88 /* GroupNode.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = GroupNode.swift; path = "lottie-swift/src/Private/NodeRenderSystem/Nodes/RenderContainers/GroupNode.swift"; sourceTree = "<group>"; };
@@ -5774,6 +5773,7 @@
 		EAEDD3CC921150658E6A9ED6A50308AB /* YapDatabaseSearchResultsViewPrivate.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = YapDatabaseSearchResultsViewPrivate.h; path = YapDatabase/Extensions/SearchResultsView/Internal/YapDatabaseSearchResultsViewPrivate.h; sourceTree = "<group>"; };
 		EB16EB983AB15AADE76A9E8603BC609C /* AxolotlKit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = AxolotlKit.debug.xcconfig; sourceTree = "<group>"; };
 		EB1822EC1DF0354B049AA2E3118D4DF0 /* FingerprintProto.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FingerprintProto.swift; sourceTree = "<group>"; };
+		EB4816CDAF5EE80CC5579462F6E5FE3A /* PhoneNumberUtilTest.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = PhoneNumberUtilTest.m; sourceTree = "<group>"; };
 		EB4C0595AC9FF1EA50F27F5B0878240A /* huffman_encode_utils.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = huffman_encode_utils.h; path = src/utils/huffman_encode_utils.h; sourceTree = "<group>"; };
 		EB6DD416559F93488F903C349FF2BCE3 /* decode.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = decode.h; path = src/webp/decode.h; sourceTree = "<group>"; };
 		EB6EE2691BE8E4317D221020FAC11CA6 /* Pods-SignalShareExtension-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-SignalShareExtension-dummy.m"; sourceTree = "<group>"; };
@@ -6348,24 +6348,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		026FD2D602A18EAC56DC83FB1549FF3A /* Contacts */ = {
-			isa = PBXGroup;
-			children = (
-				542927405F384895F7D720560B8A4EB7 /* ContactSortingTest.m */,
-				DE7A99E82BAE284FD56930B3B5469B17 /* OWSDisappearingMessagesConfigurationTest.m */,
-				0E634391C0E5531872F56F753A6813C8 /* PhoneNumberTest.m */,
-				172D5631C70BB25E4D13BE4DF2685791 /* PhoneNumberTest.swift */,
-				189B3BE258633BF726C5FE54799A2967 /* PhoneNumberUtilTest.m */,
-				63C9A910A2721490721F371AF7ED77F0 /* SignalRecipientTest.m */,
-				24E0CF41112417F0EA4614370F758212 /* TSContactThreadTest.m */,
-				0602EC19D24660EF3FA9FF538599A695 /* TSGroupThreadTest.m */,
-				05E17226F14A45A69550E4EEA09D4213 /* TSThreadTest.m */,
-				DE9A01A5F217F5F6AEDC52A83B992ABB /* UUIDBackfillTaskTest.swift */,
-			);
-			name = Contacts;
-			path = SignalServiceKit/tests/Contacts;
-			sourceTree = "<group>";
-		};
 		0368C6710189A01C74299FE4A74D91D8 /* Network */ = {
 			isa = PBXGroup;
 			children = (
@@ -8354,6 +8336,24 @@
 			name = Hooks;
 			sourceTree = "<group>";
 		};
+		7A7296D97AE0D141F4134B6BE2FAA5C6 /* Contacts */ = {
+			isa = PBXGroup;
+			children = (
+				8532169324CEE3E8203927A9A6D4987B /* ContactSortingTest.m */,
+				9E5AFD2A56B3D1B1C3D4B7E547275C70 /* OWSDisappearingMessagesConfigurationTest.m */,
+				A475FB507D2512BEF1058F973C351F2E /* PhoneNumberTest.m */,
+				5FEAB443D67D3E9310F56BDA286519E8 /* PhoneNumberTest.swift */,
+				EB4816CDAF5EE80CC5579462F6E5FE3A /* PhoneNumberUtilTest.m */,
+				1DEB900147EDDEEECA6FF9B299CCC035 /* SignalRecipientTest.swift */,
+				CFC554CE90997656ED7F510B30FC7EFA /* TSContactThreadTest.m */,
+				80EA8A34EF6BEE69240D6CDFAB4DEA8D /* TSGroupThreadTest.m */,
+				4EEDA35B65CDC8E93DA7B2C909503314 /* TSThreadTest.m */,
+				81C10B37D5FCF2582386C25CE61B48CD /* UUIDBackfillTaskTest.swift */,
+			);
+			name = Contacts;
+			path = SignalServiceKit/tests/Contacts;
+			sourceTree = "<group>";
+		};
 		7B371B6BA883EE0A9CEA67D10BCA8FE7 /* Attachments */ = {
 			isa = PBXGroup;
 			children = (
@@ -8986,7 +8986,7 @@
 				21BB1D93795577132D0118EB25EAE523 /* SSKBaseTestSwift.swift */,
 				6F43F4FB6B73D62D548AF24E84EC9B75 /* SSKSwiftTests.swift */,
 				FD07F89C89DBEA751C972A2B1E7E33D5 /* Account */,
-				026FD2D602A18EAC56DC83FB1549FF3A /* Contacts */,
+				7A7296D97AE0D141F4134B6BE2FAA5C6 /* Contacts */,
 				C5456BDF92CF32263379AC05E35EED10 /* Devices */,
 				69487A5570999516756FBB49CEC35E26 /* Messages */,
 				25A0B922DD1F676A9A0E6E8FEA4D81B0 /* Network */,
@@ -11864,7 +11864,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0ABCAF3E719F7B60AB5C000EF0ECCDE6 /* Build configuration list for PBXNativeTarget "SignalServiceKit-Unit-Tests" */;
 			buildPhases = (
-				A49468E0FFEEF59FAFDB00E951C52E50 /* Sources */,
+				6D0B6A68CCD10464A55D2C67B945E8AC /* Sources */,
 				C52D9E356AC62322E7F4CC620C424301 /* Frameworks */,
 				F278F27F33C20A62FD6775A378D694D1 /* Resources */,
 				FAE24F90EC4C2EECC2A12AA0568CA75D /* Headers */,
@@ -13889,6 +13889,63 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		6D0B6A68CCD10464A55D2C67B945E8AC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6ECEA3D1CC0F20E1E4FAE2A567E35E90 /* ContactSortingTest.m in Sources */,
+				B15DE8C6246B8DF03D89808BD117A843 /* DeviceNamesTest.swift in Sources */,
+				0582152D633DDC898A45364A6A016322 /* DispatchQueue+OWSTest.swift in Sources */,
+				E3CF670D2DADDDAAB756439B8713AA2C /* InteractionFinderTest.swift in Sources */,
+				A17C863972E3FE7ED61A39D6ED3DA8DC /* JobQueueTest.swift in Sources */,
+				8FE0D1ABC775F5AF9E3C6C665B7851F9 /* KeyBackupServiceTests.swift in Sources */,
+				1552FBA0D8831B618EBC8D35F7B1A32B /* MessagePipelineSupervisorTest.swift in Sources */,
+				A723206A6509B5E3206A899E9CFE2A7B /* MessageProcessingIntegrationTest.swift in Sources */,
+				7A17CF0AB0B5058F57F37AC4879DA834 /* MessageSenderJobRecordTest.swift in Sources */,
+				C523B700F0C3EE7794E9C3A4B2925277 /* MessageSendJobQueueTest.swift in Sources */,
+				0765FF2F8C6D589433ADABE54AEBDA1C /* OWSAnalyticsTests.m in Sources */,
+				4583BE5B5C7BC5E0FEC11F31F8B8354B /* OWSDeviceProvisionerTest.m in Sources */,
+				32ACD2DF17806BD4E94281DCE9881C2E /* OWSDisappearingMessageFinderTest.m in Sources */,
+				03D6197B89B91A1ABD8ADD2D436C3BE2 /* OWSDisappearingMessagesConfigurationTest.m in Sources */,
+				5FBB88E3A5DDFD79D0A996EA7C912018 /* OWSDisappearingMessagesJobTest.m in Sources */,
+				E1F32AD5F8D46420A671D9B1BEC34B26 /* OWSFingerprintTest.m in Sources */,
+				916F83D8144A545B584C41FF14E0DFB9 /* OWSIdentityManagerTests.m in Sources */,
+				590C6DC55C39918EBF56E8BF9F85F3EC /* OWSIncomingMessageFinderTest.m in Sources */,
+				D1F586B19FACF5CED72A30CB0345094A /* OWSLinkPreviewTest.swift in Sources */,
+				58057476538D9AEF460675BDB219F793 /* OWSMessageManagerTest.m in Sources */,
+				8B792496B1E5F243E1914AC0323AF07D /* OWSMessageSenderTest.m in Sources */,
+				0209BBA8B5289ADD4A7A82D156E83F3F /* OWSOperationTest.swift in Sources */,
+				49B36D689D3FAB6293A587BAF5925FEB /* OWSProvisioningCipherTest.m in Sources */,
+				7D0E0623E77A101A0FFAE7FDCC017322 /* OWSSignalAddressTest.swift in Sources */,
+				9A505EC6BF610BD1E74C94B2F1D7AE85 /* OWSUDManagerTest.swift in Sources */,
+				FE71274A070A71DF40F62E35B42588CA /* PhoneNumberTest.m in Sources */,
+				2D8C1708ADC0773B7B76A88C64AAB680 /* PhoneNumberTest.swift in Sources */,
+				BD284121C1A3417C81813652481C3D0A /* PhoneNumberUtilTest.m in Sources */,
+				C3500A35F37F887D34755E9A1D786A71 /* SDSDatabaseStorageObservationTest.swift in Sources */,
+				86367521C23C954BC6EF09B902C522C7 /* SDSDatabaseStorageTest.swift in Sources */,
+				300C1D0DE3C7A7815FD2543B7154AAC4 /* SDSKeyValueStoreTest.swift in Sources */,
+				7ECE5FD70ECA20BADCFAF24D987A34A2 /* SignalRecipientTest.swift in Sources */,
+				5505C0EDF43B4EE277FC6FA19B69AC49 /* SignalServiceAddressTest.swift in Sources */,
+				3A746A2DCA5A15D5D0758D1CB5EB3370 /* SignedPreKeyDeletionTests.m in Sources */,
+				E8A360DCD0F2C0CEE1C74ADA80E2645E /* SSKBaseTestObjC.m in Sources */,
+				F96BD9581502CF3A81D96CACA1B74896 /* SSKBaseTestSwift.swift in Sources */,
+				B1B9B277EF259673E9B9C21AE3F89C0A /* SSKPreKeyStoreTests.m in Sources */,
+				413ADD79191AF823C37B277308A48B70 /* SSKSwiftTests.swift in Sources */,
+				9B501911F6EC7B8E2976D352C1A912E7 /* StickerManagerTest.swift in Sources */,
+				57B1BAC7811F313F86D5172070B3A835 /* TestModelTests.swift in Sources */,
+				EEDB6375597C68BA3FEE9132700DD8CA /* TestProtocolRunnerTest.swift in Sources */,
+				219F503F8315C15B593AD4795C0093C0 /* TSContactThreadTest.m in Sources */,
+				8AF969DBE1834EB80A33D8EAEA138ADA /* TSGroupThreadTest.m in Sources */,
+				C52753081C627CD5F490D552130C8106 /* TSMessageStorageTests.m in Sources */,
+				3B424DB21123F17AB21C4A5F7AB6BAEF /* TSMessageTest.m in Sources */,
+				5FC1600EE97ED84DEEB38CD4047C6784 /* TSOutgoingMessageTest.m in Sources */,
+				60E7901D50805468A4144CE54108A18B /* TSThreadTest.m in Sources */,
+				D10A94575EFE4B5B9D6A42BE98120090 /* UnfairLockTest.swift in Sources */,
+				41102089AE20DA0C58773EFFA0955449 /* UUIDBackfillTaskTest.swift in Sources */,
+				D7F25E41B44E620920DF3511B4CF3F36 /* ViewOnceMessagesTest.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		70FB7634A4CFFC57FEB93EE38FBF7651 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -14064,63 +14121,6 @@
 				EDECF25365BFE256563D5939A4FB6ACB /* SSZipArchive.m in Sources */,
 				16A9465D940DCC10DE4B607672B28266 /* unzip.c in Sources */,
 				09DBEB3EADB4E1F6AAE72E0CBF5F95DF /* zip.c in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		A49468E0FFEEF59FAFDB00E951C52E50 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				A946AD9C223B6612801CC52E5574FDEF /* ContactSortingTest.m in Sources */,
-				52BDB0E8F5F577630D19A43D0AD920CF /* DeviceNamesTest.swift in Sources */,
-				51FDBEA9F170ADEAB43EE8AF76B83725 /* DispatchQueue+OWSTest.swift in Sources */,
-				320EBA38A9DD06E1979C5F461425D4D4 /* InteractionFinderTest.swift in Sources */,
-				5247D1C8B0A28C42F1A3624DA49AEF2D /* JobQueueTest.swift in Sources */,
-				4C6EB28D885642B2548C96A6E010DBEA /* KeyBackupServiceTests.swift in Sources */,
-				D34B0D34DDD83D59C8B824020DC093F9 /* MessagePipelineSupervisorTest.swift in Sources */,
-				0C3E789713B79D96BEDD2014A3866C12 /* MessageProcessingIntegrationTest.swift in Sources */,
-				351AAEC72A77DC1C5BA06DF9BDED1C45 /* MessageSenderJobRecordTest.swift in Sources */,
-				F5EF979F0DBA54CB19165B6F21A16CE2 /* MessageSendJobQueueTest.swift in Sources */,
-				5E58997C6CCD10C39DF1AD56B6124798 /* OWSAnalyticsTests.m in Sources */,
-				52470FF131DA54B1B497D9C0AB22830A /* OWSDeviceProvisionerTest.m in Sources */,
-				C59C984DDB6BD03B763A7C1A0EBEFFEF /* OWSDisappearingMessageFinderTest.m in Sources */,
-				3D35C42779C56BF09820C7D1FFC954FA /* OWSDisappearingMessagesConfigurationTest.m in Sources */,
-				3B5CB83AA0C5478262D447FE1277E051 /* OWSDisappearingMessagesJobTest.m in Sources */,
-				AC9EC259C8F7AE355657AF11B0E8BD7D /* OWSFingerprintTest.m in Sources */,
-				B2878C63B3EFCE7AC3A447CA8F52528F /* OWSIdentityManagerTests.m in Sources */,
-				52FCC75E808F74BC7A2EB64648EB2385 /* OWSIncomingMessageFinderTest.m in Sources */,
-				F80F894D609893670AFF58035EBEF7ED /* OWSLinkPreviewTest.swift in Sources */,
-				D2944FC1C62013264365DA6373CAAB3B /* OWSMessageManagerTest.m in Sources */,
-				5132FF3CB74C49217F4063C67231F21B /* OWSMessageSenderTest.m in Sources */,
-				A0412B696CC55B01FD2A9F97B0A7623E /* OWSOperationTest.swift in Sources */,
-				F960D92115E1C1AB6BBA1432DE1599D8 /* OWSProvisioningCipherTest.m in Sources */,
-				612495A59019C8CC8A4D4241C393C331 /* OWSSignalAddressTest.swift in Sources */,
-				BD0486C1C1CF5A375FB294BE37D8B27D /* OWSUDManagerTest.swift in Sources */,
-				90E92CDA6736BEADE76F252968983487 /* PhoneNumberTest.m in Sources */,
-				CF5D01DD79799BA4A7724D2C88DBEBAB /* PhoneNumberTest.swift in Sources */,
-				16C9DC7216101BF79CE2300A68CD7867 /* PhoneNumberUtilTest.m in Sources */,
-				B5EC8837052A8CF31E34EC986A6175F1 /* SDSDatabaseStorageObservationTest.swift in Sources */,
-				8CD1122D741EAE8F6CA34D11DB67F4D3 /* SDSDatabaseStorageTest.swift in Sources */,
-				B542197A119AC588957216303927A457 /* SDSKeyValueStoreTest.swift in Sources */,
-				1192C788562B0E77767786638F04FBC1 /* SignalRecipientTest.m in Sources */,
-				02D29F59D2533785689B520F79FDD767 /* SignalServiceAddressTest.swift in Sources */,
-				46C65A576D390F6613AD0AD995645FEF /* SignedPreKeyDeletionTests.m in Sources */,
-				7792E39D49BAAE2F030636FF002D87B8 /* SSKBaseTestObjC.m in Sources */,
-				DA73C255334DF6BED53B26DC0F7D2A8D /* SSKBaseTestSwift.swift in Sources */,
-				5C38013FEB31F7F930182F524B5514B2 /* SSKPreKeyStoreTests.m in Sources */,
-				13757EDE9DAE350D19F60BCF52C0DD8D /* SSKSwiftTests.swift in Sources */,
-				F64B1951F0CA7F65C783F1DAFD9F193A /* StickerManagerTest.swift in Sources */,
-				C9E34AF80AE776B65CE5D3A133BE90B9 /* TestModelTests.swift in Sources */,
-				E57CDE44C9E141AC87A291DA187FFC62 /* TestProtocolRunnerTest.swift in Sources */,
-				7B1C7A267D1124D45E090AEEDC7B3062 /* TSContactThreadTest.m in Sources */,
-				27A21394E838AEB90FCB5FA4CC623147 /* TSGroupThreadTest.m in Sources */,
-				D0D658284903DBCFC160A3157161918F /* TSMessageStorageTests.m in Sources */,
-				538606D0A0C3B723B827FCAF54D1EE4A /* TSMessageTest.m in Sources */,
-				CD6CF8DE1AD37B6793E4803792CAFD6F /* TSOutgoingMessageTest.m in Sources */,
-				2DF20F715E93AF00F6E0B8D2D1074D1E /* TSThreadTest.m in Sources */,
-				30E90002E913DD14BB8B3B75087B88E2 /* UnfairLockTest.swift in Sources */,
-				DF104579B953044D355B5F8FAAFCBB41 /* UUIDBackfillTaskTest.swift in Sources */,
-				E7C1E62E1E10CFAE16F20C552855C423 /* ViewOnceMessagesTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
