@@ -40,6 +40,15 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark -
 
 static void *kNSString_SSK_hasExcessiveDiacriticals = &kNSString_SSK_hasExcessiveDiacriticals;
+static unichar bidiLeftToRightIsolate = 0x2066;
+static unichar bidiRightToLeftIsolate = 0x2067;
+static unichar bidiFirstStrongIsolate = 0x2068;
+static unichar bidiLeftToRightEmbedding = 0x202A;
+static unichar bidiRightToLeftEmbedding = 0x202B;
+static unichar bidiLeftToRightOverride = 0x202D;
+static unichar bidiRightToLeftOverride = 0x202E;
+static unichar bidiPopDirectionalFormatting = 0x202C;
+static unichar bidiPopDirectionalIsolate = 0x2069;
 
 @implementation NSString (OWS)
 
@@ -50,8 +59,21 @@ static void *kNSString_SSK_hasExcessiveDiacriticals = &kNSString_SSK_hasExcessiv
     dispatch_once(&onceToken, ^{
         NSMutableCharacterSet *characterSet = NSCharacterSet.whitespaceAndNewlineCharacterSet.mutableCopy;
         [characterSet formUnionWithCharacterSet:NSCharacterSet.controlCharacterSet];
+        [characterSet formUnionWithCharacterSet:[self bidiControlCharacterSet]];
         // Left-to-right and Right-to-left marks.
-        [characterSet addCharactersInString:@"\u8206\u8207"];
+        [characterSet addCharactersInString:@"\u200E\u200f"];
+        result = [characterSet copy];
+    });
+    return result;
+}
+
++ (NSCharacterSet *)bidiControlCharacterSet
+{
+    static NSCharacterSet *result = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        NSMutableCharacterSet *characterSet = [NSMutableCharacterSet new];
+        [characterSet addCharactersInString:[NSString stringWithFormat:@"%C%C%C%C%C%C%C%C%C", bidiLeftToRightIsolate, bidiRightToLeftIsolate, bidiFirstStrongIsolate, bidiLeftToRightEmbedding, bidiRightToLeftEmbedding, bidiLeftToRightOverride, bidiRightToLeftOverride, bidiPopDirectionalFormatting, bidiPopDirectionalIsolate]];
         result = [characterSet copy];
     });
     return result;
@@ -204,14 +226,91 @@ static void *kNSString_SSK_hasExcessiveDiacriticals = &kNSString_SSK_hasExcessiv
     return filtered;
 }
 
+- (NSString *)filterSubstringForDisplay
+{
+    // We don't want to strip a substring before filtering.
+    return self.filterForIndicScripts.filterForExcessiveDiacriticals.ensureBalancedBidiControlCharacters;
+}
+
 - (NSString *)filterStringForDisplay
 {
-    return self.ows_stripped.filterForIndicScripts.filterForExcessiveDiacriticals;
+    return self.ows_stripped.filterSubstringForDisplay;
 }
 
 - (NSString *)filterFilename
 {
     return self.ows_stripped.filterForIndicScripts.filterForExcessiveDiacriticals.filterUnsafeFilenameCharacters;
+}
+
+- (NSString *)withoutBidiControlCharacters
+{
+    return [self stringByTrimmingCharactersInSet:[NSString bidiControlCharacterSet]];
+}
+
+- (NSString *)ensureBalancedBidiControlCharacters
+{
+    NSInteger isolateStartsCount = 0;
+    NSInteger isolatePopCount = 0;
+    NSInteger formattingStartsCount = 0;
+    NSInteger formattingPopCount = 0;
+
+    for (NSUInteger index = 0; index < self.length; index++) {
+        unichar c = [self characterAtIndex:index];
+        if (c == bidiLeftToRightIsolate || c == bidiRightToLeftIsolate || c == bidiFirstStrongIsolate) {
+            isolateStartsCount++;
+        } else if (c == bidiPopDirectionalIsolate) {
+            isolatePopCount++;
+        } else if (c == bidiLeftToRightEmbedding || c == bidiRightToLeftEmbedding || c == bidiLeftToRightOverride
+            || c == bidiRightToLeftOverride) {
+            formattingStartsCount++;
+        } else if (c == bidiPopDirectionalFormatting) {
+            formattingPopCount++;
+        }
+    }
+
+    NSMutableString *mutableString = [self mutableCopy];
+    NSString *balancedString = self;
+
+    // If we have too many isolate starts, append PDI to balance
+    while (isolateStartsCount > isolatePopCount) {
+        [mutableString appendFormat:@"%C", bidiPopDirectionalIsolate];
+        isolatePopCount++;
+    }
+
+    // If we have too many isolate pops, prepend FSI to balance
+    while (isolatePopCount > isolateStartsCount) {
+        [mutableString appendFormat:@"%C%@", bidiFirstStrongIsolate, balancedString];
+        isolateStartsCount++;
+    }
+
+    // If we have too many formatting starts, append PDF to balance
+    while (formattingStartsCount > formattingPopCount) {
+        [mutableString appendFormat:@"%C", bidiPopDirectionalFormatting];
+        formattingPopCount++;
+    }
+
+    // If we have too many formatting pops, prepend LRE to balance
+    while (formattingPopCount > formattingStartsCount) {
+        [mutableString appendFormat:@"%C%@", bidiLeftToRightEmbedding, balancedString];
+        formattingStartsCount++;
+    }
+
+    return [mutableString copy];
+}
+
+- (NSString *)bidirectionallyBalancedAndIsolated
+{
+    if (self.length > 1) {
+        unichar firstChar = [self characterAtIndex:0];
+        unichar lastChar = [self characterAtIndex:self.length - 1];
+
+        // We're already isolated, nothing to do here.
+        if (firstChar == bidiFirstStrongIsolate && lastChar == bidiPopDirectionalIsolate) {
+            return self;
+        }
+    }
+
+    return [NSString stringWithFormat:@"%C%@%C", bidiFirstStrongIsolate, self.ensureBalancedBidiControlCharacters, bidiPopDirectionalIsolate];
 }
 
 - (NSString *)filterForExcessiveDiacriticals
