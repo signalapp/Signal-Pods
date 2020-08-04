@@ -63,6 +63,7 @@
 #import "TSIncomingMessage.h"
 #import "TSInfoMessage.h"
 #import "TSInteraction.h"
+#import "TSMention.h"
 #import "TSMessage.h"
 #import "TSOutgoingDeleteMessage.h"
 #import "TSOutgoingMessage.h"
