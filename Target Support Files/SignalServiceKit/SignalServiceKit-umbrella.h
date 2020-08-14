@@ -185,7 +185,7 @@
 #import "NSNotificationCenter+OWS.h"
 #import "NSString+SSK.h"
 #import "NSTimer+OWS.h"
-#import "NSURLSessionDataTask+StatusCode.h"
+#import "NSURLSessionDataTask+OWS_HTTP.h"
 #import "NSUserDefaults+OWS.h"
 #import "OWS2FAManager.h"
 #import "OWSAnalytics.h"
