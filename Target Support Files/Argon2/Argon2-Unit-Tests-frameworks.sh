@@ -217,9 +217,6 @@ fi
 if [[ "$CONFIGURATION" == "App Store Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/Argon2/Argon2.framework"
 fi
-if [[ "$CONFIGURATION" == "Profiling" ]]; then
-  install_framework "${BUILT_PRODUCTS_DIR}/Argon2/Argon2.framework"
-fi
 if [[ "$CONFIGURATION" == "Testable Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/Argon2/Argon2.framework"
 fi
