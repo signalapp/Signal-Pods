@@ -13,19 +13,18 @@
 //   to endorse or promote products derived from this software without specific
 //   prior written permission of Deusty, LLC.
 
-#import <CocoaLumberjack/DDFileLogger.h>
+#import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DDFileLogger (Internal)
+typedef NSString *DDLoggerName NS_EXTENSIBLE_STRING_ENUM;
 
-- (void)logData:(NSData *)data;
+FOUNDATION_EXPORT DDLoggerName const DDLoggerNameOS NS_SWIFT_NAME(DDLoggerName.os);     // DDOSLogger
+FOUNDATION_EXPORT DDLoggerName const DDLoggerNameFile NS_SWIFT_NAME(DDLoggerName.file); // DDFileLogger
 
-// Will assert if used outside logger's queue.
-- (void)lt_logData:(NSData *)data;
+FOUNDATION_EXPORT DDLoggerName const DDLoggerNameTTY NS_SWIFT_NAME(DDLoggerName.tty);   // DDTTYLogger
 
-- (nullable NSData *)lt_dataForMessage:(DDLogMessage *)message;
-
-@end
+API_DEPRECATED("Use DDOSLogger instead", macosx(10.4, 10.12), ios(2.0, 10.0), watchos(2.0, 3.0), tvos(9.0, 10.0))
+FOUNDATION_EXPORT DDLoggerName const DDLoggerNameASL NS_SWIFT_NAME(DDLoggerName.asl);   // DDASLLogger
 
 NS_ASSUME_NONNULL_END

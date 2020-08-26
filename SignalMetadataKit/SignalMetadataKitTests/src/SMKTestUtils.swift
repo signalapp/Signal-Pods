@@ -82,7 +82,7 @@ class MockClient: NSObject {
         let preKeyId: Int32 = Int32(arc4random_uniform(UInt32(INT32_MAX)))
         let keyPair = Curve25519.generateKeyPair()
         let preKey = PreKeyRecord(id: preKeyId, keyPair: keyPair, createdAt: Date())
-        self.preKeyStore.storePreKey(preKeyId, preKeyRecord: preKey)
+        self.preKeyStore.storePreKey(preKeyId, preKeyRecord: preKey, protocolContext: nil)
         return preKey
     }
 
@@ -93,7 +93,7 @@ class MockClient: NSObject {
         let identityKeyPair = self.identityStore.identityKeyPair(nil)!
         let signature = try! Ed25519.sign((keyPair.publicKey as NSData).prependKeyType() as Data, with: identityKeyPair)
         let signedPreKey = SignedPreKeyRecord(id: signedPreKeyId, keyPair: keyPair, signature: signature, generatedAt: generatedAt)
-        self.signedPreKeyStore.storeSignedPreKey(signedPreKeyId, signedPreKeyRecord: signedPreKey)
+        self.signedPreKeyStore.storeSignedPreKey(signedPreKeyId, signedPreKeyRecord: signedPreKey, protocolContext: nil)
         return signedPreKey
     }
 
