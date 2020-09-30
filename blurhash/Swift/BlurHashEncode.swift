@@ -21,7 +21,9 @@ extension UIImage {
             for x in 0 ..< components.0 {
                 let normalisation: Float = (x == 0 && y == 0) ? 1 : 2
                 let factor = multiplyBasisFunction(pixels: pixels, width: width, height: height, bytesPerRow: bytesPerRow, bytesPerPixel: cgImage.bitsPerPixel / 8, pixelOffset: 0) {
-                    normalisation * cos(Float.pi * Float(x) * $0 / Float(width)) * cos(Float.pi * Float(y) * $1 / Float(height))
+                    let horizontal = cos(Float.pi * Float(x) * $0 / Float(width))
+                    let vertical = cos(Float.pi * Float(y) * $1 / Float(height))
+                    return normalisation * horizontal * vertical
                 }
                 factors.append(factor)
             }
