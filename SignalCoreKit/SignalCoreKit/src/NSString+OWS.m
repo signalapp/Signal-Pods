@@ -267,35 +267,47 @@ static unichar bidiPopDirectionalIsolate = 0x2069;
             formattingPopCount++;
         }
     }
-
-    NSMutableString *mutableString = [self mutableCopy];
-    NSString *balancedString = self;
-
-    // If we have too many isolate starts, append PDI to balance
-    while (isolateStartsCount > isolatePopCount) {
-        [mutableString appendFormat:@"%C", bidiPopDirectionalIsolate];
-        isolatePopCount++;
-    }
-
+    
+    NSMutableString *balancedString = [NSMutableString new];
+    
+    
     // If we have too many isolate pops, prepend FSI to balance
     while (isolatePopCount > isolateStartsCount) {
-        [mutableString appendFormat:@"%C%@", bidiFirstStrongIsolate, balancedString];
+        [balancedString appendFormat:@"%C", bidiFirstStrongIsolate];
         isolateStartsCount++;
     }
-
-    // If we have too many formatting starts, append PDF to balance
-    while (formattingStartsCount > formattingPopCount) {
-        [mutableString appendFormat:@"%C", bidiPopDirectionalFormatting];
-        formattingPopCount++;
-    }
-
+    
     // If we have too many formatting pops, prepend LRE to balance
     while (formattingPopCount > formattingStartsCount) {
-        [mutableString appendFormat:@"%C%@", bidiLeftToRightEmbedding, balancedString];
+        [balancedString appendFormat:@"%C", bidiLeftToRightEmbedding];
         formattingStartsCount++;
     }
+    
+    [balancedString appendString:self];
+    
+    // If we have too many formatting starts, append PDF to balance
+    while (formattingStartsCount > formattingPopCount) {
+        [balancedString appendFormat:@"%C", bidiPopDirectionalFormatting];
+        formattingPopCount++;
+    }
+    
+    // If we have too many isolate starts, append PDI to balance
+    while (isolateStartsCount > isolatePopCount) {
+        [balancedString appendFormat:@"%C", bidiPopDirectionalIsolate];
+        isolatePopCount++;
+    }
+    
+    return [balancedString copy];
+}
 
-    return [mutableString copy];
+- (NSString *)stringByPrependingCharacter:(unichar)character
+{
+    return [NSString stringWithFormat:@"%C%@", character, self];
+}
+
+- (NSString *)stringByAppendingCharacter:(unichar)character
+{
+    return [self stringByAppendingFormat:@"%C", character];
 }
 
 - (NSString *)bidirectionallyBalancedAndIsolated
