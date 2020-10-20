@@ -7,7 +7,7 @@ Android Usage
 --
 
 ```gradle
-implementation 'org.signal:argon2:13.0@aar'
+implementation 'org.signal:argon2:13.1@aar'
 ```
 
 ```java
@@ -32,7 +32,7 @@ iOS Usage
 Add the following line to your Podfile:
 
 ```ruby
-pod 'Argon2', git: 'https://github.com/signalapp/Argon2.git', submodules: true
+pod 'SignalArgon2'
 ```
 
 ```swift

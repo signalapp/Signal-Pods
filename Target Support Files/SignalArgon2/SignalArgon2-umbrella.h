@@ -12,6 +12,6 @@
 
 #import "argon2.h"
 
-FOUNDATION_EXPORT double Argon2VersionNumber;
-FOUNDATION_EXPORT const unsigned char Argon2VersionString[];
+FOUNDATION_EXPORT double SignalArgon2VersionNumber;
+FOUNDATION_EXPORT const unsigned char SignalArgon2VersionString[];
 
