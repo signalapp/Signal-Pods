@@ -652,6 +652,12 @@ const NSUInteger kAES256_KeyByteLength = 32;
         return nil;
     }
 
+    if (bufferData.length < bytesEncrypted) {
+        OWSFailDebug(@"bufferData has unexpected length: %lu < %lu",
+                    (unsigned long) bufferData.length,
+                    (unsigned long) bytesEncrypted);
+        return nil;
+    }
     NSData *cipherText = [bufferData subdataWithRange:NSMakeRange(0, bytesEncrypted)];
 
     NSMutableData *encryptedPaddedData = [NSMutableData data];
