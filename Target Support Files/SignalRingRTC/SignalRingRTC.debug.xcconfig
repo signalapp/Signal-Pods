@@ -1,5 +1,5 @@
 CONFIGURATION_BUILD_DIR = ${PODS_CONFIGURATION_BUILD_DIR}/SignalRingRTC
-FRAMEWORK_SEARCH_PATHS = $(inherited) "${PODS_CONFIGURATION_BUILD_DIR}/CocoaLumberjack" "${PODS_CONFIGURATION_BUILD_DIR}/SignalCoreKit" "${PODS_ROOT}/../ThirdParty/WebRTC/Build" "${PODS_ROOT}/GRKOpenSSLFramework/OpenSSL-iOS/bin"
+FRAMEWORK_SEARCH_PATHS = $(inherited) "${PODS_CONFIGURATION_BUILD_DIR}/CocoaLumberjack" "${PODS_CONFIGURATION_BUILD_DIR}/PromiseKit" "${PODS_CONFIGURATION_BUILD_DIR}/SignalCoreKit" "${PODS_ROOT}/../ThirdParty/WebRTC/Build" "${PODS_ROOT}/GRKOpenSSLFramework/OpenSSL-iOS/bin"
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1
 LIBRARY_SEARCH_PATHS = $(inherited) "${PODS_ROOT}/../ThirdParty/WebRTC/Build/libringrtc"
 OTHER_LDFLAGS = $(inherited) -l"ringrtc" -framework "openssl"
