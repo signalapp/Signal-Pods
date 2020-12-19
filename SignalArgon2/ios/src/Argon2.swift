@@ -1,6 +1,6 @@
 import Foundation
 
-public class Argon2 {
+public enum Argon2 {
     public enum Error: LocalizedError, Equatable {
         case assertion(rawError: Int32)
 
@@ -163,41 +163,45 @@ public class Argon2 {
         variant: Variant,
         version: Version
     ) throws -> (raw: Data, encoded: String) {
-        let passwordBytes = password.withUnsafeBytes { [UInt8]($0) }
-        let saltBytes = salt.withUnsafeBytes { [UInt8]($0) }
-        var hashBytes = [UInt8](repeating: 0, count: desiredLength)
+        return try password.withUnsafeBytes { passwordBytes in
+            return try salt.withUnsafeBytes { saltBytes in
+                let encodedLength = argon2_encodedlen(
+                    iterations,
+                    memoryInKiB,
+                    threads,
+                    UInt32(saltBytes.count),
+                    UInt32(desiredLength),
+                    variant.argon2type
+                )
 
-        let encodedLength = argon2_encodedlen(
-            iterations,
-            memoryInKiB,
-            threads,
-            UInt32(saltBytes.count),
-            UInt32(desiredLength),
-            variant.argon2type
-        )
-        var encodedBytes = [Int8](repeating: 0, count: encodedLength)
+                var hashData = Data(count: desiredLength)
+                var encodedBytes = [Int8](repeating: 0, count: encodedLength)
 
-        let result = argon2_hash(
-            iterations, memoryInKiB,
-            threads,
-            passwordBytes,
-            passwordBytes.count,
-            saltBytes,
-            saltBytes.count,
-            &hashBytes,
-            desiredLength,
-            &encodedBytes,
-            encodedLength,
-            variant.argon2type,
-            version.rawValue
-        )
+                let result = hashData.withUnsafeMutableBytes { hashBytes in
+                    argon2_hash(
+                        iterations, memoryInKiB,
+                        threads,
+                        passwordBytes.baseAddress,
+                        passwordBytes.count,
+                        saltBytes.baseAddress,
+                        saltBytes.count,
+                        hashBytes.baseAddress,
+                        hashBytes.count,
+                        &encodedBytes,
+                        encodedBytes.count,
+                        variant.argon2type,
+                        version.rawValue
+                    )
+                }
 
-        let argonError = Argon2_ErrorCodes(rawValue: result)
-        switch argonError {
-        case ARGON2_OK:
-            return (raw: Data(hashBytes), encoded: String(cString: encodedBytes))
-        default:
-            throw Error(argonError)
+                let argonError = Argon2_ErrorCodes(rawValue: result)
+                switch argonError {
+                case ARGON2_OK:
+                    return (raw: hashData, encoded: String(cString: encodedBytes))
+                default:
+                    throw Error(argonError)
+                }
+            }
         }
     }
 
@@ -212,9 +216,9 @@ public class Argon2 {
     /// - Returns: `true` if the password is valid.
     /// - Throws: `Argon2.Error` if the input parameters are invalid or verification fails.
     public static func verify(encoded: String, password: Data, variant: Variant) throws -> Bool {
-        let encodedBytes = encoded.withCString { $0 }
-        let passwordBytes = password.withUnsafeBytes { [UInt8]($0) }
-        let result = argon2_verify(encodedBytes, passwordBytes, passwordBytes.count, variant.argon2type)
+        let result = password.withUnsafeBytes { passwordBytes in
+            argon2_verify(encoded, passwordBytes.baseAddress, passwordBytes.count, variant.argon2type)
+        }
 
         let argonError = Argon2_ErrorCodes(rawValue: result)
         switch argonError {
