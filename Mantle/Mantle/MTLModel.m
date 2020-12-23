@@ -362,9 +362,13 @@ static void *MTLModelCachedDictionaryValueKeysKey = &MTLModelCachedDictionaryVal
 #pragma mark NSObject
 
 - (NSString *)description {
+#if DEBUG
 	NSDictionary<NSString *, id> *permanentProperties = [self dictionaryWithValuesForKeys:self.class.permanentPropertyKeys.allObjects];
 
 	return [NSString stringWithFormat:@"<%@: %p> %@", self.class, self, permanentProperties];
+#else
+    return [NSString stringWithFormat:@"<%@: %p>", self.class, self];
+#endif
 }
 
 - (NSUInteger)hash {
