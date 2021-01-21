@@ -37,7 +37,6 @@
 #import "OWSVerificationStateSyncMessage.h"
 #import "OWSViewOnceMessageReadSyncMessage.h"
 #import "TSGroupModel.h"
-#import "OWSAttachmentDownloads.h"
 #import "TSAttachment.h"
 #import "TSAttachmentPointer.h"
 #import "TSAttachmentStream.h"
