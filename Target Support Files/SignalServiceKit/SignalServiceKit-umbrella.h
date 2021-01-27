@@ -200,11 +200,11 @@
 #import "OWSMath.h"
 #import "OWSOperation.h"
 #import "OWSQueues.h"
-#import "OWSUnfairLock.h"
 #import "OWSUserProfile.h"
 #import "SSKAsserts.h"
 #import "TestModel.h"
 #import "UIImage+OWS.h"
+#import "UnfairLock.h"
 #import "YapDatabaseViewTransaction+OWS.h"
 
 FOUNDATION_EXPORT double SignalServiceKitVersionNumber;
