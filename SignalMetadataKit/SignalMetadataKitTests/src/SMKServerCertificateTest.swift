@@ -1,10 +1,12 @@
 //
-//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2020 Open Whisper Systems. All rights reserved.
 //
 
 import XCTest
 import SwiftProtobuf
+import Curve25519Kit
 import SignalMetadataKit
+import SignalClient
 
 // See: https://github.com/signalapp/libsignal-metadata-java/blob/master/tests/src/test/java/org/signal/libsignal/metadata/certificate/ServerCertificateTest.java
 //
@@ -71,7 +73,7 @@ class SMKServerCertificateTest: XCTestCase {
             .buildSerializedData()
 
         // new CertificateValidator(trustRoot.getPublicKey()).validate(new ServerCertificate(serialized));
-        let serverCertificate = try! SMKServerCertificate(serializedData: serializedData)
+        let serverCertificate = try! ServerCertificate(serializedData)
         let certificateValidator = SMKCertificateDefaultValidator(trustRoot: try! trustRoot.ecPublicKey())
         try! certificateValidator.throwswrapped_validate(serverCertificate: serverCertificate)
     }
@@ -124,7 +126,7 @@ class SMKServerCertificateTest: XCTestCase {
                 // } catch (InvalidCertificateException e) {
                 //   // good
                 // }
-                let serverCertificate = try! SMKServerCertificate(serializedData: serializedData)
+                let serverCertificate = try! ServerCertificate(serializedData)
                 let certificateValidator = SMKCertificateDefaultValidator(trustRoot: try! trustRoot.ecPublicKey())
                 XCTAssertThrowsError(try certificateValidator.throwswrapped_validate(serverCertificate: serverCertificate))
             }
@@ -157,22 +159,12 @@ class SMKServerCertificateTest: XCTestCase {
                 // } catch (InvalidCertificateException e) {
                 //   // good
                 // }
-                let serverCertificate: SMKServerCertificate
+                let serverCertificate: ServerCertificate
                 do {
-                    serverCertificate = try SMKServerCertificate(serializedData: serializedData)
-                } catch BinaryDecodingError.malformedProtobuf {
-                    // Some bad certificates will fail to parse.
-                    continue
-                } catch BinaryDecodingError.truncated {
-                    // Some bad certificates will fail to parse.
-                    continue
-                } catch SMKProtoError.invalidProtobuf {
-                    // Some bad certificates will fail to parse.
-                    continue
-                } catch SMKError.assertionError {
-                    // Some bad certificates will fail to parse.
-                    continue
-                } catch ECKeyError.assertionError {
+                    serverCertificate = try ServerCertificate(serializedData)
+                } catch SignalError.protobufError,
+                        SignalError.invalidMessage,
+                        SignalError.invalidKey {
                     // Some bad certificates will fail to parse.
                     continue
                 } catch {

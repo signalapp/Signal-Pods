@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2020 Open Whisper Systems. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -8,11 +8,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 #define ECCKeyLength 32
 #define ECCSignatureLength 64
-
-extern NSErrorDomain const Curve25519KitErrorDomain;
-typedef NS_ERROR_ENUM(Curve25519KitErrorDomain, Curve25519KitError){
-    Curve25519KitError_InvalidKeySize = 1
-};
 
 @interface ECKeyPair : NSObject <NSSecureCoding>
 
@@ -29,6 +24,12 @@ typedef NS_ERROR_ENUM(Curve25519KitErrorDomain, Curve25519KitError){
                                 privateKeyData:(NSData *)privateKeyData
                                          error:(NSError **)error NS_DESIGNATED_INITIALIZER;
 
+- (nullable instancetype)initWithCoder:(NSCoder *)coder NS_DESIGNATED_INITIALIZER;
+
+/**
+ * A transitionary interface, only to be called from within the implementation of ECKeyPair's class cluster.
+ */
+- (instancetype)initFromClassClusterSubclassOnly NS_DESIGNATED_INITIALIZER;
 @end
 
 #pragma mark -

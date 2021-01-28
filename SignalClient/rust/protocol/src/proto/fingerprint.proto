@@ -1,0 +1,19 @@
+syntax = "proto2";
+
+//
+// Copyright 2020 Signal Messenger, LLC.
+// SPDX-License-Identifier: AGPL-3.0-only
+//
+
+package signal.proto.fingerprint;
+
+message LogicalFingerprint {
+  optional bytes content = 1;
+  // bytes identifier = 2;
+}
+
+message CombinedFingerprints {
+  optional uint32             version            = 1;
+  optional LogicalFingerprint local_fingerprint  = 2;
+  optional LogicalFingerprint remote_fingerprint = 3;
+}

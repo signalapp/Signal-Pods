@@ -1,18 +1,22 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2020 Open Whisper Systems. All rights reserved.
 //
 
 import Foundation
+import Curve25519Kit
+import SignalCoreKit
+import SignalClient
 
 public enum SMKCertificateError: Error {
     case invalidCertificate(description: String)
 }
 
-@objc public protocol SMKCertificateValidator: class {
+@objc(SMKCertificateValidator)
+public protocol SMKCertificateValidatorObjC {}
 
-    @objc func throwswrapped_validate(senderCertificate: SMKSenderCertificate, validationTime: UInt64) throws
-
-    @objc func throwswrapped_validate(serverCertificate: SMKServerCertificate) throws
+public protocol SMKCertificateValidator: SMKCertificateValidatorObjC {
+    func throwswrapped_validate(senderCertificate: SenderCertificate, validationTime: UInt64) throws
+    func throwswrapped_validate(serverCertificate: ServerCertificate) throws
 }
 
 // See: https://github.com/signalapp/libsignal-metadata-java/blob/master/java/src/main/java/org/signal/libsignal/metadata/certificate/CertificateValidator.java
@@ -36,10 +40,10 @@ public enum SMKCertificateError: Error {
     }
 
 //    public void validate(SenderCertificate certificate, long validationTime) throws InvalidCertificateException {
-    @objc public func throwswrapped_validate(senderCertificate: SMKSenderCertificate, validationTime: UInt64) throws {
+    public func throwswrapped_validate(senderCertificate: SenderCertificate, validationTime: UInt64) throws {
 //    try {
 //    ServerCertificate serverCertificate = certificate.getSigner();
-        let serverCertificate = senderCertificate.signer
+        let serverCertificate = senderCertificate.serverCertificate
 
 //    validate(serverCertificate);
         try throwswrapped_validate(serverCertificate: serverCertificate)
@@ -47,9 +51,8 @@ public enum SMKCertificateError: Error {
 //    if (!Curve.verifySignature(serverCertificate.getKey(), certificate.getCertificate(), certificate.getSignature())) {
 //    throw new InvalidCertificateException("Signature failed");
 //    }
-        guard try Ed25519.verifySignature(senderCertificate.signatureData,
-                                          publicKey: serverCertificate.key.keyData,
-                                          data: senderCertificate.certificateData) else {
+        guard try serverCertificate.publicKey.verifySignature(message: senderCertificate.certificateBytes,
+                                                              signature: senderCertificate.signatureBytes) else {
             Logger.error("Sender certificate signature verification failed.")
             let error = SMKCertificateError.invalidCertificate(description: "Sender certificate signature verification failed.")
             Logger.error("\(error)")
@@ -59,7 +62,7 @@ public enum SMKCertificateError: Error {
 //    if (validationTime > certificate.getExpiration()) {
 //    throw new InvalidCertificateException("Certificate is expired");
 //    }
-        guard validationTime <= senderCertificate.expirationTimestamp else {
+        guard validationTime <= senderCertificate.expiration else {
             let error = SMKCertificateError.invalidCertificate(description: "Certficate is expired.")
             Logger.error("\(error)")
             throw error
@@ -71,17 +74,16 @@ public enum SMKCertificateError: Error {
     }
 
     // void validate(ServerCertificate certificate) throws InvalidCertificateException {
-    @objc public func throwswrapped_validate(serverCertificate: SMKServerCertificate) throws {
+    public func throwswrapped_validate(serverCertificate: ServerCertificate) throws {
         // try {
         //   if (!Curve.verifySignature(trustRoot, certificate.getCertificate(), certificate.getSignature())) {
         //   throw new InvalidCertificateException("Signature failed");
         // }
-        guard try Ed25519.verifySignature(serverCertificate.signatureData,
-                                          publicKey: trustRoot.keyData,
-                                          data: serverCertificate.certificateData) else {
-                                            let error = SMKCertificateError.invalidCertificate(description: "Server certificate signature verification failed.")
-                                            Logger.error("\(error)")
-                                            throw error
+        guard try trustRoot.key.verifySignature(message: serverCertificate.certificateBytes,
+                                                signature: serverCertificate.signatureBytes) else {
+            let error = SMKCertificateError.invalidCertificate(description: "Server certificate signature verification failed.")
+            Logger.error("\(error)")
+            throw error
         }
 
         // if (REVOKED.contains(certificate.getKeyId())) {

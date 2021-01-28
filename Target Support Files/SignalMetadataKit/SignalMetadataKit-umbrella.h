@@ -11,7 +11,6 @@
 #endif
 
 #import "NSData+messagePadding.h"
-#import "SMK-Bridging-Header.h"
 
 FOUNDATION_EXPORT double SignalMetadataKitVersionNumber;
 FOUNDATION_EXPORT const unsigned char SignalMetadataKitVersionString[];

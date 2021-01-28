@@ -65,6 +65,9 @@
     "SwiftProtobuf": [
 
     ],
+    "SignalClient": [
+
+    ],
     "SignalCoreKit": [
 
     ],
@@ -95,7 +98,7 @@
       "name": "Tests",
       "test_type": "unit",
       "source_files": "SignalServiceKit/tests/**/*.{h,m,swift}",
-      "resources": "SignalServiceKit/tests/**/*.json"
+      "resources": "SignalServiceKit/tests/**/*.{json,encrypted,webp}"
     }
   ]
 }

@@ -1,0 +1,69 @@
+{
+  "name": "SignalClient",
+  "version": "0.1.0",
+  "summary": "A Swift wrapper library for communicating with the Signal messaging service.",
+  "homepage": "https://github.com/signalapp/libsignal-client",
+  "license": "AGPL-3.0-only",
+  "authors": {
+    "Jack Lloyd": "jack@signal.org",
+    "Jordan Rose": "jrose@signal.org"
+  },
+  "source": {
+    "git": "https://github.com/signalapp/libsignal-client.git",
+    "tag": "v0.1.0"
+  },
+  "swift_versions": "5",
+  "platforms": {
+    "ios": "10"
+  },
+  "dependencies": {
+    "SignalCoreKit": [
+
+    ]
+  },
+  "source_files": [
+    "swift/Sources/**/*.swift",
+    "swift/Sources/**/*.m"
+  ],
+  "preserve_paths": [
+    "bin/*",
+    "Cargo.toml",
+    "Cargo.lock",
+    "rust-toolchain",
+    "rust/*",
+    "swift/*.sh",
+    "swift/Sources/SignalFfi"
+  ],
+  "pod_target_xcconfig": {
+    "CARGO_BUILD_TARGET_DIR": "$(DERIVED_FILE_DIR)/libsignal-ffi",
+    "CARGO_PROFILE_RELEASE_DEBUG": "1",
+    "LIBSIGNAL_FFI_DIR": "$(CARGO_BUILD_TARGET_DIR)/$(CARGO_BUILD_TARGET)/release",
+    "HEADER_SEARCH_PATHS": "$(LIBSIGNAL_FFI_DIR)",
+    "SWIFT_INCLUDE_PATHS": "$(PODS_TARGET_SRCROOT)/swift/Sources/SignalFfi $(LIBSIGNAL_FFI_DIR)",
+    "LIBSIGNAL_FFI_LIB_IF_NEEDED": "$(LIBSIGNAL_FFI_DIR)/libsignal_ffi.a",
+    "OTHER_LDFLAGS": "$(LIBSIGNAL_FFI_LIB_IF_NEEDED)",
+    "CARGO_BUILD_TARGET[sdk=iphonesimulator*]": "x86_64-apple-ios",
+    "CARGO_BUILD_TARGET[sdk=iphoneos*]": "aarch64-apple-ios",
+    "CARGO_BUILD_TARGET[sdk=macosx*]": "x86_64-apple-darwin",
+    "ARCHS[sdk=iphonesimulator*]": "x86_64",
+    "ARCHS[sdk=iphoneos*]": "arm64"
+  },
+  "script_phases": [
+    {
+      "name": "Build libsignal-ffi",
+      "execution_position": "before_compile",
+      "script": "\"${PODS_TARGET_SRCROOT}/swift/build_ffi.sh\""
+    }
+  ],
+  "testspecs": [
+    {
+      "name": "Tests",
+      "test_type": "unit",
+      "source_files": "swift/Tests/*/*.swift",
+      "pod_target_xcconfig": {
+        "LIBSIGNAL_FFI_LIB_IF_NEEDED": ""
+      }
+    }
+  ],
+  "swift_version": "5"
+}

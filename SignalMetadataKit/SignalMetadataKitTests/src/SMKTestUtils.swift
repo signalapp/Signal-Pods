@@ -1,18 +1,18 @@
 //
-//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2020 Open Whisper Systems. All rights reserved.
 //
 
 import Foundation
 import SignalMetadataKit
-import AxolotlKit
+import SignalClient
 
 class MockCertificateValidator: NSObject, SMKCertificateValidator {
 
-    @objc public func throwswrapped_validate(senderCertificate: SMKSenderCertificate, validationTime: UInt64) throws {
+    public func throwswrapped_validate(senderCertificate: SenderCertificate, validationTime: UInt64) throws {
         // Do not throw
     }
 
-    @objc public func throwswrapped_validate(serverCertificate: SMKServerCertificate) throws {
+    public func throwswrapped_validate(serverCertificate: ServerCertificate) throws {
         // Do not throw
     }
 }
@@ -32,34 +32,26 @@ class MockClient: NSObject {
     let deviceId: Int32
     let registrationId: Int32
 
-    let identityKeyPair: ECKeyPair
+    let identityKeyPair: IdentityKeyPair
 
-    let sessionStore: SPKMockProtocolStore
-    let preKeyStore: SPKMockProtocolStore
-    let signedPreKeyStore: SPKMockProtocolStore
-    let identityStore: SPKMockProtocolStore
+    let sessionStore: InMemorySignalProtocolStore
+    let preKeyStore: InMemorySignalProtocolStore
+    let signedPreKeyStore: InMemorySignalProtocolStore
+    let identityStore: InMemorySignalProtocolStore
 
     init(address: SMKAddress, deviceId: Int32, registrationId: Int32) {
         self.address = address
         self.deviceId = deviceId
         self.registrationId = registrationId
-        self.identityKeyPair = Curve25519.generateKeyPair()
+        self.identityKeyPair = IdentityKeyPair.generate()
 
-        let protocolStore = SPKMockProtocolStore(identityKeyPair: identityKeyPair, localRegistrationId: registrationId)
+        let protocolStore = InMemorySignalProtocolStore(identity: identityKeyPair,
+                                                        deviceId: UInt32(bitPattern: deviceId))
 
         sessionStore = protocolStore
         preKeyStore = protocolStore
         signedPreKeyStore = protocolStore
         identityStore = protocolStore
-    }
-
-    func createSessionCipher() -> SessionCipher {
-        return SessionCipher(sessionStore: sessionStore,
-                             preKeyStore: preKeyStore,
-                             signedPreKeyStore: signedPreKeyStore,
-                             identityKeyStore: identityStore,
-                             recipientId: accountId,
-                             deviceId: deviceId)
     }
 
     func createSecretSessionCipher() throws -> SMKSecretSessionCipher {
@@ -69,54 +61,64 @@ class MockClient: NSObject {
                                       identityStore: identityStore)
     }
 
-    func createSessionBuilder(forRecipient recipient: MockClient) -> SessionBuilder {
-        return SessionBuilder(sessionStore: sessionStore,
-                              preKeyStore: preKeyStore,
-                              signedPreKeyStore: signedPreKeyStore,
-                              identityKeyStore: identityStore,
-                              recipientId: recipient.accountId,
-                              deviceId: recipient.deviceId)
-    }
-
     func generateMockPreKey() -> PreKeyRecord {
-        let preKeyId: Int32 = Int32(arc4random_uniform(UInt32(INT32_MAX)))
-        let keyPair = Curve25519.generateKeyPair()
-        let preKey = PreKeyRecord(id: preKeyId, keyPair: keyPair, createdAt: Date())
-        self.preKeyStore.storePreKey(preKeyId, preKeyRecord: preKey, protocolContext: nil)
+        let preKeyId = UInt32(Int32.random(in: 0...Int32.max))
+        let preKey = try! PreKeyRecord(id: preKeyId, privateKey: PrivateKey.generate())
+        try! self.preKeyStore.storePreKey(preKey, id: preKeyId, context: NullContext())
         return preKey
     }
 
     func generateMockSignedPreKey() -> SignedPreKeyRecord {
-        let signedPreKeyId: Int32 = Int32(arc4random_uniform(UInt32(INT32_MAX)))
-        let keyPair = Curve25519.generateKeyPair()
+        let signedPreKeyId = UInt32(Int32.random(in: 0...Int32.max))
+        let keyPair = IdentityKeyPair.generate()
         let generatedAt = Date()
-        let identityKeyPair = self.identityStore.identityKeyPair(nil)!
-        let signature = try! Ed25519.sign((keyPair.publicKey as NSData).prependKeyType() as Data, with: identityKeyPair)
-        let signedPreKey = SignedPreKeyRecord(id: signedPreKeyId, keyPair: keyPair, signature: signature, generatedAt: generatedAt)
-        self.signedPreKeyStore.storeSignedPreKey(signedPreKeyId, signedPreKeyRecord: signedPreKey, protocolContext: nil)
+        let identityKeyPair = try! self.identityStore.identityKeyPair(context: NullContext())
+        let signature = identityKeyPair.privateKey.generateSignature(message: keyPair.publicKey.serialize())
+        let signedPreKey = try! SignedPreKeyRecord(id: signedPreKeyId,
+                                                   timestamp: UInt64(generatedAt.timeIntervalSince1970),
+                                                   privateKey: keyPair.privateKey,
+                                                   signature: signature)
+        try! self.signedPreKeyStore.storeSignedPreKey(signedPreKey, id: signedPreKeyId, context: NullContext())
         return signedPreKey
     }
 
-    // Each client needs their own accountIdFinder
-    let accountIdFinder = MockAccountIdFinder()
-    var accountId: String {
-        return accountIdFinder.accountId(forUuid: recipientUuid,
-                                         phoneNumber: recipientE164,
-                                         protocolContext: nil)!
-    }
+    // Moved from SMKSecretSessionCipherTest.
+    // private void initializeSessions(TestInMemorySignalProtocolStore aliceStore, TestInMemorySignalProtocolStore bobStore)
+    //     throws InvalidKeyException, UntrustedIdentityException
+    func initializeSession(with bobMockClient: MockClient) {
+        // ECKeyPair          bobPreKey       = Curve.generateKeyPair();
+        let bobPreKey = bobMockClient.generateMockPreKey()
 
-    func storeSession(address: SMKAddress,
-                      deviceId: Int32,
-                      session: SessionRecord,
-                      protocolContext: SPKProtocolWriteContext?) {
+        // IdentityKeyPair    bobIdentityKey  = bobStore.getIdentityKeyPair();
+        let bobIdentityKey = bobMockClient.identityKeyPair
 
-        let accountId = accountIdFinder.accountId(forUuid: address.uuid,
-                                                  phoneNumber: address.e164,
-                                                  protocolContext: protocolContext)!
-        sessionStore.storeSession(accountId,
-                                  deviceId: deviceId,
-                                  session: session,
-                                  protocolContext: protocolContext)
+        // SignedPreKeyRecord bobSignedPreKey = KeyHelper.generateSignedPreKey(bobIdentityKey, 2);
+        let bobSignedPreKey = bobMockClient.generateMockSignedPreKey()
+
+        // PreKeyBundle bobBundle             = new PreKeyBundle(1, 1, 1, bobPreKey.getPublicKey(), 2, bobSignedPreKey.getKeyPair().getPublicKey(), bobSignedPreKey.getSignature(), bobIdentityKey.getPublicKey());
+        let bobBundle = try! SignalClient.PreKeyBundle(registrationId: UInt32(bitPattern: bobMockClient.registrationId),
+                                                       deviceId: UInt32(bitPattern: bobMockClient.deviceId),
+                                                       prekeyId: bobPreKey.id,
+                                                       prekey: bobPreKey.publicKey,
+                                                       signedPrekeyId: bobSignedPreKey.id,
+                                                       signedPrekey: bobSignedPreKey.publicKey,
+                                                       signedPrekeySignature: bobSignedPreKey.signature,
+                                                       identity: bobIdentityKey.identityKey)
+
+        // SessionBuilder aliceSessionBuilder = new SessionBuilder(aliceStore, new SignalProtocolAddress("+14152222222", 1));
+        // aliceSessionBuilder.process(bobBundle);
+        let bobProtocolAddress = try! ProtocolAddress(
+            name: bobMockClient.address.uuid?.uuidString ?? bobMockClient.address.e164!,
+            deviceId: UInt32(bitPattern: bobMockClient.deviceId))
+        try! processPreKeyBundle(bobBundle,
+                                 for: bobProtocolAddress,
+                                 sessionStore: sessionStore,
+                                 identityStore: identityStore,
+                                 context: NullContext())
+
+        // bobStore.storeSignedPreKey(2, bobSignedPreKey);
+        // bobStore.storePreKey(1, new PreKeyRecord(1, bobPreKey));
+        // NOTE: These stores are taken care of in the mocks' createKey() methods above.
     }
 
 }

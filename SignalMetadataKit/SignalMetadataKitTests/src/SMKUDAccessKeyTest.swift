@@ -1,9 +1,10 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2020 Open Whisper Systems. All rights reserved.
 //
 
 import XCTest
 import SignalMetadataKit
+import SignalCoreKit
 
 class SMKUDAccessKeyTest: XCTestCase {
 

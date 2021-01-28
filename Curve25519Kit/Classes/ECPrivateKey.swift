@@ -1,32 +1,36 @@
 //
-//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2020 Open Whisper Systems. All rights reserved.
 //
 
 import Foundation
 import SignalCoreKit
+import SignalClient
 
 // See:
 // https://github.com/signalapp/libsignal-protocol-java/blob/87fae0f98332e98a32bbb82515428b4edeb4181f/java/src/main/java/org/whispersystems/libsignal/ecc/ECPrivateKey.java
 @objc public class ECPrivateKey: NSObject {
+    public let key: PrivateKey
 
     @objc
-    public let keyData: Data
+    public var keyData: Data {
+        Data(key.serialize())
+    }
 
     @objc
     public init(keyData: Data) throws {
-        guard keyData.count == ECCKeyLength else {
-            throw OWSAssertionError("\(ECPrivateKey.logTag) key has invalid length")
-        }
+        self.key = try PrivateKey(keyData)
+    }
 
-        self.keyData = keyData
+    public init(_ key: PrivateKey) {
+        self.key = key
     }
 
     open override func isEqual(_ object: Any?) -> Bool {
-        if let object = object as? ECPrivateKey {
-            return keyData == object.keyData
-        } else {
+        guard let object = object as? ECPrivateKey else {
             return false
         }
+        // FIXME: compare private keys directly?
+        return keyData == object.keyData
     }
 
     public override var hash: Int {

@@ -1,9 +1,11 @@
 //
-//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2020 Open Whisper Systems. All rights reserved.
 //
 
 import XCTest
 import SignalMetadataKit
+import Curve25519Kit
+import SignalClient
 
 // See: https://github.com/signalapp/libsignal-metadata-java/blob/master/tests/src/test/java/org/signal/libsignal/metadata/certificate/SenderCertificateTest.java
 //
@@ -47,7 +49,7 @@ class SMKSenderCertificateTest: XCTestCase {
         let senderCertificateData = try! SMKProtoSenderCertificate.builder(certificate: certificateData,
                                                                            signature: certificateSignature)
             .buildSerializedData()
-        let senderCertificate = try! SMKSenderCertificate(serializedData: senderCertificateData)
+        let senderCertificate = try! SenderCertificate(senderCertificateData)
 
         // new CertificateValidator(trustRoot.getPublicKey()).validate(senderCertificate, 31336);
         let certificateValidator = try! SMKCertificateDefaultValidator(trustRoot: trustRoot.ecPublicKey())
@@ -89,7 +91,7 @@ class SMKSenderCertificateTest: XCTestCase {
         let senderCertificateData = try! SMKProtoSenderCertificate.builder(certificate: certificateData,
                                                                            signature: certificateSignature)
             .buildSerializedData()
-        let senderCertificate = try! SMKSenderCertificate(serializedData: senderCertificateData)
+        let senderCertificate = try! SenderCertificate(senderCertificateData)
 
         // try {
         //   new CertificateValidator(trustRoot.getPublicKey()).validate(senderCertificate, 31338);
@@ -147,7 +149,7 @@ class SMKSenderCertificateTest: XCTestCase {
                 //     .toByteArray());
                 let serializedData = try! SMKProtoSenderCertificate.builder(certificate: certificateData,
                                                                             signature: badSignature).buildSerializedData()
-                let senderCertificate = try! SMKSenderCertificate(serializedData: serializedData)
+                let senderCertificate = try! SenderCertificate(serializedData)
 
                 // try {
                 //   new CertificateValidator(trustRoot.getPublicKey()).validate(senderCertificate, 31336);
@@ -215,7 +217,7 @@ class SMKSenderCertificateTest: XCTestCase {
                                                                            signature: certificateSignature)
             .buildSerializedData()
 
-        let senderCertificate = try! SMKSenderCertificate(serializedData: senderCertificateData)
+        let senderCertificate = try! SenderCertificate(senderCertificateData)
 
         let stableTrustRoot = try! ECPublicKey(serializedKeyData: trustRootPublicKeyData)
 
