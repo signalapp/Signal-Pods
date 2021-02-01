@@ -10,7 +10,7 @@ use std::fmt;
 
 pub type Result<T> = std::result::Result<T, SignalProtocolError>;
 
-#[derive(Debug, Clone, Eq, PartialEq)]
+#[derive(Debug)]
 pub enum SignalProtocolError {
     InvalidArgument(String),
     InvalidState(&'static str, String),
@@ -25,24 +25,20 @@ pub enum SignalProtocolError {
     UnrecognizedMessageVersion(u32),
 
     FingerprintIdentifierMismatch,
-    FingerprintVersionMismatch,
+    FingerprintVersionMismatch(u32, u32),
+    FingerprintParsingError,
 
     NoKeyTypeIdentifier,
     BadKeyType(u8),
     BadKeyLength(KeyType, usize),
-    MismatchedKeyTypes(KeyType, KeyType),
-    MismatchedSignatureLengthForKey(KeyType, usize),
 
     SignatureValidationFailed,
-    SignaturePubkeyMissing,
 
     UntrustedIdentity(crate::ProtocolAddress),
 
     InvalidPreKeyId,
     InvalidSignedPreKeyId,
     InvalidSenderKeyId,
-
-    InvalidPreKeyBundle,
 
     InvalidRootKeyLength(usize),
     InvalidChainKeyLength(usize),
@@ -52,17 +48,16 @@ pub enum SignalProtocolError {
     InvalidCiphertext,
 
     NoSenderKeyState,
-    SenderKeySigningKeyMissing,
 
-    SessionNotFound,
+    SessionNotFound(String),
     InvalidSessionStructure,
 
     DuplicatedMessage(u32, u32),
     InvalidMessage(&'static str),
+    MessageDecryptionFailed(String),
     InternalError(&'static str),
     FfiBindingError(String),
-    ApplicationCallbackThrewException(&'static str, Option<String>, String),
-    ApplicationCallbackReturnedIntegerError(&'static str, i32),
+    ApplicationCallbackError(&'static str, Box<dyn Error + 'static>),
 
     InvalidSealedSenderMessage(String),
     UnknownSealedSenderVersion(u8),
@@ -74,6 +69,7 @@ impl Error for SignalProtocolError {
         match self {
             SignalProtocolError::ProtobufEncodingError(e) => Some(e),
             SignalProtocolError::ProtobufDecodingError(e) => Some(e),
+            SignalProtocolError::ApplicationCallbackError(_, e) => Some(e.as_ref()),
             _ => None,
         }
     }
@@ -122,22 +118,21 @@ impl fmt::Display for SignalProtocolError {
             SignalProtocolError::FingerprintIdentifierMismatch => {
                 write!(f, "fingerprint identifiers do not match")
             }
-            SignalProtocolError::FingerprintVersionMismatch => {
-                write!(f, "fingerprint version numbers do not match")
+            SignalProtocolError::FingerprintVersionMismatch(theirs, ours) => {
+                write!(
+                    f,
+                    "fingerprint version number mismatch them {} us {}",
+                    theirs, ours
+                )
+            }
+            SignalProtocolError::FingerprintParsingError => {
+                write!(f, "fingerprint parsing error")
             }
             SignalProtocolError::NoKeyTypeIdentifier => write!(f, "no key type identifier"),
             SignalProtocolError::BadKeyType(t) => write!(f, "bad key type <{:#04x}>", t),
             SignalProtocolError::BadKeyLength(t, l) => {
                 write!(f, "bad key length <{}> for key with type <{}>", l, t)
             }
-            SignalProtocolError::MismatchedKeyTypes(a, b) => {
-                write!(f, "key types <{}> and <{}> do not match", a, b)
-            }
-            SignalProtocolError::MismatchedSignatureLengthForKey(t, l) => write!(
-                f,
-                "signature length <{}> does not match expected for key with type <{}>",
-                l, t
-            ),
             SignalProtocolError::InvalidPreKeyId => write!(f, "invalid prekey identifier"),
             SignalProtocolError::InvalidSignedPreKeyId => {
                 write!(f, "invalid signed prekey identifier")
@@ -162,9 +157,10 @@ impl fmt::Display for SignalProtocolError {
             SignalProtocolError::SignatureValidationFailed => {
                 write!(f, "invalid signature detected")
             }
-            SignalProtocolError::InvalidPreKeyBundle => write!(f, "invalid pre key bundle format"),
             SignalProtocolError::InvalidCiphertext => write!(f, "invalid ciphertext message"),
-            SignalProtocolError::SessionNotFound => write!(f, "session not found"),
+            SignalProtocolError::SessionNotFound(who) => {
+                write!(f, "session with '{}' not found", who)
+            }
             SignalProtocolError::InvalidSessionStructure => write!(f, "invalid session structure"),
             SignalProtocolError::DuplicatedMessage(i, c) => {
                 write!(f, "message with old counter {} / {}", i, c)
@@ -173,30 +169,12 @@ impl fmt::Display for SignalProtocolError {
             SignalProtocolError::InternalError(m) => write!(f, "internal error {}", m),
             SignalProtocolError::InvalidSenderKeyId => write!(f, "invalid send key id"),
             SignalProtocolError::NoSenderKeyState => write!(f, "no sender key state"),
-            SignalProtocolError::SenderKeySigningKeyMissing => {
-                write!(f, "sender key signature key missing")
-            }
-            SignalProtocolError::SignaturePubkeyMissing => {
-                write!(f, "cannot verify signature due to missing key")
-            }
             SignalProtocolError::FfiBindingError(m) => {
                 write!(f, "error while invoking an ffi callback: {}", m)
             }
-            SignalProtocolError::ApplicationCallbackReturnedIntegerError(func, c) => {
-                write!(f, "application callback {} returned error code {}", func, c)
+            SignalProtocolError::ApplicationCallbackError(func, c) => {
+                write!(f, "application callback {} failed with {}", func, c)
             }
-            SignalProtocolError::ApplicationCallbackThrewException(func, t, m) => match t {
-                Some(t) => write!(
-                    f,
-                    "application callback {} threw exception {} with message {}",
-                    func, t, m
-                ),
-                None => write!(
-                    f,
-                    "application callback {} threw exception with message {}",
-                    func, m
-                ),
-            },
             SignalProtocolError::InvalidSealedSenderMessage(m) => {
                 write!(f, "invalid sealed sender message {}", m)
             }
@@ -205,6 +183,9 @@ impl fmt::Display for SignalProtocolError {
             }
             SignalProtocolError::SealedSenderSelfSend => {
                 write!(f, "self send of a sealed sender message")
+            }
+            SignalProtocolError::MessageDecryptionFailed(info) => {
+                write!(f, "{}", info)
             }
         }
     }

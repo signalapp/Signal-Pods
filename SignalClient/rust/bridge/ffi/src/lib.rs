@@ -12,8 +12,7 @@ use libsignal_protocol_rust::*;
 use static_assertions::const_assert_eq;
 use std::convert::TryFrom;
 use std::ffi::{c_void, CString};
-
-use aes_gcm_siv::Aes256GcmSiv;
+use std::fmt;
 
 pub mod logging;
 mod util;
@@ -110,126 +109,14 @@ pub unsafe extern "C" fn signal_hkdf_derive(
     })
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn signal_address_new(
-    address: *mut *mut ProtocolAddress,
-    name: *const c_char,
-    device_id: c_uint,
-) -> *mut SignalFfiError {
-    run_ffi_safe(|| {
-        let name = read_c_string(name)?;
-        box_object(address, Ok(ProtocolAddress::new(name, device_id)))
-    })
-}
-
 ffi_fn_get_uint32!(signal_address_get_device_id(ProtocolAddress) using
                    |obj: &ProtocolAddress| { Ok(obj.device_id()) });
 
 ffi_fn_clone!(signal_address_clone clones ProtocolAddress);
 
-#[no_mangle]
-pub unsafe extern "C" fn signal_publickey_compare(
-    result: *mut i32,
-    key1: *const PublicKey,
-    key2: *const PublicKey,
-) -> *mut SignalFfiError {
-    run_ffi_safe(|| {
-        let key1 = native_handle_cast::<PublicKey>(key1)?;
-        let key2 = native_handle_cast::<PublicKey>(key2)?;
-
-        *result = match key1.cmp(&key2) {
-            std::cmp::Ordering::Less => -1,
-            std::cmp::Ordering::Equal => 0,
-            std::cmp::Ordering::Greater => 1,
-        };
-        Ok(())
-    })
-}
-
-#[no_mangle]
-pub unsafe extern "C" fn signal_publickey_verify(
-    key: *const PublicKey,
-    result: *mut bool,
-    message: *const c_uchar,
-    message_len: size_t,
-    signature: *const c_uchar,
-    signature_len: size_t,
-) -> *mut SignalFfiError {
-    run_ffi_safe(|| {
-        *result = false; // pre-set to invalid state
-        let key = native_handle_cast::<PublicKey>(key)?;
-        let message = as_slice(message, message_len)?;
-        let signature = as_slice(signature, signature_len)?;
-
-        *result = key.verify_signature(&message, &signature)?;
-        Ok(())
-    })
-}
-
 ffi_fn_clone!(signal_publickey_clone clones PublicKey);
 
-#[no_mangle]
-pub unsafe extern "C" fn signal_privatekey_generate(
-    key: *mut *mut PrivateKey,
-) -> *mut SignalFfiError {
-    run_ffi_safe(|| {
-        let mut rng = rand::rngs::OsRng;
-        let keypair = KeyPair::generate(&mut rng);
-        box_object::<PrivateKey>(key, Ok(keypair.private_key))
-    })
-}
-
-ffi_fn_get_new_boxed_obj!(signal_privatekey_get_public_key(PublicKey) from PrivateKey,
-                          |k: &PrivateKey| k.public_key());
-
-#[no_mangle]
-pub unsafe extern "C" fn signal_privatekey_sign(
-    signature: *mut *const c_uchar,
-    signature_len: *mut size_t,
-    key: *const PrivateKey,
-    message: *const c_uchar,
-    message_len: size_t,
-) -> *mut SignalFfiError {
-    run_ffi_safe(|| {
-        let message = as_slice(message, message_len)?;
-        let key = native_handle_cast::<PrivateKey>(key)?;
-        let mut rng = rand::rngs::OsRng;
-        let sig = key.calculate_signature(&message, &mut rng);
-        write_bytearray_to(signature, signature_len, sig)
-    })
-}
-
-#[no_mangle]
-pub unsafe extern "C" fn signal_privatekey_agree(
-    shared_secret: *mut *const c_uchar,
-    shared_secret_len: *mut size_t,
-    private_key: *const PrivateKey,
-    public_key: *const PublicKey,
-) -> *mut SignalFfiError {
-    run_ffi_safe(|| {
-        let private_key = native_handle_cast::<PrivateKey>(private_key)?;
-        let public_key = native_handle_cast::<PublicKey>(public_key)?;
-        let dh_secret = private_key.calculate_agreement(&public_key);
-        write_bytearray_to(shared_secret, shared_secret_len, dh_secret)
-    })
-}
-
 ffi_fn_clone!(signal_privatekey_clone clones PrivateKey);
-
-#[no_mangle]
-pub unsafe extern "C" fn signal_identitykeypair_serialize(
-    output: *mut *const c_uchar,
-    output_len: *mut size_t,
-    private_key: *const PrivateKey,
-    public_key: *const PublicKey,
-) -> *mut SignalFfiError {
-    run_ffi_safe(|| {
-        let private_key = *native_handle_cast::<PrivateKey>(private_key)?;
-        let public_key = *native_handle_cast::<PublicKey>(public_key)?;
-        let identity_key_pair = IdentityKeyPair::new(IdentityKey::new(public_key), private_key);
-        write_bytearray_to(output, output_len, Ok(identity_key_pair.serialize()))
-    })
-}
 
 #[no_mangle]
 pub unsafe extern "C" fn signal_identitykeypair_deserialize(
@@ -260,23 +147,22 @@ pub unsafe extern "C" fn signal_session_record_archive_current_state(
     })
 }
 
-ffi_fn_clone!(signal_session_record_clone clones SessionRecord);
-
 #[no_mangle]
-pub unsafe extern "C" fn signal_fingerprint_format(
-    fprint: *mut *const c_char,
-    local: *const c_uchar,
-    local_len: size_t,
-    remote: *const c_uchar,
-    remote_len: size_t,
+pub unsafe extern "C" fn signal_session_record_has_current_state(
+    result: *mut bool,
+    session_record: *const SessionRecord,
 ) -> *mut SignalFfiError {
     run_ffi_safe(|| {
-        let local = as_slice(local, local_len)?;
-        let remote = as_slice(remote, remote_len)?;
-        let fingerprint = DisplayableFingerprint::new(&local, &remote).map(|f| format!("{}", f));
-        write_cstr_to(fprint, fingerprint)
+        if result.is_null() {
+            return Err(SignalFfiError::NullPointer);
+        }
+        let session_record = native_handle_cast::<SessionRecord>(session_record)?;
+        *result = session_record.has_current_session_state();
+        Ok(())
     })
 }
+
+ffi_fn_clone!(signal_session_record_clone clones SessionRecord);
 
 #[no_mangle]
 pub unsafe extern "C" fn signal_fingerprint_new(
@@ -312,64 +198,6 @@ pub unsafe extern "C" fn signal_fingerprint_new(
 
 ffi_fn_clone!(signal_fingerprint_clone clones Fingerprint);
 
-#[no_mangle]
-pub unsafe extern "C" fn signal_fingerprint_compare(
-    result: *mut bool,
-    fprint1: *const c_uchar,
-    fprint1_len: size_t,
-    fprint2: *const c_uchar,
-    fprint2_len: size_t,
-) -> *mut SignalFfiError {
-    run_ffi_safe(|| {
-        if fprint1.is_null() || fprint2.is_null() || result.is_null() {
-            return Err(SignalFfiError::NullPointer);
-        }
-        let fprint1 = as_slice(fprint1, fprint1_len)?;
-        let fprint2 = as_slice(fprint2, fprint2_len)?;
-
-        let fprint1 = ScannableFingerprint::deserialize(&fprint1)?;
-        *result = fprint1.compare(&fprint2)?;
-        Ok(())
-    })
-}
-
-#[no_mangle]
-pub unsafe extern "C" fn signal_message_new(
-    obj: *mut *mut SignalMessage,
-    message_version: c_uchar,
-    mac_key: *const c_uchar,
-    mac_key_len: size_t,
-    sender_ratchet_key: *const PublicKey,
-    counter: c_uint,
-    previous_counter: c_uint,
-    ciphertext: *const c_uchar,
-    ciphertext_len: size_t,
-    sender_identity_key: *const PublicKey,
-    receiver_identity_key: *const PublicKey,
-) -> *mut SignalFfiError {
-    run_ffi_safe(|| {
-        let mac_key = as_slice(mac_key, mac_key_len)?;
-        let sender_ratchet_key = native_handle_cast::<PublicKey>(sender_ratchet_key)?;
-        let ciphertext = as_slice(ciphertext, ciphertext_len)?;
-
-        let sender_identity_key = native_handle_cast::<PublicKey>(sender_identity_key)?;
-        let receiver_identity_key = native_handle_cast::<PublicKey>(receiver_identity_key)?;
-
-        let msg = SignalMessage::new(
-            message_version,
-            &mac_key,
-            *sender_ratchet_key,
-            counter,
-            previous_counter,
-            &ciphertext,
-            &IdentityKey::new(*sender_identity_key),
-            &IdentityKey::new(*receiver_identity_key),
-        );
-
-        box_object::<SignalMessage>(obj, msg)
-    })
-}
-
 ffi_fn_clone!(signal_message_clone clones SignalMessage);
 
 ffi_fn_get_new_boxed_obj!(signal_message_get_sender_ratchet_key(PublicKey) from SignalMessage,
@@ -380,60 +208,6 @@ ffi_fn_get_uint32!(signal_message_get_message_version(SignalMessage) using
 
 ffi_fn_get_uint32!(signal_message_get_counter(SignalMessage) using
                    |msg: &SignalMessage| { Ok(msg.counter()) });
-
-#[no_mangle]
-pub unsafe extern "C" fn signal_message_verify_mac(
-    result: *mut bool,
-    handle: *const SignalMessage,
-    sender_identity_key: *const PublicKey,
-    receiver_identity_key: *const PublicKey,
-    mac_key: *const c_uchar,
-    mac_key_len: size_t,
-) -> *mut SignalFfiError {
-    run_ffi_safe(|| {
-        let msg = native_handle_cast::<SignalMessage>(handle)?;
-        let sender_identity_key = native_handle_cast::<PublicKey>(sender_identity_key)?;
-        let receiver_identity_key = native_handle_cast::<PublicKey>(receiver_identity_key)?;
-        let mac_key = as_slice(mac_key, mac_key_len)?;
-
-        *result = msg.verify_mac(
-            &IdentityKey::new(*sender_identity_key),
-            &IdentityKey::new(*receiver_identity_key),
-            &mac_key,
-        )?;
-        Ok(())
-    })
-}
-
-#[no_mangle]
-pub unsafe extern "C" fn signal_pre_key_signal_message_new(
-    obj: *mut *mut PreKeySignalMessage,
-    message_version: c_uchar,
-    registration_id: c_uint,
-    pre_key_id: *const c_uint,
-    signed_pre_key_id: c_uint,
-    base_key: *const PublicKey,
-    identity_key: *const PublicKey,
-    signal_message: *const SignalMessage,
-) -> *mut SignalFfiError {
-    run_ffi_safe(|| {
-        let pre_key_id = get_optional_uint32(pre_key_id);
-        let base_key = native_handle_cast::<PublicKey>(base_key)?;
-        let identity_key = native_handle_cast::<PublicKey>(identity_key)?;
-        let signal_message = native_handle_cast::<SignalMessage>(signal_message)?;
-
-        let msg = PreKeySignalMessage::new(
-            message_version,
-            registration_id,
-            pre_key_id,
-            signed_pre_key_id,
-            *base_key,
-            IdentityKey::new(*identity_key),
-            signal_message.clone(),
-        );
-        box_object::<PreKeySignalMessage>(obj, msg)
-    })
-}
 
 ffi_fn_clone!(signal_pre_key_signal_message_clone clones PreKeySignalMessage);
 
@@ -458,24 +232,6 @@ ffi_fn_get_new_boxed_obj!(signal_pre_key_signal_message_get_identity_key(PublicK
 ffi_fn_get_new_boxed_obj!(signal_pre_key_signal_message_get_signal_message(SignalMessage) from PreKeySignalMessage,
                           |p: &PreKeySignalMessage| Ok(p.message().clone()));
 
-#[no_mangle]
-pub unsafe extern "C" fn signal_sender_key_message_new(
-    obj: *mut *mut SenderKeyMessage,
-    key_id: c_uint,
-    iteration: c_uint,
-    ciphertext: *const c_uchar,
-    ciphertext_len: size_t,
-    pk: *const PrivateKey,
-) -> *mut SignalFfiError {
-    run_ffi_safe(|| {
-        let ciphertext = as_slice(ciphertext, ciphertext_len)?;
-        let signature_key = native_handle_cast::<PrivateKey>(pk)?;
-        let mut csprng = rand::rngs::OsRng;
-        let skm = SenderKeyMessage::new(key_id, iteration, &ciphertext, &mut csprng, signature_key);
-        box_object::<SenderKeyMessage>(obj, skm)
-    })
-}
-
 ffi_fn_clone!(signal_sender_key_message_clone clones SenderKeyMessage);
 
 ffi_fn_get_uint32!(signal_sender_key_message_get_key_id(SenderKeyMessage) using
@@ -483,38 +239,6 @@ ffi_fn_get_uint32!(signal_sender_key_message_get_key_id(SenderKeyMessage) using
 
 ffi_fn_get_uint32!(signal_sender_key_message_get_iteration(SenderKeyMessage) using
                    |m: &SenderKeyMessage| Ok(m.iteration()));
-
-#[no_mangle]
-pub unsafe extern "C" fn signal_sender_key_message_verify_signature(
-    result: *mut bool,
-    skm: *const SenderKeyMessage,
-    pubkey: *const PublicKey,
-) -> *mut SignalFfiError {
-    run_ffi_safe(|| {
-        let skm = native_handle_cast::<SenderKeyMessage>(skm)?;
-        let pubkey = native_handle_cast::<PublicKey>(pubkey)?;
-
-        *result = skm.verify_signature(pubkey)?;
-        Ok(())
-    })
-}
-
-#[no_mangle]
-pub unsafe extern "C" fn signal_sender_key_distribution_message_new(
-    obj: *mut *mut SenderKeyDistributionMessage,
-    key_id: c_uint,
-    iteration: c_uint,
-    chainkey: *const c_uchar,
-    chainkey_len: size_t,
-    pk: *const PublicKey,
-) -> *mut SignalFfiError {
-    run_ffi_safe(|| {
-        let chainkey = as_slice(chainkey, chainkey_len)?;
-        let signature_key = native_handle_cast::<PublicKey>(pk)?;
-        let skdm = SenderKeyDistributionMessage::new(key_id, iteration, &chainkey, *signature_key);
-        box_object::<SenderKeyDistributionMessage>(obj, skdm)
-    })
-}
 
 ffi_fn_clone!(signal_sender_key_distribution_message_clone clones SenderKeyDistributionMessage);
 
@@ -545,15 +269,26 @@ pub unsafe extern "C" fn signal_pre_key_bundle_new(
         let signed_prekey_signature =
             as_slice(signed_prekey_signature, signed_prekey_signature_len)?;
 
-        let prekey = native_handle_cast_optional::<PublicKey>(prekey)?.copied();
-
-        let prekey_id = get_optional_uint32(prekey_id);
         let identity_key = IdentityKey::new(*(identity_key as *const PublicKey));
+
+        let prekey = native_handle_cast_optional::<PublicKey>(prekey)?.copied();
+        let prekey_id = get_optional_uint32(prekey_id);
+
+        let prekey = match (prekey, prekey_id) {
+            (None, None) => None,
+            (Some(k), Some(id)) => Some((id, k)),
+            _ => {
+                return Err(SignalFfiError::Signal(
+                    SignalProtocolError::InvalidArgument(
+                        "Must supply both or neither of prekey and prekey_id".to_owned(),
+                    ),
+                ))
+            }
+        };
 
         let bundle = PreKeyBundle::new(
             registration_id,
             device_id,
-            prekey_id,
             prekey,
             signed_prekey_id,
             *signed_prekey,
@@ -590,30 +325,6 @@ ffi_fn_get_new_boxed_obj!(signal_pre_key_bundle_get_identity_key(PublicKey) from
 
 /* SignedPreKeyRecord */
 
-#[no_mangle]
-pub unsafe extern "C" fn signal_signed_pre_key_record_new(
-    obj: *mut *mut SignedPreKeyRecord,
-    id: c_uint,
-    timestamp: c_ulonglong,
-    pub_key: *const PublicKey,
-    priv_key: *const PrivateKey,
-    signature: *const c_uchar,
-    signature_len: size_t,
-) -> *mut SignalFfiError {
-    run_ffi_safe(|| {
-        let pub_key = native_handle_cast::<PublicKey>(pub_key)?;
-        let priv_key = native_handle_cast::<PrivateKey>(priv_key)?;
-        let id = id;
-        let timestamp = timestamp as u64;
-        let keypair = KeyPair::new(*pub_key, *priv_key);
-        let signature = as_slice(signature, signature_len)?;
-
-        let spkr = SignedPreKeyRecord::new(id, timestamp, &keypair, &signature);
-
-        box_object::<SignedPreKeyRecord>(obj, Ok(spkr))
-    })
-}
-
 ffi_fn_get_uint32!(signal_signed_pre_key_record_get_id(SignedPreKeyRecord) using
                    |m: &SignedPreKeyRecord| m.id());
 
@@ -630,25 +341,6 @@ ffi_fn_clone!(signal_signed_pre_key_record_clone clones SignedPreKeyRecord);
 
 /* PreKeyRecord */
 
-#[no_mangle]
-pub unsafe extern "C" fn signal_pre_key_record_new(
-    obj: *mut *mut PreKeyRecord,
-    id: c_uint,
-    pub_key: *const PublicKey,
-    priv_key: *const PrivateKey,
-) -> *mut SignalFfiError {
-    run_ffi_safe(|| {
-        let id = id;
-        let pub_key = native_handle_cast::<PublicKey>(pub_key)?;
-        let priv_key = native_handle_cast::<PrivateKey>(priv_key)?;
-        let keypair = KeyPair::new(*pub_key, *priv_key);
-
-        let pkr = PreKeyRecord::new(id, &keypair);
-
-        box_object::<PreKeyRecord>(obj, Ok(pkr))
-    })
-}
-
 ffi_fn_get_uint32!(signal_pre_key_record_get_id(PreKeyRecord) using
                    |m: &PreKeyRecord| m.id());
 
@@ -661,35 +353,10 @@ ffi_fn_get_new_boxed_obj!(signal_pre_key_record_get_private_key(PrivateKey) from
 ffi_fn_clone!(signal_pre_key_record_clone clones PreKeyRecord);
 
 /* SenderKeyName */
-#[no_mangle]
-pub unsafe extern "C" fn signal_sender_key_name_new(
-    obj: *mut *mut SenderKeyName,
-    group_id: *const c_char,
-    sender_name: *const c_char,
-    sender_device_id: c_uint,
-) -> *mut SignalFfiError {
-    run_ffi_safe(|| {
-        let group_id = read_c_string(group_id)?;
-        let sender_name = read_c_string(sender_name)?;
-        let name = SenderKeyName::new(
-            group_id,
-            ProtocolAddress::new(sender_name, sender_device_id),
-        );
-        box_object::<SenderKeyName>(obj, name)
-    })
-}
-
 ffi_fn_clone!(signal_sender_key_name_clone clones SenderKeyName);
 
 ffi_fn_get_uint32!(signal_sender_key_name_get_sender_device_id(SenderKeyName) using
                    |m: &SenderKeyName| Ok(m.sender()?.device_id()));
-
-#[no_mangle]
-pub unsafe extern "C" fn signal_sender_key_record_new_fresh(
-    obj: *mut *mut SenderKeyRecord,
-) -> *mut SignalFfiError {
-    run_ffi_safe(|| box_object::<SenderKeyRecord>(obj, Ok(SenderKeyRecord::new_empty())))
-}
 
 ffi_fn_clone!(signal_sender_key_record_clone clones SenderKeyRecord);
 
@@ -747,6 +414,26 @@ impl FfiIdentityKeyStore {
     }
 }
 
+#[derive(Debug)]
+struct CallbackError {
+    value: std::num::NonZeroI32,
+}
+
+impl CallbackError {
+    fn check(value: i32) -> Option<Self> {
+        let value = std::num::NonZeroI32::try_from(value).ok()?;
+        Some(Self { value })
+    }
+}
+
+impl fmt::Display for CallbackError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "error code {}", self.value)
+    }
+}
+
+impl std::error::Error for CallbackError {}
+
 #[async_trait(?Send)]
 impl IdentityKeyStore for FfiIdentityKeyStore {
     async fn get_identity_key_pair(
@@ -757,13 +444,11 @@ impl IdentityKeyStore for FfiIdentityKeyStore {
         let mut key = std::ptr::null_mut();
         let result = (self.store.get_identity_key_pair)(self.store.ctx, &mut key, ctx);
 
-        if result != 0 {
-            return Err(
-                SignalProtocolError::ApplicationCallbackReturnedIntegerError(
-                    "get_identity_key_pair",
-                    result,
-                ),
-            );
+        if let Some(error) = CallbackError::check(result) {
+            return Err(SignalProtocolError::ApplicationCallbackError(
+                "get_identity_key_pair",
+                Box::new(error),
+            ));
         }
 
         if key.is_null() {
@@ -781,13 +466,11 @@ impl IdentityKeyStore for FfiIdentityKeyStore {
         let mut id = 0;
         let result = (self.store.get_local_registration_id)(self.store.ctx, &mut id, ctx);
 
-        if result != 0 {
-            return Err(
-                SignalProtocolError::ApplicationCallbackReturnedIntegerError(
-                    "get_local_registration_id",
-                    result,
-                ),
-            );
+        if let Some(error) = CallbackError::check(result) {
+            return Err(SignalProtocolError::ApplicationCallbackError(
+                "get_local_registration_id",
+                Box::new(error),
+            ));
         }
 
         Ok(id)
@@ -806,9 +489,10 @@ impl IdentityKeyStore for FfiIdentityKeyStore {
         match result {
             0 => Ok(false),
             1 => Ok(true),
-            r => Err(
-                SignalProtocolError::ApplicationCallbackReturnedIntegerError("save_identity", r),
-            ),
+            r => Err(SignalProtocolError::ApplicationCallbackError(
+                "save_identity",
+                Box::new(CallbackError::check(r).unwrap()),
+            )),
         }
     }
 
@@ -835,12 +519,10 @@ impl IdentityKeyStore for FfiIdentityKeyStore {
         match result {
             0 => Ok(false),
             1 => Ok(true),
-            r => Err(
-                SignalProtocolError::ApplicationCallbackReturnedIntegerError(
-                    "is_trusted_identity",
-                    r,
-                ),
-            ),
+            r => Err(SignalProtocolError::ApplicationCallbackError(
+                "is_trusted_identity",
+                Box::new(CallbackError::check(r).unwrap()),
+            )),
         }
     }
 
@@ -853,13 +535,11 @@ impl IdentityKeyStore for FfiIdentityKeyStore {
         let mut key = std::ptr::null_mut();
         let result = (self.store.get_identity)(self.store.ctx, &mut key, &*address, ctx);
 
-        if result != 0 {
-            return Err(
-                SignalProtocolError::ApplicationCallbackReturnedIntegerError(
-                    "get_identity",
-                    result,
-                ),
-            );
+        if let Some(error) = CallbackError::check(result) {
+            return Err(SignalProtocolError::ApplicationCallbackError(
+                "get_identity",
+                Box::new(error),
+            ));
         }
 
         if key.is_null() {
@@ -918,13 +598,11 @@ impl PreKeyStore for FfiPreKeyStore {
         let mut record = std::ptr::null_mut();
         let result = (self.store.load_pre_key)(self.store.ctx, &mut record, prekey_id, ctx);
 
-        if result != 0 {
-            return Err(
-                SignalProtocolError::ApplicationCallbackReturnedIntegerError(
-                    "load_pre_key",
-                    result,
-                ),
-            );
+        if let Some(error) = CallbackError::check(result) {
+            return Err(SignalProtocolError::ApplicationCallbackError(
+                "load_pre_key",
+                Box::new(error),
+            ));
         }
 
         if record.is_null() {
@@ -944,13 +622,11 @@ impl PreKeyStore for FfiPreKeyStore {
         let ctx = ctx.unwrap_or(std::ptr::null_mut());
         let result = (self.store.store_pre_key)(self.store.ctx, prekey_id, &*record, ctx);
 
-        if result != 0 {
-            return Err(
-                SignalProtocolError::ApplicationCallbackReturnedIntegerError(
-                    "store_pre_key",
-                    result,
-                ),
-            );
+        if let Some(error) = CallbackError::check(result) {
+            return Err(SignalProtocolError::ApplicationCallbackError(
+                "store_pre_key",
+                Box::new(error),
+            ));
         }
 
         Ok(())
@@ -964,13 +640,11 @@ impl PreKeyStore for FfiPreKeyStore {
         let ctx = ctx.unwrap_or(std::ptr::null_mut());
         let result = (self.store.remove_pre_key)(self.store.ctx, prekey_id, ctx);
 
-        if result != 0 {
-            return Err(
-                SignalProtocolError::ApplicationCallbackReturnedIntegerError(
-                    "remove_pre_key",
-                    result,
-                ),
-            );
+        if let Some(error) = CallbackError::check(result) {
+            return Err(SignalProtocolError::ApplicationCallbackError(
+                "remove_pre_key",
+                Box::new(error),
+            ));
         }
 
         Ok(())
@@ -1021,13 +695,11 @@ impl SignedPreKeyStore for FfiSignedPreKeyStore {
         let mut record = std::ptr::null_mut();
         let result = (self.store.load_signed_pre_key)(self.store.ctx, &mut record, prekey_id, ctx);
 
-        if result != 0 {
-            return Err(
-                SignalProtocolError::ApplicationCallbackReturnedIntegerError(
-                    "load_signed_pre_key",
-                    result,
-                ),
-            );
+        if let Some(error) = CallbackError::check(result) {
+            return Err(SignalProtocolError::ApplicationCallbackError(
+                "load_signed_pre_key",
+                Box::new(error),
+            ));
         }
 
         if record.is_null() {
@@ -1048,13 +720,11 @@ impl SignedPreKeyStore for FfiSignedPreKeyStore {
         let ctx = ctx.unwrap_or(std::ptr::null_mut());
         let result = (self.store.store_signed_pre_key)(self.store.ctx, prekey_id, &*record, ctx);
 
-        if result != 0 {
-            return Err(
-                SignalProtocolError::ApplicationCallbackReturnedIntegerError(
-                    "store_signed_pre_key",
-                    result,
-                ),
-            );
+        if let Some(error) = CallbackError::check(result) {
+            return Err(SignalProtocolError::ApplicationCallbackError(
+                "store_signed_pre_key",
+                Box::new(error),
+            ));
         }
 
         Ok(())
@@ -1105,13 +775,11 @@ impl SessionStore for FfiSessionStore {
         let mut record = std::ptr::null_mut();
         let result = (self.store.load_session)(self.store.ctx, &mut record, &*address, ctx);
 
-        if result != 0 {
-            return Err(
-                SignalProtocolError::ApplicationCallbackReturnedIntegerError(
-                    "load_session",
-                    result,
-                ),
-            );
+        if let Some(error) = CallbackError::check(result) {
+            return Err(SignalProtocolError::ApplicationCallbackError(
+                "load_session",
+                Box::new(error),
+            ));
         }
 
         if record.is_null() {
@@ -1132,13 +800,11 @@ impl SessionStore for FfiSessionStore {
         let ctx = ctx.unwrap_or(std::ptr::null_mut());
         let result = (self.store.store_session)(self.store.ctx, &*address, &*record, ctx);
 
-        if result != 0 {
-            return Err(
-                SignalProtocolError::ApplicationCallbackReturnedIntegerError(
-                    "store_session",
-                    result,
-                ),
-            );
+        if let Some(error) = CallbackError::check(result) {
+            return Err(SignalProtocolError::ApplicationCallbackError(
+                "store_session",
+                Box::new(error),
+            ));
         }
 
         Ok(())
@@ -1250,7 +916,7 @@ pub unsafe extern "C" fn signal_ciphertext_message_serialize(
     run_ffi_safe(|| {
         let msg = native_handle_cast::<CiphertextMessage>(msg)?;
         let bits = msg.serialize();
-        write_bytearray_to(result, result_len, Ok(bits))
+        write_bytearray_to(result, result_len, bits)
     })
 }
 
@@ -1279,7 +945,7 @@ pub unsafe extern "C" fn signal_decrypt_message(
             &mut identity_key_store,
             &mut csprng,
             Some(ctx),
-        ));
+        ))?;
         write_bytearray_to(result, result_len, ptext)
     })
 }
@@ -1314,7 +980,7 @@ pub unsafe extern "C" fn signal_decrypt_pre_key_message(
             &mut signed_prekey_store,
             &mut csprng,
             Some(ctx),
-        ));
+        ))?;
 
         write_bytearray_to(result, result_len, ptext)
     })
@@ -1365,13 +1031,11 @@ impl SenderKeyStore for FfiSenderKeyStore {
         let result =
             (self.store.store_sender_key)(self.store.ctx, &*sender_key_name, &*record, ctx);
 
-        if result != 0 {
-            return Err(
-                SignalProtocolError::ApplicationCallbackReturnedIntegerError(
-                    "store_sender_key",
-                    result,
-                ),
-            );
+        if let Some(error) = CallbackError::check(result) {
+            return Err(SignalProtocolError::ApplicationCallbackError(
+                "store_sender_key",
+                Box::new(error),
+            ));
         }
 
         Ok(())
@@ -1387,13 +1051,11 @@ impl SenderKeyStore for FfiSenderKeyStore {
         let result =
             (self.store.load_sender_key)(self.store.ctx, &mut record, &*sender_key_name, ctx);
 
-        if result != 0 {
-            return Err(
-                SignalProtocolError::ApplicationCallbackReturnedIntegerError(
-                    "load_sender_key",
-                    result,
-                ),
-            );
+        if let Some(error) = CallbackError::check(result) {
+            return Err(SignalProtocolError::ApplicationCallbackError(
+                "load_sender_key",
+                Box::new(error),
+            ));
         }
 
         if record.is_null() {
@@ -1478,7 +1140,7 @@ pub unsafe extern "C" fn signal_group_encrypt_message(
             &message,
             &mut rng,
             Some(ctx),
-        ));
+        ))?;
         write_bytearray_to(out, out_len, ctext)
     })
 }
@@ -1503,7 +1165,7 @@ pub unsafe extern "C" fn signal_group_decrypt_message(
             &mut sender_key_store,
             &sender_key_name,
             Some(ctx),
-        ));
+        ))?;
         write_bytearray_to(out, out_len, ptext)
     })
 }
@@ -1514,23 +1176,6 @@ ffi_fn_get_uint32!(signal_server_certificate_get_key_id(ServerCertificate) using
 ffi_fn_get_new_boxed_obj!(signal_server_certificate_get_key(PublicKey) from ServerCertificate,
                           ServerCertificate::public_key);
 
-#[no_mangle]
-pub unsafe extern "C" fn signal_server_certificate_new(
-    out: *mut *mut ServerCertificate,
-    key_id: c_uint,
-    server_key: *const PublicKey,
-    trust_root: *const PrivateKey,
-) -> *mut SignalFfiError {
-    run_ffi_safe(|| {
-        let server_key = native_handle_cast::<PublicKey>(server_key)?;
-        let trust_root = native_handle_cast::<PrivateKey>(trust_root)?;
-        let mut rng = rand::rngs::OsRng;
-
-        let sc = ServerCertificate::new(key_id, *server_key, trust_root, &mut rng);
-        box_object(out, sc)
-    })
-}
-
 // Sender Certificate
 ffi_fn_get_uint64!(signal_sender_certificate_get_expiration(SenderCertificate) using SenderCertificate::expiration);
 ffi_fn_get_uint32!(signal_sender_certificate_get_device_id(SenderCertificate) using SenderCertificate::sender_device_id);
@@ -1539,55 +1184,6 @@ ffi_fn_get_new_boxed_obj!(signal_sender_certificate_get_key(PublicKey) from Send
                           SenderCertificate::key);
 ffi_fn_get_new_boxed_obj!(signal_sender_certificate_get_server_certificate(ServerCertificate) from SenderCertificate,
                           |s: &SenderCertificate| Ok(s.signer()?.clone()));
-
-#[no_mangle]
-pub unsafe extern "C" fn signal_sender_certificate_validate(
-    valid: *mut bool,
-    cert: *const SenderCertificate,
-    key: *const PublicKey,
-    time: u64,
-) -> *mut SignalFfiError {
-    run_ffi_safe(|| {
-        let cert = native_handle_cast::<SenderCertificate>(cert)?;
-        let key = native_handle_cast::<PublicKey>(key)?;
-        *valid = cert.validate(key, time)?;
-        Ok(())
-    })
-}
-
-#[no_mangle]
-pub unsafe extern "C" fn signal_sender_certificate_new(
-    out: *mut *mut SenderCertificate,
-    sender_uuid: *const c_char,
-    sender_e164: *const c_char,
-    sender_device_id: u32,
-    sender_key: *const PublicKey,
-    expiration: u64,
-    signer_cert: *const ServerCertificate,
-    signer_key: *const PrivateKey,
-) -> *mut SignalFfiError {
-    run_ffi_safe(|| {
-        let sender_uuid = read_optional_c_string(sender_uuid)?;
-        let sender_e164 = read_optional_c_string(sender_e164)?;
-        let sender_key = native_handle_cast::<PublicKey>(sender_key)?;
-        let signer_cert = native_handle_cast::<ServerCertificate>(signer_cert)?;
-        let signer_key = native_handle_cast::<PrivateKey>(signer_key)?;
-
-        let mut rng = rand::rngs::OsRng;
-
-        let sc = SenderCertificate::new(
-            sender_uuid,
-            sender_e164,
-            *sender_key,
-            sender_device_id,
-            expiration,
-            signer_cert.clone(),
-            signer_key,
-            &mut rng,
-        );
-        box_object(out, sc)
-    })
-}
 
 // UnidentifiedSenderMessageContent
 #[no_mangle]
@@ -1636,7 +1232,7 @@ pub unsafe extern "C" fn signal_sealed_session_cipher_encrypt(
             Some(ctx),
             &mut rng,
         ))?;
-        write_bytearray_to(out, out_len, Ok(ctext))
+        write_bytearray_to(out, out_len, ctext)
     })
 }
 
@@ -1710,69 +1306,6 @@ pub unsafe extern "C" fn signal_sealed_session_cipher_decrypt(
         write_optional_cstr_to(sender_e164, Ok(decrypted.sender_e164))?;
         write_optional_cstr_to(sender_uuid, Ok(decrypted.sender_uuid))?;
         write_uint32_to(sender_device_id, Ok(decrypted.device_id))?;
-        write_bytearray_to(out, out_len, Ok(decrypted.message))
-    })
-}
-
-#[no_mangle]
-pub unsafe extern "C" fn signal_aes256_gcm_siv_new(
-    obj: *mut *mut Aes256GcmSiv,
-    key: *const c_uchar,
-    key_len: size_t,
-) -> *mut SignalFfiError {
-    run_ffi_safe(|| {
-        let key = as_slice(key, key_len)?;
-        let aes_gcm_siv = aes_gcm_siv::Aes256GcmSiv::new(&key)?;
-        box_object::<Aes256GcmSiv>(obj, Ok(aes_gcm_siv))
-    })
-}
-
-#[no_mangle]
-pub unsafe extern "C" fn signal_aes256_gcm_siv_encrypt(
-    aes_gcm_siv: *const Aes256GcmSiv,
-    ctext: *mut *const c_uchar,
-    ctext_len: *mut size_t,
-    ptext: *const c_uchar,
-    ptext_len: size_t,
-    nonce: *const c_uchar,
-    nonce_len: size_t,
-    associated_data: *const c_uchar,
-    associated_data_len: size_t,
-) -> *mut SignalFfiError {
-    run_ffi_safe(|| {
-        let aes_gcm_siv = native_handle_cast::<Aes256GcmSiv>(aes_gcm_siv)?;
-        let ptext = as_slice(ptext, ptext_len)?;
-        let nonce = as_slice(nonce, nonce_len)?;
-        let associated_data = as_slice(associated_data, associated_data_len)?;
-
-        let mut buf = Vec::with_capacity(ptext.len() + 16);
-        buf.extend_from_slice(ptext);
-
-        let gcm_tag = aes_gcm_siv.encrypt(&mut buf, &nonce, &associated_data)?;
-        buf.extend_from_slice(&gcm_tag);
-
-        write_bytearray_to(ctext, ctext_len, Ok(buf))
-    })
-}
-
-#[no_mangle]
-pub unsafe extern "C" fn signal_aes256_gcm_siv_decrypt(
-    aes_gcm_siv: *const Aes256GcmSiv,
-    ptext: *mut *const c_uchar,
-    ptext_len: *mut size_t,
-    ctext: *const c_uchar,
-    ctext_len: size_t,
-    nonce: *const c_uchar,
-    nonce_len: size_t,
-    associated_data: *const c_uchar,
-    associated_data_len: size_t,
-) -> *mut SignalFfiError {
-    run_ffi_safe(|| {
-        let aes_gcm_siv = native_handle_cast::<Aes256GcmSiv>(aes_gcm_siv)?;
-        let mut buf = as_slice(ctext, ctext_len)?.to_vec();
-        let nonce = as_slice(nonce, nonce_len)?;
-        let associated_data = as_slice(associated_data, associated_data_len)?;
-        aes_gcm_siv.decrypt_with_appended_tag(&mut buf, &nonce, &associated_data)?;
-        write_bytearray_to(ptext, ptext_len, Ok(buf))
+        write_bytearray_to(out, out_len, decrypted.message)
     })
 }

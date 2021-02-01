@@ -3,20 +3,17 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
-use futures::pin_mut;
-use futures::task::noop_waker_ref;
 use libc::{c_char, c_uchar, c_uint, c_ulonglong, size_t};
 use libsignal_bridge::ffi::*;
 use libsignal_protocol_rust::*;
 use std::ffi::CStr;
-use std::future::Future;
-use std::task::{self, Poll};
 
 use aes_gcm_siv::Error as AesGcmSivError;
 
 #[derive(Debug)]
 #[repr(C)]
 pub enum SignalErrorCode {
+    #[allow(dead_code)]
     UnknownError = 1,
     InvalidState = 2,
     InternalError = 3,
@@ -33,12 +30,14 @@ pub enum SignalErrorCode {
     UnknownCiphertextVersion = 22,
     UnrecognizedMessageVersion = 23,
     InvalidMessage = 30,
+    SealedSenderSelfSend = 31,
 
     InvalidKey = 40,
     InvalidSignature = 41,
 
     FingerprintIdentifierMismatch = 50,
     FingerprintVersionMismatch = 51,
+    FingerprintParsingError = 52,
 
     UntrustedIdentity = 60,
 
@@ -56,9 +55,20 @@ impl From<&SignalFfiError> for SignalErrorCode {
         match err {
             SignalFfiError::NullPointer => SignalErrorCode::NullParameter,
             SignalFfiError::InvalidType => SignalErrorCode::InvalidType,
-            SignalFfiError::UnexpectedPanic(_) => SignalErrorCode::InternalError,
 
-            SignalFfiError::CallbackError(_) => SignalErrorCode::CallbackError,
+            SignalFfiError::UnexpectedPanic(_)
+            | SignalFfiError::Signal(SignalProtocolError::InternalError(_))
+            | SignalFfiError::Signal(SignalProtocolError::FfiBindingError(_))
+            | SignalFfiError::Signal(SignalProtocolError::InvalidChainKeyLength(_))
+            | SignalFfiError::Signal(SignalProtocolError::InvalidRootKeyLength(_))
+            | SignalFfiError::Signal(SignalProtocolError::InvalidCipherCryptographicParameters(
+                _,
+                _,
+            ))
+            | SignalFfiError::Signal(SignalProtocolError::InvalidMacKeyLength(_)) => {
+                SignalErrorCode::InternalError
+            }
+
             SignalFfiError::InvalidUtf8String => SignalErrorCode::InvalidUtf8String,
             SignalFfiError::InsufficientOutputSize(_, _) => SignalErrorCode::InsufficientOutputSize,
 
@@ -77,6 +87,10 @@ impl From<&SignalFfiError> for SignalErrorCode {
                 SignalErrorCode::InvalidKeyIdentifier
             }
 
+            SignalFfiError::Signal(SignalProtocolError::SealedSenderSelfSend) => {
+                SignalErrorCode::SealedSenderSelfSend
+            }
+
             SignalFfiError::Signal(SignalProtocolError::SignatureValidationFailed) => {
                 SignalErrorCode::InvalidSignature
             }
@@ -88,7 +102,7 @@ impl From<&SignalFfiError> for SignalErrorCode {
                 SignalErrorCode::InvalidKey
             }
 
-            SignalFfiError::Signal(SignalProtocolError::SessionNotFound) => {
+            SignalFfiError::Signal(SignalProtocolError::SessionNotFound(_)) => {
                 SignalErrorCode::SessionNotFound
             }
 
@@ -96,7 +110,11 @@ impl From<&SignalFfiError> for SignalErrorCode {
                 SignalErrorCode::FingerprintIdentifierMismatch
             }
 
-            SignalFfiError::Signal(SignalProtocolError::FingerprintVersionMismatch) => {
+            SignalFfiError::Signal(SignalProtocolError::FingerprintParsingError) => {
+                SignalErrorCode::FingerprintParsingError
+            }
+
+            SignalFfiError::Signal(SignalProtocolError::FingerprintVersionMismatch(_, _)) => {
                 SignalErrorCode::FingerprintVersionMismatch
             }
 
@@ -116,6 +134,7 @@ impl From<&SignalFfiError> for SignalErrorCode {
             }
 
             SignalFfiError::Signal(SignalProtocolError::InvalidMessage(_))
+            | SignalFfiError::Signal(SignalProtocolError::MessageDecryptionFailed(_))
             | SignalFfiError::Signal(SignalProtocolError::InvalidProtobufEncoding)
             | SignalFfiError::Signal(SignalProtocolError::InvalidSealedSenderMessage(_)) => {
                 SignalErrorCode::InvalidMessage
@@ -138,17 +157,10 @@ impl From<&SignalFfiError> for SignalErrorCode {
             SignalFfiError::Signal(SignalProtocolError::InvalidArgument(_))
             | SignalFfiError::AesGcmSiv(_) => SignalErrorCode::InvalidArgument,
 
-            _ => SignalErrorCode::UnknownError,
+            SignalFfiError::Signal(SignalProtocolError::ApplicationCallbackError(_, _)) => {
+                SignalErrorCode::CallbackError
+            }
         }
-    }
-}
-
-#[track_caller]
-pub fn expect_ready<F: Future>(future: F) -> F::Output {
-    pin_mut!(future);
-    match future.poll(&mut task::Context::from_waker(noop_waker_ref())) {
-        Poll::Ready(result) => result,
-        Poll::Pending => panic!("future was not ready"),
     }
 }
 
@@ -233,17 +245,6 @@ pub unsafe fn get_optional_uint32(p: *const c_uint) -> Option<u32> {
     }
 
     Some(*p)
-}
-
-pub unsafe fn read_c_string(cstr: *const c_char) -> Result<String, SignalFfiError> {
-    if cstr.is_null() {
-        return Err(SignalFfiError::NullPointer);
-    }
-
-    match CStr::from_ptr(cstr).to_str() {
-        Ok(s) => Ok(s.to_owned()),
-        Err(_) => Err(SignalFfiError::InvalidUtf8String),
-    }
 }
 
 pub unsafe fn read_optional_c_string(

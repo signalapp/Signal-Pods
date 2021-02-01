@@ -305,10 +305,10 @@ fn group_basic_ratchet() -> Result<(), SignalProtocolError> {
             group_decrypt(&alice_ciphertext1, &mut bob_store, &group_sender, None).await?;
         assert_eq!(String::from_utf8(bob_plaintext1).unwrap(), "swim camp");
 
-        assert_eq!(
+        assert!(matches!(
             group_decrypt(&alice_ciphertext1, &mut bob_store, &group_sender, None).await,
             Err(SignalProtocolError::DuplicatedMessage(1, 0))
-        );
+        ));
 
         let bob_plaintext3 =
             group_decrypt(&alice_ciphertext3, &mut bob_store, &group_sender, None).await?;
@@ -480,7 +480,7 @@ fn group_too_far_in_the_future() -> Result<(), SignalProtocolError> {
         )
         .await?;
 
-        for i in 0..2001 {
+        for i in 0..25001 {
             group_encrypt(
                 &mut alice_store,
                 &group_sender,

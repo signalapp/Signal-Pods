@@ -17,7 +17,7 @@ use prost::Message;
 use std::collections::VecDeque;
 
 #[derive(Debug, Clone)]
-pub struct UnacknowledgedPreKeyMessageItems {
+pub(crate) struct UnacknowledgedPreKeyMessageItems {
     pre_key_id: Option<u32>,
     signed_pre_key_id: u32,
     base_key: curve::PublicKey,
@@ -32,30 +32,25 @@ impl UnacknowledgedPreKeyMessageItems {
         }
     }
 
-    pub fn pre_key_id(&self) -> Result<Option<u32>> {
+    pub(crate) fn pre_key_id(&self) -> Result<Option<u32>> {
         Ok(self.pre_key_id)
     }
 
-    pub fn signed_pre_key_id(&self) -> Result<u32> {
+    pub(crate) fn signed_pre_key_id(&self) -> Result<u32> {
         Ok(self.signed_pre_key_id)
     }
 
-    pub fn base_key(&self) -> Result<&curve::PublicKey> {
+    pub(crate) fn base_key(&self) -> Result<&curve::PublicKey> {
         Ok(&self.base_key)
     }
 }
 
 #[derive(Clone, Debug)]
-pub struct SessionState {
+pub(crate) struct SessionState {
     session: SessionStructure,
 }
 
 impl SessionState {
-    pub fn deserialize(bytes: &[u8]) -> Result<Self> {
-        let session = SessionStructure::decode(bytes)?;
-        Ok(Self { session })
-    }
-
     pub(crate) fn new(session: SessionStructure) -> Self {
         Self { session }
     }
@@ -137,6 +132,21 @@ impl SessionState {
 
     pub fn has_sender_chain(&self) -> Result<bool> {
         Ok(self.session.sender_chain.is_some())
+    }
+
+    pub(crate) fn all_receiver_chain_logging_info(&self) -> Result<Vec<(Vec<u8>, Option<u32>)>> {
+        let mut results = vec![];
+        for chain in self.session.receiver_chains.iter() {
+            let sender_ratchet_public = chain.sender_ratchet_key.clone();
+
+            let chain_key_idx = match &chain.chain_key {
+                Some(chain_key) => Some(chain_key.index),
+                None => None,
+            };
+
+            results.push((sender_ratchet_public, chain_key_idx))
+        }
+        Ok(results)
     }
 
     pub(crate) fn get_receiver_chain(
@@ -407,12 +417,6 @@ impl SessionState {
     pub(crate) fn local_registration_id(&self) -> Result<u32> {
         Ok(self.session.local_registration_id)
     }
-
-    pub fn serialize(&self) -> Result<Vec<u8>> {
-        let mut buf = vec![];
-        self.session.encode(&mut buf)?;
-        Ok(buf)
-    }
 }
 
 impl From<SessionStructure> for SessionState {
@@ -435,8 +439,8 @@ impl From<&SessionState> for SessionStructure {
 
 #[derive(Clone, Debug)]
 pub struct SessionRecord {
-    pub current_session: Option<SessionState>,
-    pub previous_sessions: VecDeque<SessionState>,
+    current_session: Option<SessionState>,
+    previous_sessions: VecDeque<SessionState>,
 }
 
 impl SessionRecord {
@@ -447,7 +451,7 @@ impl SessionRecord {
         }
     }
 
-    pub fn new(state: SessionState) -> Self {
+    pub(crate) fn new(state: SessionState) -> Self {
         Self {
             current_session: Some(state),
             previous_sessions: VecDeque::new(),
@@ -465,6 +469,14 @@ impl SessionRecord {
         Ok(Self {
             current_session: record.current_session.map(|s| s.into()),
             previous_sessions: previous,
+        })
+    }
+
+    pub fn from_single_session_state(bytes: &[u8]) -> Result<Self> {
+        let session = SessionState::new(SessionStructure::decode(bytes)?);
+        Ok(Self {
+            current_session: Some(session),
+            previous_sessions: VecDeque::new(),
         })
     }
 
@@ -488,7 +500,11 @@ impl SessionRecord {
         Ok(false)
     }
 
-    pub fn session_state(&self) -> Result<&SessionState> {
+    pub fn has_current_session_state(&self) -> bool {
+        self.current_session.is_some()
+    }
+
+    pub(crate) fn session_state(&self) -> Result<&SessionState> {
         if let Some(ref session) = self.current_session {
             Ok(session)
         } else {
@@ -580,7 +596,10 @@ impl SessionRecord {
     }
 
     pub fn has_sender_chain(&self) -> Result<bool> {
-        self.session_state()?.has_sender_chain()
+        match &self.current_session {
+            Some(session) => session.has_sender_chain(),
+            None => Ok(false),
+        }
     }
 
     pub fn alice_base_key(&self) -> Result<&[u8]> {
