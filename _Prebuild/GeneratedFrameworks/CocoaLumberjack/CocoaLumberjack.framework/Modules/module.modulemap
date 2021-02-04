@@ -1,0 +1,11 @@
+framework module CocoaLumberjack {
+  umbrella header "CocoaLumberjack-umbrella.h"
+
+  export *
+  module * { export * }
+}
+
+module CocoaLumberjack.Swift {
+    header "CocoaLumberjack-Swift.h"
+    requires objc
+}

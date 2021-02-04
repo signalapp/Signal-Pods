@@ -1,5 +1,5 @@
 APPLICATION_EXTENSION_API_ONLY = YES
-FRAMEWORK_SEARCH_PATHS = $(inherited) "${PODS_CONFIGURATION_BUILD_DIR}/CocoaLumberjack" "${PODS_CONFIGURATION_BUILD_DIR}/Curve25519Kit" "${PODS_CONFIGURATION_BUILD_DIR}/SignalClient" "${PODS_CONFIGURATION_BUILD_DIR}/SignalCoreKit" "${PODS_ROOT}/GRKOpenSSLFramework/OpenSSL-iOS/bin"
+FRAMEWORK_SEARCH_PATHS = $(inherited) "${PODS_CONFIGURATION_BUILD_DIR}/Curve25519Kit" "${PODS_CONFIGURATION_BUILD_DIR}/SignalCoreKit" "${PODS_ROOT}/CocoaLumberjack" "${PODS_ROOT}/GRKOpenSSLFramework/OpenSSL-iOS/bin" "${PODS_ROOT}/SignalClient"
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1
 LD_RUNPATH_SEARCH_PATHS = $(inherited) '@executable_path/Frameworks' '@loader_path/Frameworks'
 OTHER_LDFLAGS = $(inherited) -ObjC -framework "CocoaLumberjack" -framework "Curve25519Kit" -framework "Security" -framework "SignalClient" -framework "SignalCoreKit" -framework "openssl"
