@@ -31,7 +31,6 @@ def translate_to_ts(typ):
         "u64": "number",
         "bool": "boolean",
         "String": "string",
-        "Vec<u8>": "Buffer",
     }
 
     if typ in type_map:
@@ -52,17 +51,6 @@ def translate_to_ts(typ):
     return typ
 
 
-ignore_this_warning = re.compile(
-    "("
-    r"warning: \d+ warnings? emitted"
-    ")")
-
-
-def camelcase(arg):
-    parts = arg.split('_')
-    return parts[0] + ''.join(x.title() for x in parts[1:])
-
-
 def collect_decls(crate_dir, features=''):
     args = [
         'cargo',
@@ -70,7 +58,6 @@ def collect_decls(crate_dir, features=''):
         '-q',
         '--profile=check',
         '--features', features,
-        '--message-format=short',
         '--',
         '-Zunstable-options',
         '--pretty=expanded']
@@ -81,18 +68,11 @@ def collect_decls(crate_dir, features=''):
     stdout = str(stdout.decode('utf8'))
     stderr = str(stderr.decode('utf8'))
 
-    had_error = False
     for l in stderr.split('\n'):
         if l == "":
             continue
 
-        if ignore_this_warning.match(l):
-            continue
-
         print(l, file=sys.stderr)
-        had_error = True
-
-    if had_error:
         sys.exit(1)
 
     comment_decl = re.compile(r'\s*///\s*ts: (.+)')
@@ -123,7 +103,7 @@ def collect_decls(crate_dir, features=''):
             for arg in args.split(', '):
                 (arg_name, arg_type) = arg.split(': ')
                 ts_arg_type = translate_to_ts(arg_type)
-                ts_args.append('%s: %s' % (camelcase(arg_name.strip()), ts_arg_type))
+                ts_args.append('%s: %s' % (arg_name.strip(), ts_arg_type))
 
         yield '%s(%s): %s;' % (prefix, ', '.join(ts_args), ts_ret_type)
 

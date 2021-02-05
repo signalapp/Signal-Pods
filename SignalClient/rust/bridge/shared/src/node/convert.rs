@@ -5,7 +5,7 @@
 
 use neon::prelude::*;
 use std::borrow::Cow;
-use std::convert::{TryFrom, TryInto};
+use std::convert::TryInto;
 use std::ops::RangeInclusive;
 
 pub(crate) trait ArgTypeInfo<'a>: Sized {
@@ -153,30 +153,6 @@ impl<'a> ResultTypeInfo<'a> for i32 {
     }
 }
 
-impl<'a> ResultTypeInfo<'a> for u32 {
-    type ResultType = JsNumber;
-    fn convert_into(
-        self,
-        cx: &mut FunctionContext<'a>,
-    ) -> NeonResult<Handle<'a, Self::ResultType>> {
-        Ok(cx.number(self as f64))
-    }
-}
-
-impl<'a> ResultTypeInfo<'a> for u64 {
-    type ResultType = JsNumber;
-    fn convert_into(
-        self,
-        cx: &mut FunctionContext<'a>,
-    ) -> NeonResult<Handle<'a, Self::ResultType>> {
-        let result = self as f64;
-        if result > MAX_SAFE_JS_INTEGER {
-            cx.throw_range_error(format!("precision loss during conversion of {}", self))?;
-        }
-        Ok(cx.number(self as f64))
-    }
-}
-
 impl<'a> ResultTypeInfo<'a> for String {
     type ResultType = JsString;
     fn convert_into(
@@ -184,38 +160,6 @@ impl<'a> ResultTypeInfo<'a> for String {
         cx: &mut FunctionContext<'a>,
     ) -> NeonResult<Handle<'a, Self::ResultType>> {
         Ok(cx.string(self))
-    }
-}
-
-impl<'a, T: ResultTypeInfo<'a>> ResultTypeInfo<'a> for Option<T> {
-    type ResultType = JsValue;
-    fn convert_into(
-        self,
-        cx: &mut FunctionContext<'a>,
-    ) -> NeonResult<Handle<'a, Self::ResultType>> {
-        match self {
-            Some(value) => Ok(value.convert_into(cx)?.upcast()),
-            None => Ok(cx.null().upcast()),
-        }
-    }
-}
-
-impl<'a> ResultTypeInfo<'a> for Vec<u8> {
-    type ResultType = JsBuffer;
-    fn convert_into(
-        self,
-        cx: &mut FunctionContext<'a>,
-    ) -> NeonResult<Handle<'a, Self::ResultType>> {
-        let bytes_len = match u32::try_from(self.len()) {
-            Ok(l) => l,
-            Err(_) => return cx.throw_error("Cannot return very large object to JS environment"),
-        };
-
-        let mut buffer = cx.buffer(bytes_len)?;
-        cx.borrow_mut(&mut buffer, |raw_buffer| {
-            raw_buffer.as_mut_slice().copy_from_slice(&self);
-        });
-        Ok(buffer)
     }
 }
 
@@ -270,8 +214,7 @@ impl<'a, T: Value> ResultTypeInfo<'a> for Handle<'a, T> {
 }
 
 macro_rules! node_bridge_handle {
-    ( $typ:ty as false ) => {};
-    ( $typ:ty as $node_name:ident ) => {
+    ($typ:ty) => {
         impl<'a> node::ArgTypeInfo<'a> for &'a $typ {
             type ArgType = node::DefaultJsBox<$typ>;
             type StoredType = node::Handle<'a, Self::ArgType>;
@@ -300,11 +243,6 @@ macro_rules! node_bridge_handle {
                     node::return_boxed_object(cx, Ok(self))
                 }
             }
-        }
-    };
-    ( $typ:ty ) => {
-        paste! {
-            node_bridge_handle!($typ as $typ);
         }
     };
 }

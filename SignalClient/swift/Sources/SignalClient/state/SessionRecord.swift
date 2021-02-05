@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
+import SignalFfi
 import Foundation
 
 public class SessionRecord: ClonableHandleOwner {
@@ -30,7 +31,7 @@ public class SessionRecord: ClonableHandleOwner {
     public func serialize() -> [UInt8] {
         return failOnError {
             try invokeFnReturningArray {
-                signal_session_record_serialize($0, $1, nativeHandle)
+                signal_session_record_serialize(nativeHandle, $0, $1)
             }
         }
     }
@@ -47,7 +48,7 @@ public class SessionRecord: ClonableHandleOwner {
 
     public func remoteRegistrationId() throws -> UInt32 {
         return try invokeFnReturningInteger {
-            signal_session_record_get_remote_registration_id($0, nativeHandle)
+            signal_session_record_get_remote_registration_id(nativeHandle, $0)
         }
     }
 }

@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
+import SignalFfi
 import Foundation
 
 public class PreKeyRecord: ClonableHandleOwner {
@@ -42,7 +43,7 @@ public class PreKeyRecord: ClonableHandleOwner {
     public func serialize() -> [UInt8] {
         return failOnError {
             try invokeFnReturningArray {
-                signal_pre_key_record_serialize($0, $1, nativeHandle)
+                signal_pre_key_record_serialize(nativeHandle, $0, $1)
             }
         }
     }
@@ -50,7 +51,7 @@ public class PreKeyRecord: ClonableHandleOwner {
     public var id: UInt32 {
         return failOnError {
             try invokeFnReturningInteger {
-                signal_pre_key_record_get_id($0, nativeHandle)
+                signal_pre_key_record_get_id(nativeHandle, $0)
             }
         }
     }

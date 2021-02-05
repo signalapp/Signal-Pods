@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
+import SignalFfi
 import Foundation
 
 public struct DisplayableFingerprint {
@@ -63,12 +64,12 @@ public struct NumericFingerprintGenerator {
         }
 
         let fprintStr = try invokeFnReturningString {
-            signal_fingerprint_display_string($0, obj)
+            signal_fingerprint_display_string(obj, $0)
         }
         let displayable = DisplayableFingerprint(formatted: fprintStr)
 
         let scannableBits = try invokeFnReturningArray {
-            signal_fingerprint_scannable_encoding($0, $1, obj)
+            signal_fingerprint_scannable_encoding(obj, $0, $1)
         }
         let scannable = ScannableFingerprint(encoding: scannableBits)
         try checkError(signal_fingerprint_destroy(obj))

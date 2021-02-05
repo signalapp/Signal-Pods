@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
+import SignalFfi
+
 public class SenderKeyName: ClonableHandleOwner {
     internal override class func destroyNativeHandle(_ handle: OpaquePointer) -> SignalFfiErrorRef? {
         return signal_sender_key_name_destroy(handle)
@@ -33,7 +35,7 @@ public class SenderKeyName: ClonableHandleOwner {
     public var groupId: String {
         return failOnError {
             try invokeFnReturningString {
-                signal_sender_key_name_get_group_id($0, nativeHandle)
+                signal_sender_key_name_get_group_id(nativeHandle, $0)
             }
         }
     }
@@ -41,7 +43,7 @@ public class SenderKeyName: ClonableHandleOwner {
     public var senderName: String {
         return failOnError {
             try invokeFnReturningString {
-                signal_sender_key_name_get_sender_name($0, nativeHandle)
+                signal_sender_key_name_get_sender_name(nativeHandle, $0)
             }
         }
     }
@@ -49,7 +51,7 @@ public class SenderKeyName: ClonableHandleOwner {
     public var senderDeviceId: UInt32 {
         return failOnError {
             try invokeFnReturningInteger {
-                signal_sender_key_name_get_sender_device_id($0, nativeHandle)
+                signal_sender_key_name_get_sender_device_id(nativeHandle, $0)
             }
         }
     }

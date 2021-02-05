@@ -10,7 +10,6 @@
 #endif
 #endif
 
-#import "signal_ffi.h"
 
 FOUNDATION_EXPORT double SignalClientVersionNumber;
 FOUNDATION_EXPORT const unsigned char SignalClientVersionString[];

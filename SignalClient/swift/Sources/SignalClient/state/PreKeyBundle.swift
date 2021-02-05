@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
+import SignalFfi
 import Foundation
 
 public class PreKeyBundle {
@@ -26,11 +27,12 @@ public class PreKeyBundle {
                                         signedPrekeySignature: Bytes,
                                         identity identityKey: IdentityKey) throws {
         handle = try signedPrekeySignature.withUnsafeBytes {
+            var prekeyId = prekeyId
             var result: OpaquePointer?
             try checkError(signal_pre_key_bundle_new(&result,
                                                      registrationId,
                                                      deviceId,
-                                                     prekeyId,
+                                                     &prekeyId,
                                                      prekey.nativeHandle,
                                                      signedPrekeyId,
                                                      signedPrekey.nativeHandle,
@@ -53,7 +55,7 @@ public class PreKeyBundle {
             try checkError(signal_pre_key_bundle_new(&result,
                                                      registrationId,
                                                      deviceId,
-                                                     ~0,
+                                                     nil,
                                                      nil,
                                                      signedPrekeyId,
                                                      signedPrekey.nativeHandle,
@@ -67,7 +69,7 @@ public class PreKeyBundle {
     public var registrationId: UInt32 {
         return failOnError {
             try invokeFnReturningInteger {
-                signal_pre_key_bundle_get_registration_id($0, handle)
+                signal_pre_key_bundle_get_registration_id(handle, $0)
             }
         }
     }
@@ -75,7 +77,7 @@ public class PreKeyBundle {
     public var deviceId: UInt32 {
         return failOnError {
             try invokeFnReturningInteger {
-                signal_pre_key_bundle_get_device_id($0, handle)
+                signal_pre_key_bundle_get_device_id(handle, $0)
             }
         }
     }
@@ -83,7 +85,7 @@ public class PreKeyBundle {
     public var signedPreKeyId: UInt32 {
         return failOnError {
             try invokeFnReturningInteger {
-                signal_pre_key_bundle_get_signed_pre_key_id($0, handle)
+                signal_pre_key_bundle_get_signed_pre_key_id(handle, $0)
             }
         }
     }
@@ -91,11 +93,11 @@ public class PreKeyBundle {
     public var preKeyId: UInt32? {
         let prekey_id = failOnError {
             try invokeFnReturningInteger {
-                signal_pre_key_bundle_get_signed_pre_key_id($0, handle)
+                signal_pre_key_bundle_get_signed_pre_key_id(handle, $0)
             }
         }
 
-        if prekey_id == ~0 {
+        if prekey_id == 0xFFFFFFFF {
             return nil
         } else {
             return prekey_id
@@ -130,7 +132,7 @@ public class PreKeyBundle {
     public var signedPreKeySignature: [UInt8] {
         return failOnError {
             try invokeFnReturningArray {
-                signal_pre_key_bundle_get_signed_pre_key_signature($0, $1, handle)
+                signal_pre_key_bundle_get_signed_pre_key_signature(handle, $0, $1)
             }
         }
     }

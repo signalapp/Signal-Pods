@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
+import SignalFfi
 import Foundation
 
 public class PreKeySignalMessage {
@@ -40,25 +41,25 @@ public class PreKeySignalMessage {
 
     public func serialize() throws -> [UInt8] {
         return try invokeFnReturningArray {
-            signal_pre_key_signal_message_serialize($0, $1, handle)
+            signal_pre_key_signal_message_serialize(handle, $0, $1)
         }
     }
 
     public func version() throws -> UInt32 {
         return try invokeFnReturningInteger {
-            signal_pre_key_signal_message_get_version($0, handle)
+            signal_pre_key_signal_message_get_version(handle, $0)
         }
     }
 
     public func registrationId() throws -> UInt32 {
         return try invokeFnReturningInteger {
-            signal_pre_key_signal_message_get_registration_id($0, handle)
+            signal_pre_key_signal_message_get_registration_id(handle, $0)
         }
     }
 
     public func preKeyId() throws -> UInt32? {
         let id = try invokeFnReturningInteger {
-            signal_pre_key_signal_message_get_pre_key_id($0, handle)
+            signal_pre_key_signal_message_get_pre_key_id(handle, $0)
         }
 
         if id == 0xFFFFFFFF {
@@ -71,7 +72,7 @@ public class PreKeySignalMessage {
     public var signedPreKeyId: UInt32 {
         return failOnError {
             try invokeFnReturningInteger {
-                signal_pre_key_signal_message_get_signed_pre_key_id($0, handle)
+                signal_pre_key_signal_message_get_signed_pre_key_id(handle, $0)
             }
         }
     }

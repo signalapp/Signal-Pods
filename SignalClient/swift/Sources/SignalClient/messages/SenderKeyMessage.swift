@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
+import SignalFfi
 import Foundation
 
 public class SenderKeyMessage {
@@ -39,7 +40,7 @@ public class SenderKeyMessage {
     public var keyId: UInt32 {
         return failOnError {
             try invokeFnReturningInteger {
-                signal_sender_key_message_get_key_id($0, handle)
+                signal_sender_key_message_get_key_id(handle, $0)
             }
         }
     }
@@ -47,7 +48,7 @@ public class SenderKeyMessage {
     public var iteration: UInt32 {
         return failOnError {
             try invokeFnReturningInteger {
-                signal_sender_key_message_get_iteration($0, handle)
+                signal_sender_key_message_get_iteration(handle, $0)
             }
         }
     }
@@ -55,7 +56,7 @@ public class SenderKeyMessage {
     public func serialize() -> [UInt8] {
         return failOnError {
             try invokeFnReturningArray {
-                signal_sender_key_message_serialize($0, $1, handle)
+                signal_sender_key_message_serialize(handle, $0, $1)
             }
         }
     }
@@ -63,7 +64,7 @@ public class SenderKeyMessage {
     public var ciphertext: [UInt8] {
         return failOnError {
             try invokeFnReturningArray {
-                signal_sender_key_message_get_cipher_text($0, $1, handle)
+                signal_sender_key_message_get_cipher_text(handle, $0, $1)
             }
         }
     }

@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
+import SignalFfi
 import Foundation
 
 public class SenderKeyRecord: ClonableHandleOwner {
@@ -40,7 +41,7 @@ public class SenderKeyRecord: ClonableHandleOwner {
     public func serialize() -> [UInt8] {
         return failOnError {
             try invokeFnReturningArray {
-                signal_sender_key_record_serialize($0, $1, nativeHandle)
+                signal_sender_key_record_serialize(nativeHandle, $0, $1)
             }
         }
     }

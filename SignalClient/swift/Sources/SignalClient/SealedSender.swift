@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
+import SignalFfi
 import Foundation
 
 public class ServerCertificate: ClonableHandleOwner {
@@ -37,7 +38,7 @@ public class ServerCertificate: ClonableHandleOwner {
     public var keyId: UInt32 {
         return failOnError {
             try invokeFnReturningInteger {
-                signal_server_certificate_get_key_id($0, nativeHandle)
+                signal_server_certificate_get_key_id(nativeHandle, $0)
             }
         }
     }
@@ -45,7 +46,7 @@ public class ServerCertificate: ClonableHandleOwner {
     public func serialize() -> [UInt8] {
         return failOnError {
             try invokeFnReturningArray {
-                signal_server_certificate_get_serialized($0, $1, nativeHandle)
+                signal_server_certificate_get_serialized(nativeHandle, $0, $1)
             }
         }
     }
@@ -53,7 +54,7 @@ public class ServerCertificate: ClonableHandleOwner {
     public var certificateBytes: [UInt8] {
         return failOnError {
             try invokeFnReturningArray {
-                signal_server_certificate_get_certificate($0, $1, nativeHandle)
+                signal_server_certificate_get_certificate(nativeHandle, $0, $1)
             }
         }
     }
@@ -61,7 +62,7 @@ public class ServerCertificate: ClonableHandleOwner {
     public var signatureBytes: [UInt8] {
         return failOnError {
             try invokeFnReturningArray {
-                signal_server_certificate_get_signature($0, $1, nativeHandle)
+                signal_server_certificate_get_signature(nativeHandle, $0, $1)
             }
         }
     }
@@ -110,7 +111,7 @@ public class SenderCertificate: ClonableHandleOwner {
     public var expiration: UInt64 {
         return failOnError {
             try invokeFnReturningInteger {
-                signal_sender_certificate_get_expiration($0, nativeHandle)
+                signal_sender_certificate_get_expiration(nativeHandle, $0)
             }
         }
     }
@@ -118,7 +119,7 @@ public class SenderCertificate: ClonableHandleOwner {
     public var deviceId: UInt32 {
         return failOnError {
             try invokeFnReturningInteger {
-                signal_sender_certificate_get_device_id($0, nativeHandle)
+                signal_sender_certificate_get_device_id(nativeHandle, $0)
             }
         }
     }
@@ -126,7 +127,7 @@ public class SenderCertificate: ClonableHandleOwner {
     public func serialize() -> [UInt8] {
         return failOnError {
             try invokeFnReturningArray {
-                signal_sender_certificate_get_serialized($0, $1, nativeHandle)
+                signal_sender_certificate_get_serialized(nativeHandle, $0, $1)
             }
         }
     }
@@ -134,7 +135,7 @@ public class SenderCertificate: ClonableHandleOwner {
     public var certificateBytes: [UInt8] {
         return failOnError {
             try invokeFnReturningArray {
-                signal_sender_certificate_get_certificate($0, $1, nativeHandle)
+                signal_sender_certificate_get_certificate(nativeHandle, $0, $1)
             }
         }
     }
@@ -142,7 +143,7 @@ public class SenderCertificate: ClonableHandleOwner {
     public var signatureBytes: [UInt8] {
         return failOnError {
             try invokeFnReturningArray {
-                signal_sender_certificate_get_signature($0, $1, nativeHandle)
+                signal_sender_certificate_get_signature(nativeHandle, $0, $1)
             }
         }
     }
@@ -158,7 +159,7 @@ public class SenderCertificate: ClonableHandleOwner {
     public var senderUuid: String? {
         return failOnError {
             try invokeFnReturningOptionalString {
-                signal_sender_certificate_get_sender_uuid($0, nativeHandle)
+                signal_sender_certificate_get_sender_uuid(nativeHandle, $0)
             }
         }
     }
@@ -166,7 +167,7 @@ public class SenderCertificate: ClonableHandleOwner {
     public var senderE164: String? {
         return failOnError {
             try invokeFnReturningOptionalString {
-                signal_sender_certificate_get_sender_e164($0, nativeHandle)
+                signal_sender_certificate_get_sender_e164(nativeHandle, $0)
             }
         }
     }
@@ -254,7 +255,7 @@ public class UnidentifiedSenderMessageContent: ClonableHandleOwner {
     public var contents: [UInt8] {
         return failOnError {
             try invokeFnReturningArray {
-                signal_unidentified_sender_message_content_get_contents($0, $1, self.nativeHandle)
+                signal_unidentified_sender_message_content_get_contents(self.nativeHandle, $0, $1)
             }
         }
     }

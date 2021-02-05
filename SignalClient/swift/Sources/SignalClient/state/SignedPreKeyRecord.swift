@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
+import SignalFfi
 import Foundation
 
 public class SignedPreKeyRecord: ClonableHandleOwner {
@@ -45,7 +46,7 @@ public class SignedPreKeyRecord: ClonableHandleOwner {
     public func serialize() -> [UInt8] {
         return failOnError {
             try invokeFnReturningArray {
-                signal_signed_pre_key_record_serialize($0, $1, nativeHandle)
+                signal_signed_pre_key_record_serialize(nativeHandle, $0, $1)
             }
         }
     }
@@ -53,7 +54,7 @@ public class SignedPreKeyRecord: ClonableHandleOwner {
     public var id: UInt32 {
         return failOnError {
             try invokeFnReturningInteger {
-                signal_signed_pre_key_record_get_id($0, nativeHandle)
+                signal_signed_pre_key_record_get_id(nativeHandle, $0)
             }
         }
     }
@@ -61,7 +62,7 @@ public class SignedPreKeyRecord: ClonableHandleOwner {
     public var timestamp: UInt64 {
         return failOnError {
             try invokeFnReturningInteger {
-                signal_signed_pre_key_record_get_timestamp($0, nativeHandle)
+                signal_signed_pre_key_record_get_timestamp(nativeHandle, $0)
             }
         }
     }
@@ -85,7 +86,7 @@ public class SignedPreKeyRecord: ClonableHandleOwner {
     public var signature: [UInt8] {
         return failOnError {
             try invokeFnReturningArray {
-                signal_signed_pre_key_record_get_signature($0, $1, nativeHandle)
+                signal_signed_pre_key_record_get_signature(nativeHandle, $0, $1)
             }
         }
     }

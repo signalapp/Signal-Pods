@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
+import SignalFfi
+
 public class ProtocolAddress: ClonableHandleOwner {
     public init(name: String, deviceId: UInt32) throws {
         var handle: OpaquePointer?
@@ -31,7 +33,7 @@ public class ProtocolAddress: ClonableHandleOwner {
     public var name: String {
         return failOnError {
             try invokeFnReturningString {
-                signal_address_get_name($0, nativeHandle)
+                signal_address_get_name(nativeHandle, $0)
             }
         }
     }
@@ -39,7 +41,7 @@ public class ProtocolAddress: ClonableHandleOwner {
     public var deviceId: UInt32 {
         return failOnError {
             try invokeFnReturningInteger {
-                signal_address_get_device_id($0, nativeHandle)
+                signal_address_get_device_id(nativeHandle, $0)
             }
         }
     }

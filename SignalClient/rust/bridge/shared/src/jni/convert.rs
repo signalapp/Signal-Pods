@@ -128,44 +128,10 @@ impl ResultTypeInfo for bool {
     }
 }
 
-impl ResultTypeInfo for u32 {
-    type ResultType = jint;
-    fn convert_into(self, _env: &JNIEnv) -> Result<Self::ResultType, SignalJniError> {
-        // Note that we don't check bounds here.
-        Ok(self as jint)
-    }
-}
-
-impl ResultTypeInfo for Option<u32> {
-    type ResultType = jint;
-    fn convert_into(self, _env: &JNIEnv) -> Result<Self::ResultType, SignalJniError> {
-        // Note that we don't check bounds here.
-        Ok(self.unwrap_or(u32::MAX) as jint)
-    }
-}
-
-impl ResultTypeInfo for u64 {
-    type ResultType = jlong;
-    fn convert_into(self, _env: &JNIEnv) -> Result<Self::ResultType, SignalJniError> {
-        // Note that we don't check bounds here.
-        Ok(self as jlong)
-    }
-}
-
 impl ResultTypeInfo for String {
     type ResultType = jstring;
     fn convert_into(self, env: &JNIEnv) -> Result<Self::ResultType, SignalJniError> {
         Ok(env.new_string(self)?.into_inner())
-    }
-}
-
-impl ResultTypeInfo for Option<String> {
-    type ResultType = jstring;
-    fn convert_into(self, env: &JNIEnv) -> Result<Self::ResultType, SignalJniError> {
-        match self {
-            Some(s) => s.convert_into(env),
-            None => Ok(std::ptr::null_mut()),
-        }
     }
 }
 
@@ -198,8 +164,7 @@ impl crate::Env for &'_ JNIEnv<'_> {
 }
 
 macro_rules! jni_bridge_handle {
-    ( $typ:ty as false ) => {};
-    ( $typ:ty as $jni_name:ident ) => {
+    ($typ:ty) => {
         impl<'a> jni::SimpleArgTypeInfo<'a> for &$typ {
             type ArgType = jni::ObjectHandle;
             fn convert_from(
@@ -207,19 +172,6 @@ macro_rules! jni_bridge_handle {
                 foreign: Self::ArgType,
             ) -> Result<Self, jni::SignalJniError> {
                 Ok(unsafe { jni::native_handle_cast(foreign) }?)
-            }
-        }
-        impl<'a> jni::SimpleArgTypeInfo<'a> for Option<&$typ> {
-            type ArgType = jni::ObjectHandle;
-            fn convert_from(
-                env: &jni::JNIEnv,
-                foreign: Self::ArgType,
-            ) -> Result<Self, jni::SignalJniError> {
-                if foreign == 0 {
-                    Ok(None)
-                } else {
-                    <&$typ>::convert_from(env, foreign).map(Some)
-                }
             }
         }
         impl jni::ResultTypeInfo for $typ {
@@ -230,24 +182,6 @@ macro_rules! jni_bridge_handle {
             ) -> Result<Self::ResultType, jni::SignalJniError> {
                 jni::box_object(Ok(self))
             }
-        }
-        impl jni::ResultTypeInfo for Option<$typ> {
-            type ResultType = jni::ObjectHandle;
-            fn convert_into(
-                self,
-                env: &jni::JNIEnv,
-            ) -> Result<Self::ResultType, jni::SignalJniError> {
-                match self {
-                    Some(obj) => obj.convert_into(env),
-                    None => Ok(0),
-                }
-            }
-        }
-        jni_bridge_destroy!($typ as $jni_name);
-    };
-    ( $typ:ty ) => {
-        paste! {
-            jni_bridge_handle!($typ as $typ);
         }
     };
 }
@@ -297,17 +231,11 @@ macro_rules! jni_arg_type {
     (& $typ:ty) => {
         jni::ObjectHandle
     };
-    (Option<& $typ:ty>) => {
-        jni::ObjectHandle
-    };
 }
 
 macro_rules! jni_result_type {
     (Result<$typ:tt, $_:ty>) => {
         jni_result_type!($typ)
-    };
-    (Result<$typ:tt<$($args:tt),+>, $_:ty>) => {
-        jni_result_type!($typ<$($args)+>)
     };
     (bool) => {
         jni::jboolean
@@ -315,19 +243,7 @@ macro_rules! jni_result_type {
     (i32) => {
         jni::jint
     };
-    (u32) => {
-        jni::jint
-    };
-    (u64) => {
-        jni::jlong
-    };
-    (Option<u32>) => {
-        jni::jint
-    };
     (String) => {
-        jni::jstring
-    };
-    (Option<String>) => {
         jni::jstring
     };
     ( $typ:ty ) => {
