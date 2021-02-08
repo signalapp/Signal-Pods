@@ -1,23 +1,43 @@
 PODS:
+  - CocoaLumberjack/Core (3.7.0)
+  - CocoaLumberjack/Swift (3.7.0):
+    - CocoaLumberjack/Core
+  - SignalClient (0.1.2):
+    - CocoaLumberjack/Swift
+  - SignalClient/Tests (0.1.2):
+    - CocoaLumberjack/Swift
   - ZXingObjC (3.6.5):
     - ZXingObjC/All (= 3.6.5)
   - ZXingObjC/All (3.6.5)
 
 DEPENDENCIES:
+  - SignalClient (from `https://github.com/signalapp/libsignal-client.git`)
+  - SignalClient/Tests (from `https://github.com/signalapp/libsignal-client.git`)
   - ZXingObjC (from `https://github.com/zxingify/zxingify-objc.git`)
 
+SPEC REPOS:
+  trunk:
+    - CocoaLumberjack
+
 EXTERNAL SOURCES:
+  SignalClient:
+    :git: https://github.com/signalapp/libsignal-client.git
   ZXingObjC:
     :git: https://github.com/zxingify/zxingify-objc.git
 
 CHECKOUT OPTIONS:
+  SignalClient:
+    :commit: 28618d37b63ded1a530483c418ddcfd13d537293
+    :git: https://github.com/signalapp/libsignal-client.git
   ZXingObjC:
     :commit: fce3786177fd7032c62b230df8beeb206722d38e
     :git: https://github.com/zxingify/zxingify-objc.git
 
 SPEC CHECKSUMS:
+  CocoaLumberjack: e8955b9d337ac307103b0a34fd141c32f27e53c5
+  SignalClient: 91b917679b15bdf469934aca026787493efdbe1b
   ZXingObjC: fdbb269f25dd2032da343e06f10224d62f537bdb
 
-PODFILE CHECKSUM: 050edf147d3218ab942be27e8c6c7b5407687ae4
+PODFILE CHECKSUM: 58b0dcf90e54a3d6d59eebe376b19dc5606b4419
 
 COCOAPODS: 1.9.2

@@ -1,6 +1,6 @@
 {
   "name": "SignalClient",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "summary": "A Swift wrapper library for communicating with the Signal messaging service.",
   "homepage": "https://github.com/signalapp/libsignal-client",
   "license": "AGPL-3.0-only",
@@ -10,20 +10,21 @@
   },
   "source": {
     "git": "https://github.com/signalapp/libsignal-client.git",
-    "tag": "swift-0.1.1"
+    "tag": "swift-0.1.2"
   },
   "swift_versions": "5",
   "platforms": {
     "ios": "10"
   },
   "dependencies": {
-    "SignalCoreKit": [
+    "CocoaLumberjack/Swift": [
 
     ]
   },
   "source_files": [
     "swift/Sources/**/*.swift",
-    "swift/Sources/**/*.m"
+    "swift/Sources/**/*.m",
+    "swift/Sources/SignalFfi/signal_ffi.h"
   ],
   "preserve_paths": [
     "bin/*",
@@ -31,15 +32,12 @@
     "Cargo.lock",
     "rust-toolchain",
     "rust/*",
-    "swift/*.sh",
-    "swift/Sources/SignalFfi"
+    "swift/*.sh"
   ],
   "pod_target_xcconfig": {
     "CARGO_BUILD_TARGET_DIR": "$(DERIVED_FILE_DIR)/libsignal-ffi",
     "CARGO_PROFILE_RELEASE_DEBUG": "1",
     "LIBSIGNAL_FFI_DIR": "$(CARGO_BUILD_TARGET_DIR)/$(CARGO_BUILD_TARGET)/release",
-    "HEADER_SEARCH_PATHS": "$(PODS_TARGET_SRCROOT)/swift/Sources/SignalFfi",
-    "SWIFT_INCLUDE_PATHS": "$(HEADER_SEARCH_PATHS)",
     "LIBSIGNAL_FFI_LIB_IF_NEEDED": "$(LIBSIGNAL_FFI_DIR)/libsignal_ffi.a",
     "OTHER_LDFLAGS": "$(LIBSIGNAL_FFI_LIB_IF_NEEDED)",
     "CARGO_BUILD_TARGET[sdk=iphonesimulator*]": "x86_64-apple-ios",
@@ -50,9 +48,9 @@
   },
   "script_phases": [
     {
-      "name": "Build libsignal-ffi",
+      "name": "Build libsignal-ffi (if not prebuilt)",
       "execution_position": "before_compile",
-      "script": "\"${PODS_TARGET_SRCROOT}/swift/build_ffi.sh\""
+      "script": "if [[ -n \"${PRODUCT_TYPE}\" ]]; then \"${PODS_TARGET_SRCROOT}/swift/build_ffi.sh\"; fi"
     }
   ],
   "testspecs": [

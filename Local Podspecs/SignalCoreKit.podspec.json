@@ -22,7 +22,6 @@
     "SignalCoreKit/Private/**/*.{h,m,mm,swift}"
   ],
   "public_header_files": "SignalCoreKit/src/**/*.h",
-  "compiler_flags": "-fcxx-modules",
   "prefix_header_file": "SignalCoreKit/SCKPrefix.h",
   "xcconfig": {
     "OTHER_CFLAGS": "$(inherited) -DSQLITE_HAS_CODEC"
