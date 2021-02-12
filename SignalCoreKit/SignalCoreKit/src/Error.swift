@@ -7,8 +7,11 @@ import Foundation
 public struct OWSAssertionError: Error {
     public let errorCode: Int = SCKError.Code.assertionError.rawValue
     public let description: String
-    public init(_ description: String) {
-        owsFailDebug("assertionError: \(description)")
+    public init(_ description: String,
+                file: String = #file,
+                function: String = #function,
+                line: Int = #line) {
+        owsFailDebug("assertionError: \(description)", file: file, function: function, line: line)
         self.description = description
     }
 }
