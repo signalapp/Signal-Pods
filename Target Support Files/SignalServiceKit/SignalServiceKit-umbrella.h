@@ -86,7 +86,6 @@
 #import "OWSMessageHandler.h"
 #import "OWSMessageManager.h"
 #import "OWSMessageReceiver.h"
-#import "OWSMessageServiceParams.h"
 #import "OWSMessageUtils.h"
 #import "OWSOutgoingCallMessage.h"
 #import "OWSOutgoingGroupCallMessage.h"
