@@ -82,7 +82,6 @@
 #import "OWSGroupInfoRequestMessage.h"
 #import "OWSIdentityManager.h"
 #import "OWSIncompleteCallsJob.h"
-#import "OWSMessageDecrypter.h"
 #import "OWSMessageHandler.h"
 #import "OWSMessageManager.h"
 #import "OWSMessageReceiver.h"
