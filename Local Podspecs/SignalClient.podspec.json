@@ -1,6 +1,6 @@
 {
   "name": "SignalClient",
-  "version": "0.1.2",
+  "version": "0.3.0",
   "summary": "A Swift wrapper library for communicating with the Signal messaging service.",
   "homepage": "https://github.com/signalapp/libsignal-client",
   "license": "AGPL-3.0-only",
@@ -10,35 +10,29 @@
   },
   "source": {
     "git": "https://github.com/signalapp/libsignal-client.git",
-    "tag": "swift-0.1.2"
+    "tag": "swift-0.3.0"
   },
   "swift_versions": "5",
   "platforms": {
     "ios": "10"
   },
   "dependencies": {
-    "CocoaLumberjack/Swift": [
+    "SignalCoreKit": [
 
     ]
   },
   "source_files": [
     "swift/Sources/**/*.swift",
-    "swift/Sources/**/*.m",
-    "swift/Sources/SignalFfi/signal_ffi.h"
+    "swift/Sources/**/*.m"
   ],
   "preserve_paths": [
-    "bin/*",
-    "Cargo.toml",
-    "Cargo.lock",
-    "rust-toolchain",
-    "rust/*",
-    "swift/*.sh"
+    "target/*/release/libsignal_ffi.a",
+    "swift/Sources/SignalFfi"
   ],
   "pod_target_xcconfig": {
-    "CARGO_BUILD_TARGET_DIR": "$(DERIVED_FILE_DIR)/libsignal-ffi",
-    "CARGO_PROFILE_RELEASE_DEBUG": "1",
-    "LIBSIGNAL_FFI_DIR": "$(CARGO_BUILD_TARGET_DIR)/$(CARGO_BUILD_TARGET)/release",
-    "LIBSIGNAL_FFI_LIB_IF_NEEDED": "$(LIBSIGNAL_FFI_DIR)/libsignal_ffi.a",
+    "HEADER_SEARCH_PATHS": "$(PODS_TARGET_SRCROOT)/swift/Sources/SignalFfi",
+    "SWIFT_INCLUDE_PATHS": "$(HEADER_SEARCH_PATHS)",
+    "LIBSIGNAL_FFI_LIB_IF_NEEDED": "$(PODS_TARGET_SRCROOT)/target/$(CARGO_BUILD_TARGET)/release/libsignal_ffi.a",
     "OTHER_LDFLAGS": "$(LIBSIGNAL_FFI_LIB_IF_NEEDED)",
     "CARGO_BUILD_TARGET[sdk=iphonesimulator*]": "x86_64-apple-ios",
     "CARGO_BUILD_TARGET[sdk=iphoneos*]": "aarch64-apple-ios",
@@ -48,11 +42,12 @@
   },
   "script_phases": [
     {
-      "name": "Build libsignal-ffi (if not prebuilt)",
+      "name": "Check libsignal-ffi",
       "execution_position": "before_compile",
-      "script": "if [[ -n \"${PRODUCT_TYPE}\" ]]; then \"${PODS_TARGET_SRCROOT}/swift/build_ffi.sh\"; fi"
+      "script": "\n        test -e ${LIBSIGNAL_FFI_LIB_IF_NEEDED} && exit 0\n        echo 'error: libsignal_ffi.a not built; run the following to build it:' >&2\n        echo \"CARGO_BUILD_TARGET=${CARGO_BUILD_TARGET} \\\"${PODS_TARGET_SRCROOT}/swift/build_ffi.sh\\\"\" >&2\n        false\n      "
     }
   ],
+  "prepare_command": "set -euo pipefail\nCARGO_BUILD_TARGET=aarch64-apple-ios swift/build_ffi.sh\nCARGO_BUILD_TARGET=x86_64-apple-ios swift/build_ffi.sh",
   "testspecs": [
     {
       "name": "Tests",

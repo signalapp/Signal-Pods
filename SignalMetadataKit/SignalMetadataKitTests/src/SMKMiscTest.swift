@@ -39,8 +39,8 @@ class SMKTest: XCTestCase {
 
     func testUDSessionCipher_encrypt() {
         // NOTE: We use MockClient to ensure consistency between of our session state.
-        let aliceMockClient = MockClient(address: .e164("+13213214321"), deviceId: 456, registrationId: 123)
-        let bobMockClient = MockClient(address: .e164("+13213214322"), deviceId: 321, registrationId: 512)
+        let aliceMockClient = MockClient(address: aliceAddress, deviceId: 456, registrationId: 123)
+        let bobMockClient = MockClient(address: bobAddress, deviceId: 321, registrationId: 512)
 
         let certificateValidator = MockCertificateValidator()
 

@@ -35,7 +35,7 @@ class SMKSenderCertificateTest: XCTestCase {
                                                                         expires: 31337,
                                                                         identityKey: key.ecPublicKey().serialized,
                                                                         signer: signer)
-        builder.setSenderE164("+14152222222")
+        builder.setSenderUuid(aliceAddress.uuid!.uuidString)
         let certificateData = try! builder.buildSerializedData()
 
         // byte[] certificateSignature = Curve.calculateSignature(serverKey.getPrivateKey(), certificateBytes);
@@ -77,7 +77,7 @@ class SMKSenderCertificateTest: XCTestCase {
                                                                         expires: 31337,
                                                                         identityKey: key.ecPublicKey().serialized,
                                                                         signer: signer)
-        builder.setSenderE164("+14152222222")
+        builder.setSenderUuid(aliceAddress.uuid!.uuidString)
         let certificateData = try! builder.buildSerializedData()
 
         // byte[] certificateSignature = Curve.calculateSignature(serverKey.getPrivateKey(), certificateBytes);
@@ -123,7 +123,7 @@ class SMKSenderCertificateTest: XCTestCase {
                                                                         expires: 31337,
                                                                         identityKey: key.ecPublicKey().serialized,
                                                                         signer: signer)
-        builder.setSenderE164("+14152222222")
+        builder.setSenderUuid(aliceAddress.uuid!.uuidString)
         let certificateData = try! builder.buildSerializedData()
 
         // byte[] certificateSignature = Curve.calculateSignature(serverKey.getPrivateKey(), certificateBytes);
@@ -162,68 +162,6 @@ class SMKSenderCertificateTest: XCTestCase {
                                                                                      validationTime: 31336))
             }
         }
-    }
-
-    func test_losslessRoundTrip() {
-        // To test a hypothetical addition of a new field:
-        //
-        // Step 1: tempororarily add a new field to the .proto.
-        //
-        //     index 537f8df..82e9263 100644
-        //     --- a/protobuf/OWSUnidentifiedDelivery.proto
-        //     +++ b/protobuf/OWSUnidentifiedDelivery.proto
-        //     @@ -40,6 +40,7 @@ message SenderCertificate {
-        //     optional bytes identityKey = 4;
-        //     // @required
-        //     optional ServerCertificate signer = 5;
-        //     +        optional string someFakeField = 999;
-        //     }
-        //
-        // Step 2: Serialize and print out the new fixture data (uncomment the following)
-        //
-        //     let serverKey = Curve25519.generateKeyPair()
-        //     let key = Curve25519.generateKeyPair()
-        //     let signer = try! getServerCertificate(serverKey: serverKey)
-        //     let builder = try! SMKProtoSenderCertificateCertificate.builder(sender: "+14152222222",
-        //                                                                     senderDevice: 1,
-        //                                                                     expires: 31337,
-        //                                                                     identityKey: key.ecPublicKey().serialized,
-        //                                                                     signer: signer)
-        //     builder.setSomeFakeField("crashing right down")
-        //
-        //     print("<SNIP>")
-        //     let serializedCertificateData = try! builder.buildSerializedData()
-        //     let certificateDataEncoded = serializedCertificateData.base64EncodedString()
-        //     print("let certificateDataEncoded = \"\(certificateDataEncoded)\"")
-        //
-        //     let certificateSignatureEncoded = try! Ed25519.sign(serializedCertificateData, with: serverKey).base64EncodedString()
-        //     print("let certificateSignatureEncoded = \"\(certificateSignatureEncoded)\"")
-        //
-        //     let trustRootPublicKeyDataEncoded = try! trustRoot.ecPublicKey().serialized.base64EncodedString()
-        //     print("let trustRootPublicKeyDataEncoded = \"\(trustRootPublicKeyDataEncoded)\"")
-        //     print("</SNIP>")
-
-        // Step 3: update the following *Encoded fixture data with the new values from above.
-        let certificateDataEncoded = "CgwrMTQxNTIyMjIyMjIQARlpegAAAAAAACIhBdyYGjVpE02g7CUlCvGNElHZNZmGy3Xhh5y+TuPh6dQIKmkKJQgBEiEFeszl2BGIxS95K+anx30GX6+Tgoqp70/aWKNEkH/5TGkSQPbz1mzKfidiWTuT8pRdnYYchEnL+ln5i/mVq5JP1MzzmqVnx8bzkFhfT4EGYSDY5rQoVfb5JnV0Kf3Aavdkd426PhNjcmFzaGluZyByaWdodCBkb3du"
-        let certificateSignatureEncoded = "Ii8DBO6yapzQwc0kJ6M5EhuFsgHccjlzFSJow408O1tceRVZiYGpR5MZO1SBgKHH2GEayiBNpvayFIL2i4POig=="
-        let trustRootPublicKeyDataEncoded = "BanGdQtiGO0KYbSu/rBz3MZvO+LGkjGVceXfmQV8eNwM"
-
-        let certificateData = Data(base64Encoded: certificateDataEncoded)!
-        let certificateSignature = Data(base64Encoded: certificateSignatureEncoded)!
-        let trustRootPublicKeyData = Data(base64Encoded: trustRootPublicKeyDataEncoded)!
-
-        // The rest of the test should be stable.
-        let senderCertificateData = try! SMKProtoSenderCertificate.builder(certificate: certificateData,
-                                                                           signature: certificateSignature)
-            .buildSerializedData()
-
-        let senderCertificate = try! SenderCertificate(senderCertificateData)
-
-        let stableTrustRoot = try! ECPublicKey(serializedKeyData: trustRootPublicKeyData)
-
-        let certificateValidator = SMKCertificateDefaultValidator(trustRoot: stableTrustRoot)
-        XCTAssertNoThrow(try certificateValidator.throwswrapped_validate(senderCertificate: senderCertificate,
-                                                                         validationTime: 31336))
     }
 
     // MARK: - Utils

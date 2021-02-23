@@ -6,6 +6,10 @@ import Foundation
 import SignalMetadataKit
 import SignalClient
 
+// Two manipulated-but-valid v1 UUIDs.
+let aliceAddress: SMKAddress = .uuid(UUID(uuidString: "aaaaaaaa-7000-11eb-b32a-33b8a8a487a6")!)
+let bobAddress: SMKAddress = .uuid(UUID(uuidString: "bbbbbbbb-7000-11eb-b32a-33b8a8a487a6")!)
+
 class MockCertificateValidator: NSObject, SMKCertificateValidator {
 
     public func throwswrapped_validate(senderCertificate: SenderCertificate, validationTime: UInt64) throws {

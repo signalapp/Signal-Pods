@@ -235,6 +235,12 @@ if [[ "$CONFIGURATION" == "Testable Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/CocoaLumberjack/CocoaLumberjack.framework"
   install_framework "${PODS_ROOT}/GRKOpenSSLFramework/OpenSSL-iOS/bin/openssl.framework"
 fi
+if [[ "$CONFIGURATION" == "Release" ]]; then
+  install_framework "${BUILT_PRODUCTS_DIR}/SignalClient/SignalClient.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/SignalCoreKit/SignalCoreKit.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/CocoaLumberjack/CocoaLumberjack.framework"
+  install_framework "${PODS_ROOT}/GRKOpenSSLFramework/OpenSSL-iOS/bin/openssl.framework"
+fi
 if [ "${COCOAPODS_PARALLEL_CODE_SIGN}" == "true" ]; then
   wait
 fi

@@ -213,32 +213,27 @@ fi
 
 if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/SignalCoreKit/SignalCoreKit.framework"
-  install_framework "${PODS_ROOT}/CocoaLumberjack/CocoaLumberjack.framework"
-  install_dsym "${PODS_ROOT}/CocoaLumberjack/CocoaLumberjack.framework.dSYM"
+  install_framework "${BUILT_PRODUCTS_DIR}/CocoaLumberjack/CocoaLumberjack.framework"
   install_framework "${PODS_ROOT}/GRKOpenSSLFramework/OpenSSL-iOS/bin/openssl.framework"
 fi
 if [[ "$CONFIGURATION" == "App Store Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/SignalCoreKit/SignalCoreKit.framework"
-  install_framework "${PODS_ROOT}/CocoaLumberjack/CocoaLumberjack.framework"
-  install_dsym "${PODS_ROOT}/CocoaLumberjack/CocoaLumberjack.framework.dSYM"
+  install_framework "${BUILT_PRODUCTS_DIR}/CocoaLumberjack/CocoaLumberjack.framework"
   install_framework "${PODS_ROOT}/GRKOpenSSLFramework/OpenSSL-iOS/bin/openssl.framework"
 fi
 if [[ "$CONFIGURATION" == "Profiling" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/SignalCoreKit/SignalCoreKit.framework"
-  install_framework "${PODS_ROOT}/CocoaLumberjack/CocoaLumberjack.framework"
-  install_dsym "${PODS_ROOT}/CocoaLumberjack/CocoaLumberjack.framework.dSYM"
+  install_framework "${BUILT_PRODUCTS_DIR}/CocoaLumberjack/CocoaLumberjack.framework"
   install_framework "${PODS_ROOT}/GRKOpenSSLFramework/OpenSSL-iOS/bin/openssl.framework"
 fi
 if [[ "$CONFIGURATION" == "Testable Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/SignalCoreKit/SignalCoreKit.framework"
-  install_framework "${PODS_ROOT}/CocoaLumberjack/CocoaLumberjack.framework"
-  install_dsym "${PODS_ROOT}/CocoaLumberjack/CocoaLumberjack.framework.dSYM"
+  install_framework "${BUILT_PRODUCTS_DIR}/CocoaLumberjack/CocoaLumberjack.framework"
   install_framework "${PODS_ROOT}/GRKOpenSSLFramework/OpenSSL-iOS/bin/openssl.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/SignalCoreKit/SignalCoreKit.framework"
-  install_framework "${PODS_ROOT}/CocoaLumberjack/CocoaLumberjack.framework"
-  install_dsym "${PODS_ROOT}/CocoaLumberjack/CocoaLumberjack.framework.dSYM"
+  install_framework "${BUILT_PRODUCTS_DIR}/CocoaLumberjack/CocoaLumberjack.framework"
   install_framework "${PODS_ROOT}/GRKOpenSSLFramework/OpenSSL-iOS/bin/openssl.framework"
 fi
 if [ "${COCOAPODS_PARALLEL_CODE_SIGN}" == "true" ]; then

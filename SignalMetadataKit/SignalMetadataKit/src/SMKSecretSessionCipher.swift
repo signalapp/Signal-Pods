@@ -135,13 +135,13 @@ fileprivate extension ProtocolAddress {
     }
 
     convenience init(from senderAddress: SealedSenderAddress) throws {
-        try self.init(name: senderAddress.uuidString ?? senderAddress.e164!, deviceId: senderAddress.deviceId)
+        try self.init(name: senderAddress.uuidString, deviceId: senderAddress.deviceId)
     }
 }
 
 fileprivate extension SMKAddress {
     init(_ address: SealedSenderAddress) {
-        try! self.init(uuid: address.uuidString.flatMap(UUID.init(uuidString:)), e164: address.e164)
+        try! self.init(uuid: UUID(uuidString: address.uuidString), e164: address.e164)
     }
 }
 

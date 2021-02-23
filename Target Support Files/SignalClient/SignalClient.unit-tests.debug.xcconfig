@@ -4,13 +4,10 @@ ARCHS[sdk=iphonesimulator*] = x86_64
 CARGO_BUILD_TARGET[sdk=iphoneos*] = aarch64-apple-ios
 CARGO_BUILD_TARGET[sdk=iphonesimulator*] = x86_64-apple-ios
 CARGO_BUILD_TARGET[sdk=macosx*] = x86_64-apple-darwin
-CARGO_BUILD_TARGET_DIR = $(DERIVED_FILE_DIR)/libsignal-ffi
-CARGO_PROFILE_RELEASE_DEBUG = 1
 FRAMEWORK_SEARCH_PATHS = $(inherited) "${PODS_CONFIGURATION_BUILD_DIR}/CocoaLumberjack" "${PODS_CONFIGURATION_BUILD_DIR}/SignalClient" "${PODS_CONFIGURATION_BUILD_DIR}/SignalCoreKit" "${PODS_ROOT}/GRKOpenSSLFramework/OpenSSL-iOS/bin"
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1
 HEADER_SEARCH_PATHS = $(inherited) $(PODS_TARGET_SRCROOT)/swift/Sources/SignalFfi
 LD_RUNPATH_SEARCH_PATHS = $(inherited) '@executable_path/Frameworks' '@loader_path/Frameworks'
-LIBSIGNAL_FFI_DIR = $(CARGO_BUILD_TARGET_DIR)/$(CARGO_BUILD_TARGET)/release
 LIBSIGNAL_FFI_LIB_IF_NEEDED =
 OTHER_LDFLAGS = $(LIBSIGNAL_FFI_LIB_IF_NEEDED) $(inherited) -ObjC -framework "CocoaLumberjack" -framework "SignalClient" -framework "SignalCoreKit" -framework "openssl"
 OTHER_SWIFT_FLAGS = $(inherited) -D COCOAPODS

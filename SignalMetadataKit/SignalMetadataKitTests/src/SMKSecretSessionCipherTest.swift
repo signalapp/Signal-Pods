@@ -16,8 +16,8 @@ class SMKSecretSessionCipherTest: XCTestCase {
         // TestInMemorySignalProtocolStore aliceStore = new TestInMemorySignalProtocolStore();
         // TestInMemorySignalProtocolStore bobStore   = new TestInMemorySignalProtocolStore();
         // NOTE: We use MockClient to ensure consistency between of our session state.
-        let aliceMockClient = MockClient(address: .e164("+14159999999"), deviceId: 1, registrationId: 1234)
-        let bobMockClient = MockClient(address: .e164("+14158888888"), deviceId: 1, registrationId: 1235)
+        let aliceMockClient = MockClient(address: aliceAddress, deviceId: 1, registrationId: 1234)
+        let bobMockClient = MockClient(address: bobAddress, deviceId: 1, registrationId: 1235)
 
         // initializeSessions(aliceStore, bobStore);
         initializeSessions(aliceMockClient: aliceMockClient, bobMockClient: bobMockClient)
@@ -71,8 +71,8 @@ class SMKSecretSessionCipherTest: XCTestCase {
         // TestInMemorySignalProtocolStore aliceStore = new TestInMemorySignalProtocolStore();
         // TestInMemorySignalProtocolStore bobStore   = new TestInMemorySignalProtocolStore();
         // NOTE: We use MockClient to ensure consistency between of our session state.
-        let aliceMockClient = MockClient(address: .e164("+14159999999"), deviceId: 1, registrationId: 1234)
-        let bobMockClient = MockClient(address: .e164("+14158888888"), deviceId: 1, registrationId: 1235)
+        let aliceMockClient = MockClient(address: aliceAddress, deviceId: 1, registrationId: 1234)
+        let bobMockClient = MockClient(address: bobAddress, deviceId: 1, registrationId: 1235)
 
         // initializeSessions(aliceStore, bobStore);
         initializeSessions(aliceMockClient: aliceMockClient, bobMockClient: bobMockClient)
@@ -133,8 +133,8 @@ class SMKSecretSessionCipherTest: XCTestCase {
         // TestInMemorySignalProtocolStore aliceStore = new TestInMemorySignalProtocolStore();
         // TestInMemorySignalProtocolStore bobStore   = new TestInMemorySignalProtocolStore();
         // NOTE: We use MockClient to ensure consistency between of our session state.
-        let aliceMockClient = MockClient(address: .e164("+14159999999"), deviceId: 1, registrationId: 1234)
-        let bobMockClient = MockClient(address: .e164("+14158888888"), deviceId: 1, registrationId: 1235)
+        let aliceMockClient = MockClient(address: aliceAddress, deviceId: 1, registrationId: 1234)
+        let bobMockClient = MockClient(address: bobAddress, deviceId: 1, registrationId: 1235)
 
         // initializeSessions(aliceStore, bobStore);
         initializeSessions(aliceMockClient: aliceMockClient, bobMockClient: bobMockClient)
@@ -194,8 +194,8 @@ class SMKSecretSessionCipherTest: XCTestCase {
         // TestInMemorySignalProtocolStore aliceStore = new TestInMemorySignalProtocolStore();
         // TestInMemorySignalProtocolStore bobStore   = new TestInMemorySignalProtocolStore();
         // NOTE: We use MockClient to ensure consistency between of our session state.
-        let aliceMockClient = MockClient(address: .e164("+14159999999"), deviceId: 1, registrationId: 1234)
-        let bobMockClient = MockClient(address: .e164("+14158888888"), deviceId: 1, registrationId: 1235)
+        let aliceMockClient = MockClient(address: aliceAddress, deviceId: 1, registrationId: 1234)
+        let bobMockClient = MockClient(address: bobAddress, deviceId: 1, registrationId: 1235)
 
         // initializeSessions(aliceStore, bobStore);
         initializeSessions(aliceMockClient: aliceMockClient,
@@ -266,7 +266,7 @@ class SMKSecretSessionCipherTest: XCTestCase {
                                                        publicKey: serverKey.publicKey,
                                                        trustRoot: trustRoot.privateKey)
         return try! SenderCertificate(sender: SealedSenderAddress(e164: senderAddress.e164,
-                                                                  uuidString: senderAddress.uuid?.uuidString,
+                                                                  uuidString: senderAddress.uuid!.uuidString,
                                                                   deviceId: senderDeviceId),
                                       publicKey: identityKey,
                                       expiration: expirationTimestamp,
