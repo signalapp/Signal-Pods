@@ -20,6 +20,15 @@ PODS:
     - SwiftProtobuf
   - blurhash (0.0.1)
   - BonMot (5.6.0)
+  - CGRPCZlib (1.0.0-alpha.22)
+  - CNIOAtomics (2.26.0)
+  - CNIOBoringSSL (2.10.3)
+  - CNIOBoringSSLShims (2.10.3):
+    - CNIOBoringSSL (= 2.10.3)
+  - CNIODarwin (2.26.0)
+  - CNIOHTTPParser (2.26.0)
+  - CNIOLinux (2.26.0)
+  - CNIOWindows (2.26.0)
   - CocoaLumberjack (3.7.0):
     - CocoaLumberjack/Core (= 3.7.0)
   - CocoaLumberjack/Core (3.7.0)
@@ -34,12 +43,24 @@ PODS:
   - GRDB.swift/SQLCipher (4.3.0):
     - SQLCipher (>= 3.4.0)
   - GRKOpenSSLFramework (1.0.2.19)
+  - gRPC-Swift (1.0.0-alpha.22):
+    - CGRPCZlib (= 1.0.0-alpha.22)
+    - Logging (< 2, >= 1.4.0)
+    - SwiftNIO (< 3, >= 2.25.0)
+    - SwiftNIOExtras (< 2, >= 1.7.0)
+    - SwiftNIOHTTP2 (< 2, >= 1.16.2)
+    - SwiftNIOSSL (< 3, >= 2.10.1)
+    - SwiftNIOTransportServices (< 2, >= 1.9.1)
+    - SwiftProtobuf (< 2, >= 1.14.0)
   - HKDFKit (0.0.4):
     - CocoaLumberjack
     - SignalCoreKit
   - HKDFKit/Tests (0.0.4):
     - CocoaLumberjack
     - SignalCoreKit
+  - LibMobileCoin (0.13.0):
+    - gRPC-Swift (= 1.0.0-alpha.22)
+    - SwiftProtobuf (~> 1.5)
   - libPhoneNumber-iOS (0.9.15)
   - libwebp (1.0.2):
     - libwebp/core (= 1.0.2)
@@ -65,10 +86,20 @@ PODS:
   - libwebp/utils (1.0.2):
     - libwebp/core
   - libwebp/webp (1.0.2)
+  - Logging (1.4.0)
   - lottie-ios (3.1.3)
   - Mantle (2.1.0):
     - Mantle/extobjc (= 2.1.0)
   - Mantle/extobjc (2.1.0)
+  - MobileCoin (0.13.1):
+    - MobileCoin/Core (= 0.13.1)
+  - MobileCoin/Core (0.13.1):
+    - gRPC-Swift (~> 1.0.0-alpha.22)
+    - LibMobileCoin (~> 0.13.0)
+    - SwiftNIO (~> 2.25)
+    - SwiftNIOHPACK (~> 1.16)
+    - SwiftNIOHTTP1 (~> 2.18)
+    - SwiftProtobuf (~> 1.14)
   - PromiseKit (6.13.1):
     - PromiseKit/CorePromise (= 6.13.1)
     - PromiseKit/Foundation (= 6.13.1)
@@ -167,7 +198,45 @@ PODS:
     - SQLCipher/common
   - SSZipArchive (2.1.4)
   - Starscream (3.0.6)
-  - SwiftProtobuf (1.7.0)
+  - SwiftNIO (2.26.0):
+    - CNIODarwin (= 2.26.0)
+    - CNIOLinux (= 2.26.0)
+    - CNIOWindows (= 2.26.0)
+    - SwiftNIOConcurrencyHelpers (= 2.26.0)
+  - SwiftNIOConcurrencyHelpers (2.26.0):
+    - CNIOAtomics (= 2.26.0)
+  - SwiftNIOExtras (1.8.0):
+    - SwiftNIO (< 3, >= 2.9.0)
+  - SwiftNIOFoundationCompat (2.26.0):
+    - SwiftNIO (= 2.26.0)
+  - SwiftNIOHPACK (1.16.3):
+    - SwiftNIO (< 3, >= 2.18.0)
+    - SwiftNIOConcurrencyHelpers (< 3, >= 2.18.0)
+    - SwiftNIOHTTP1 (< 3, >= 2.18.0)
+  - SwiftNIOHTTP1 (2.26.0):
+    - CNIOHTTPParser (= 2.26.0)
+    - SwiftNIO (= 2.26.0)
+    - SwiftNIOConcurrencyHelpers (= 2.26.0)
+  - SwiftNIOHTTP2 (1.16.3):
+    - SwiftNIO (< 3, >= 2.18.0)
+    - SwiftNIOConcurrencyHelpers (< 3, >= 2.18.0)
+    - SwiftNIOHPACK (= 1.16.3)
+    - SwiftNIOHTTP1 (< 3, >= 2.18.0)
+    - SwiftNIOTLS (< 3, >= 2.18.0)
+  - SwiftNIOSSL (2.10.3):
+    - CNIOBoringSSL (= 2.10.3)
+    - CNIOBoringSSLShims (= 2.10.3)
+    - SwiftNIO (< 3, >= 2.15.0)
+    - SwiftNIOConcurrencyHelpers (< 3, >= 2.15.0)
+    - SwiftNIOTLS (< 3, >= 2.15.0)
+  - SwiftNIOTLS (2.26.0):
+    - SwiftNIO (= 2.26.0)
+  - SwiftNIOTransportServices (1.9.2):
+    - SwiftNIO (< 3, >= 2.19.0)
+    - SwiftNIOConcurrencyHelpers (< 3, >= 2.19.0)
+    - SwiftNIOFoundationCompat (< 3, >= 2.19.0)
+    - SwiftNIOTLS (< 3, >= 2.19.0)
+  - SwiftProtobuf (1.15.0)
   - YapDatabase/SQLCipher (3.1.1):
     - YapDatabase/SQLCipher/Core (= 3.1.1)
     - YapDatabase/SQLCipher/Extensions (= 3.1.1)
@@ -256,6 +325,7 @@ DEPENDENCIES:
   - libPhoneNumber-iOS (from `https://github.com/signalapp/libPhoneNumber-iOS`, branch `signal-master`)
   - lottie-ios
   - Mantle (from `https://github.com/signalapp/Mantle`, branch `signal-master`)
+  - MobileCoin (from `https://github.com/mobilecoinofficial/MobileCoin-Swift.git`)
   - PromiseKit
   - PureLayout
   - Reachability
@@ -273,7 +343,7 @@ DEPENDENCIES:
   - SQLCipher (>= 4.0.1)
   - SSZipArchive
   - Starscream (from `https://github.com/signalapp/Starscream.git`, branch `signal-release`)
-  - SwiftProtobuf (= 1.7.0)
+  - SwiftProtobuf (>= 1.14.0)
   - YapDatabase/SQLCipher (from `https://github.com/signalapp/YapDatabase.git`, branch `signal-release`)
   - YYImage (from `https://github.com/signalapp/YYImage`)
   - ZKGroup (from `https://github.com/signalapp/signal-zkgroup-swift`)
@@ -281,12 +351,24 @@ DEPENDENCIES:
   - ZXingObjC (from `https://github.com/zxingify/zxingify-objc.git`)
 
 SPEC REPOS:
+  "git@github.com:mobilecoinofficial/CocoaPods-Specs.git":
+    - LibMobileCoin
   trunk:
     - AFNetworking
     - BonMot
+    - CGRPCZlib
+    - CNIOAtomics
+    - CNIOBoringSSL
+    - CNIOBoringSSLShims
+    - CNIODarwin
+    - CNIOHTTPParser
+    - CNIOLinux
+    - CNIOWindows
     - CocoaLumberjack
     - GRDB.swift
+    - gRPC-Swift
     - libwebp
+    - Logging
     - lottie-ios
     - PromiseKit
     - PureLayout
@@ -294,6 +376,16 @@ SPEC REPOS:
     - SAMKeychain
     - SQLCipher
     - SSZipArchive
+    - SwiftNIO
+    - SwiftNIOConcurrencyHelpers
+    - SwiftNIOExtras
+    - SwiftNIOFoundationCompat
+    - SwiftNIOHPACK
+    - SwiftNIOHTTP1
+    - SwiftNIOHTTP2
+    - SwiftNIOSSL
+    - SwiftNIOTLS
+    - SwiftNIOTransportServices
     - SwiftProtobuf
 
 EXTERNAL SOURCES:
@@ -317,6 +409,8 @@ EXTERNAL SOURCES:
   Mantle:
     :branch: signal-master
     :git: https://github.com/signalapp/Mantle
+  MobileCoin:
+    :git: https://github.com/mobilecoinofficial/MobileCoin-Swift.git
   SignalArgon2:
     :git: https://github.com/signalapp/Argon2.git
     :submodules: true
@@ -366,6 +460,9 @@ CHECKOUT OPTIONS:
   Mantle:
     :commit: e7e46253bb01ce39525d90aa69ed9e85e758bfc4
     :git: https://github.com/signalapp/Mantle
+  MobileCoin:
+    :commit: 5bffb24163f35907d27c3e18411a868ec648b447
+    :git: https://github.com/mobilecoinofficial/MobileCoin-Swift.git
   SignalArgon2:
     :commit: 6a37e32167500ff7830e337b726a1653061d86b2
     :git: https://github.com/signalapp/Argon2.git
@@ -400,15 +497,27 @@ SPEC CHECKSUMS:
   AxolotlKit: ac03e4d79486b62d08282c840da410116227683e
   blurhash: 4b3b2b8909cf41ab59fa349788654b8387284ff4
   BonMot: 2217a66e5ddc6a8d2ffb759fe8c85a8528e0d3e7
+  CGRPCZlib: 3c82c26bd3074702270db462bcc8fb6289e5f084
+  CNIOAtomics: 7599e2500f637f1e043047da52efd710d6020dd3
+  CNIOBoringSSL: 8e20acf863216a6d7b75a56fe0567a36147d8ee0
+  CNIOBoringSSLShims: 72cc9d43e6f5d8a137a2699eb08a0c67865c9797
+  CNIODarwin: 68f6ff440e989ef43ca6eb3335f3e5484066fab7
+  CNIOHTTPParser: 26678afdbc27f24d1a3498bf87413bfc3391fbc5
+  CNIOLinux: 5fd92122d58b04508074371d95a1f874310fe8e3
+  CNIOWindows: 0af55cf84c3811318aee91888737e0b124552029
   CocoaLumberjack: e8955b9d337ac307103b0a34fd141c32f27e53c5
   Curve25519Kit: 4b6cddbe2d44be0ccb37e15ba719a145edab8aff
   GRDB.swift: 083ec261ce573888d8ed2eae1b49bc0bf40d9e2c
   GRKOpenSSLFramework: 4abc733a8fcbc37060619a86a54202d2938dd70e
+  gRPC-Swift: 15ab59465752e71c4adc3455c700da998dc2fd92
   HKDFKit: bd6b9566654253aa45ef60a205979ec291f00641
+  LibMobileCoin: a76a6e3822fb0eec9e1ac0bb6773a44d0768caed
   libPhoneNumber-iOS: 0a32a9525cf8744fe02c5206eb30d571e38f7d75
   libwebp: b068a3bd7c45f7460f6715be7bed1a18fd5d6b48
+  Logging: beeb016c9c80cf77042d62e83495816847ef108b
   lottie-ios: 496ac5cea1bbf1a7bd1f1f472f3232eb1b8d744b
   Mantle: 2fa750afa478cd625a94230fbf1c13462f29395b
+  MobileCoin: 275a158c0370654fb31a56dcfe351d7486058d96
   PromiseKit: 28fda91c973cc377875d8c0ea4f973013c05b6db
   PureLayout: f08c01b8dec00bb14a1fefa3de4c7d9c265df85e
   Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
@@ -422,12 +531,22 @@ SPEC CHECKSUMS:
   SQLCipher: d305a7bd9af4b64f095c79bdc1a1fa50f2a15116
   SSZipArchive: 41455d4b8d2b6ab93990820b50dc697c2554a322
   Starscream: 8aaf1a7feb805c816d0e7d3190ef23856f6665b9
-  SwiftProtobuf: 4fd9645e69b72cbae6ec8da5be0cdd20ca6565dd
+  SwiftNIO: 1f309539cfe7ed42648f505a48c546e83a2f66c3
+  SwiftNIOConcurrencyHelpers: ebbceb814afcd8b4fab86935855f6c8c77ae4285
+  SwiftNIOExtras: aa561b71020cd6844f722cf4513fb176c577414d
+  SwiftNIOFoundationCompat: 6869943bce8c6b777114d840f7d795178a7391ae
+  SwiftNIOHPACK: 38e855a72ae0c5176485ddd039b3933b99daa2b7
+  SwiftNIOHTTP1: 7f7aa111d51d09a97ef1fddb50855074e5e42778
+  SwiftNIOHTTP2: de7eff9d32fd347338f85b86c6fd0e13c3fbd1a0
+  SwiftNIOSSL: ac6e05adff65df9a3b518bbd27ff1f152fa82999
+  SwiftNIOTLS: 0faded6aff802c423ddee27828850a8ea4a818d0
+  SwiftNIOTransportServices: 896c9a4ac98698d32aa2feea7657ade219ae80bb
+  SwiftProtobuf: 3320217e9d8fb75f36b40282e78c482640fd75dd
   YapDatabase: b418a4baa6906e8028748938f9159807fd039af4
   YYImage: 6db68da66f20d9f169ceb94dfb9947c3867b9665
   ZKGroup: 15a08eed5870a44b9dd14af0824ac95f6eed7380
   ZXingObjC: fdbb269f25dd2032da343e06f10224d62f537bdb
 
-PODFILE CHECKSUM: 70ac5af4c2290ee2d38793a59f26395582cd0bd8
+PODFILE CHECKSUM: d72e76b884a5f97c0018b495ae6b998a39189931
 
 COCOAPODS: 1.9.2
