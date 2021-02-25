@@ -49,6 +49,7 @@
 #import "OWSSyncKeysMessage.h"
 #import "OWSSyncMessageRequestResponseMessage.h"
 #import "OWSSyncRequestMessage.h"
+#import "PaymentsSyncMessage.h"
 #import "OWSContact+Private.h"
 #import "OWSContact.h"
 #import "OWSDisappearingConfigurationUpdateInfoMessage.h"
