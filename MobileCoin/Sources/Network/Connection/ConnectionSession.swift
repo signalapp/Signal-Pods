@@ -12,7 +12,7 @@ class ConnectionSession {
         guard let cookieStorage = URLSessionConfiguration.ephemeral.httpCookieStorage else {
             // Safety: URLSessionConfiguration.ephemeral.httpCookieStorage will always return
             // non-nil.
-            fatalError("URLSessionConfiguration.ephemeral.httpCookieStorage returned nil.")
+            logger.fatalError("URLSessionConfiguration.ephemeral.httpCookieStorage returned nil.")
         }
         return cookieStorage
     }

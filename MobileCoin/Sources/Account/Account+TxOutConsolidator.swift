@@ -18,7 +18,7 @@ extension Account {
             self.account = account
         }
 
-        func consolidateTxOuts(completion: @escaping (Result<(), Error>) -> Void) {
+        func consolidateTxOuts(completion: @escaping (Result<(), ConnectionError>) -> Void) {
             // TODO: Unimplemented
             serialQueue.async {
                 completion(.success(()))

@@ -2,6 +2,8 @@
 //  Copyright (c) 2020 MobileCoin. All rights reserved.
 //
 
+// swiftlint:disable multiline_function_chains
+
 import Foundation
 import LibMobileCoin
 
@@ -16,15 +18,14 @@ final class FogViewKeyScanner {
 
     func viewKeyScanBlocks(
         blockRanges: [Range<UInt64>],
-        completion: @escaping (Result<[KnownTxOut], Error>) -> Void
+        completion: @escaping (Result<[KnownTxOut], ConnectionError>) -> Void
     ) {
         print("view key scanning blocks: " +
-            "\(blockRanges.map { "[\($0.lowerBound), \($0.upperBound))" }.joined(separator: ", "))")
+            blockRanges.map { "[\($0.lowerBound), \($0.upperBound))" }.joined(separator: ", "))
         fetchBlocksTxOuts(ranges: blockRanges) {
             completion($0.map { blocksTxOuts in
-                print(
-                    "Scanning \(blockRanges.map { $0.upperBound - $0.lowerBound }.reduce(0, +)) " +
-                    "missed blocks containing \(blocksTxOuts.count) TxOuts")
+                print("Scanning \(blockRanges.map { $0.count }.reduce(0, +)) missed blocks " +
+                    "containing \(blocksTxOuts.count) TxOuts")
                 let foundTxOuts = blocksTxOuts.compactMap {
                     KnownTxOut($0, accountKey: self.accountKey)
                 }
@@ -36,26 +37,26 @@ final class FogViewKeyScanner {
 
     func fetchBlocksTxOuts(
         ranges: [Range<UInt64>],
-        completion: @escaping (Result<[LedgerTxOut], Error>) -> Void
+        completion: @escaping (Result<[LedgerTxOut], ConnectionError>) -> Void
     ) {
         var request = FogLedger_BlockRequest()
         request.rangeValues = ranges
         fogBlockService.getBlocks(request: request) {
             completion($0.flatMap { response in
-                try response.blocks.flatMap { responseBlock -> [LedgerTxOut] in
-                    let block = BlockMetadata(index: responseBlock.index, timestampStatus: nil)
+                response.blocks.flatMap { responseBlock -> [Result<LedgerTxOut, ConnectionError>] in
                     let globalIndexStart =
                         responseBlock.globalTxoCount - UInt64(responseBlock.outputs.count)
-                    return try responseBlock.outputs.enumerated().map { outputIndex, output in
+                    return responseBlock.outputs.enumerated().map { outputIndex, output in
                         guard let partialTxOut = PartialTxOut(output) else {
-                            throw InternalError("")
+                            return .failure(.invalidServerResponse(
+                                "Fog Block service returned invalid output: \(output)"))
                         }
-                        return LedgerTxOut(
+                        return .success(LedgerTxOut(
                             partialTxOut,
                             globalIndex: globalIndexStart + UInt64(outputIndex),
-                            block: block)
+                            block: responseBlock.metadata))
                     }
-                }
+                }.collectResult()
             })
         }
     }

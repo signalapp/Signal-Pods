@@ -23,8 +23,9 @@ extension TxOutMembershipProof {
         do {
             serializedData = try txOutMembershipProof.serializedData()
         } catch {
-            // Safety: Protobuf binary serialization is no fail when not using proto2 or `Any`
-            fatalError("Error: \(Self.self).\(#function): Protobuf serialization failed: \(error)")
+            // Safety: Protobuf binary serialization is no fail when not using proto2 or `Any`.
+            logger.fatalError(
+                "Error: \(Self.self).\(#function): Protobuf serialization failed: \(error)")
         }
         self.init(serializedData: serializedData)
     }

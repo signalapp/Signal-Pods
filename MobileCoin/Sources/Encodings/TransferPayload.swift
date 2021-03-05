@@ -10,16 +10,10 @@ public struct TransferPayload {
     let txOutPublicKey: RistrettoPublic
     public let memo: String?
 
-    init(rootEntropy: Data32, txOutPublicKey: RistrettoPublic, memo: String? = nil) throws {
+    init(rootEntropy: Data32, txOutPublicKey: RistrettoPublic, memo: String? = nil) {
         self.rootEntropy32 = rootEntropy
         self.txOutPublicKey = txOutPublicKey
-
-        if let memo = memo {
-            guard !memo.isEmpty else {
-                throw MalformedInput("\(Self.self).\(#function): memo must not be empty")
-            }
-        }
-        self.memo = memo
+        self.memo = memo?.isEmpty == false ? memo : nil
     }
 
     public var rootEntropy: Data {

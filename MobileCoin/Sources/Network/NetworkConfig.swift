@@ -7,6 +7,25 @@
 import Foundation
 
 struct NetworkConfig {
+    static func make(
+        consensusUrl: String,
+        fogViewUrl: String,
+        fogLedgerUrl: String,
+        attestationConfig: AttestationConfig = .devMrSigner
+    ) -> Result<NetworkConfig, InvalidInputError> {
+        ConsensusUrl.make(string: consensusUrl).flatMap { consensusUrl in
+            FogViewUrl.make(string: fogViewUrl).flatMap { fogViewUrl in
+                FogLedgerUrl.make(string: fogLedgerUrl).map { fogLedgerUrl in
+                    NetworkConfig(
+                        consensusUrl: consensusUrl,
+                        fogViewUrl: fogViewUrl,
+                        fogLedgerUrl: fogLedgerUrl,
+                        attestation: attestationConfig)
+                }
+            }
+        }
+    }
+
     let consensusUrl: ConsensusUrl
     let fogViewUrl: FogViewUrl
     let fogKeyImageUrl: FogLedgerUrl
@@ -15,19 +34,6 @@ struct NetworkConfig {
     let fogUntrustedTxOutUrl: FogLedgerUrl
 
     private let attestationConfig: AttestationConfig
-
-    init(
-        consensusUrl: String,
-        fogViewUrl: String,
-        fogLedgerUrl: String,
-        attestationConfig: AttestationConfig = .devMrSigner
-    ) throws {
-        self.init(
-            consensusUrl: try ConsensusUrl(string: consensusUrl),
-            fogViewUrl: try FogViewUrl(string: fogViewUrl),
-            fogLedgerUrl: try FogLedgerUrl(string: fogLedgerUrl),
-            attestation: attestationConfig)
-    }
 
     init(
         consensusUrl: ConsensusUrl,
@@ -48,7 +54,7 @@ struct NetworkConfig {
     var fogViewAttestation: Attestation { attestationConfig.fogView }
     var fogKeyImageAttestation: Attestation { attestationConfig.fogKeyImage }
     var fogMerkleProofAttestation: Attestation { attestationConfig.fogMerkleProof }
-    var fogIngestAttestation: Attestation { attestationConfig.fogIngest }
+    var fogReportAttestation: Attestation { attestationConfig.fogReport }
 }
 
 extension NetworkConfig {
@@ -78,15 +84,15 @@ extension NetworkConfig {
                         productId: McConstants.FOG_LEDGER_PRODUCT_ID,
                         minimumSecurityVersion: McConstants.CONSENSUS_SECURITY_VERSION,
                         allowedHardeningAdvisories: ["INTEL-SA-00334"]).get()),
-                    fogIngest: try Attestation(Attestation.MrSigner.make(
-                        mrSigner: McConstants.DEV_FOG_INGEST_MRSIGNER,
-                        productId: McConstants.FOG_INGEST_PRODUCT_ID,
+                    fogReport: try Attestation(Attestation.MrSigner.make(
+                        mrSigner: McConstants.DEV_FOG_REPORT_MRSIGNER,
+                        productId: McConstants.FOG_REPORT_PRODUCT_ID,
                         minimumSecurityVersion: McConstants.CONSENSUS_SECURITY_VERSION,
                         allowedHardeningAdvisories: ["INTEL-SA-00334"]).get()))
             } catch {
                 // Safety: MrSigner is guaranteed to be 32 bytes in length, so Attestation.init
                 // should never fail.
-                fatalError("\(Self.self).\(#function): invalid configuration: \(error)")
+                logger.fatalError("\(Self.self).\(#function): invalid configuration: \(error)")
             }
         }
 
@@ -115,15 +121,15 @@ extension NetworkConfig {
                         productId: McConstants.FOG_LEDGER_PRODUCT_ID,
                         minimumSecurityVersion: McConstants.FOG_LEDGER_SECURITY_VERSION,
                         allowedHardeningAdvisories: ["INTEL-SA-00334"]).get()),
-                    fogIngest: try Attestation(Attestation.MrSigner.make(
-                        mrSigner: McConstants.DEV_FOG_INGEST_MRSIGNER,
-                        productId: McConstants.FOG_INGEST_PRODUCT_ID,
-                        minimumSecurityVersion: McConstants.FOG_INGEST_SECURITY_VERSION,
+                    fogReport: try Attestation(Attestation.MrSigner.make(
+                        mrSigner: McConstants.DEV_FOG_REPORT_MRSIGNER,
+                        productId: McConstants.FOG_REPORT_PRODUCT_ID,
+                        minimumSecurityVersion: McConstants.FOG_REPORT_SECURITY_VERSION,
                         allowedHardeningAdvisories: ["INTEL-SA-00334"]).get()))
             } catch {
                 // Safety: MrSigner is guaranteed to be 32 bytes in length, so Attestation.init
                 // should never fail.
-                fatalError("\(Self.self).\(#function): invalid configuration: \(error)")
+                logger.fatalError("\(Self.self).\(#function): invalid configuration: \(error)")
             }
         }
 
@@ -131,6 +137,6 @@ extension NetworkConfig {
         let fogView: Attestation
         let fogKeyImage: Attestation
         let fogMerkleProof: Attestation
-        let fogIngest: Attestation
+        let fogReport: Attestation
     }
 }

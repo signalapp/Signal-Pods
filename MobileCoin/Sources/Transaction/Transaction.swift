@@ -2,17 +2,13 @@
 //  Copyright (c) 2020 MobileCoin. All rights reserved.
 //
 
-// swiftlint:disable todo
-
 import Foundation
 import LibMobileCoin
 
-enum TransactionBuilderError: Error {
-    // TODO: Enumerate errors
-}
-
 public struct Transaction {
     fileprivate let proto: External_Tx
+    let inputKeyImagesTyped: Set<KeyImage>
+    let outputs: Set<TxOut>
 
     /// - Returns: `nil` when the input is not deserializable.
     public init?(serializedData: Data) {
@@ -27,17 +23,17 @@ public struct Transaction {
             return try proto.serializedData()
         } catch {
             // Safety: Protobuf binary serialization is no fail when not using proto2 or `Any`
-            fatalError("Error: \(Self.self).\(#function): Protobuf serialization failed: \(error)")
+            logger.fatalError(
+                "Error: \(Self.self).\(#function): Protobuf serialization failed: \(error)")
         }
     }
 
-    var inputKeyImagesTyped: Set<KeyImage> {
-        Set(proto.signature.ringSignatures.map {
-            guard let keyImage = KeyImage($0.keyImage) else {
-                fatalError("\(Self.self).\(#function): serialization failure")
-            }
-            return keyImage
-        })
+    var anyInputKeyImage: KeyImage {
+        guard let inputKeyImage = inputKeyImagesTyped.first else {
+            // Safety: Transaction is guaranteed to have at least 1 input.
+            logger.fatalError("Error: \(Self.self).\(#function): Transaction contains 0 inputs.")
+        }
+        return inputKeyImage
     }
 
     /// Key images of the `TxOut`'s being spent as the inputs to this `Transaction`.
@@ -45,21 +41,12 @@ public struct Transaction {
         Set(inputKeyImagesTyped.map { $0.data })
     }
 
-    var outputs: Set<TxOut> {
-        Set(proto.prefix.outputs.map {
-            let txOutData: Data
-            do {
-                txOutData = try $0.serializedData()
-            } catch {
-                // Safety: Protobuf binary serialization is no fail when not using proto2 or `Any`
-                fatalError(
-                    "Error: \(Self.self).\(#function): Protobuf serialization failed: \(error)")
-            }
-            guard let txOut = TxOut(serializedData: txOutData) else {
-                fatalError("\(Self.self).\(#function): serialization failure")
-            }
-            return txOut
-        })
+    var anyOutput: TxOut {
+        guard let output = outputs.first else {
+            // Safety: Transaction is guaranteed to have at least 1 output.
+            logger.fatalError("Error: \(Self.self).\(#function): Transaction contains 0 outputs.")
+        }
+        return output
     }
 
     /// Public keys of the `TxOut`'s being created as the outputs from this `Transaction`.
@@ -100,7 +87,30 @@ extension Transaction: Hashable {}
 
 extension Transaction {
     init?(_ proto: External_Tx) {
+        guard proto.prefix.inputs.count > 0 && proto.prefix.outputs.count > 0 else {
+            return nil
+        }
         self.proto = proto
+        self.inputKeyImagesTyped = Set(proto.signature.ringSignatures.map {
+            guard let keyImage = KeyImage($0.keyImage) else {
+                logger.fatalError("\(Self.self).\(#function): serialization failure")
+            }
+            return keyImage
+        })
+        self.outputs = Set(proto.prefix.outputs.map {
+            let txOutData: Data
+            do {
+                txOutData = try $0.serializedData()
+            } catch {
+                // Safety: Protobuf binary serialization is no fail when not using proto2 or `Any`
+                logger.fatalError(
+                    "Error: \(Self.self).\(#function): Protobuf serialization failed: \(error)")
+            }
+            guard let txOut = TxOut(serializedData: txOutData) else {
+                logger.fatalError("\(Self.self).\(#function): serialization failure")
+            }
+            return txOut
+        })
     }
 }
 

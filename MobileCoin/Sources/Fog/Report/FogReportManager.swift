@@ -19,7 +19,7 @@ final class FogReportManager {
 
     func reportResponse(
         for reportUrl: FogReportUrl,
-        completion: @escaping (Result<Report_ReportResponse, Error>) -> Void
+        completion: @escaping (Result<Report_ReportResponse, ConnectionError>) -> Void
     ) {
         let reportService = serviceProvider.fogReportService(for: reportUrl)
 
@@ -32,7 +32,7 @@ final class FogReportManager {
     func reportResponse(
         for reportUrl: FogReportUrl,
         reportParams: [(reportId: String, desiredMinPubkeyExpiry: UInt64)],
-        completion: @escaping (Result<Report_ReportResponse, Error>) -> Void
+        completion: @escaping (Result<Report_ReportResponse, ConnectionError>) -> Void
     ) {
         let reportService = serviceProvider.fogReportService(for: reportUrl)
 

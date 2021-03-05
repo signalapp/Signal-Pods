@@ -21,7 +21,7 @@ final class FogBlockConnection: Connection, FogBlockService {
 
     func getBlocks(
         request: FogLedger_BlockRequest,
-        completion: @escaping (Result<FogLedger_BlockResponse, Error>) -> Void
+        completion: @escaping (Result<FogLedger_BlockResponse, ConnectionError>) -> Void
     ) {
         performCall(GetBlocksCall(client: client), request: request, completion: completion)
     }

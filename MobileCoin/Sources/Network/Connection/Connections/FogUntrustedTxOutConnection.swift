@@ -21,7 +21,7 @@ final class FogUntrustedTxOutConnection: Connection, FogUntrustedTxOutService {
 
     func getTxOuts(
         request: FogLedger_TxOutRequest,
-        completion: @escaping (Result<FogLedger_TxOutResponse, Error>) -> Void
+        completion: @escaping (Result<FogLedger_TxOutResponse, ConnectionError>) -> Void
     ) {
         performCall(GetTxOutsCall(client: client), request: request, completion: completion)
     }

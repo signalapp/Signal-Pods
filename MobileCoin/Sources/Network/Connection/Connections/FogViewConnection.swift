@@ -31,7 +31,7 @@ final class FogViewConnection: AttestedConnection, FogViewService {
     func query(
         requestAad: FogView_QueryRequestAAD,
         request: FogView_QueryRequest,
-        completion: @escaping (Result<FogView_QueryResponse, Error>) -> Void
+        completion: @escaping (Result<FogView_QueryResponse, ConnectionError>) -> Void
     ) {
         performAttestedCall(
             EnclaveRequestCall(client: client),

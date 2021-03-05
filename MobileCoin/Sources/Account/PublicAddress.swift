@@ -6,23 +6,25 @@ import Foundation
 import LibMobileCoin
 
 public struct PublicAddress {
-    let viewPublicKeyTyped: RistrettoPublic
-    let spendPublicKeyTyped: RistrettoPublic
-    let fogInfo: FogInfo?
-
-    init(
+    static func make(
         viewPublicKey: RistrettoPublic,
         spendPublicKey: RistrettoPublic,
         fogReportUrl: String,
         fogAuthoritySig: Data,
         fogReportId: String
-    ) throws {
-        let fogInfo = try FogInfo(
-            reportUrl: fogReportUrl,
-            authoritySig: fogAuthoritySig,
-            reportId: fogReportId)
-        self.init(viewPublicKey: viewPublicKey, spendPublicKey: spendPublicKey, fogInfo: fogInfo)
+    ) -> Result<PublicAddress, InvalidInputError> {
+        FogInfo.make(reportUrl: fogReportUrl, authoritySig: fogAuthoritySig, reportId: fogReportId)
+            .map { fogInfo in
+                PublicAddress(
+                    viewPublicKey: viewPublicKey,
+                    spendPublicKey: spendPublicKey,
+                    fogInfo: fogInfo)
+            }
     }
+
+    let viewPublicKeyTyped: RistrettoPublic
+    let spendPublicKeyTyped: RistrettoPublic
+    let fogInfo: FogInfo?
 
     init(viewPublicKey: RistrettoPublic, spendPublicKey: RistrettoPublic, fogInfo: FogInfo? = nil) {
         self.viewPublicKeyTyped = viewPublicKey
@@ -43,8 +45,9 @@ public struct PublicAddress {
         do {
             return try proto.serializedData()
         } catch {
-            // Safety: Protobuf binary serialization is no fail when not using proto2 or `Any`
-            fatalError("Error: \(Self.self).\(#function): Protobuf serialization failed: \(error)")
+            // Safety: Protobuf binary serialization is no fail when not using proto2 or `Any`.
+            logger.fatalError(
+                "Error: \(Self.self).\(#function): Protobuf serialization failed: \(error)")
         }
     }
 
@@ -101,7 +104,7 @@ extension PublicAddress {
 
         let fogInfo: FogInfo?
         if !publicAddress.fogReportURL.isEmpty {
-            guard let maybeFogInfo = try? FogInfo(
+            guard case .success(let maybeFogInfo) = FogInfo.make(
                 reportUrl: publicAddress.fogReportURL,
                 authoritySig: publicAddress.fogAuthoritySig,
                 reportId: publicAddress.fogReportID)
@@ -132,12 +135,24 @@ extension External_PublicAddress {
 
 extension PublicAddress {
     struct FogInfo {
+        fileprivate static func make(reportUrl: String, authoritySig: Data, reportId: String)
+            -> Result<FogInfo, InvalidInputError>
+        {
+            FogReportUrl.make(string: reportUrl).map { reportUrlTyped in
+                FogInfo(
+                    reportUrlString: reportUrl,
+                    reportUrl: reportUrlTyped,
+                    authoritySig: authoritySig,
+                    reportId: reportId)
+            }
+        }
+
         let reportUrlString: String
         let reportUrl: FogReportUrl
         let authoritySig: Data
         let reportId: String
 
-        fileprivate init(
+        private init(
             reportUrlString: String,
             reportUrl: FogReportUrl,
             authoritySig: Data,
@@ -145,13 +160,6 @@ extension PublicAddress {
         ) {
             self.reportUrlString = reportUrlString
             self.reportUrl = reportUrl
-            self.authoritySig = authoritySig
-            self.reportId = reportId
-        }
-
-        fileprivate init(reportUrl: String, authoritySig: Data, reportId: String) throws {
-            self.reportUrlString = reportUrl
-            self.reportUrl = try FogReportUrl(string: reportUrl)
             self.authoritySig = authoritySig
             self.reportId = reportId
         }

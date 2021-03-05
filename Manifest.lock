@@ -22,9 +22,9 @@ PODS:
   - BonMot (5.6.0)
   - CGRPCZlib (1.0.0-alpha.22)
   - CNIOAtomics (2.26.0)
-  - CNIOBoringSSL (2.10.3)
-  - CNIOBoringSSLShims (2.10.3):
-    - CNIOBoringSSL (= 2.10.3)
+  - CNIOBoringSSL (2.10.4)
+  - CNIOBoringSSLShims (2.10.4):
+    - CNIOBoringSSL (= 2.10.4)
   - CNIODarwin (2.26.0)
   - CNIOHTTPParser (2.26.0)
   - CNIOLinux (2.26.0)
@@ -96,6 +96,7 @@ PODS:
   - MobileCoin/Core (0.13.1):
     - gRPC-Swift (~> 1.0.0-alpha.22)
     - LibMobileCoin (~> 0.13.0)
+    - Logging (~> 1.4)
     - SwiftNIO (~> 2.25)
     - SwiftNIOHPACK (~> 1.16)
     - SwiftNIOHTTP1 (~> 2.18)
@@ -140,11 +141,11 @@ PODS:
     - SignalClient
     - SignalCoreKit
     - SwiftProtobuf
-  - SignalRingRTC (2.9.0):
+  - SignalRingRTC (2.9.4):
     - PromiseKit
     - SignalCoreKit
-    - SignalRingRTC/WebRTC (= 2.9.0)
-  - SignalRingRTC/WebRTC (2.9.0):
+    - SignalRingRTC/WebRTC (= 2.9.4)
+  - SignalRingRTC/WebRTC (2.9.4):
     - PromiseKit
     - SignalCoreKit
   - SignalServiceKit (0.9.0):
@@ -223,9 +224,9 @@ PODS:
     - SwiftNIOHPACK (= 1.16.3)
     - SwiftNIOHTTP1 (< 3, >= 2.18.0)
     - SwiftNIOTLS (< 3, >= 2.18.0)
-  - SwiftNIOSSL (2.10.3):
-    - CNIOBoringSSL (= 2.10.3)
-    - CNIOBoringSSLShims (= 2.10.3)
+  - SwiftNIOSSL (2.10.4):
+    - CNIOBoringSSL (= 2.10.4)
+    - CNIOBoringSSLShims (= 2.10.4)
     - SwiftNIO (< 3, >= 2.15.0)
     - SwiftNIOConcurrencyHelpers (< 3, >= 2.15.0)
     - SwiftNIOTLS (< 3, >= 2.15.0)
@@ -461,7 +462,7 @@ CHECKOUT OPTIONS:
     :commit: e7e46253bb01ce39525d90aa69ed9e85e758bfc4
     :git: https://github.com/signalapp/Mantle
   MobileCoin:
-    :commit: 5bffb24163f35907d27c3e18411a868ec648b447
+    :commit: 7b404d115005258bbbb2154ab2e5e7b1e2e1001e
     :git: https://github.com/mobilecoinofficial/MobileCoin-Swift.git
   SignalArgon2:
     :commit: 6a37e32167500ff7830e337b726a1653061d86b2
@@ -499,8 +500,8 @@ SPEC CHECKSUMS:
   BonMot: 2217a66e5ddc6a8d2ffb759fe8c85a8528e0d3e7
   CGRPCZlib: 3c82c26bd3074702270db462bcc8fb6289e5f084
   CNIOAtomics: 7599e2500f637f1e043047da52efd710d6020dd3
-  CNIOBoringSSL: 8e20acf863216a6d7b75a56fe0567a36147d8ee0
-  CNIOBoringSSLShims: 72cc9d43e6f5d8a137a2699eb08a0c67865c9797
+  CNIOBoringSSL: c639a7139a3b8fffb4dcda1e4a2d2eff66ec9090
+  CNIOBoringSSLShims: defe5c479941717c1ad1e3bdc4329686b4bb6b46
   CNIODarwin: 68f6ff440e989ef43ca6eb3335f3e5484066fab7
   CNIOHTTPParser: 26678afdbc27f24d1a3498bf87413bfc3391fbc5
   CNIOLinux: 5fd92122d58b04508074371d95a1f874310fe8e3
@@ -517,7 +518,7 @@ SPEC CHECKSUMS:
   Logging: beeb016c9c80cf77042d62e83495816847ef108b
   lottie-ios: 496ac5cea1bbf1a7bd1f1f472f3232eb1b8d744b
   Mantle: 2fa750afa478cd625a94230fbf1c13462f29395b
-  MobileCoin: 275a158c0370654fb31a56dcfe351d7486058d96
+  MobileCoin: 40f490ef9a64602decae15255f2179a7dc21c526
   PromiseKit: 28fda91c973cc377875d8c0ea4f973013c05b6db
   PureLayout: f08c01b8dec00bb14a1fefa3de4c7d9c265df85e
   Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
@@ -526,7 +527,7 @@ SPEC CHECKSUMS:
   SignalClient: 33768bc23cd46f738665d597323bea8f9e3965d0
   SignalCoreKit: 43daa8f15d6125d54705f35628ac35051bb205c6
   SignalMetadataKit: a40217605426975468175eb9328a170e2162be94
-  SignalRingRTC: d59de0ae05da586f043f83e5a6f7e5bc0c60a482
+  SignalRingRTC: 1769d40e1a155a2d6ddd95c404e7822bedd97076
   SignalServiceKit: af084384e66b5b2ea468261a15eb01552677d600
   SQLCipher: d305a7bd9af4b64f095c79bdc1a1fa50f2a15116
   SSZipArchive: 41455d4b8d2b6ab93990820b50dc697c2554a322
@@ -538,7 +539,7 @@ SPEC CHECKSUMS:
   SwiftNIOHPACK: 38e855a72ae0c5176485ddd039b3933b99daa2b7
   SwiftNIOHTTP1: 7f7aa111d51d09a97ef1fddb50855074e5e42778
   SwiftNIOHTTP2: de7eff9d32fd347338f85b86c6fd0e13c3fbd1a0
-  SwiftNIOSSL: ac6e05adff65df9a3b518bbd27ff1f152fa82999
+  SwiftNIOSSL: ca33b5cfd872ef8261bab9c68e8634c54c14b9fb
   SwiftNIOTLS: 0faded6aff802c423ddee27828850a8ea4a818d0
   SwiftNIOTransportServices: 896c9a4ac98698d32aa2feea7657ade219ae80bb
   SwiftProtobuf: 3320217e9d8fb75f36b40282e78c482640fd75dd

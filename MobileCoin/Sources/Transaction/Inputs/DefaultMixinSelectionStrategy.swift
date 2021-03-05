@@ -18,14 +18,11 @@ final class DefaultMixinSelectionStrategy: MixinSelectionStrategy {
         selectionRange: PartialRangeUpTo<UInt64>?,
         excludedTxOutIndices: [UInt64],
         ringSize: Int
-    ) throws -> [Set<UInt64>] {
-        if let selectionRange = selectionRange {
-            // Ensure selectionRange width is at least as large as the intended selection window
-            // width.
-            guard selectionRange.upperBound >= selectionWindowWidth else {
-                throw MalformedInput("Selection range is not large enough")
-            }
-        }
+    ) -> [Set<UInt64>] {
+        // Ensure selectionRange width is at least as large as the intended selection window width,
+        // otherwise disable selectionRange.
+        let selectionRange =
+            selectionRange.flatMap { $0.upperBound >= selectionWindowWidth ? $0 : nil }
 
         var excludedIndices = Set<UInt64>(
             minimumCapacity: excludedTxOutIndices.count + ringSize * realTxOutIndices.count)

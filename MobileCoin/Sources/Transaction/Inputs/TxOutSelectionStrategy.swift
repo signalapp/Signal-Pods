@@ -5,8 +5,5 @@
 import Foundation
 
 protocol TxOutSelectionStrategy {
-    func selectTxOuts(
-        totalingAtLeast amount: UInt64,
-        from txOuts: [KnownTxOut]
-    ) throws -> [KnownTxOut]
+    func selectTxOuts(_ txOuts: SpendableTxOutsWithAmount) -> SpendableTxOutsWithAmount
 }

@@ -151,23 +151,20 @@ extension McConstants {
         121, 244, 252, 42, 166, 188, 185, 147, 1, 44, 60, 56, 108,
     ])
 
-    static let FOG_INGEST_PRODUCT_ID: UInt16 = 4
-    static let FOG_INGEST_SECURITY_VERSION: UInt16 = 1
-    static let DEV_FOG_INGEST_MRSIGNER_HEX =
+    static let FOG_REPORT_PRODUCT_ID: UInt16 = 4
+    static let FOG_REPORT_SECURITY_VERSION: UInt16 = 1
+    static let DEV_FOG_REPORT_MRSIGNER_HEX =
         "7ee5e29d74623fdbc6fbf1454be6f3bb0b86c12366b7b478ad13353e44de8411"
-    static let DEV_FOG_INGEST_MRSIGNER = Data([
+    static let DEV_FOG_REPORT_MRSIGNER = Data([
         126, 229, 226, 157, 116, 98, 63, 219, 198, 251, 241, 69, 75, 230, 243, 187, 11, 134, 193,
         35, 102, 183, 180, 120, 173, 19, 53, 62, 68, 222, 132, 17,
     ])
-    static let TESTNET_FOG_INGEST_MRSIGNER_HEX =
+    static let TESTNET_FOG_REPORT_MRSIGNER_HEX =
         "bf7fa957a6a94acb588851bc8767eca5776c79f4fc2aa6bcb99312c3c386c"
-    static let TESTNET_FOG_INGEST_MRSIGNER = Data([
+    static let TESTNET_FOG_REPORT_MRSIGNER = Data([
         191, 127, 169, 87, 166, 169, 74, 203, 88, 136, 81, 188, 135, 103, 224, 202, 87, 112, 108,
         121, 244, 252, 42, 166, 188, 185, 147, 1, 44, 60, 56, 108,
     ])
-
-    /// Length of Fog ingest PublicKey, in bytes.
-    static let FOG_INGEST_PUBLIC_KEY_LEN = 32
 
 }
 
@@ -209,7 +206,7 @@ extension McConstants {
 
 }
 
-// MARK: - Fog Ingest
+// MARK: - Fog Report
 
 extension McConstants {
 

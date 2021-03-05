@@ -2,86 +2,56 @@
 //  Copyright (c) 2020 MobileCoin. All rights reserved.
 //
 
+// swiftlint:disable multiline_function_chains
+
 import Foundation
 import LibMobileCoin
 
 public struct AccountKey {
+    public static func make(
+        rootEntropy: Data,
+        fogReportUrl: String,
+        fogAuthoritySpki: Data,
+        fogReportId: String
+    ) -> Result<AccountKey, InvalidInputError> {
+        guard let rootEntropy = Data32(rootEntropy) else {
+            return .failure(InvalidInputError("rootEntropy must be 32 bytes in length"))
+        }
+
+        return FogInfo.make(
+            reportUrl: fogReportUrl,
+            authoritySpki: fogAuthoritySpki,
+            reportId: fogReportId
+        ).map { fogInfo in
+            AccountKey(rootEntropy: rootEntropy, fogInfo: fogInfo)
+        }
+    }
+
+    static func make(
+        rootEntropy: Data32,
+        fogReportUrl: String,
+        fogAuthoritySpki: Data,
+        fogReportId: String,
+        subaddressIndex: UInt64 = McConstants.DEFAULT_SUBADDRESS_INDEX
+    ) -> Result<AccountKey, InvalidInputError> {
+        FogInfo.make(
+            reportUrl: fogReportUrl,
+            authoritySpki: fogAuthoritySpki,
+            reportId: fogReportId
+        ).map { fogInfo in
+            AccountKey(
+                rootEntropy: rootEntropy,
+                fogInfo: fogInfo,
+                subaddressIndex: subaddressIndex)
+        }
+    }
+
     let viewPrivateKey: RistrettoPrivate
     let spendPrivateKey: RistrettoPrivate
     let fogInfo: FogInfo?
     let subaddressIndex: UInt64
 
     public let publicAddress: PublicAddress
-
-    public static func make(
-        rootEntropy: Data,
-        fogReportUrl: String,
-        fogAuthoritySpki: Data,
-        fogReportId: String
-    ) -> Result<AccountKey, MalformedInput> {
-        guard let rootEntropy = Data32(rootEntropy) else {
-            return .failure(MalformedInput("rootEntropy must be 32 bytes in length"))
-        }
-
-        let fogReportUrlTyped: FogReportUrl
-        do {
-            fogReportUrlTyped = try FogReportUrl(string: fogReportUrl)
-        } catch {
-            return .failure(MalformedInput(String(describing: error)))
-        }
-
-        let fogInfo = FogInfo(
-            reportUrlString: fogReportUrl,
-            reportUrl: fogReportUrlTyped,
-            authoritySpki: fogAuthoritySpki,
-            reportId: fogReportId)
-        return .success(Self(rootEntropy: rootEntropy, fogInfo: fogInfo))
-    }
-
-    @available(*, deprecated,
-        renamed: "AccountKey.make(rootEntropy:fogReportUrl:fogAuthoritySpki:fogReportId:)")
-    public static func make(
-        rootEntropy: Data,
-        fogReportUrl: String,
-        fogAuthorityFingerprint: Data,
-        fogReportId: String
-    ) -> Result<AccountKey, MalformedInput> {
-        make(
-            rootEntropy: rootEntropy,
-            fogReportUrl: fogReportUrl,
-            fogAuthoritySpki: fogAuthorityFingerprint,
-            fogReportId: fogReportId)
-    }
-
-    @available(*, deprecated,
-        renamed: "AccountKey.make(rootEntropy:fogReportUrl:fogAuthoritySpki:fogReportId:)")
-    public init(
-        rootEntropy: Data,
-        fogReportUrl: String,
-        fogAuthorityFingerprint: Data,
-        fogReportId: String
-    ) throws {
-        let result = Self.make(
-            rootEntropy: rootEntropy,
-            fogReportUrl: fogReportUrl,
-            fogAuthoritySpki: fogAuthorityFingerprint,
-            fogReportId: fogReportId)
-        self = try result.get()
-    }
-
-    init(
-        rootEntropy: Data32,
-        fogReportUrl: String,
-        fogAuthoritySpki: Data,
-        fogReportId: String,
-        subaddressIndex: UInt64 = McConstants.DEFAULT_SUBADDRESS_INDEX
-    ) throws {
-        let fogInfo = try FogInfo(
-            reportUrl: fogReportUrl,
-            authoritySpki: fogAuthoritySpki,
-            reportId: fogReportId)
-        self.init(rootEntropy: rootEntropy, fogInfo: fogInfo, subaddressIndex: subaddressIndex)
-    }
 
     init(
         rootEntropy: Data32,
@@ -127,8 +97,9 @@ public struct AccountKey {
         do {
             return try proto.serializedData()
         } catch {
-            // Safety: Protobuf binary serialization is no fail when not using proto2 or `Any`
-            fatalError("Error: \(Self.self).\(#function): Protobuf serialization failed: \(error)")
+            // Safety: Protobuf binary serialization is no fail when not using proto2 or `Any`.
+            logger.fatalError(
+                "Error: \(Self.self).\(#function): Protobuf serialization failed: \(error)")
         }
     }
 
@@ -158,6 +129,39 @@ extension AccountKey: Equatable {}
 extension AccountKey: Hashable {}
 
 extension AccountKey {
+    @available(*, deprecated,
+        renamed: "AccountKey.make(rootEntropy:fogReportUrl:fogAuthoritySpki:fogReportId:)")
+    public static func make(
+        rootEntropy: Data,
+        fogReportUrl: String,
+        fogAuthorityFingerprint: Data,
+        fogReportId: String
+    ) -> Result<AccountKey, InvalidInputError> {
+        make(
+            rootEntropy: rootEntropy,
+            fogReportUrl: fogReportUrl,
+            fogAuthoritySpki: fogAuthorityFingerprint,
+            fogReportId: fogReportId)
+    }
+
+    @available(*, deprecated,
+        renamed: "AccountKey.make(rootEntropy:fogReportUrl:fogAuthoritySpki:fogReportId:)")
+    public init(
+        rootEntropy: Data,
+        fogReportUrl: String,
+        fogAuthorityFingerprint: Data,
+        fogReportId: String
+    ) throws {
+        let result = AccountKey.make(
+            rootEntropy: rootEntropy,
+            fogReportUrl: fogReportUrl,
+            fogAuthoritySpki: fogAuthorityFingerprint,
+            fogReportId: fogReportId)
+        self = try result.get()
+    }
+}
+
+extension AccountKey {
     init?(
         _ proto: External_AccountKey,
         subaddressIndex: UInt64 = McConstants.DEFAULT_SUBADDRESS_INDEX
@@ -168,24 +172,24 @@ extension AccountKey {
             return nil
         }
 
-        let fogInfo: FogInfo?
+        let maybeFogInfo: FogInfo?
         if !proto.fogReportURL.isEmpty {
-            guard let maybeFogInfo = try? FogInfo(
+            guard case .success(let fogInfo) = FogInfo.make(
                 reportUrl: proto.fogReportURL,
                 authoritySpki: proto.fogAuthoritySpki,
                 reportId: proto.fogReportID)
             else {
                 return nil
             }
-            fogInfo = maybeFogInfo
+            maybeFogInfo = fogInfo
         } else {
-            fogInfo = nil
+            maybeFogInfo = nil
         }
 
         self.init(
             viewPrivateKey: viewPrivateKey,
             spendPrivateKey: spendPrivateKey,
-            fogInfo: fogInfo,
+            fogInfo: maybeFogInfo,
             subaddressIndex: subaddressIndex)
     }
 }
@@ -205,12 +209,24 @@ extension External_AccountKey {
 
 extension AccountKey {
     struct FogInfo {
+        fileprivate static func make(reportUrl: String, authoritySpki: Data, reportId: String)
+            -> Result<FogInfo, InvalidInputError>
+        {
+            FogReportUrl.make(string: reportUrl).map { reportUrlTyped in
+                FogInfo(
+                    reportUrlString: reportUrl,
+                    reportUrl: reportUrlTyped,
+                    authoritySpki: authoritySpki,
+                    reportId: reportId)
+            }
+        }
+
         let reportUrlString: String
         let reportUrl: FogReportUrl
         let authoritySpki: Data
         let reportId: String
 
-        fileprivate init(
+        private init(
             reportUrlString: String,
             reportUrl: FogReportUrl,
             authoritySpki: Data,
@@ -218,13 +234,6 @@ extension AccountKey {
         ) {
             self.reportUrlString = reportUrlString
             self.reportUrl = reportUrl
-            self.authoritySpki = authoritySpki
-            self.reportId = reportId
-        }
-
-        fileprivate init(reportUrl: String, authoritySpki: Data, reportId: String) throws {
-            self.reportUrlString = reportUrl
-            self.reportUrl = try FogReportUrl(string: reportUrl)
             self.authoritySpki = authoritySpki
             self.reportId = reportId
         }
@@ -238,10 +247,19 @@ struct AccountKeyWithFog {
     let accountKey: AccountKey
 
     init?(accountKey: AccountKey) {
-        guard accountKey.fogReportUrl != nil else {
+        guard accountKey.fogInfo != nil else {
             return nil
         }
 
         self.accountKey = accountKey
+    }
+
+    var fogInfo: AccountKey.FogInfo {
+        guard let fogInfo = accountKey.fogInfo else {
+            // Safety: accountKey is guaranteed to have fogInfo.
+            logger.fatalError("\(Self.self).\(#function): accountKey doesn't have fogInfo.")
+        }
+
+        return fogInfo
     }
 }

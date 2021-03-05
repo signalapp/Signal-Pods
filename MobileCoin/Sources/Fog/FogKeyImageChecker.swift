@@ -2,7 +2,7 @@
 //  Copyright (c) 2020 MobileCoin. All rights reserved.
 //
 
-// swiftlint:disable multiline_arguments
+// swiftlint:disable multiline_arguments multiline_function_chains
 
 import Foundation
 import LibMobileCoin
@@ -16,38 +16,39 @@ struct FogKeyImageChecker {
         self.fogKeyImageService = fogKeyImageService
     }
 
-    func checkInputKeyImages(
-        for transaction: Transaction,
-        completion: @escaping (Result<KeyImage.SpentStatus, Error>) -> Void
+    func checkKeyImage(
+        keyImage: KeyImage,
+        nextKeyImageQueryBlockIndex: UInt64 = 0,
+        completion: @escaping (Result<KeyImage.SpentStatus, ConnectionError>) -> Void
     ) {
-        do {
-            guard let keyImage = transaction.inputKeyImagesTyped.first else {
-                throw MalformedInput("transaction has no inputs: \(transaction)")
-            }
-
-            checkKeyImages(
-                keyImageQueries: [(keyImage, nextKeyImageQueryBlockIndex:0)],
-                maxKeyImagesPerQuery: 10
-            ) {
-                completion($0.flatMap { statuses in
-                    guard let keyImageStatus = statuses.first else {
-                        throw ConnectionFailure("CheckKeyImage failed to return results: " +
-                            "\(statuses)")
-                    }
-                    return keyImageStatus
-                })
-            }
-        } catch {
-            serialQueue.async {
-                completion(.failure(error))
-            }
+        checkKeyImages(
+            keyImageQueries: [(keyImage, nextKeyImageQueryBlockIndex: nextKeyImageQueryBlockIndex)]
+        ) {
+            completion($0.flatMap { statuses in
+                guard let keyImageStatus = statuses.first else {
+                    return .failure(.invalidServerResponse(
+                        "CheckKeyImage failed to return results: \(statuses)"))
+                }
+                return .success(keyImageStatus)
+            })
         }
+    }
+
+    func checkKeyImages(
+        keyImageQueries: [KeyImage],
+        maxKeyImagesPerQuery: Int,
+        completion: @escaping (Result<[KeyImage.SpentStatus], ConnectionError>) -> Void
+    ) {
+        checkKeyImages(
+            keyImageQueries: keyImageQueries.map { ($0, nextKeyImageQueryBlockIndex: 0) },
+            maxKeyImagesPerQuery: maxKeyImagesPerQuery,
+            completion: completion)
     }
 
     func checkKeyImages(
         keyImageQueries: [(KeyImage, nextKeyImageQueryBlockIndex: UInt64)],
         maxKeyImagesPerQuery: Int,
-        completion: @escaping (Result<[KeyImage.SpentStatus], Error>) -> Void
+        completion: @escaping (Result<[KeyImage.SpentStatus], ConnectionError>) -> Void
     ) {
         let queryArrays = keyImageQueries.chunked(maxLength: maxKeyImagesPerQuery).map { Array($0) }
         queryArrays.mapAsync({ chunk, callback in
@@ -58,8 +59,17 @@ struct FogKeyImageChecker {
     }
 
     func checkKeyImages(
+        keyImageQueries: [KeyImage],
+        completion: @escaping (Result<[KeyImage.SpentStatus], ConnectionError>) -> Void
+    ) {
+        checkKeyImages(
+            keyImageQueries: keyImageQueries.map { ($0, nextKeyImageQueryBlockIndex: 0) },
+            completion: completion)
+    }
+
+    func checkKeyImages(
         keyImageQueries: [(KeyImage, nextKeyImageQueryBlockIndex: UInt64)],
-        completion: @escaping (Result<[KeyImage.SpentStatus], Error>) -> Void
+        completion: @escaping (Result<[KeyImage.SpentStatus], ConnectionError>) -> Void
     ) {
         var request = FogLedger_CheckKeyImagesRequest()
         request.queries = keyImageQueries.map {
@@ -70,11 +80,11 @@ struct FogKeyImageChecker {
         }
         fogKeyImageService.checkKeyImages(request: request) {
             completion($0.flatMap { response in
-                let statuses: [KeyImage.SpentStatus] = try keyImageQueries.map { query in
+                keyImageQueries.map { query in
                     guard let keyImageResult = response.results.first(
                         where: { KeyImage($0.keyImage) == query.0 }) else
                     {
-                        return .unspent(knownToBeUnspentBlockCount: response.numBlocks)
+                        return .success(.unspent(knownToBeUnspentBlockCount: response.numBlocks))
                     }
 
                     switch keyImageResult.keyImageResultCodeEnum {
@@ -82,16 +92,14 @@ struct FogKeyImageChecker {
                         let spentAtBlock = BlockMetadata(
                             index: keyImageResult.spentAt,
                             timestampStatus: keyImageResult.timestampStatus)
-                        return .spent(block: spentAtBlock)
+                        return .success(.spent(block: spentAtBlock))
                     case .notSpent:
-                        return .unspent(knownToBeUnspentBlockCount: response.numBlocks)
+                        return .success(.unspent(knownToBeUnspentBlockCount: response.numBlocks))
                     case .keyImageError, .unused, .UNRECOGNIZED:
-                        throw ConnectionFailure("Fog KeyImage result error: " +
-                            "\(keyImageResult.keyImageResultCodeEnum), " +
-                            "response: \(response)")
+                        return .failure(.invalidServerResponse("Fog KeyImage result error: " +
+                            "\(keyImageResult.keyImageResultCodeEnum), response: \(response)"))
                     }
-                }
-                return statuses
+                }.collectResult()
             })
         }
     }

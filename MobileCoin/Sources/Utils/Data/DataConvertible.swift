@@ -185,7 +185,7 @@ extension DataConvertibleImpl {
     init(from decoder: Decoder) throws {
         let data = try Data(from: decoder)
         guard let decoded = Self(data) else {
-            throw MalformedInput("Data validation failed.")
+            throw InvalidInputError("Data validation failed.")
         }
         self = decoded
     }

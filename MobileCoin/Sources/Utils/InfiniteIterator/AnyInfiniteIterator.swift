@@ -25,12 +25,10 @@ extension AnyInfiniteIterator: InfiniteIteratorProtocol {
 }
 
 private class AnyInfiniteIteratorBoxBase<Element>: InfiniteIteratorProtocol {
-    // swiftlint:disable unavailable_function
     func next() -> Element {
         // This condition should never be reached and indicates a programming error.
-        fatalError("Must be overridden")
+        logger.fatalError("Must be overridden")
     }
-    // swiftlint:enable unavailable_function
 }
 
 private final class InfiniteIteratorBox<Base: InfiniteIteratorProtocol>:

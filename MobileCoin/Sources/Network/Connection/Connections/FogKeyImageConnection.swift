@@ -30,7 +30,7 @@ final class FogKeyImageConnection: AttestedConnection, FogKeyImageService {
 
     func checkKeyImages(
         request: FogLedger_CheckKeyImagesRequest,
-        completion: @escaping (Result<FogLedger_CheckKeyImagesResponse, Error>) -> Void
+        completion: @escaping (Result<FogLedger_CheckKeyImagesResponse, ConnectionError>) -> Void
     ) {
         performAttestedCall(
             CheckKeyImagesCall(client: client),

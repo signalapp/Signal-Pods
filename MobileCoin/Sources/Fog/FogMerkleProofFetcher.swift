@@ -2,10 +2,28 @@
 //  Copyright (c) 2020 MobileCoin. All rights reserved.
 //
 
-// swiftlint:disable multiline_arguments
+// swiftlint:disable multiline_arguments multiline_function_chains
 
 import Foundation
 import LibMobileCoin
+
+enum FogMerkleProofFetcherError: Error {
+    case connectionError(ConnectionError)
+    case outOfBounds(blockCount: UInt64, ledgerTxOutCount: UInt64)
+}
+
+extension FogMerkleProofFetcherError: CustomStringConvertible {
+    public var description: String {
+        "Fog Merkle Proof Fetcher error: " + {
+            switch self {
+            case .connectionError(let innerError):
+                return "\(innerError)"
+            case let .outOfBounds(blockCount: blockCount, ledgerTxOutCount: txOutCount):
+                return "Out of bounds: blockCount: \(blockCount), globalTxOutCount: \(txOutCount)"
+            }
+        }()
+    }
+}
 
 struct FogMerkleProofFetcher {
     private let serialQueue: DispatchQueue
@@ -21,7 +39,7 @@ struct FogMerkleProofFetcher {
         merkleRootBlock: UInt64,
         maxNumIndicesPerQuery: Int,
         completion: @escaping (
-            Result<FetchResult<[[(TxOut, TxOutMembershipProof)]]>, Error>
+            Result<[[(TxOut, TxOutMembershipProof)]], FogMerkleProofFetcherError>
         ) -> Void
     ) {
         getOutputs(
@@ -30,15 +48,15 @@ struct FogMerkleProofFetcher {
             maxNumIndicesPerQuery: maxNumIndicesPerQuery
         ) {
             completion($0.flatMap { allResults in
-                processResults(resultsArray: try globalIndicesArray.map { globalIndices in
+                globalIndicesArray.map { globalIndices in
                     guard let results = allResults[globalIndices] else {
-                        throw ConnectionFailure("\(Self.self).\(#function): " +
-                            "global txout indices not found in GetOutputs reponse. " +
-                            "globalTxOutIndices: \(globalIndices), " +
-                            "returned outputs: \(allResults)")
+                        return .failure(.connectionError(.invalidServerResponse(
+                            "\(Self.self).\(#function): global txout indices not found in " +
+                            "GetOutputs reponse. globalTxOutIndices: \(globalIndices), returned " +
+                            "outputs: \(allResults)")))
                     }
-                    return results
-                })
+                    return .success(results)
+                }.collectResult()
             })
         }
     }
@@ -48,7 +66,7 @@ struct FogMerkleProofFetcher {
         merkleRootBlock: UInt64,
         maxNumIndicesPerQuery: Int,
         completion: @escaping (
-            Result<[UInt64: FetchResult<(TxOut, TxOutMembershipProof)>], Error>
+            Result<[UInt64: (TxOut, TxOutMembershipProof)], FogMerkleProofFetcherError>
         ) -> Void
     ) {
         let globalIndicesArrays =
@@ -68,76 +86,46 @@ struct FogMerkleProofFetcher {
         globalIndices: [UInt64],
         merkleRootBlock: UInt64,
         completion: @escaping (
-            Result<[UInt64: FetchResult<(TxOut, TxOutMembershipProof)>], Error>
+            Result<[UInt64: (TxOut, TxOutMembershipProof)], FogMerkleProofFetcherError>
         ) -> Void
     ) {
         var request = FogLedger_GetOutputsRequest()
         request.indices = globalIndices
         request.merkleRootBlock = merkleRootBlock
         fogMerkleProofService.getOutputs(request: request) {
-            completion($0.flatMap {
-                try Self.parseResponse(response: $0)
-            })
+            completion(
+                $0.mapError { .connectionError($0) }
+                    .flatMap {
+                        Self.parseResponse(response: $0)
+                    })
         }
     }
 
-    private static func parseResponse(response: FogLedger_GetOutputsResponse) throws
-        -> [UInt64: FetchResult<(TxOut, TxOutMembershipProof)>]
+    private static func parseResponse(response: FogLedger_GetOutputsResponse)
+        -> Result<[UInt64: (TxOut, TxOutMembershipProof)], FogMerkleProofFetcherError>
     {
-        Dictionary(try response.results.map { outputResult in
-            let fetchResult: FetchResult<(TxOut, TxOutMembershipProof)>
+        response.results.map { outputResult in
             switch outputResult.resultCodeEnum {
             case .exists:
                 guard let txOut = TxOut(outputResult.output),
                       let membershipProof = TxOutMembershipProof(outputResult.proof)
                 else {
-                    throw InternalError("\(Self.self).\(#function): " +
-                        "FogMerkleProofService.getOutputs returned invalid result.")
+                    return .failure(.connectionError(.invalidServerResponse(
+                        "\(Self.self).\(#function): FogMerkleProofService.getOutputs returned " +
+                        "invalid result.")))
                 }
-                fetchResult = .success((txOut, membershipProof))
+                return .success((outputResult.index, (txOut, membershipProof)))
             case .doesNotExist:
-                fetchResult = .outOfBounds(
+                return .failure(.outOfBounds(
                     blockCount: response.numBlocks,
-                    ledgerTxOutCount: response.globalTxoCount)
+                    ledgerTxOutCount: response.globalTxoCount))
             case .outputDatabaseError, .intentionallyUnused, .UNRECOGNIZED:
-                throw ConnectionFailure("Fog MerkleProof result error: " +
-                    "\(outputResult.resultCodeEnum), " +
-                    "response: \(response)")
+                return .failure(.connectionError(.invalidServerResponse(
+                    "Fog MerkleProof result error: \(outputResult.resultCodeEnum), response: " +
+                    "\(response)")))
             }
-
-            return (outputResult.index, fetchResult)
-        }, uniquingKeysWith: { key1, _ in key1 })
-    }
-}
-
-extension FogMerkleProofFetcher {
-    enum FetchResult<Success> {
-        case success(Success)
-        case outOfBounds(blockCount: UInt64, ledgerTxOutCount: UInt64)
-    }
-}
-
-private func processResults(
-    resultsArray: [[FogMerkleProofFetcher.FetchResult<(TxOut, TxOutMembershipProof)>]]
-) -> FogMerkleProofFetcher.FetchResult<[[(TxOut, TxOutMembershipProof)]]> {
-    // Ensure all fetch results are successful, otherwise return outOfBounds
-    for result in resultsArray.flatMap({ $0 }) {
-        switch result {
-        case .success:
-            continue
-        case let .outOfBounds(blockCount: blockCount, ledgerTxOutCount: txOutCount):
-            return .outOfBounds(blockCount: blockCount, ledgerTxOutCount: txOutCount)
+        }.collectResult().map {
+            Dictionary($0, uniquingKeysWith: { key1, _ in key1 })
         }
     }
-
-    // Convert results to outputs with the assumption that that all results are guaranteed to
-    // have succeeded.
-    return .success(resultsArray.map { results in
-        results.map { result in
-            guard case let .success((txOut, membershipProof)) = result else {
-                fatalError("Unreachable code")
-            }
-            return (txOut, membershipProof)
-        }
-    })
 }

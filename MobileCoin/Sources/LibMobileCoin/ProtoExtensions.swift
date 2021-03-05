@@ -171,3 +171,35 @@ extension FogLedger_BlockRequest {
         set { ranges = newValue.map { FogCommon_BlockRange($0) } }
     }
 }
+
+extension FogLedger_Block {
+    var timestampDate: Date {
+        get { Date(timeIntervalSince1970: TimeInterval(timestamp)) }
+        set { timestamp = UInt64(newValue.timeIntervalSince1970) }
+    }
+
+    var timestampResultCodeEnum: Watcher_TimestampResultCode {
+        get {
+            Watcher_TimestampResultCode(rawValue: Int(timestampResultCode))
+                ?? .UNRECOGNIZED(Int(timestampResultCode))
+        }
+        set { timestampResultCode = UInt32(newValue.rawValue) }
+    }
+
+    var timestampStatus: BlockMetadata.TimestampStatus? {
+        switch timestampResultCodeEnum {
+        case .timestampFound:
+            return .known(timestamp: timestampDate)
+        case .unavailable:
+            return .unavailable
+        case .watcherBehind, .watcherDatabaseError, .blockIndexOutOfBounds:
+            return .temporarilyUnknown
+        case .unusedField, .UNRECOGNIZED:
+            return nil
+        }
+    }
+
+    var metadata: BlockMetadata {
+        BlockMetadata(index: index, timestampStatus: timestampStatus)
+    }
+}

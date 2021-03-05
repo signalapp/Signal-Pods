@@ -5,5 +5,5 @@
 import Foundation
 
 protocol FogQueryScalingStrategy {
-    func create() -> AnyInfiniteIterator<Int>
+    func create() -> AnyInfiniteIterator<PositiveInt>
 }

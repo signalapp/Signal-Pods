@@ -30,7 +30,7 @@ final class FogMerkleProofConnection: AttestedConnection, FogMerkleProofService 
 
     func getOutputs(
         request: FogLedger_GetOutputsRequest,
-        completion: @escaping (Result<FogLedger_GetOutputsResponse, Error>) -> Void
+        completion: @escaping (Result<FogLedger_GetOutputsResponse, ConnectionError>) -> Void
     ) {
         performAttestedCall(
             GetOutputsCall(client: client),

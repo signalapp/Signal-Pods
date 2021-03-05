@@ -162,7 +162,7 @@
 #import "TSStorageKeys.h"
 #import "TSYapDatabaseObject.h"
 #import "YapDatabaseTransaction+OWS.h"
-#import "YAPDBMediaGalleryFinder.h"
+#import "YAPDBMediaGalleryManager.h"
 #import "MockSSKEnvironment.h"
 #import "OWSFakeCallMessageHandler.h"
 #import "OWSFakeMessageSender.h"

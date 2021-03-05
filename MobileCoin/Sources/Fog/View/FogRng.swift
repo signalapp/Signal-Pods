@@ -2,10 +2,50 @@
 //  Copyright (c) 2020 MobileCoin. All rights reserved.
 //
 
+// swiftlint:disable multiline_function_chains
+
 import Foundation
 import LibMobileCoin
 
+enum FogRngError: Error {
+    case invalidKey
+    case unsupportedCryptoBoxVersion(String)
+}
+
+extension FogRngError: CustomStringConvertible {
+    public var description: String {
+        "Fog Kex Rng error: " + {
+            switch self {
+            case .invalidKey:
+                return "Invalid key"
+            case .unsupportedCryptoBoxVersion(let reason):
+                return "Unsupported CryptoBox version: \(reason)"
+            }
+        }()
+    }
+}
+
 final class FogRng {
+    static func make(accountKey: AccountKey, fogRngKey: FogRngKey) -> Result<FogRng, FogRngError> {
+        make(subaddressViewPrivateKey: accountKey.subaddressViewPrivateKey, fogRngKey: fogRngKey)
+    }
+
+    static func make(subaddressViewPrivateKey: RistrettoPrivate, fogRngKey: FogRngKey)
+        -> Result<FogRng, FogRngError>
+    {
+        subaddressViewPrivateKey.asMcBuffer { viewPrivateKeyPtr in
+            fogRngKey.pubkey.asMcBuffer { pubkeyPtr in
+                withMcError({ errorPtr in
+                    mc_fog_rng_create(viewPrivateKeyPtr, pubkeyPtr, fogRngKey.version, &errorPtr)
+                }).mapError { _ in
+                    .invalidKey
+                }.map { ptr in
+                    FogRng(ptr)
+                }
+            }
+        }
+    }
+
     private let ptr: OpaquePointer
     private let outputSize: Int
 
@@ -19,22 +59,6 @@ final class FogRng {
             return nil
         }
         self.init(ptr)
-    }
-
-    convenience init(accountKey: AccountKey, fogRngKey: FogRngKey) throws {
-        try self.init(
-            subaddressViewPrivateKey: accountKey.subaddressViewPrivateKey,
-            fogRngKey: fogRngKey)
-    }
-
-    convenience init(subaddressViewPrivateKey: RistrettoPrivate, fogRngKey: FogRngKey) throws {
-        self.init(try subaddressViewPrivateKey.asMcBuffer { viewPrivateKeyPtr in
-            try fogRngKey.pubkey.asMcBuffer { pubkeyPtr in
-                try withMcError { errorPtr in
-                    mc_fog_rng_create(viewPrivateKeyPtr, pubkeyPtr, fogRngKey.version, &errorPtr)
-                }.get()
-            }
-        })
     }
 
     private init(_ ptr: OpaquePointer) {

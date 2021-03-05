@@ -30,7 +30,7 @@ final class ConsensusConnection: AttestedConnection, ConsensusService {
 
     func proposeTx(
         _ tx: External_Tx,
-        completion: @escaping (Result<ConsensusCommon_ProposeTxResponse, Error>) -> Void
+        completion: @escaping (Result<ConsensusCommon_ProposeTxResponse, ConnectionError>) -> Void
     ) {
         performAttestedCall(
             ProposeTxCall(client: client),

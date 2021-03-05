@@ -2,6 +2,8 @@
 //  Copyright (c) 2020 MobileCoin. All rights reserved.
 //
 
+// swiftlint:disable multiline_function_chains
+
 import Foundation
 import LibMobileCoin
 
@@ -11,15 +13,16 @@ enum FogViewUtils {
         publicAddress: PublicAddress,
         rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)?,
         rngContext: Any?
-    ) throws -> Data {
+    ) -> Result<Data, InvalidInputError> {
         let plaintext: Data
         do {
             plaintext = try txOutRecord.serializedData()
         } catch {
-            // Safety: Protobuf binary serialization is no fail when not using proto2 or `Any`
-            fatalError("Error: \(Self.self).\(#function): Protobuf serialization failed: \(error)")
+            // Safety: Protobuf binary serialization is no fail when not using proto2 or `Any`.
+            logger.fatalError(
+                "Error: \(Self.self).\(#function): Protobuf serialization failed: \(error)")
         }
-        return try VersionedCryptoBox.encrypt(
+        return VersionedCryptoBox.encrypt(
             plaintext: plaintext,
             publicKey: publicAddress.viewPublicKeyTyped,
             rng: rng,
@@ -29,10 +32,16 @@ enum FogViewUtils {
     static func decryptTxOutRecord(
         ciphertext: Data,
         accountKey: AccountKey
-    ) throws -> FogView_TxOutRecord {
-        let decrypted = try VersionedCryptoBox.decrypt(
+    ) -> Result<FogView_TxOutRecord, VersionedCryptoBoxError> {
+        VersionedCryptoBox.decrypt(
             ciphertext: ciphertext,
-            privateKey: accountKey.subaddressViewPrivateKey)
-        return try FogView_TxOutRecord(serializedData: decrypted)
+            privateKey: accountKey.subaddressViewPrivateKey
+        ).flatMap { decrypted in
+            do {
+                return .success(try FogView_TxOutRecord(serializedData: decrypted))
+            } catch {
+                return .failure(.invalidInput("FogView_TxOutRecord serialization error: \(error)"))
+            }
+        }
     }
 }

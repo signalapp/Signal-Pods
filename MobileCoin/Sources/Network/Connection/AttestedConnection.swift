@@ -2,9 +2,29 @@
 //  Copyright (c) 2020 MobileCoin. All rights reserved.
 //
 
+// swiftlint:disable multiline_function_chains operator_usage_whitespace
+
 import Foundation
 import GRPC
 import LibMobileCoin
+
+enum AttestedConnectionError: Error {
+    case connectionError(ConnectionError)
+    case attestationFailure
+}
+
+extension AttestedConnectionError: CustomStringConvertible {
+    public var description: String {
+        "Attested connection error: " + {
+            switch self {
+            case .connectionError(let connectionError):
+                return "\(connectionError)"
+            case .attestationFailure:
+                return "Attestation failure"
+            }
+        }()
+    }
+}
 
 class AttestedConnection {
     private let inner: SerialCallbackLock<Inner>
@@ -35,7 +55,7 @@ class AttestedConnection {
     func performAttestedCall<Call: AttestedGrpcCallable>(
         _ call: Call,
         request: Call.InnerRequest,
-        completion: @escaping (Result<Call.InnerResponse, Error>) -> Void
+        completion: @escaping (Result<Call.InnerResponse, ConnectionError>) -> Void
     ) where Call.InnerRequestAad == (), Call.InnerResponseAad == () {
         performAttestedCall(call, requestAad: (), request: request, completion: completion)
     }
@@ -44,7 +64,7 @@ class AttestedConnection {
         _ call: Call,
         requestAad: Call.InnerRequestAad,
         request: Call.InnerRequest,
-        completion: @escaping (Result<Call.InnerResponse, Error>) -> Void
+        completion: @escaping (Result<Call.InnerResponse, ConnectionError>) -> Void
     ) where Call.InnerResponseAad == () {
         performAttestedCall(call, requestAad: requestAad, request: request) {
             completion($0.map { $0.response })
@@ -55,7 +75,8 @@ class AttestedConnection {
         _ call: Call,
         request: Call.InnerRequest,
         completion: @escaping (
-            Result<(responseAad: Call.InnerResponseAad, response: Call.InnerResponse), Error>
+            Result<(responseAad: Call.InnerResponseAad, response: Call.InnerResponse),
+                   ConnectionError>
         ) -> Void
     ) where Call.InnerRequestAad == () {
         performAttestedCall(call, requestAad: (), request: request, completion: completion)
@@ -66,19 +87,16 @@ class AttestedConnection {
         requestAad: Call.InnerRequestAad,
         request: Call.InnerRequest,
         completion: @escaping (
-            Result<(responseAad: Call.InnerResponseAad, response: Call.InnerResponse), Error>
+            Result<(responseAad: Call.InnerResponseAad, response: Call.InnerResponse),
+                   ConnectionError>
         ) -> Void
     ) {
         inner.accessAsync(block: { inner, callback in
-            do {
-                try inner.performAttestedCall(
-                    call,
-                    requestAad: requestAad,
-                    request: request,
-                    completion: callback)
-            } catch {
-                callback(.failure(error))
-            }
+            inner.performAttestedCall(
+                call,
+                requestAad: requestAad,
+                request: request,
+                completion: callback)
         }, completion: completion)
     }
 }
@@ -128,35 +146,78 @@ extension AttestedConnection {
             requestAad: Call.InnerRequestAad,
             request: Call.InnerRequest,
             completion: @escaping (
-                Result<(responseAad: Call.InnerResponseAad, response: Call.InnerResponse), Error>
+                Result<(responseAad: Call.InnerResponseAad, response: Call.InnerResponse),
+                       ConnectionError>
             ) -> Void
-        ) throws {
+        ) {
             if let attestAkeCipher = attestAke.cipher {
-                try doPerformAttestedCall(
+                doPerformAttestedCall(
                     call,
                     requestAad: requestAad,
                     request: request,
-                    attestAkeCipher: attestAkeCipher,
-                    completion: completion)
-            } else {
-                auth { authResult in
-                    do {
-                        let attestAkeCipher = try authResult.get()
-
-                        try self.doPerformAttestedCall(
-                            call,
-                            requestAad: requestAad,
-                            request: request,
-                            attestAkeCipher: attestAkeCipher,
-                            completion: completion)
-                    } catch {
-                        completion(.failure(error))
+                    attestAkeCipher: attestAkeCipher
+                ) {
+                    switch $0 {
+                    case .success(let response):
+                        completion(.success(response))
+                    case .failure(let error):
+                        switch error {
+                        case .connectionError(let connectionError):
+                            completion(.failure(connectionError))
+                        case .attestationFailure:
+                            self.attestAke.deattest()
+                            self.authAndPerformAttestedCall(
+                                call,
+                                requestAad: requestAad,
+                                request: request,
+                                completion: completion)
+                        }
                     }
+                }
+            } else {
+                authAndPerformAttestedCall(
+                    call,
+                    requestAad: requestAad,
+                    request: request,
+                    completion: completion)
+
+            }
+        }
+
+        private func authAndPerformAttestedCall<Call: AttestedGrpcCallable>(
+            _ call: Call,
+            requestAad: Call.InnerRequestAad,
+            request: Call.InnerRequest,
+            completion: @escaping (
+                Result<(responseAad: Call.InnerResponseAad, response: Call.InnerResponse),
+                       ConnectionError>
+            ) -> Void
+        ) {
+            auth {
+                guard let attestAkeCipher = $0.successOr(completion: completion) else { return }
+
+                self.doPerformAttestedCall(
+                    call,
+                    requestAad: requestAad,
+                    request: request,
+                    attestAkeCipher: attestAkeCipher
+                ) {
+                    completion($0.mapError {
+                        switch $0 {
+                        case .connectionError(let connectionError):
+                            return connectionError
+                        case .attestationFailure:
+                            self.attestAke.deattest()
+                            return .invalidServerResponse("Attestation failure with fresh auth")
+                        }
+                    })
                 }
             }
         }
 
-        private func auth(completion: @escaping (Result<AttestAke.Cipher, Error>) -> Void) {
+        private func auth(
+            completion: @escaping (Result<AttestAke.Cipher, ConnectionError>) -> Void
+        ) {
             let request = attestAke.authBeginRequest(
                 responderId: responderId,
                 rng: rng,
@@ -166,11 +227,28 @@ extension AttestedConnection {
                 AuthGrpcCallableWrapper(authCallable: client.authCallable),
                 request: request
             ) {
-                completion($0.flatMap { response in
-                    try self.attestAke.authEnd(
-                        authResponse: response,
-                        attestationVerifier: self.attestationVerifier)
-                })
+                completion(
+                    $0.mapError {
+                        switch $0 {
+                        case .connectionError(let connectionError):
+                            return connectionError
+                        case .attestationFailure:
+                            self.attestAke.deattest()
+                            return .invalidServerResponse("Attestation failure during auth")
+                        }
+                    }.flatMap { response in
+                        self.attestAke.authEnd(
+                            authResponse: response,
+                            attestationVerifier: self.attestationVerifier
+                        ).mapError {
+                            switch $0 {
+                            case .invalidInput(let reason):
+                                return .invalidServerResponse(reason)
+                            case .attestationVerificationFailed(let reason):
+                                return .attestationVerificationFailed(reason)
+                            }
+                        }
+                    })
             }
         }
 
@@ -180,17 +258,22 @@ extension AttestedConnection {
             request: Call.InnerRequest,
             attestAkeCipher: AttestAke.Cipher,
             completion: @escaping (
-                Result<(responseAad: Call.InnerResponseAad, response: Call.InnerResponse), Error>
+                Result<(responseAad: Call.InnerResponseAad, response: Call.InnerResponse),
+                       AttestedConnectionError>
             ) -> Void
-        ) throws {
-            let processedRequest = try call.processRequest(
-                requestAad: requestAad,
-                request: request,
-                attestAkeCipher: attestAkeCipher)
+        ) {
+            guard let processedRequest =
+                    call.processRequest(
+                        requestAad: requestAad,
+                        request: request,
+                        attestAkeCipher: attestAkeCipher)
+                    .mapError({ _ in .attestationFailure })
+                    .successOr(completion: completion)
+            else { return }
 
             doPerformCall(call, request: processedRequest) {
                 completion($0.flatMap { response in
-                    try call.processResponse(response: response, attestAkeCipher: attestAkeCipher)
+                    call.processResponse(response: response, attestAkeCipher: attestAkeCipher)
                 })
             }
         }
@@ -198,14 +281,12 @@ extension AttestedConnection {
         private func doPerformCall<Call: GrpcCallable>(
             _ call: Call,
             request: Call.Request,
-            completion: @escaping (Result<Call.Response, Error>) -> Void
+            completion: @escaping (Result<Call.Response, AttestedConnectionError>) -> Void
         ) {
             let callOptions = requestCallOptions()
 
-            call.call(request: request, callOptions: callOptions) { callResult in
-                completion(Result {
-                    try self.processResponse(callResult: callResult)
-                })
+            call.call(request: request, callOptions: callOptions) {
+                completion(self.processResponse(callResult: $0))
             }
         }
 
@@ -215,27 +296,30 @@ extension AttestedConnection {
             return callOptions
         }
 
-        private func processResponse<Response>(callResult: UnaryCallResult<Response>) throws
-            -> Response
+        private func processResponse<Response>(callResult: UnaryCallResult<Response>)
+            -> Result<Response, AttestedConnectionError>
         {
+            // Basic credential authorization failure
             guard callResult.status.code != .unauthenticated else {
-                throw AuthorizationFailure(String(describing: callResult.status))
+                return .failure(
+                    .connectionError(.authorizationFailure(String(describing: callResult.status))))
             }
 
+            // Attestation failure, reattest
             guard callResult.status.code != .permissionDenied else {
-                attestAke.deattest()
-                throw ConnectionFailure(String(describing: callResult.status))
+                return .failure(.attestationFailure)
             }
 
             guard callResult.status.isOk, let response = callResult.response else {
-                throw ConnectionFailure(String(describing: callResult.status))
+                return .failure(
+                    .connectionError(.connectionFailure(String(describing: callResult.status))))
             }
 
             if let initialMetadata = callResult.initialMetadata {
                 session.processResponse(headers: initialMetadata)
             }
 
-            return response
+            return .success(response)
         }
     }
 }

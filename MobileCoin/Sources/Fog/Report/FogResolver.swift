@@ -45,25 +45,25 @@ final class FogResolver {
         do {
             serializedReportResponse = try reportResponse.serializedData()
         } catch {
-            // Safety: Protobuf binary serialization is no fail when not using proto2 or `Any`
-            fatalError("Error: \(Self.self).\(#function): Protobuf serialization failed: \(error)")
+            // Safety: Protobuf binary serialization is no fail when not using proto2 or `Any`.
+            logger.fatalError(
+                "Error: \(Self.self).\(#function): Protobuf serialization failed: \(error)")
         }
 
         serializedReportResponse.asMcBuffer { reportResponsePtr in
-            let result = withMcError { errorPtr in
-                mc_fog_resolver_add_report_response(
-                    ptr,
-                    reportUrl.url.absoluteString,
-                    reportResponsePtr,
-                    &errorPtr)
-            }
-            switch result {
-            case .success:
-                break
-            case.failure(let error):
+            do {
+                try withMcError { errorPtr in
+                    mc_fog_resolver_add_report_response(
+                        ptr,
+                        reportUrl.url.absoluteString,
+                        reportResponsePtr,
+                        &errorPtr)
+                }.get()
+            } catch {
                 // Safety: mc_fog_resolver_add_report_response shouldn't fail deserialization since
                 // we just serialized it and roundtrip serialization should always succeed.
-                fatalError("Error: \(Self.self).\(#function): addReportResponse failed: \(error)")
+                logger.fatalError(
+                    "Error: \(Self.self).\(#function): addReportResponse failed: \(error)")
             }
         }
     }

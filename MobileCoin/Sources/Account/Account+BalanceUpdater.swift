@@ -35,31 +35,23 @@ extension Account {
                 targetQueue: targetQueue)
         }
 
-        func updateBalance(completion: @escaping (Result<Balance, Error>) -> Void) {
+        func updateBalance(completion: @escaping (Result<Balance, ConnectionError>) -> Void) {
             checkForNewTxOuts {
-                do {
-                    try $0.get()
+                guard $0.successOr(completion: completion) != nil else { return }
 
-                    self.viewKeyScanUnscannedMissedBlocks {
-                        do {
-                            try $0.get()
+                self.viewKeyScanUnscannedMissedBlocks {
+                    guard $0.successOr(completion: completion) != nil else { return }
 
-                            self.checkForSpentTxOuts {
-                                completion($0.map {
-                                    self.account.readSync { $0.cachedBalance }
-                                })
-                            }
-                        } catch {
-                            completion(.failure(error))
-                        }
+                    self.checkForSpentTxOuts {
+                        completion($0.map {
+                            self.account.readSync { $0.cachedBalance }
+                        })
                     }
-                } catch {
-                    completion(.failure(error))
                 }
             }
         }
 
-        func checkForNewTxOuts(completion: @escaping (Result<(), Error>) -> Void) {
+        func checkForNewTxOuts(completion: @escaping (Result<(), ConnectionError>) -> Void) {
             txOutFetcher.fetchTxOuts(partialResultsWithWriteLock: {
                 let account = self.account.accessWithoutLocking
                 account.addTxOuts($0.newTxOuts)
@@ -68,7 +60,7 @@ extension Account {
         }
 
         func viewKeyScanUnscannedMissedBlocks(
-            completion: @escaping (Result<(), Error>) -> Void
+            completion: @escaping (Result<(), ConnectionError>) -> Void
         ) {
             let unscannedRanges = account.readSync { $0.unscannedMissedBlocksRanges }
             viewKeyScanner.viewKeyScanBlocks(blockRanges: unscannedRanges) {
@@ -83,7 +75,7 @@ extension Account {
             }
         }
 
-        func checkForSpentTxOuts(completion: @escaping (Result<(), Error>) -> Void) {
+        func checkForSpentTxOuts(completion: @escaping (Result<(), ConnectionError>) -> Void) {
             let keyImageTrackers = account.mapLock { account in
                 account.allTxOutTrackers.filter { !$0.isSpent }.map { $0.keyImageTracker }
             }

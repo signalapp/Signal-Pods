@@ -2,6 +2,8 @@
 //  Copyright (c) 2020 MobileCoin. All rights reserved.
 //
 
+// swiftlint:disable multiline_function_chains
+
 import Foundation
 import LibMobileCoin
 
@@ -70,21 +72,20 @@ enum TxOutUtils {
                 viewPrivateKey.asMcBuffer { viewPrivateKeyPtr in
                     let bytes: Data32
                     do {
-                        bytes = try Data32(withMcMutableBuffer: { bufferPtr, errorPtr in
+                        bytes = try Data32.make(withMcMutableBuffer: { bufferPtr, errorPtr in
                             mc_tx_out_get_subaddress_spend_public_key(
                                 targetKeyBufferPtr,
                                 publicKeyBufferPtr,
                                 viewPrivateKeyPtr,
                                 bufferPtr,
                                 &errorPtr)
-                        })
+                        }).get()
                     } catch {
                         // Safety: This condition indicates a programming error and can only happen
                         // if arguments to mc_tx_out_get_subaddress_spend_public_key are supplied
                         // incorrectly.
-                        fatalError("\(Self.self).\(#function) error: \(error)")
+                        logger.fatalError("\(Self.self).\(#function) error: \(error)")
                     }
-
                     // Safety: It's safe to skip validation because
                     // mc_tx_out_get_subaddress_spend_public_key should always return a valid
                     // RistrettoPublic on success.
@@ -117,16 +118,19 @@ enum TxOutUtils {
                     }) {
                     case .success:
                         return valueOut
-                    case .failure(let error) where error.errorCode == .encryptionFailure:
-                        // Indicates either `commitment`/`maskedValue`/`publicKey` values are
-                        // incongruent or `viewPrivateKey` does not own `TxOut`. However, it's not
-                        // possible to determine which, only that the provided `commitment` doesn't
-                        // match the computed commitment.
-                        return nil
                     case .failure(let error):
-                        // Safety: This condition indicates a programming error and can only happen
-                        // if arguments to mc_tx_out_get_value are supplied incorrectly.
-                        fatalError("\(Self.self).\(#function) error: \(error)")
+                        switch error.errorCode {
+                        case .encryptionFailure:
+                            // Indicates either `commitment`/`maskedValue`/`publicKey` values are
+                            // incongruent or `viewPrivateKey` does not own `TxOut`. However, it's
+                            // not possible to determine which, only that the provided `commitment`
+                            // doesn't match the computed commitment.
+                            return nil
+                        default:
+                            // Safety: This condition indicates a programming error and can only
+                            // happen if arguments to mc_tx_out_get_value are supplied incorrectly.
+                            logger.fatalError("\(Self.self).\(#function) error: \(error)")
+                        }
                     }
                 }
             }
@@ -146,32 +150,33 @@ enum TxOutUtils {
             publicKey.asMcBuffer { publicKeyPtr in
                 viewPrivateKey.asMcBuffer { viewKeyBufferPtr in
                     subaddressSpendPrivateKey.asMcBuffer { spendKeyBufferPtr in
-                        let keyImageData: Data32
-                        do {
-                            keyImageData = try Data32(withMcMutableBuffer: { bufferPtr, errorPtr in
-                                mc_tx_out_get_key_image(
-                                    targetKeyPtr,
-                                    publicKeyPtr,
-                                    viewKeyBufferPtr,
-                                    spendKeyBufferPtr,
-                                    bufferPtr,
-                                    &errorPtr)
-                            })
-                        } catch let error as LibMobileCoinError
-                                    where error.errorCode == .encryptionFailure {
-                            // Indicates either `targetKey`/`publicKey` values are incongruent or
-                            // `viewPrivateKey`/`subaddressSpendPrivateKey` does not own `TxOut`.
-                            // However, it's not possible to determine which, only that the provided
-                            // `targetKey` doesn't match the computed target key (aka onetime public
-                            // key).
-                            return nil
-                        } catch {
-                            // Safety: This condition indicates a programming error and can only
-                            // happen if arguments to mc_tx_out_get_key_image are supplied
-                            // incorrectly.
-                            fatalError("\(Self.self).\(#function) error: \(error)")
+                        switch Data32.make(withMcMutableBuffer: { bufferPtr, errorPtr in
+                            mc_tx_out_get_key_image(
+                                targetKeyPtr,
+                                publicKeyPtr,
+                                viewKeyBufferPtr,
+                                spendKeyBufferPtr,
+                                bufferPtr,
+                                &errorPtr)
+                        }) {
+                        case .success(let keyImageData):
+                            return KeyImage(keyImageData)
+                        case .failure(let error):
+                            switch  error.errorCode {
+                            case .encryptionFailure:
+                                // Indicates either `targetKey`/`publicKey` values are incongruent
+                                //  or`viewPrivateKey`/`subaddressSpendPrivateKey` does not own
+                                // `TxOut`. However, it's not possible to determine which, only that
+                                // the provided `targetKey` doesn't match the computed target key
+                                // (aka onetime public key).
+                                return nil
+                            default:
+                                // Safety: This condition indicates a programming error and can only
+                                // happen if arguments to mc_tx_out_get_key_image are supplied
+                                // incorrectly.
+                                logger.fatalError("\(Self.self).\(#function) error: \(error)")
+                            }
                         }
-                        return KeyImage(keyImageData)
                     }
                 }
             }

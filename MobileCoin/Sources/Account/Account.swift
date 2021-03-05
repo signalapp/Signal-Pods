@@ -68,16 +68,20 @@ final class Account {
         allTxOutTrackers.append(contentsOf: txOuts.map { TxOutTracker($0) })
     }
 
-    func cachedReceivedStatus(of receipt: Receipt) throws -> Receipt.ReceivedStatus {
-        guard let ownedTxOut = try ownedTxOut(for: receipt) else {
-            let knownToBeNotReceivedBlockCount = allTxOutsFoundBlockCount
-            guard receipt.txTombstoneBlockIndex > knownToBeNotReceivedBlockCount else {
-                return .tombstoneExceeded
+    func cachedReceivedStatus(of receipt: Receipt)
+        -> Result<Receipt.ReceivedStatus, InvalidInputError>
+    {
+        ownedTxOut(for: receipt).map {
+            if let ownedTxOut = $0 {
+                return .received(block: ownedTxOut.block)
+            } else {
+                let knownToBeNotReceivedBlockCount = allTxOutsFoundBlockCount
+                guard receipt.txTombstoneBlockIndex > knownToBeNotReceivedBlockCount else {
+                    return .tombstoneExceeded
+                }
+                return .notReceived(knownToBeNotReceivedBlockCount: knownToBeNotReceivedBlockCount)
             }
-            return .notReceived(knownToBeNotReceivedBlockCount: knownToBeNotReceivedBlockCount)
         }
-
-        return .received(block: ownedTxOut.block)
     }
 
     func cachedSpentStatus(of keyImage: KeyImage) -> KeyImage.SpentStatus? {
@@ -85,7 +89,7 @@ final class Account {
     }
 
     /// Retrieves the `KnownTxOut`'s corresponding to `receipt` and verifies `receipt` is valid.
-    private func ownedTxOut(for receipt: Receipt) throws -> KnownTxOut? {
+    private func ownedTxOut(for receipt: Receipt) -> Result<KnownTxOut?, InvalidInputError> {
         print("Checking received status of TxOut: Tx pubkey: " +
             "\(receipt.txOutPublicKey.base64EncodedString())")
         if let lastTxOut = allTxOuts.last {
@@ -96,7 +100,7 @@ final class Account {
         // First check if we've received the TxOut (either from Fog View or from view key scanning).
         // This has the benefit of providing a guarantee that the TxOut is owned by this account.
         guard let ownedTxOut = ownedTxOut(withPublicKey: receipt.txOutPublicKeyTyped) else {
-            return nil
+            return .success(nil)
         }
 
         // Make sure the Receipt data matches the TxOut found in the ledger. This verifies that the
@@ -105,17 +109,17 @@ final class Account {
         // Note: This doesn't verify the confirmation number or tombstone block (since neither are
         // saved to the ledger).
         guard receipt.matchesTxOut(ownedTxOut) else {
-            throw InvalidReceipt("Receipt data doesn't match the corresponding TxOut found in " +
-                "the ledger.")
+            return .failure(InvalidInputError(
+                "Receipt data doesn't match the corresponding TxOut found in the ledger."))
         }
 
         // Verify that the confirmation number validates for this account key. This provides a
         // guarantee that the sender of the Receipt was the creator of the TxOut that we received.
         guard receipt.validateConfirmationNumber(accountKey: accountKey) else {
-            throw InvalidReceipt("Receipt confirmation number is invalid.")
+            return .failure(InvalidInputError("Receipt confirmation number is invalid."))
         }
 
-        return ownedTxOut
+        return .success(ownedTxOut)
     }
 
     private func ownedTxOut(withPublicKey publicKey: RistrettoPublic) -> KnownTxOut? {
@@ -124,12 +128,13 @@ final class Account {
 }
 
 extension Account {
-    convenience init(accountKey: AccountKey) throws {
+    /// - Returns: `.failure` if `accountKey` doesn't use Fog.
+    static func make(accountKey: AccountKey) -> Result<Account, InvalidInputError> {
         guard let accountKey = AccountKeyWithFog(accountKey: accountKey) else {
-            throw MalformedInput("Accounts without fog URLs are not currently supported.")
+            return .failure(InvalidInputError(
+                "Accounts without fog URLs are not currently supported."))
         }
-
-        self.init(accountKey: accountKey)
+        return .success(Account(accountKey: accountKey))
     }
 }
 

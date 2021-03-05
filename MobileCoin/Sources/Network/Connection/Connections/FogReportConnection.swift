@@ -21,7 +21,7 @@ final class FogReportConnection: Connection, FogReportService {
 
     func getReports(
         request: Report_ReportRequest,
-        completion: @escaping (Result<Report_ReportResponse, Error>) -> Void
+        completion: @escaping (Result<Report_ReportResponse, ConnectionError>) -> Void
     ) {
         performCall(GetReportsCall(client: client), request: request, completion: completion)
     }

@@ -24,8 +24,12 @@ final class McData {
 }
 
 extension Data {
-    init(withMcDataBytes body: (inout UnsafeMutablePointer<McError>?) -> OpaquePointer?) throws {
-        let mcData = McData(try withMcError(body).get())
-        self = mcData.bytes
+    static func make(withMcDataBytes body: (inout UnsafeMutablePointer<McError>?) -> OpaquePointer?)
+        -> Result<Data, LibMobileCoinError>
+    {
+        withMcError(body).map {
+            let mcData = McData($0)
+            return mcData.bytes
+        }
     }
 }

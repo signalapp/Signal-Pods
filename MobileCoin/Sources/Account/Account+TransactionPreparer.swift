@@ -6,6 +6,27 @@
 
 import Foundation
 
+public enum TransactionPreparationError: Error {
+    case invalidInput(String)
+    case insufficientBalance
+    case connectionError(ConnectionError)
+}
+
+extension TransactionPreparationError: CustomStringConvertible {
+    public var description: String {
+        "Transaction preparation error: " + {
+            switch self {
+            case .invalidInput(let reason):
+                return "Invalid input: " + reason
+            case .insufficientBalance:
+                return "Insufficient balance"
+            case .connectionError(let innerError):
+                return "\(innerError)"
+            }
+        }()
+    }
+}
+
 extension Account {
     struct TransactionPreparer {
         private let serialQueue: DispatchQueue
@@ -39,53 +60,52 @@ extension Account {
             to recipient: PublicAddress,
             amount: UInt64,
             fee: UInt64,
-            completion: @escaping (Result<(Transaction, Receipt), Error>) -> Void
+            completion: @escaping (
+                Result<(transaction: Transaction, receipt: Receipt), TransactionPreparationError>
+            ) -> Void
         ) {
+            guard amount > 0, let amount = PositiveUInt64(amount) else {
+                serialQueue.async {
+                    completion(.failure(.invalidInput("Cannot spend 0 MOB")))
+                }
+                return
+            }
+
             let (balance, unspentTxOuts) = account.readSync { ($0.cachedBalance, $0.unspentTxOuts) }
             let tombstoneBlockIndex = balance.blockCount + 50
 
-            do {
-                guard amount > 0 else {
-                    throw MalformedInput("Cannot spend 0 MOB")
-                }
-
-                let totalAmount = amount + fee
-                guard balance.amountPicoMobHigh > 0 || balance.amountPicoMobLow >= totalAmount
-                else {
-                    throw InsufficientBalance(amountRequired: totalAmount, currentBalance: balance)
-                }
-
-                let txOutsToSpend = try txOutSelectionStrategy.selectTxOuts(
-                    totalingAtLeast: totalAmount,
-                    from: unspentTxOuts)
-
-                let inputAmount = txOutsToSpend.map { $0.value }.reduce(0, +)
-                guard inputAmount >= totalAmount else {
-                    throw InternalError("Input TxOuts total \(inputAmount) does not exceed " +
-                        "amount + fee \(amount + fee)")
-                }
-
-                doPrepareTransaction(
-                    to: recipient,
-                    amount: amount,
-                    fee: fee,
-                    tombstoneBlockIndex: tombstoneBlockIndex,
-                    txOutsToSpend: txOutsToSpend,
-                    completion: completion)
-            } catch {
+            let totalAmount = amount.value + fee
+            guard balance.amountPicoMobHigh > 0 || balance.amountPicoMobLow >= totalAmount,
+                  let unspentTxOutsWithAmount
+                    = SpendableTxOutsWithAmount(unspentTxOuts, totalingAtLeast: totalAmount)
+            else {
                 serialQueue.async {
-                    completion(.failure(error))
+                    completion(.failure(.insufficientBalance))
                 }
+                return
             }
+
+            let txOutsToSpend
+                = txOutSelectionStrategy.selectTxOuts(unspentTxOutsWithAmount).txOuts
+
+            doPrepareTransaction(
+                to: recipient,
+                amount: amount,
+                fee: fee,
+                tombstoneBlockIndex: tombstoneBlockIndex,
+                txOutsToSpend: txOutsToSpend,
+                completion: completion)
         }
 
         private func doPrepareTransaction(
             to recipient: PublicAddress,
-            amount: UInt64,
+            amount: PositiveUInt64,
             fee: UInt64,
             tombstoneBlockIndex: UInt64,
             txOutsToSpend: [KnownTxOut],
-            completion: @escaping (Result<(Transaction, Receipt), Error>) -> Void
+            completion: @escaping (
+                Result<(transaction: Transaction, receipt: Receipt), TransactionPreparationError>
+            ) -> Void
         ) {
             let accountKey = self.accountKey
             let changeAddress = self.publicAddress
@@ -96,48 +116,31 @@ extension Account {
                     desiredMinPubkeyExpiry: tombstoneBlockIndex,
                     completion: callback)
             }, body2: { callback in
-                do {
-                    try prepareInputs(inputs: txOutsToSpend, completion: callback)
-                } catch {
-                    serialQueue.async {
-                        callback(.failure(error))
-                    }
-                }
+                prepareInputs(inputs: txOutsToSpend, completion: callback)
             }, completion: {
-                completion($0.flatMap { fogResolver, preparedInputs in
-                    try TransactionBuilder.build(
-                        inputs: preparedInputs,
-                        accountKey: accountKey,
-                        to: recipient,
-                        amount: amount,
-                        changeAddress: changeAddress,
-                        fee: fee,
-                        tombstoneBlockIndex: tombstoneBlockIndex,
-                        fogResolver: fogResolver)
-                })
+                completion($0.mapError { .connectionError($0) }
+                    .flatMap { fogResolver, preparedInputs in
+                        TransactionBuilder.build(
+                            inputs: preparedInputs,
+                            accountKey: accountKey,
+                            to: recipient,
+                            amount: amount,
+                            changeAddress: changeAddress,
+                            fee: fee,
+                            tombstoneBlockIndex: tombstoneBlockIndex,
+                            fogResolver: fogResolver
+                        ).mapError { .invalidInput(String(describing: $0)) }
+                    })
             })
         }
 
         private func prepareInputs(
             inputs: [KnownTxOut],
-            completion: @escaping (Result<[PreparedTxInput], Error>) -> Void
-        ) throws {
-            try mixinOutputs(inputs: inputs) {
-                completion($0.flatMap { inputsMixinOutputs in
-                    try zip(inputs, inputsMixinOutputs).map { knownTxOut, mixinOutputs in
-                        try PreparedTxInput(knownTxOut: knownTxOut, ring: mixinOutputs)
-                    }
-                })
-            }
-        }
-
-        private func mixinOutputs(
-            inputs: [KnownTxOut],
             ledgerTxOutCount: UInt64? = nil,
             merkleRootBlock: UInt64? = nil,
-            completion: @escaping (Result<[[(TxOut, TxOutMembershipProof)]], Error>) -> Void
-        ) throws {
-            let inputsMixinIndices = try mixinSelectionStrategy.selectMixinIndices(
+            completion: @escaping (Result<[PreparedTxInput], ConnectionError>) -> Void
+        ) {
+            let inputsMixinIndices = mixinSelectionStrategy.selectMixinIndices(
                 forRealTxOutIndices: inputs.map { $0.globalIndex },
                 selectionRange: ledgerTxOutCount.map { ..<$0 }
             ).map { Array($0) }
@@ -154,47 +157,48 @@ extension Account {
                 merkleRootBlock: merkleRootBlock,
                 maxNumIndicesPerQuery: 100
             ) {
-                do {
-                    let fetchResults = try $0.get()
-
-                    try self.processResults(
-                        inputs: inputs,
-                        ledgerTxOutCount: ledgerTxOutCount,
-                        results: fetchResults,
-                        completion: completion)
-                } catch {
-                    completion(.failure(error))
-                }
+                self.processResults(
+                    inputs: inputs,
+                    ledgerTxOutCount: ledgerTxOutCount,
+                    results: $0,
+                    completion: completion)
             }
         }
 
         private func processResults(
             inputs: [KnownTxOut],
             ledgerTxOutCount: UInt64?,
-            results: FogMerkleProofFetcher.FetchResult<[[(TxOut, TxOutMembershipProof)]]>,
-            completion: @escaping (Result<[[(TxOut, TxOutMembershipProof)]], Error>) -> Void
-        ) throws {
+            results: Result<[[(TxOut, TxOutMembershipProof)]], FogMerkleProofFetcherError>,
+            completion: @escaping (Result<[PreparedTxInput], ConnectionError>) -> Void
+        ) {
             switch results {
             case .success(let inputsMixinOutputs):
-                completion(.success(inputsMixinOutputs))
-            case let .outOfBounds(blockCount: blockCount, ledgerTxOutCount: responseTxOutCount):
-                guard ledgerTxOutCount == nil else {
-                    guard let ledgerTxOutCount = ledgerTxOutCount else {
-                        fatalError("Unreachable code")
+                completion(zip(inputs, inputsMixinOutputs).map { knownTxOut, mixinOutputs in
+                    PreparedTxInput.make(knownTxOut: knownTxOut, ring: mixinOutputs)
+                        .mapError { .invalidServerResponse(String(describing: $0)) }
+                }.collectResult())
+            case .failure(let error):
+                switch error {
+                case .connectionError(let connectionError):
+                    completion(.failure(connectionError))
+                case let .outOfBounds(blockCount: blockCount, ledgerTxOutCount: responseTxOutCount):
+                    if let ledgerTxOutCount = ledgerTxOutCount {
+                        completion(.failure(.invalidServerResponse(
+                            "\(Self.self).\(#function): Fog GetMerkleProof returned " +
+                            "doesNotExist, even though txo indices were limited by " +
+                            "globalTxoCount returned by previous call to GetMerkleProof. " +
+                            "Previously returned globalTxoCount: \(ledgerTxOutCount)")))
+                    } else {
+                        // Re-select mixins, making sure we limit mixin indices to txo count
+                        // returned by the server. Uses blockCount returned by server for
+                        // merkleRootBlock.
+                        prepareInputs(
+                            inputs: inputs,
+                            ledgerTxOutCount: responseTxOutCount,
+                            merkleRootBlock: blockCount,
+                            completion: completion)
                     }
-                    throw ConnectionFailure("\(Self.self).\(#function): " +
-                        "Fog GetMerkleProof returned doesNotExist, even though txo indices were " +
-                        "limited by globalTxoCount returned by previous call to GetMerkleProof. " +
-                        "Previously returned globalTxoCount: \(ledgerTxOutCount)")
                 }
-
-                // Re-select mixins, making sure we limit mixin indices to txo count returned by the
-                // server. Uses blockCount returned by server for merkleRootBlock.
-                try mixinOutputs(
-                    inputs: inputs,
-                    ledgerTxOutCount: responseTxOutCount,
-                    merkleRootBlock: blockCount,
-                    completion: completion)
             }
         }
 

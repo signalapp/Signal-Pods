@@ -2,6 +2,8 @@
 //  Copyright (c) 2020 MobileCoin. All rights reserved.
 //
 
+// swiftlint:disable multiline_function_chains
+
 import Foundation
 import LibMobileCoin
 
@@ -32,47 +34,37 @@ extension FogView {
         func fetchTxOuts(
             partialResultsWithWriteLock: @escaping
                 ((newTxOuts: [KnownTxOut], missedBlocks: [Range<UInt64>])) -> Void,
-            completion: @escaping (Result<(), Error>) -> Void
+            completion: @escaping (Result<(), ConnectionError>) -> Void
         ) {
             let queryScaling = fogQueryScalingStrategy.create()
 
-            func performSearchRound(targetBlockCount maybeTargetBlockCount: UInt64?) throws {
-                try checkForNewTxOutsLoop(
+            func performSearchRound(targetBlockCount maybeTargetBlockCount: UInt64?) {
+                checkForNewTxOutsLoop(
                     targetBlockCount: maybeTargetBlockCount,
                     numOutputs: queryScaling.next(),
                     partialResultsWithWriteLock: partialResultsWithWriteLock
                 ) {
-                    do {
-                        let highestProcessedBlockCount = try $0.get()
+                    guard let highestProcessedBlockCount = $0.successOr(completion: completion)
+                    else { return }
 
-                        // After the first call we know the current number of blocks processed by
-                        // the fog ingest server, so we'll use that to try to build a complete view
-                        // of the ledger for our account up to this number of blocks. We keep using
-                        // this `targetBlockCount` because the ledger is always growing and we have
-                        // to stop and declare the balance check finished at some point.
-                        let targetBlockCount = maybeTargetBlockCount ?? highestProcessedBlockCount
+                    // After the first call we know the current number of blocks processed by
+                    // the fog ingest server, so we'll use that to try to build a complete view
+                    // of the ledger for our account up to this number of blocks. We keep using
+                    // this `targetBlockCount` because the ledger is always growing and we have
+                    // to stop and declare the balance check finished at some point.
+                    let targetBlockCount = maybeTargetBlockCount ?? highestProcessedBlockCount
 
-                        if self.allRngTxOutsFoundBlockCount >= targetBlockCount {
-                            // Search complete
-                            completion(.success(()))
-                        } else {
-                            // Do another search round
-                            try performSearchRound(targetBlockCount: targetBlockCount)
-                        }
-                    } catch {
-                        completion(.failure(error))
+                    if self.allRngTxOutsFoundBlockCount >= targetBlockCount {
+                        // Search complete
+                        completion(.success(()))
+                    } else {
+                        // Do another search round
+                        performSearchRound(targetBlockCount: targetBlockCount)
                     }
                 }
             }
 
-            do {
-                try performSearchRound(targetBlockCount: nil)
-            } catch {
-                // We haven't dispatched yet, so make sure we do that
-                serialQueue.async {
-                    completion(.failure(error))
-                }
-            }
+            performSearchRound(targetBlockCount: nil)
         }
 
         private var allRngTxOutsFoundBlockCount: UInt64 {
@@ -85,16 +77,16 @@ extension FogView {
 
         private func checkForNewTxOutsLoop(
             targetBlockCount: UInt64?,
-            numOutputs: Int,
+            numOutputs: PositiveInt,
             partialResultsWithWriteLock: @escaping
                 ((newTxOuts: [KnownTxOut], missedBlocks: [Range<UInt64>])) -> Void,
-            completion: @escaping (Result<UInt64, Error>) -> Void
-        ) throws {
-            let searchAttempt = try fogView.readSync { fogView in
-                try fogView.searchAttempt(
+            completion: @escaping (Result<UInt64, ConnectionError>) -> Void
+        ) {
+            let searchAttempt = fogView.readSync { fogView in
+                fogView.searchAttempt(
                     requestedBlockCount: targetBlockCount,
                     numOutputs: numOutputs,
-                    minOutputsPerSelectedRng: min(2, numOutputs))
+                    minOutputsPerSelectedRng: min(2, numOutputs.value))
             }
 
             var requestAad = FogView_QueryRequestAAD()
@@ -105,19 +97,21 @@ extension FogView {
                 completion($0.flatMap { response in
                     self.printFogQueryResponseDebug(response: response)
 
-                    try self.fogView.writeSync { fogView in
-                        let newTxOuts = try fogView.processSearchResult(
-                            accountKey: self.accountKey,
+                    return self.fogView.writeSync { fogView in
+                        fogView.processQueryResponse(
                             searchAttempt: searchAttempt,
-                            response: response)
-                        print("processSearchResults: Found \(newTxOuts.count) new TxOuts")
-                        let missedBlocks = response.missedBlockRanges.map { $0.range }
-                        let partialResults = (newTxOuts: newTxOuts, missedBlocks: missedBlocks)
+                            response: response,
+                            accountKey: self.accountKey
+                        ).map { newTxOuts in
+                            print("processSearchResults: Found \(newTxOuts.count) new TxOuts")
+                            let missedBlocks = response.missedBlockRanges.map { $0.range }
+                            let partialResults = (newTxOuts: newTxOuts, missedBlocks: missedBlocks)
 
-                        partialResultsWithWriteLock(partialResults)
+                            partialResultsWithWriteLock(partialResults)
+
+                            return response.highestProcessedBlockCount
+                        }
                     }
-
-                    return response.highestProcessedBlockCount
                 })
             }
         }

@@ -26,7 +26,7 @@ final class FogResolverManager {
 
     func fogResolver(
         addresses: [PublicAddress],
-        completion: @escaping (Result<FogResolver, Error>) -> Void
+        completion: @escaping (Result<FogResolver, ConnectionError>) -> Void
     ) {
         let reportUrls = Set(addresses.compactMap { $0.fogReportUrl })
         reportUrls.mapAsync({ reportUrl, callback in
@@ -47,7 +47,7 @@ final class FogResolverManager {
     func fogResolver(
         addresses: [PublicAddress],
         desiredMinPubkeyExpiry: UInt64,
-        completion: @escaping (Result<FogResolver, Error>) -> Void
+        completion: @escaping (Result<FogResolver, ConnectionError>) -> Void
     ) {
         let fogInfos = addresses.compactMap { $0.fogInfo }
 

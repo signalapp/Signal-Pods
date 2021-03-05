@@ -6,6 +6,24 @@ import Foundation
 import LibMobileCoin
 import SwiftProtobuf
 
+enum AttestedCallError: Error {
+    case aeadError(AeadError)
+    case invalidInput(String)
+}
+
+extension AttestedCallError: CustomStringConvertible {
+    public var description: String {
+        "Attested call error: " + {
+            switch self {
+            case .aeadError(let innerError):
+                return "\(innerError)"
+            case .invalidInput(let reason):
+                return "Invalid input: " + reason
+            }
+        }()
+    }
+}
+
 protocol AttestedGrpcCallable: GrpcCallable {
     associatedtype InnerRequestAad = ()
     associatedtype InnerRequest
@@ -16,12 +34,12 @@ protocol AttestedGrpcCallable: GrpcCallable {
         requestAad: InnerRequestAad,
         request: InnerRequest,
         attestAkeCipher: AttestAke.Cipher
-    ) throws -> Request
+    ) -> Result<Request, AeadError>
 
     func processResponse(
         response: Response,
         attestAkeCipher: AttestAke.Cipher
-    ) throws -> (responseAad: InnerResponseAad, response: InnerResponse)
+    ) -> Result<(responseAad: InnerResponseAad, response: InnerResponse), AttestedConnectionError>
 }
 
 extension AttestedGrpcCallable where InnerRequestAad == (), InnerRequest == Request {
@@ -29,16 +47,16 @@ extension AttestedGrpcCallable where InnerRequestAad == (), InnerRequest == Requ
         requestAad: InnerRequestAad,
         request: InnerRequest,
         attestAkeCipher: AttestAke.Cipher
-    ) throws -> Request {
-        request
+    ) -> Result<Request, AeadError> {
+        .success(request)
     }
 }
 
 extension AttestedGrpcCallable where InnerResponseAad == (), InnerResponse == Response {
-    func processResponse(response: Response, attestAkeCipher: AttestAke.Cipher) throws
-        -> (responseAad: InnerResponseAad, response: InnerResponse)
+    func processResponse(response: Response, attestAkeCipher: AttestAke.Cipher)
+        -> Result<(responseAad: InnerResponseAad, response: InnerResponse), AttestedConnectionError>
     {
-        (responseAad: (), response: response)
+        .success((responseAad: (), response: response))
     }
 }
 
@@ -51,17 +69,18 @@ extension AttestedGrpcCallable
         requestAad: InnerRequestAad,
         request: InnerRequest,
         attestAkeCipher: AttestAke.Cipher
-    ) throws -> Attest_Message {
+    ) -> Result<Attest_Message, AeadError> {
         let aad = Data()
         let plaintext: Data
         do {
             plaintext = try request.serializedData()
         } catch {
             // Safety: Protobuf binary serialization is no fail when not using proto2 or `Any`
-            fatalError("Error: \(Self.self).\(#function): Protobuf serialization failed: \(error)")
+            logger.fatalError(
+                "Error: \(Self.self).\(#function): Protobuf serialization failed: \(error)")
         }
 
-        return try attestAkeCipher.encryptMessage(aad: aad, plaintext: plaintext)
+        return attestAkeCipher.encryptMessage(aad: aad, plaintext: plaintext)
     }
 }
 
@@ -73,15 +92,24 @@ extension AttestedGrpcCallable
     func processResponse(
         response: Attest_Message,
         attestAkeCipher: AttestAke.Cipher
-    ) throws -> (responseAad: InnerResponseAad, response: InnerResponse) {
+    ) -> Result<(responseAad: InnerResponseAad, response: InnerResponse), AttestedConnectionError> {
         guard response.aad == Data() else {
-            throw ConnectionFailure("\(Self.self) received unexpected aad: " +
-                "\(response.aad.base64EncodedString()), message: \(response)")
+            return .failure(.connectionError(.invalidServerResponse("\(Self.self) received " +
+                "unexpected aad: \(response.aad.base64EncodedString()), message: \(response)")))
         }
 
-        let plaintext = try attestAkeCipher.decryptMessage(response)
-        let response = try InnerResponse(serializedData: plaintext)
-        return (responseAad: (), response: response)
+        return attestAkeCipher.decryptMessage(response)
+            .mapError { _ in .attestationFailure }
+            .flatMap { plaintext in
+                let response: InnerResponse
+                do {
+                    response = try InnerResponse(serializedData: plaintext)
+                } catch {
+                    return .failure(.connectionError(
+                        .invalidServerResponse("Failed to deserialize server response: \(error)")))
+                }
+                return .success((responseAad: (), response: response))
+            }
     }
 }
 
@@ -94,7 +122,7 @@ extension AttestedGrpcCallable
         requestAad: InnerRequestAad,
         request: InnerRequest,
         attestAkeCipher: AttestAke.Cipher
-    ) throws -> Attest_Message {
+    ) -> Result<Attest_Message, AeadError> {
         let aad: Data
         let plaintext: Data
         do {
@@ -102,10 +130,11 @@ extension AttestedGrpcCallable
             plaintext = try request.serializedData()
         } catch {
             // Safety: Protobuf binary serialization is no fail when not using proto2 or `Any`
-            fatalError("Error: \(Self.self).\(#function): Protobuf serialization failed: \(error)")
+            logger.fatalError(
+                "Error: \(Self.self).\(#function): Protobuf serialization failed: \(error)")
         }
 
-        return try attestAkeCipher.encryptMessage(aad: aad, plaintext: plaintext)
+        return attestAkeCipher.encryptMessage(aad: aad, plaintext: plaintext)
     }
 }
 
@@ -117,10 +146,20 @@ extension AttestedGrpcCallable
     func processResponse(
         response: Attest_Message,
         attestAkeCipher: AttestAke.Cipher
-    ) throws -> (responseAad: InnerResponseAad, response: InnerResponse) {
-        let plaintext = try attestAkeCipher.decryptMessage(response)
-        let plaintextResponse = try InnerResponse(serializedData: plaintext)
-        let responseAad = try InnerResponseAad(serializedData: response.aad)
-        return (responseAad: responseAad, response: plaintextResponse)
+    ) -> Result<(responseAad: InnerResponseAad, response: InnerResponse), AttestedConnectionError> {
+        attestAkeCipher.decryptMessage(response)
+            .mapError { _ in .attestationFailure }
+            .flatMap { plaintext in
+                let plaintextResponse: InnerResponse
+                let responseAad: InnerResponseAad
+                do {
+                    plaintextResponse = try InnerResponse(serializedData: plaintext)
+                    responseAad = try InnerResponseAad(serializedData: response.aad)
+                } catch {
+                    return .failure(.connectionError(
+                        .invalidServerResponse("Failed to deserialize server response: \(error)")))
+                }
+                return .success((responseAad: responseAad, response: plaintextResponse))
+            }
     }
 }

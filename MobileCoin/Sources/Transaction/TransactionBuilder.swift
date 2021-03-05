@@ -3,9 +3,25 @@
 //
 
 // swiftlint:disable function_parameter_count function_default_parameter_at_end
+// swiftlint:disable multiline_function_chains
 
 import Foundation
 import LibMobileCoin
+
+enum TransactionBuilderError: Error {
+    case invalidInput(String)
+}
+
+extension TransactionBuilderError: CustomStringConvertible {
+    public var description: String {
+        "Transaction builder error: " + {
+            switch self {
+            case .invalidInput(let reason):
+                return "Invalid input: \(reason)"
+            }
+        }()
+    }
+}
 
 final class TransactionBuilder {
     private let tombstoneBlockIndex: UInt64
@@ -30,8 +46,10 @@ final class TransactionBuilder {
         mc_transaction_builder_free(ptr)
     }
 
-    private func addInput(preparedTxInput: PreparedTxInput, accountKey: AccountKey) throws {
-        try addInput(
+    private func addInput(preparedTxInput: PreparedTxInput, accountKey: AccountKey)
+        -> Result<(), TransactionBuilderError>
+    {
+        addInput(
             preparedTxInput: preparedTxInput,
             viewPrivateKey: accountKey.viewPrivateKey,
             subaddressSpendPrivateKey: accountKey.subaddressSpendPrivateKey)
@@ -41,12 +59,12 @@ final class TransactionBuilder {
         preparedTxInput: PreparedTxInput,
         viewPrivateKey: RistrettoPrivate,
         subaddressSpendPrivateKey: RistrettoPrivate
-    ) throws {
+    ) -> Result<(), TransactionBuilderError> {
         let ring = McTransactionBuilderRing(ring: preparedTxInput.ring)
-        try viewPrivateKey.asMcBuffer { viewPrivateKeyPtr in
-            try subaddressSpendPrivateKey.asMcBuffer { subaddressSpendPrivateKeyPtr in
-                try ring.withUnsafeOpaquePointer { ringPtr in
-                    try withMcError { errorPtr in
+        return viewPrivateKey.asMcBuffer { viewPrivateKeyPtr in
+            subaddressSpendPrivateKey.asMcBuffer { subaddressSpendPrivateKeyPtr in
+                ring.withUnsafeOpaquePointer { ringPtr in
+                    withMcError { errorPtr in
                         mc_transaction_builder_add_input(
                             ptr,
                             viewPrivateKeyPtr,
@@ -54,7 +72,7 @@ final class TransactionBuilder {
                             preparedTxInput.realInputIndex,
                             ringPtr,
                             &errorPtr)
-                    }.get()
+                    }.mapError { .invalidInput(String(describing: $0)) }
                 }
             }
         }
@@ -65,12 +83,12 @@ final class TransactionBuilder {
         amount: UInt64,
         rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)?,
         rngContext: Any?
-    ) throws -> (txOut: TxOut, receipt: Receipt) {
+    ) -> Result<(txOut: TxOut, receipt: Receipt), TransactionBuilderError> {
         var confirmationNumberData = Data32()
-        let txOut = try publicAddress.withUnsafeCStructPointer { publicAddressPtr in
-            try withMcRngCallback(rng: rng, rngContext: rngContext) { rngCallbackPtr in
-                try confirmationNumberData.asMcMutableBuffer { confirmationNumberPtr -> TxOut in
-                    let txOutData = try Data(withMcDataBytes: { errorPtr in
+        return publicAddress.withUnsafeCStructPointer { publicAddressPtr in
+            withMcRngCallback(rng: rng, rngContext: rngContext) { rngCallbackPtr in
+                confirmationNumberData.asMcMutableBuffer { confirmationNumberPtr in
+                    Data.make(withMcDataBytes: { errorPtr in
                         mc_transaction_builder_add_output(
                             ptr,
                             amount,
@@ -78,40 +96,42 @@ final class TransactionBuilder {
                             rngCallbackPtr,
                             confirmationNumberPtr,
                             &errorPtr)
-                    })
-                    guard let txOut = TxOut(serializedData: txOutData) else {
-                        // Safety: mc_transaction_builder_add_output should always return valid
-                        // data on success.
-                        fatalError("\(Self.self).\(#function): " +
-                            "mc_transaction_builder_add_output return invalid data.")
-                    }
-                    return txOut
+                    }).mapError { .invalidInput(String(describing: $0)) }
                 }
             }
+        }.map { txOutData in
+            guard let txOut = TxOut(serializedData: txOutData) else {
+                // Safety: mc_transaction_builder_add_output should always return valid data on
+                // success.
+                logger.fatalError("Error: \(Self.self).\(#function): " +
+                    "mc_transaction_builder_add_output return invalid data.")
+            }
+
+            let confirmationNumber = TxOutConfirmationNumber(confirmationNumberData)
+            let receipt = Receipt(
+                txOut: txOut,
+                confirmationNumber: confirmationNumber,
+                tombstoneBlockIndex: tombstoneBlockIndex)
+            return (txOut, receipt)
         }
-        let confirmationNumber = TxOutConfirmationNumber(confirmationNumberData)
-        let receipt = try Receipt(
-            txOut: txOut,
-            confirmationNumber: confirmationNumber,
-            tombstoneBlockIndex: tombstoneBlockIndex)
-        return (txOut, receipt)
     }
 
     private func build(
         rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)?,
         rngContext: Any?
-    ) throws -> Transaction {
-        let txBytes = try withMcRngCallback(rng: rng, rngContext: rngContext) { rngCallbackPtr in
-            try Data(withMcDataBytes: { errorPtr in
+    ) -> Result<Transaction, TransactionBuilderError> {
+        withMcRngCallback(rng: rng, rngContext: rngContext) { rngCallbackPtr in
+            Data.make(withMcDataBytes: { errorPtr in
                 mc_transaction_builder_build(ptr, rngCallbackPtr, &errorPtr)
-            })
+            }).mapError { .invalidInput(String(describing: $0)) }
+        }.map { txBytes in
+            guard let transaction = Transaction(serializedData: txBytes) else {
+                // Safety: mc_transaction_builder_build should always return valid data on success.
+                logger.fatalError("Error: \(Self.self).\(#function): " +
+                    "mc_transaction_builder_build return invalid data.")
+            }
+            return transaction
         }
-        guard let transaction = Transaction(serializedData: txBytes) else {
-            // Safety: mc_transaction_builder_build should always return valid data on success.
-            fatalError(
-                "\(Self.self).\(#function): mc_transaction_builder_build return invalid data.")
-        }
-        return transaction
     }
 }
 
@@ -120,15 +140,15 @@ extension TransactionBuilder {
         inputs: [PreparedTxInput],
         accountKey: AccountKey,
         to recipient: PublicAddress,
-        amount: UInt64,
+        amount: PositiveUInt64,
         changeAddress: PublicAddress? = nil,
         fee: UInt64,
         tombstoneBlockIndex: UInt64,
         fogResolver: FogResolver,
         rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)? = securityRNG,
         rngContext: Any? = nil
-    ) throws -> (transaction: Transaction, receipt: Receipt) {
-        let (transaction, transactionReceipts) = try build(
+    ) -> Result<(transaction: Transaction, receipt: Receipt), TransactionBuilderError> {
+        build(
             inputs: inputs,
             accountKey: accountKey,
             outputs: [(recipient, amount)],
@@ -137,27 +157,24 @@ extension TransactionBuilder {
             tombstoneBlockIndex: tombstoneBlockIndex,
             fogResolver: fogResolver,
             rng: rng,
-            rngContext: rngContext)
-        return (transaction, transactionReceipts[0])
+            rngContext: rngContext
+        ).map { transaction, transactionReceipts in
+            (transaction, transactionReceipts[0])
+        }
     }
 
     static func build(
         inputs: [PreparedTxInput],
         accountKey: AccountKey,
-        outputs: [(recipient: PublicAddress, amount: UInt64)],
+        outputs: [(recipient: PublicAddress, amount: PositiveUInt64)],
         changeAddress: PublicAddress? = nil,
         fee: UInt64,
         tombstoneBlockIndex: UInt64,
         fogResolver: FogResolver,
         rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)? = securityRNG,
         rngContext: Any? = nil
-    ) throws -> (transaction: Transaction, transactionReceipts: [Receipt]) {
-        for (_, amount) in outputs {
-            guard amount > 0 else {
-                throw MalformedInput("Cannot send 0 MOB")
-            }
-        }
-
+    ) -> Result<(transaction: Transaction, transactionReceipts: [Receipt]), TransactionBuilderError>
+    {
         for txOut in inputs.map({ $0.knownTxOut }) {
             print("TxOut to spend: " +
                 "index: \(txOut.globalIndex), " +
@@ -167,30 +184,37 @@ extension TransactionBuilder {
         print("Spending \(inputs.count) TxOuts totaling " +
             "\(inputs.map { $0.knownTxOut.value }.reduce(0, +)) picoMOB")
 
-        let outputs = try outputsAddingChangeOutputIfNeeded(
+        return outputsAddingChangeOutputIfNeeded(
             inputs: inputs,
             outputs: outputs,
             changeAddress: changeAddress,
-            fee: fee)
+            fee: fee
+        ).flatMap { outputs in
+            let builder = TransactionBuilder(
+                fee: fee,
+                tombstoneBlockIndex: tombstoneBlockIndex,
+                fogResolver: fogResolver)
 
-        let builder = TransactionBuilder(
-            fee: fee,
-            tombstoneBlockIndex: tombstoneBlockIndex,
-            fogResolver: fogResolver)
-        for input in inputs {
-            try builder.addInput(preparedTxInput: input, accountKey: accountKey)
+            for input in inputs {
+                if case .failure(let error) =
+                    builder.addInput(preparedTxInput: input, accountKey: accountKey)
+                {
+                    return .failure(error)
+                }
+            }
+            return outputs.map { recipient, amount in
+                builder.addOutput(
+                    publicAddress: recipient,
+                    amount: amount.value,
+                    rng: rng,
+                    rngContext: rngContext
+                ).map { $0.receipt }
+            }.collectResult().flatMap { transactionReceipts in
+                builder.build(rng: rng, rngContext: rngContext).map { transaction in
+                    (transaction, transactionReceipts)
+                }
+            }
         }
-        let transactionReceipts = try outputs.map { recipient, amount in
-            try builder.addOutput(
-                publicAddress: recipient,
-                amount: amount,
-                rng: rng,
-                rngContext: rngContext
-            ).receipt
-        }
-        let transaction = try builder.build(rng: rng, rngContext: rngContext)
-
-        return (transaction, transactionReceipts)
     }
 
     static func output(
@@ -200,12 +224,12 @@ extension TransactionBuilder {
         fogResolver: FogResolver = FogResolver(),
         rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)?,
         rngContext: Any?
-    ) throws -> (txOut: TxOut, receipt: Receipt) {
+    ) -> Result<(txOut: TxOut, receipt: Receipt), TransactionBuilderError> {
         let transactionBuilder = TransactionBuilder(
             fee: 0,
             tombstoneBlockIndex: tombstoneBlockIndex,
             fogResolver: fogResolver)
-        return try transactionBuilder.addOutput(
+        return transactionBuilder.addOutput(
             publicAddress: publicAddress,
             amount: amount,
             rng: rng,
@@ -217,29 +241,31 @@ extension TransactionBuilder {
 extension TransactionBuilder {
     private static func outputsAddingChangeOutputIfNeeded(
         inputs: [PreparedTxInput],
-        outputs: [(recipient: PublicAddress, amount: UInt64)],
+        outputs: [(recipient: PublicAddress, amount: PositiveUInt64)],
         changeAddress: PublicAddress?,
         fee: UInt64
-    ) throws -> [(recipient: PublicAddress, amount: UInt64)] {
+    ) -> Result<[(recipient: PublicAddress, amount: PositiveUInt64)], TransactionBuilderError> {
         let inputAmount = inputs.map { $0.knownTxOut.value }.reduce(0, +)
-        let suppliedOutputsAmountPlusFee = outputs.map { $0.amount }.reduce(0, +) + fee
+        let suppliedOutputsAmountPlusFee = outputs.map { $0.amount.value }.reduce(0, +) + fee
 
         guard inputAmount >= suppliedOutputsAmountPlusFee else {
-            throw MalformedInput("Total input amount (\(inputAmount)) < total output amount + " +
-                "fee (\(suppliedOutputsAmountPlusFee))")
+            return .failure(.invalidInput(
+                "Total input amount (\(inputAmount)) < total output amount + fee " +
+                "(\(suppliedOutputsAmountPlusFee))"))
         }
 
         var outputArray = outputs
-        if inputAmount > suppliedOutputsAmountPlusFee {
+        if inputAmount > suppliedOutputsAmountPlusFee,
+           let changeAmount = PositiveUInt64(inputAmount - suppliedOutputsAmountPlusFee)
+        {
             guard let changeAddress = changeAddress else {
-                throw MalformedInput("Total input amount (\(inputAmount)) exceeds total output " +
-                    "amount plus fee (\(suppliedOutputsAmountPlusFee)) but change address was " +
-                    "not supplied")
+                return .failure(.invalidInput(
+                    "Total input amount (\(inputAmount)) exceeds total output amount plus fee " +
+                    "(\(suppliedOutputsAmountPlusFee)) but change address was not supplied"))
             }
-            let changeAmount = inputAmount - suppliedOutputsAmountPlusFee
             outputArray.append((changeAddress, changeAmount))
         }
-        return outputArray
+        return .success(outputArray)
     }
 }
 
@@ -262,6 +288,7 @@ private final class McTransactionBuilderRing {
     func addElement(txOut: TxOut, membershipProof: TxOutMembershipProof) {
         txOut.serializedData.asMcBuffer { txOutBytesPtr in
             membershipProof.serializedData.asMcBuffer { membershipProofDataPtr in
+                // Safety: mc_transaction_builder_ring_add_element should never return nil.
                 withMcInfallible {
                     mc_transaction_builder_ring_add_element(
                         ptr,

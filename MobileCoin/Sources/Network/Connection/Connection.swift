@@ -22,7 +22,7 @@ class Connection {
     func performCall<Call: GrpcCallable>(
         _ call: Call,
         request: Call.Request,
-        completion: @escaping (Result<Call.Response, Error>) -> Void
+        completion: @escaping (Result<Call.Response, ConnectionError>) -> Void
     ) {
         inner.accessAsync {
             let callOptions = $0.requestCallOptions()
@@ -47,14 +47,14 @@ extension Connection {
         }
 
         func processResponse<Response>(callResult: UnaryCallResult<Response>)
-            -> Result<Response, Error>
+            -> Result<Response, ConnectionError>
         {
             guard callResult.status.code != .unauthenticated else {
-                return .failure(AuthorizationFailure(String(describing: callResult.status)))
+                return .failure(.authorizationFailure(String(describing: callResult.status)))
             }
 
             guard callResult.status.isOk, let response = callResult.response else {
-                return .failure(ConnectionFailure(String(describing: callResult.status)))
+                return .failure(.connectionFailure(String(describing: callResult.status)))
             }
 
             if let initialMetadata = callResult.initialMetadata {

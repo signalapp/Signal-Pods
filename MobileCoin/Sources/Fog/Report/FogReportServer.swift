@@ -19,7 +19,7 @@ final class FogReportServer {
 
     func reports(
         reportService: FogReportService,
-        completion: @escaping (Result<Report_ReportResponse, Error>) -> Void
+        completion: @escaping (Result<Report_ReportResponse, ConnectionError>) -> Void
     ) {
         fetchReports(reportService: reportService, completion: completion)
     }
@@ -27,7 +27,7 @@ final class FogReportServer {
     func reports(
         reportService: FogReportService,
         reportParams: [(reportId: String, desiredMinPubkeyExpiry: UInt64)],
-        completion: @escaping (Result<Report_ReportResponse, Error>) -> Void
+        completion: @escaping (Result<Report_ReportResponse, ConnectionError>) -> Void
     ) {
         inner.accessAsync {
             if let reportResponse =
@@ -45,7 +45,7 @@ final class FogReportServer {
 
     private func fetchReports(
         reportService: FogReportService,
-        completion: @escaping (Result<Report_ReportResponse, Error>) -> Void
+        completion: @escaping (Result<Report_ReportResponse, ConnectionError>) -> Void
     ) {
         serialConnectionQueue.append({ callback in
             self.doFetchReports(reportService: reportService, completion: callback)
@@ -55,7 +55,7 @@ final class FogReportServer {
     private func fetchReports(
         reportService: FogReportService,
         reportParams: [(reportId: String, desiredMinPubkeyExpiry: UInt64)],
-        completion: @escaping (Result<Report_ReportResponse, Error>) -> Void
+        completion: @escaping (Result<Report_ReportResponse, ConnectionError>) -> Void
     ) {
         serialConnectionQueue.append({ callback in
             // Now that we have the serialConnectionQueue lock, check again if there's a cached
@@ -75,20 +75,16 @@ final class FogReportServer {
 
     private func doFetchReports(
         reportService: FogReportService,
-        completion: @escaping (Result<Report_ReportResponse, Error>) -> Void
+        completion: @escaping (Result<Report_ReportResponse, ConnectionError>) -> Void
     ) {
         reportService.getReports(request: Report_ReportRequest()) {
-            do {
-                let reportResponse = try $0.get()
+            guard let reportResponse = $0.successOr(completion: completion) else { return }
 
-                // Save report response before releasing the serialConnectionQueue
-                // lock. This ensures that, if there's another request waiting, it
-                // will have access to the report response we just fetched.
-                self.cacheReportResponse(reportResponse) {
-                    completion(.success(reportResponse))
-                }
-            } catch {
-                completion(.failure(error))
+            // Save report response before releasing the serialConnectionQueue
+            // lock. This ensures that, if there's another request waiting, it
+            // will have access to the report response we just fetched.
+            self.cacheReportResponse(reportResponse) {
+                completion(.success(reportResponse))
             }
         }
     }

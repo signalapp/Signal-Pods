@@ -46,6 +46,7 @@ private final class MrEnclaveVerifier {
 
     init(mrEnclave: Attestation.MrEnclave) {
         self.ptr = mrEnclave.mrEnclave.asMcBuffer { mrEnclavePtr in
+            // Safety: mc_mr_enclave_verifier_create should never fail.
             withMcInfallible { mc_mr_enclave_verifier_create(mrEnclavePtr) }
         }
 
@@ -63,12 +64,14 @@ private final class MrEnclaveVerifier {
 
     private func addConfigAdvisory(advisoryId: String) {
         advisoryId.withCString { advisoryIdPtr in
+            // Safety: mc_mr_enclave_verifier_allow_config_advisory should never fail.
             withMcInfallible { mc_mr_enclave_verifier_allow_config_advisory(ptr, advisoryIdPtr) }
         }
     }
 
     private func addHardeningAdvisory(advisoryId: String) {
         advisoryId.withCString { advisoryIdPtr in
+            // Safety: mc_mr_enclave_verifier_allow_hardening_advisory should never fail.
             withMcInfallible { mc_mr_enclave_verifier_allow_hardening_advisory(ptr, advisoryIdPtr) }
         }
     }
@@ -79,6 +82,7 @@ private final class MrSignerVerifier {
 
     init(mrSigner: Attestation.MrSigner) {
         self.ptr = mrSigner.mrSigner.asMcBuffer { mrSignerPtr in
+            // Safety: mc_mr_signer_verifier_create should never fail.
             withMcInfallible {
                 mc_mr_signer_verifier_create(
                     mrSignerPtr,
@@ -101,12 +105,14 @@ private final class MrSignerVerifier {
 
     private func addConfigAdvisory(advisoryId: String) {
         advisoryId.withCString { advisoryIdPtr in
+            // Safety: mc_mr_signer_verifier_allow_config_advisory should never fail.
             withMcInfallible { mc_mr_signer_verifier_allow_config_advisory(ptr, advisoryIdPtr) }
         }
     }
 
     private func addHardeningAdvisory(advisoryId: String) {
         advisoryId.withCString { advisoryIdPtr in
+            // Safety: mc_mr_signer_verifier_allow_hardening_advisory should never fail.
             withMcInfallible { mc_mr_signer_verifier_allow_hardening_advisory(ptr, advisoryIdPtr) }
         }
     }

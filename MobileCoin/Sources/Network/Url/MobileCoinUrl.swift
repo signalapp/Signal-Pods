@@ -4,20 +4,6 @@
 
 import Foundation
 
-struct UrlParseError: Error {
-    let reason: String
-
-    init(_ reason: String) {
-        self.reason = reason
-    }
-}
-
-extension UrlParseError: CustomStringConvertible {
-    public var description: String {
-        "URL parsing error: \(reason)"
-    }
-}
-
 protocol Scheme {
     static var secureScheme: String { get }
     static var insecureScheme: String { get }
@@ -66,31 +52,38 @@ extension MobileCoinUrlProtocol {
 }
 
 struct MobileCoinUrl<Scheme: MobileCoin.Scheme>: MobileCoinUrlProtocol {
+    static func make(string: String) -> Result<MobileCoinUrl, InvalidInputError> {
+        guard let url = URL(string: string) else {
+            return .failure(InvalidInputError("Could not parse url: \(string)"))
+        }
+
+        let useTls: Bool
+        switch url.scheme {
+        case .some(Scheme.secureScheme):
+            useTls = true
+        case .some(Scheme.insecureScheme):
+            useTls = false
+        default:
+            return .failure(InvalidInputError("Unrecognized scheme: \(string), expected: " +
+                "[\"\(Scheme.secureScheme)\", \"\(Scheme.insecureScheme)\"]"))
+        }
+
+        guard let host = url.host, !host.isEmpty else {
+            return .failure(InvalidInputError("Invalid host: \(string)"))
+        }
+
+        return .success(MobileCoinUrl(url: url, useTls: useTls, host: host))
+    }
+
     let url: URL
 
     let useTls: Bool
     let host: String
     let port: Int
 
-    init(string: String) throws {
-        guard let url = URL(string: string) else {
-            throw UrlParseError("Could not parse url: \(string)")
-        }
+    private init(url: URL, useTls: Bool, host: String) {
         self.url = url
-
-        switch url.scheme {
-        case .some(Scheme.secureScheme):
-            self.useTls = true
-        case .some(Scheme.insecureScheme):
-            self.useTls = false
-        default:
-            throw UrlParseError("Unrecognized scheme: \(string), " +
-                "expected: [\"\(Scheme.secureScheme)\", \"\(Scheme.insecureScheme)\"]")
-        }
-
-        guard let host = url.host, !host.isEmpty else {
-            throw UrlParseError("Invalid host: \(string)")
-        }
+        self.useTls = useTls
         self.host = host
 
         if let port = url.port {
@@ -102,27 +95,41 @@ struct MobileCoinUrl<Scheme: MobileCoin.Scheme>: MobileCoinUrlProtocol {
 }
 
 struct AnyMobileCoinUrl: MobileCoinUrlProtocol {
+    static func make(string: String) -> Result<AnyMobileCoinUrl, InvalidInputError> {
+        make(string: string, useTlsOverride: nil)
+    }
+
+    static func make(string: String, useTls: Bool) -> Result<AnyMobileCoinUrl, InvalidInputError> {
+        make(string: string, useTlsOverride: useTls)
+    }
+
+    // swiftlint:disable discouraged_optional_boolean
+    private static func make(string: String, useTlsOverride: Bool?)
+        -> Result<AnyMobileCoinUrl, InvalidInputError>
+    {
+    // swiftlint:enable discouraged_optional_boolean
+        guard let url = URL(string: string) else {
+            return .failure(InvalidInputError("Could not parse url: \(string)"))
+        }
+
+        guard let host = url.host, !host.isEmpty else {
+            return .failure(InvalidInputError("Invalid host: \(string)"))
+        }
+
+        return .success(AnyMobileCoinUrl(url: url, host: host, useTlsOverride: useTlsOverride))
+    }
+
     let url: URL
 
     let useTls: Bool
     let host: String
     let port: Int
 
-    init(string: String) throws {
-        try self.init(string: string, useTlsOverride: nil)
-    }
-
-    init(string: String, useTls: Bool) throws {
-        try self.init(string: string, useTlsOverride: useTls)
-    }
-
     // swiftlint:disable discouraged_optional_boolean
-    private init(string: String, useTlsOverride: Bool?) throws {
+    private init(url: URL, host: String, useTlsOverride: Bool?) {
     // swiftlint:enable discouraged_optional_boolean
-        guard let url = URL(string: string) else {
-            throw UrlParseError("Could not parse url: \(string)")
-        }
         self.url = url
+        self.host = host
 
         if let useTls = useTlsOverride {
             self.useTls = useTls
@@ -136,11 +143,6 @@ struct AnyMobileCoinUrl: MobileCoinUrlProtocol {
                 self.useTls = true
             }
         }
-
-        guard let host = url.host, !host.isEmpty else {
-            throw UrlParseError("Invalid host: \(string)")
-        }
-        self.host = host
 
         if let port = url.port {
             self.port = port

@@ -33,7 +33,7 @@ public struct Receipt {
         txOut: TxOut,
         confirmationNumber: TxOutConfirmationNumber,
         tombstoneBlockIndex: UInt64
-    ) throws {
+    ) {
         self.txOutPublicKeyTyped = txOut.publicKey
         self.commitment = txOut.commitment
         self.maskedValue = txOut.maskedValue
@@ -55,7 +55,8 @@ public struct Receipt {
             return try proto.serializedData()
         } catch {
             // Safety: Protobuf binary serialization is no fail when not using proto2 or `Any`
-            fatalError("Error: \(Self.self).\(#function): Protobuf serialization failed: \(error)")
+            logger.fatalError(
+                "Error: \(Self.self).\(#function): Protobuf serialization failed: \(error)")
         }
     }
 
@@ -77,16 +78,16 @@ public struct Receipt {
             viewPrivateKey: accountKey.viewPrivateKey)
     }
 
-    func unmaskValue(accountKey: AccountKey) throws -> UInt64 {
+    func unmaskValue(accountKey: AccountKey) -> Result<UInt64, InvalidInputError> {
         guard let value = TxOutUtils.value(
             commitment: commitment,
             maskedValue: maskedValue,
             publicKey: txOutPublicKeyTyped,
             viewPrivateKey: accountKey.viewPrivateKey)
         else {
-            throw MalformedInput("accountKey does not own Receipt")
+            return .failure(InvalidInputError("accountKey does not own Receipt"))
         }
-        return value
+        return .success(value)
     }
 
     /// Validates whether or not `Receipt` is well-formed and matches `accountKey`, returning `nil`

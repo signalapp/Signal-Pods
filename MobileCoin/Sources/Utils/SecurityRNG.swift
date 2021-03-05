@@ -20,7 +20,7 @@ func securityRNG(context: UnsafeMutableRawPointer?) -> UInt64 {
             message = ", message: \(errorMessage)"
         }
         // TODO: Handle this failure gracefully
-        fatalError("Failed to generate bytes. SecError: \(status)" + message)
+        logger.fatalError("Failed to generate bytes. SecError: \(status)" + message)
     }
 
     return value

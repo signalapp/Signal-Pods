@@ -2,8 +2,36 @@
 //  Copyright (c) 2020 MobileCoin. All rights reserved.
 //
 
+// swiftlint:disable multiline_function_chains
+
 import Foundation
 import LibMobileCoin
+
+enum AttestAkeError: Error {
+    case invalidInput(String)
+    case attestationVerificationFailed(String)
+}
+
+extension AttestAkeError: CustomStringConvertible {
+    public var description: String {
+        "Attest Ake error: " + {
+            switch self {
+            case .invalidInput(let reason):
+                return "Invalid input: " + reason
+            case .attestationVerificationFailed(let reason):
+                return "Attestation verification failed: " + reason
+            }
+        }()
+    }
+}
+
+struct AeadError: Error {}
+
+extension AeadError: CustomStringConvertible {
+    public var description: String {
+        "Aead error"
+    }
+}
 
 final class AttestAke {
     private var state: State = .unattested
@@ -36,27 +64,30 @@ final class AttestAke {
     }
 
     @discardableResult
-    func authEnd(authResponse: Attest_AuthMessage, attestationVerifier: AttestationVerifier) throws
-        -> Cipher
+    func authEnd(authResponse: Attest_AuthMessage, attestationVerifier: AttestationVerifier)
+        -> Result<Cipher, AttestAkeError>
     {
-        try authEnd(
+        authEnd(
             authResponseData: authResponse.data,
             attestationVerifier: attestationVerifier)
     }
 
     @discardableResult
-    func authEnd(authResponseData: Data, attestationVerifier: AttestationVerifier) throws
-        -> Cipher
+    func authEnd(authResponseData: Data, attestationVerifier: AttestationVerifier)
+        -> Result<Cipher, AttestAkeError>
     {
         guard case .authPending(let attestAke) = state else {
-            throw MalformedInput("\(Self.self).\(#function): Error: authEnd can only be called " +
-                "when there is an auth pending.")
+            return .failure(.invalidInput("\(Self.self).\(#function): Error: authEnd can only be " +
+                "called when there is an auth pending."))
         }
-        try attestAke.authEnd(
+
+        return attestAke.authEnd(
             authResponseData: authResponseData,
-            attestationVerifier: attestationVerifier)
-        state = .attested(attestAke)
-        return Cipher(attestAke)
+            attestationVerifier: attestationVerifier
+        ).map {
+            state = .attested(attestAke)
+            return Cipher(attestAke)
+        }
     }
 
     var isAttested: Bool {
@@ -94,24 +125,28 @@ extension AttestAke {
             ffi.binding
         }
 
-        func encryptMessage(aad: Data, plaintext: Data) throws -> Attest_Message {
+        func encryptMessage(aad: Data, plaintext: Data)
+            -> Result<Attest_Message, AeadError>
+        {
             var message = Attest_Message()
             message.aad = aad
             message.channelID = binding
-            message.data = try encrypt(aad: aad, plaintext: plaintext)
-            return message
+            return encrypt(aad: aad, plaintext: plaintext).map {
+                message.data = $0
+                return message
+            }
         }
 
-        func encrypt(aad: Data, plaintext: Data) throws -> Data {
-            try ffi.encrypt(aad: aad, plaintext: plaintext)
+        func encrypt(aad: Data, plaintext: Data) -> Result<Data, AeadError> {
+            ffi.encrypt(aad: aad, plaintext: plaintext)
         }
 
-        func decryptMessage(_ message: Attest_Message) throws -> Data {
-            try decrypt(aad: message.aad, ciphertext: message.data)
+        func decryptMessage(_ message: Attest_Message) -> Result<Data, AeadError> {
+            decrypt(aad: message.aad, ciphertext: message.data)
         }
 
-        func decrypt(aad: Data, ciphertext: Data) throws -> Data {
-            try ffi.decrypt(aad: aad, ciphertext: ciphertext)
+        func decrypt(aad: Data, ciphertext: Data) -> Result<Data, AeadError> {
+            ffi.decrypt(aad: aad, ciphertext: ciphertext)
         }
     }
 }
@@ -138,7 +173,9 @@ private final class FfiAttestAke {
 
     var isAttested: Bool {
         var attested = false
-        mc_attest_ake_is_attested(ptr, &attested)
+        withMcInfallible {
+            mc_attest_ake_is_attested(ptr, &attested)
+        }
         return attested
     }
 
@@ -155,46 +192,44 @@ private final class FfiAttestAke {
     ) -> Data {
         withMcRngCallback(rng: rng, rngContext: rngContext) { rngCallbackPtr in
             Data(withMcMutableBufferInfallible: { bufferPtr in
-                mc_attest_ake_get_auth_request(
-                    ptr,
-                    responderId,
-                    rngCallbackPtr,
-                    bufferPtr)
+                mc_attest_ake_get_auth_request(ptr, responderId, rngCallbackPtr, bufferPtr)
             })
         }
     }
 
-    func authEnd(authResponseData: Data, attestationVerifier: AttestationVerifier) throws {
-        try authResponseData.asMcBuffer { bytesPtr in
-            try attestationVerifier.withUnsafeOpaquePointer { attestationVerifierPtr in
-                try withMcError { errorPtr in
+    func authEnd(authResponseData: Data, attestationVerifier: AttestationVerifier)
+        -> Result<(), AttestAkeError>
+    {
+        authResponseData.asMcBuffer { bytesPtr in
+            attestationVerifier.withUnsafeOpaquePointer { attestationVerifierPtr in
+                withMcError { errorPtr in
                     mc_attest_ake_process_auth_response(
                         ptr,
                         bytesPtr,
                         attestationVerifierPtr,
                         &errorPtr)
-                }.get()
+                }.mapError { .invalidInput($0.description) }
             }
         }
     }
 
-    func encrypt(aad: Data, plaintext: Data) throws -> Data {
-        try aad.asMcBuffer { aadPtr in
-            try plaintext.asMcBuffer { plaintextPtr in
-                try Data(withMcMutableBuffer: { ciphertextOutPtr, errorPtr in
+    func encrypt(aad: Data, plaintext: Data) -> Result<Data, AeadError> {
+        aad.asMcBuffer { aadPtr in
+            plaintext.asMcBuffer { plaintextPtr in
+                Data.make(withMcMutableBuffer: { ciphertextOutPtr, errorPtr in
                     mc_attest_ake_encrypt(ptr, aadPtr, plaintextPtr, ciphertextOutPtr, &errorPtr)
-                })
+                }).mapError { _ in AeadError() }
             }
         }
     }
 
-    func decrypt(aad: Data, ciphertext: Data) throws -> Data {
-        try aad.asMcBuffer { aadPtr in
-            try ciphertext.asMcBuffer { ciphertextPtr in
-                try Data(withEstimatedLengthMcMutableBuffer: ciphertext.count)
+    func decrypt(aad: Data, ciphertext: Data) -> Result<Data, AeadError> {
+        aad.asMcBuffer { aadPtr in
+            ciphertext.asMcBuffer { ciphertextPtr in
+                Data.make(withEstimatedLengthMcMutableBuffer: ciphertext.count)
                 { plaintextOutPtr, errorPtr in
                     mc_attest_ake_decrypt(ptr, aadPtr, ciphertextPtr, plaintextOutPtr, &errorPtr)
-                }
+                }.mapError { _ in AeadError() }
             }
         }
     }
