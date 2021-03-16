@@ -11,12 +11,14 @@
 #endif
 
 #import "attest.h"
+#import "bip39.h"
 #import "common.h"
 #import "crypto.h"
 #import "encodings.h"
 #import "fog.h"
 #import "keys.h"
 #import "libmobilecoin.h"
+#import "slip10.h"
 #import "transaction.h"
 
 FOUNDATION_EXPORT double LibMobileCoinVersionNumber;

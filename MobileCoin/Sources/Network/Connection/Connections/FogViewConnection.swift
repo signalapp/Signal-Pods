@@ -1,23 +1,25 @@
 //
-//  Copyright (c) 2020 MobileCoin. All rights reserved.
+//  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
 
 import Foundation
 import GRPC
 import LibMobileCoin
+import NIOSSL
 
 final class FogViewConnection: AttestedConnection, FogViewService {
     private let client: FogView_FogViewAPIClient
 
     init(
-        url: FogViewUrl,
+        url: FogUrl,
         attestation: Attestation,
+        trustRoots: [NIOSSLCertificate]?,
         channelManager: GrpcChannelManager,
         targetQueue: DispatchQueue?,
         rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)? = securityRNG,
         rngContext: Any? = nil
     ) {
-        let channel = channelManager.channel(for: url)
+        let channel = channelManager.channel(for: url, trustRoots: trustRoots)
         self.client = FogView_FogViewAPIClient(channel: channel)
         super.init(
             client: self.client,

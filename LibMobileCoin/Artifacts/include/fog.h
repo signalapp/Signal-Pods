@@ -1,3 +1,5 @@
+// Copyright (c) 2018-2021 The MobileCoin Foundation
+
 #ifndef FOG_H_
 #define FOG_H_
 
@@ -27,13 +29,13 @@ void mc_fog_resolver_free(
   McFogResolver* MC_NULLABLE fog_resolver
 );
 
-/// # Errors
-///
-/// * `LibMcError::Serialization`
-///
 /// # Preconditions
 ///
 /// * `report_url` - must be a nul-terminated C string containing a valid Fog report uri.
+///
+/// # Errors
+///
+/// * `LibMcError::InvalidInput`
 bool mc_fog_resolver_add_report_response(
   McFogResolver* MC_NONNULL fog_resolver,
   const char* MC_NONNULL report_url,
@@ -44,17 +46,18 @@ MC_ATTRIBUTE_NONNULL(1, 2, 3);
 
 /* ==== McFogRng ==== */
 
-/// # Errors
-///
-/// * `LibMcError::Encryption`
-///
 /// # Preconditions
 ///
 /// * `subaddress_view_private_key` - must be a valid 32-byte Ristretto-format scalar.
+///
+/// # Errors
+///
+/// * `LibMcError::InvalidInput`
+/// * `LibMcError::UnsupportedCryptoBoxVersion`
 McFogRng* MC_NULLABLE mc_fog_rng_create(
   const McBuffer* MC_NONNULL subaddress_view_private_key,
-  const McBuffer* MC_NONNULL pubkey_bytes,
-  uint32_t version,
+  const McBuffer* MC_NONNULL rng_public_key,
+  uint32_t rng_version,
   McError* MC_NULLABLE * MC_NULLABLE out_error
 )
 MC_ATTRIBUTE_NONNULL(1, 2);
@@ -78,8 +81,8 @@ MC_ATTRIBUTE_NONNULL(1);
 
 /// # Errors
 ///
-/// * `LibMcError::Serialization`
-/// * `LibMcError::Encryption`
+/// * `LibMcError::InvalidInput`
+/// * `LibMcError::UnsupportedCryptoBoxVersion`
 McFogRng* MC_NULLABLE mc_fog_rng_deserialize_proto(
   const McBuffer* MC_NONNULL fog_rng_proto_bytes,
   McError* MC_NULLABLE * MC_NULLABLE out_error

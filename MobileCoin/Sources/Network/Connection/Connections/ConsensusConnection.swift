@@ -1,10 +1,11 @@
 //
-//  Copyright (c) 2020 MobileCoin. All rights reserved.
+//  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
 
 import Foundation
 import GRPC
 import LibMobileCoin
+import NIOSSL
 
 final class ConsensusConnection: AttestedConnection, ConsensusService {
     private let client: ConsensusClient_ConsensusClientAPIClient
@@ -12,12 +13,13 @@ final class ConsensusConnection: AttestedConnection, ConsensusService {
     init(
         url: ConsensusUrl,
         attestation: Attestation,
+        trustRoots: [NIOSSLCertificate]?,
         channelManager: GrpcChannelManager,
         targetQueue: DispatchQueue?,
         rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)? = securityRNG,
         rngContext: Any? = nil
     ) {
-        let channel = channelManager.channel(for: url)
+        let channel = channelManager.channel(for: url, trustRoots: trustRoots)
         self.client = ConsensusClient_ConsensusClientAPIClient(channel: channel)
         super.init(
             client: Attest_AttestedApiClient(channel: channel),

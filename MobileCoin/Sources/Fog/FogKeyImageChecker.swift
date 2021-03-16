@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2020 MobileCoin. All rights reserved.
+//  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
 
 // swiftlint:disable multiline_arguments multiline_function_chains
@@ -79,28 +79,35 @@ struct FogKeyImageChecker {
             return query
         }
         fogKeyImageService.checkKeyImages(request: request) {
-            completion($0.flatMap { response in
-                keyImageQueries.map { query in
-                    guard let keyImageResult = response.results.first(
-                        where: { KeyImage($0.keyImage) == query.0 }) else
-                    {
-                        return .success(.unspent(knownToBeUnspentBlockCount: response.numBlocks))
-                    }
-
-                    switch keyImageResult.keyImageResultCodeEnum {
-                    case .spent:
-                        let spentAtBlock = BlockMetadata(
-                            index: keyImageResult.spentAt,
-                            timestampStatus: keyImageResult.timestampStatus)
-                        return .success(.spent(block: spentAtBlock))
-                    case .notSpent:
-                        return .success(.unspent(knownToBeUnspentBlockCount: response.numBlocks))
-                    case .keyImageError, .unused, .UNRECOGNIZED:
-                        return .failure(.invalidServerResponse("Fog KeyImage result error: " +
-                            "\(keyImageResult.keyImageResultCodeEnum), response: \(response)"))
-                    }
-                }.collectResult()
+            completion($0.flatMap {
+                Self.parseResponse(keyImageQueries: keyImageQueries, response: $0)
             })
         }
+    }
+
+    private static func parseResponse(
+        keyImageQueries: [(KeyImage, nextKeyImageQueryBlockIndex: UInt64)],
+        response: FogLedger_CheckKeyImagesResponse
+    ) -> Result<[KeyImage.SpentStatus], ConnectionError> {
+        keyImageQueries.map { query in
+            guard let keyImageResult = response.results.first(
+                where: { KeyImage($0.keyImage) == query.0 }) else
+            {
+                return .success(.unspent(knownToBeUnspentBlockCount: response.numBlocks))
+            }
+
+            switch keyImageResult.keyImageResultCodeEnum {
+            case .spent:
+                let spentAtBlock = BlockMetadata(
+                    index: keyImageResult.spentAt,
+                    timestampStatus: keyImageResult.timestampStatus)
+                return .success(.spent(block: spentAtBlock))
+            case .notSpent:
+                return .success(.unspent(knownToBeUnspentBlockCount: response.numBlocks))
+            case .keyImageError, .unused, .UNRECOGNIZED:
+                return .failure(.invalidServerResponse("Fog KeyImage result error: " +
+                    "\(keyImageResult.keyImageResultCodeEnum), response: \(response)"))
+            }
+        }.collectResult()
     }
 }

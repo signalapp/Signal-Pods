@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2020 MobileCoin. All rights reserved.
+//  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
 
 import Foundation
@@ -9,11 +9,10 @@ struct PreparedTxInput {
     static func make(knownTxOut: KnownTxOut, ring: [(TxOut, TxOutMembershipProof)])
         -> Result<PreparedTxInput, InvalidInputError>
     {
-        let ring =
-            ring.sorted { $0.0.publicKey.data.lexicographicallyPrecedes($1.0.publicKey.data) }
+        let ring = ring.sorted { $0.0.publicKey.lexicographicallyPrecedes($1.0.publicKey) }
 
         guard let realInputIndex =
-            ring.firstIndex(where: { $0.0.publicKey == knownTxOut.publicKey })
+                ring.firstIndex(where: { $0.0.publicKey == knownTxOut.publicKey })
         else {
             return .failure(InvalidInputError("TxOut not found in ring"))
         }

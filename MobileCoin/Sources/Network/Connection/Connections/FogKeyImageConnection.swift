@@ -1,23 +1,25 @@
 //
-//  Copyright (c) 2020 MobileCoin. All rights reserved.
+//  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
 
 import Foundation
 import GRPC
 import LibMobileCoin
+import NIOSSL
 
 final class FogKeyImageConnection: AttestedConnection, FogKeyImageService {
     private let client: FogLedger_FogKeyImageAPIClient
 
     init(
-        url: FogLedgerUrl,
+        url: FogUrl,
         attestation: Attestation,
+        trustRoots: [NIOSSLCertificate]?,
         channelManager: GrpcChannelManager,
         targetQueue: DispatchQueue?,
         rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)? = securityRNG,
         rngContext: Any? = nil
     ) {
-        let channel = channelManager.channel(for: url)
+        let channel = channelManager.channel(for: url, trustRoots: trustRoots)
         self.client = FogLedger_FogKeyImageAPIClient(channel: channel)
         super.init(
             client: self.client,

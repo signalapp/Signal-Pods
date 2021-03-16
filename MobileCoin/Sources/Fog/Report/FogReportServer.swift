@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2020 MobileCoin. All rights reserved.
+//  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
 
 // swiftlint:disable array_init
@@ -102,7 +102,7 @@ final class FogReportServer {
 }
 
 extension FogReportServer {
-    private class Inner {
+    private struct Inner {
         private var cachedReportResponse: Report_ReportResponse?
 
         func cachedReportResponse(
@@ -116,7 +116,7 @@ extension FogReportServer {
             return reportResponse
         }
 
-        func cacheReportResponse(_ reportResponse: Report_ReportResponse) {
+        mutating func cacheReportResponse(_ reportResponse: Report_ReportResponse) {
             cachedReportResponse = reportResponse
         }
     }

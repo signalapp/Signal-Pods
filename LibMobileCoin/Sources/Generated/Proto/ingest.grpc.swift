@@ -60,6 +60,11 @@ public protocol AccountIngest_AccountIngestAPIClientProtocol: GRPCClient {
     callOptions: CallOptions?
   ) -> UnaryCall<SwiftProtobuf.Google_Protobuf_Empty, IngestCommon_IngestSummary>
 
+  func unretire(
+    _ request: SwiftProtobuf.Google_Protobuf_Empty,
+    callOptions: CallOptions?
+  ) -> UnaryCall<SwiftProtobuf.Google_Protobuf_Empty, IngestCommon_IngestSummary>
+
   func reportMissedBlockRange(
     _ request: AccountIngest_ReportMissedBlockRangeRequest,
     callOptions: CallOptions?
@@ -204,6 +209,30 @@ extension AccountIngest_AccountIngestAPIClientProtocol {
     )
   }
 
+  //// Attempt to take the cluster (identified by the current ingress key on this ingest server) out of retirement.
+  //// The use case for this is:
+  //// 1. We are trying to do ingest enclave upgrade
+  //// 2. We retire the old cluster and activate the new cluster
+  //// 3. Something goes wrong and the new cluster goes up in flames
+  //// 4. We want to unretire the old cluster key so that the old cluster starts publishing fog reports
+  ////    again and continues life as usual, and then continue debugging the new cluster and try again later.
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to Unretire.
+  ///   - callOptions: Call options.
+  /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
+  public func unretire(
+    _ request: SwiftProtobuf.Google_Protobuf_Empty,
+    callOptions: CallOptions? = nil
+  ) -> UnaryCall<SwiftProtobuf.Google_Protobuf_Empty, IngestCommon_IngestSummary> {
+    return self.makeUnaryCall(
+      path: "/account_ingest.AccountIngestAPI/Unretire",
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeUnretireInterceptors() ?? []
+    )
+  }
+
   //// Report a range of missed blocks.
   ///
   /// - Parameters:
@@ -260,6 +289,9 @@ public protocol AccountIngest_AccountIngestAPIClientInterceptorFactoryProtocol {
 
   /// - Returns: Interceptors to use when invoking 'retire'.
   func makeRetireInterceptors() -> [ClientInterceptor<SwiftProtobuf.Google_Protobuf_Empty, IngestCommon_IngestSummary>]
+
+  /// - Returns: Interceptors to use when invoking 'unretire'.
+  func makeUnretireInterceptors() -> [ClientInterceptor<SwiftProtobuf.Google_Protobuf_Empty, IngestCommon_IngestSummary>]
 
   /// - Returns: Interceptors to use when invoking 'reportMissedBlockRange'.
   func makeReportMissedBlockRangeInterceptors() -> [ClientInterceptor<AccountIngest_ReportMissedBlockRangeRequest, SwiftProtobuf.Google_Protobuf_Empty>]

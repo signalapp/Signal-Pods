@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2020 MobileCoin. All rights reserved.
+//  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
 
 import Foundation
@@ -64,5 +64,15 @@ extension FogView_FogTxOut {
             External_Amount(commitment: txOut.commitment, maskedValue: txOut.maskedValue)
         self.targetKey = External_CompressedRistretto(txOut.targetKey)
         self.publicKey = External_CompressedRistretto(txOut.publicKey)
+    }
+}
+
+extension FogView_TxOutRecord {
+    init(_ txOut: TxOutProtocol) {
+        self.init()
+        self.txOutAmountCommitmentData = txOut.commitment.data
+        self.txOutAmountMaskedValue = txOut.maskedValue
+        self.txOutTargetKeyData = txOut.targetKey.data
+        self.txOutPublicKeyData = txOut.publicKey.data
     }
 }

@@ -1,3 +1,5 @@
+// Copyright (c) 2018-2021 The MobileCoin Foundation
+
 #ifndef KEYS_H_
 #define KEYS_H_
 
@@ -83,26 +85,12 @@ MC_ATTRIBUTE_NONNULL(1, 2, 4, 5);
 ///
 /// * `account_key` - must be a valid `AccountKey` with `fog_info`.
 /// * `out_fog_authority_fingerprint_sig` - length must be >= 64.
-bool mc_account_key_get_public_address_fog_authority_fingerprint_sig(
+bool mc_account_key_get_public_address_fog_authority_sig(
   const McAccountKey* MC_NONNULL account_key,
   uint64_t subaddress_index,
   McMutableBuffer* MC_NONNULL out_fog_authority_sig
 )
 MC_ATTRIBUTE_NONNULL(1, 3);
-
-/* ==== PublicAddress ==== */
-
-/// # Errors
-///
-/// * `LibMcError::Serialization`
-/// * `LibMcError::Attestation`
-bool mc_public_address_verify_fog_authority_fingerprint_sig(
-  const McBuffer* MC_NONNULL subaddress_view_public_key,
-  const McBuffer* MC_NONNULL fog_authority_fingerprint,
-  const McBuffer* MC_NONNULL fog_authority_fingerprint_sig,
-  McError* MC_NULLABLE * MC_NULLABLE out_error
-)
-MC_ATTRIBUTE_NONNULL(1, 2, 3);
 
 #ifdef __cplusplus
 }

@@ -16,15 +16,18 @@
 
 /// Whether compression should be enabled for the message.
 public struct Compression: Hashable {
-  private enum Wrapped: Hashable {
+  @usableFromInline
+  internal enum _Wrapped: Hashable {
     case enabled
     case disabled
     case deferToCallDefault
   }
 
-  private var wrapped: Wrapped
-  private init(_ wrapped: Wrapped) {
-    self.wrapped = wrapped
+  @usableFromInline
+  internal var _wrapped: _Wrapped
+
+  private init(_ wrapped: _Wrapped) {
+    self._wrapped = wrapped
   }
 
   /// Enable compression. Note that this will be ignored if compression has not been enabled or is
@@ -40,8 +43,9 @@ public struct Compression: Hashable {
 }
 
 extension Compression {
+  @inlinable
   internal func isEnabled(callDefault: Bool) -> Bool {
-    switch self.wrapped {
+    switch self._wrapped {
     case .enabled:
       return callDefault
     case .disabled:
@@ -52,13 +56,16 @@ extension Compression {
   }
 }
 
+/// Whether compression is enabled or disabled for a client.
 public enum ClientMessageEncoding {
+  /// Compression is enabled with the given configuration.
   case enabled(Configuration)
+  /// Compression is disabled.
   case disabled
 }
 
 extension ClientMessageEncoding {
-  var enabledForRequests: Bool {
+  internal var enabledForRequests: Bool {
     switch self {
     case let .enabled(configuration):
       return configuration.outbound != nil
@@ -108,9 +115,22 @@ extension ClientMessageEncoding {
   }
 }
 
+/// Whether compression is enabled or disabled on the server.
 public enum ServerMessageEncoding {
+  /// Compression is supported with this configuration.
   case enabled(Configuration)
+  /// Compression is not enabled. However, 'identity' compression is still supported.
   case disabled
+
+  @usableFromInline
+  internal var isEnabled: Bool {
+    switch self {
+    case .enabled:
+      return true
+    case .disabled:
+      return false
+    }
+  }
 }
 
 extension ServerMessageEncoding {

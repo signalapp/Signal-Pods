@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2020 MobileCoin. All rights reserved.
+//  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
 
 // swiftlint:disable multiline_function_chains
@@ -8,16 +8,16 @@ import Foundation
 import LibMobileCoin
 
 enum FogRngError: Error {
-    case invalidKey
+    case invalidKey(String)
     case unsupportedCryptoBoxVersion(String)
 }
 
 extension FogRngError: CustomStringConvertible {
-    public var description: String {
+    var description: String {
         "Fog Kex Rng error: " + {
             switch self {
-            case .invalidKey:
-                return "Invalid key"
+            case .invalidKey(let reason):
+                return "Invalid key: \(reason)"
             case .unsupportedCryptoBoxVersion(let reason):
                 return "Unsupported CryptoBox version: \(reason)"
             }
@@ -35,10 +35,19 @@ final class FogRng {
     {
         subaddressViewPrivateKey.asMcBuffer { viewPrivateKeyPtr in
             fogRngKey.pubkey.asMcBuffer { pubkeyPtr in
-                withMcError({ errorPtr in
+                withMcError { errorPtr in
                     mc_fog_rng_create(viewPrivateKeyPtr, pubkeyPtr, fogRngKey.version, &errorPtr)
-                }).mapError { _ in
-                    .invalidKey
+                }.mapError {
+                    switch $0.errorCode {
+                    case .invalidInput:
+                        return .invalidKey($0.description)
+                    case .unsupportedCryptoBoxVersion:
+                        return .unsupportedCryptoBoxVersion($0.description)
+                    default:
+                        // Safety: mc_fog_rng_create should not throw non-documented errors.
+                        logger.fatalError(
+                            "\(Self.self).\(#function): Unhandled LibMobileCoin error: \($0)")
+                    }
                 }.map { ptr in
                     FogRng(ptr)
                 }
@@ -46,20 +55,30 @@ final class FogRng {
         }
     }
 
-    private let ptr: OpaquePointer
-    private let outputSize: Int
-
-    /// - Returns: `nil` when the input is not deserializable.
-    convenience init?(serializedData: Data) {
-        guard case .success(let ptr) = serializedData.asMcBuffer({ dataPtr in
+    /// - Returns: `.failure` when the input is not deserializable.
+    static func make(serializedData: Data) -> Result<FogRng, FogRngError> {
+        serializedData.asMcBuffer { dataPtr in
             withMcError { errorPtr in
                 mc_fog_rng_deserialize_proto(dataPtr, &errorPtr)
+            }.mapError {
+                switch $0.errorCode {
+                case .invalidInput:
+                    return .invalidKey($0.description)
+                case .unsupportedCryptoBoxVersion:
+                    return .unsupportedCryptoBoxVersion($0.description)
+                default:
+                    // Safety: mc_fog_rng_deserialize_proto should not throw non-documented errors.
+                    logger.fatalError(
+                        "\(Self.self).\(#function): Unhandled LibMobileCoin error: \($0)")
+                }
             }
-        }) else {
-            return nil
+        }.map { ptr in
+            FogRng(ptr)
         }
-        self.init(ptr)
     }
+
+    private let ptr: OpaquePointer
+    private let outputSize: Int
 
     private init(_ ptr: OpaquePointer) {
         self.ptr = ptr

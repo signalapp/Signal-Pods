@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2020 MobileCoin. All rights reserved.
+//  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
 
 import Foundation
@@ -17,8 +17,14 @@ public struct BlockMetadata {
         }
     }
 
-    init(index: UInt64, timestamp: Date) {
-        self.init(index: index, timestampStatus: .known(timestamp: timestamp))
+    init(index: UInt64, timestamp: Date?) {
+        let timestampStatus: TimestampStatus?
+        if let timestamp = timestamp {
+            timestampStatus = .known(timestamp: timestamp)
+        } else {
+            timestampStatus = nil
+        }
+        self.init(index: index, timestampStatus: timestampStatus)
     }
 
     init(index: UInt64, timestampStatus: TimestampStatus?) {
@@ -40,6 +46,3 @@ extension BlockMetadata {
 
 extension BlockMetadata.TimestampStatus: Equatable {}
 extension BlockMetadata.TimestampStatus: Hashable {}
-
-@available(*, deprecated, renamed: "BlockMetadata")
-public typealias Block = BlockMetadata

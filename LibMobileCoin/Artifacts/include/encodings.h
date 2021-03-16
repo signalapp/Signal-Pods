@@ -1,3 +1,5 @@
+// Copyright (c) 2018-2021 The MobileCoin Foundation
+
 #ifndef ENCODINGS_H_
 #define ENCODINGS_H_
 
@@ -20,15 +22,15 @@ char* MC_NULLABLE mc_printable_wrapper_b58_encode(
 )
 MC_ATTRIBUTE_NONNULL(1);
 
-/// # Errors
-///
-/// * `LibMcError::Serialization`
-///
 /// # Preconditions
 ///
 /// * `b58_encoded_string` - must be a nul-terminated C string containing valid UTF-8.
 /// * `out_printable_wrapper_proto_bytes` - must be null or else length must be >=
 ///     `wrapper_bytes.len`.
+///
+/// # Errors
+///
+/// * `LibMcError::InvalidInput`
 ssize_t mc_printable_wrapper_b58_decode(
   const char* MC_NONNULL b58_encoded_string,
   McMutableBuffer* MC_NULLABLE out_printable_wrapper_proto_bytes,

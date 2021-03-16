@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2020 MobileCoin. All rights reserved.
+//  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
 
 // swiftlint:disable multiline_function_chains operator_usage_whitespace
@@ -10,17 +10,17 @@ import LibMobileCoin
 
 enum AttestedConnectionError: Error {
     case connectionError(ConnectionError)
-    case attestationFailure
+    case attestationFailure(String = String())
 }
 
 extension AttestedConnectionError: CustomStringConvertible {
-    public var description: String {
+    var description: String {
         "Attested connection error: " + {
             switch self {
             case .connectionError(let connectionError):
                 return "\(connectionError)"
-            case .attestationFailure:
-                return "Attestation failure"
+            case .attestationFailure(let reason):
+                return "Attestation failure\(!reason.isEmpty ? ": \(reason)" : "")"
             }
         }()
     }
@@ -111,7 +111,7 @@ extension AttestedConnection {
     //
     // This means that calls to `AttestedConnection.Inner` can assume thread-safety until the call
     // invokes the completion handler.
-    private class Inner {
+    private struct Inner {
         private let session: ConnectionSession
         private let client: AttestableGrpcClient
         private let attestAke: AttestAke
@@ -267,7 +267,7 @@ extension AttestedConnection {
                         requestAad: requestAad,
                         request: request,
                         attestAkeCipher: attestAkeCipher)
-                    .mapError({ _ in .attestationFailure })
+                    .mapError({ _ in .attestationFailure() })
                     .successOr(completion: completion)
             else { return }
 
@@ -307,7 +307,7 @@ extension AttestedConnection {
 
             // Attestation failure, reattest
             guard callResult.status.code != .permissionDenied else {
-                return .failure(.attestationFailure)
+                return .failure(.attestationFailure())
             }
 
             guard callResult.status.isOk, let response = callResult.response else {

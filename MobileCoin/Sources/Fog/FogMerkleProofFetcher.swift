@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2020 MobileCoin. All rights reserved.
+//  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
 
 // swiftlint:disable multiline_arguments multiline_function_chains
@@ -13,7 +13,7 @@ enum FogMerkleProofFetcherError: Error {
 }
 
 extension FogMerkleProofFetcherError: CustomStringConvertible {
-    public var description: String {
+    var description: String {
         "Fog Merkle Proof Fetcher error: " + {
             switch self {
             case .connectionError(let innerError):
@@ -95,9 +95,7 @@ struct FogMerkleProofFetcher {
         fogMerkleProofService.getOutputs(request: request) {
             completion(
                 $0.mapError { .connectionError($0) }
-                    .flatMap {
-                        Self.parseResponse(response: $0)
-                    })
+                    .flatMap { Self.parseResponse(response: $0) })
         }
     }
 

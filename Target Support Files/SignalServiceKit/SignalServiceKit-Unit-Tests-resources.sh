@@ -97,6 +97,8 @@ EOM
   esac
 }
 if [[ "$CONFIGURATION" == "Debug" ]]; then
+  install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/8395.crt"
+  install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/8395.der"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/DigiCertGlobalRootG2.crt"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/DigiCertSHA2HighAssuranceServerCA.crt"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/GIAG2.crt"
@@ -113,6 +115,8 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_resource "${PODS_ROOT}/SAMKeychain/Support/SAMKeychain.bundle"
 fi
 if [[ "$CONFIGURATION" == "App Store Release" ]]; then
+  install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/8395.crt"
+  install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/8395.der"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/DigiCertGlobalRootG2.crt"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/DigiCertSHA2HighAssuranceServerCA.crt"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/GIAG2.crt"
@@ -129,6 +133,8 @@ if [[ "$CONFIGURATION" == "App Store Release" ]]; then
   install_resource "${PODS_ROOT}/SAMKeychain/Support/SAMKeychain.bundle"
 fi
 if [[ "$CONFIGURATION" == "Profiling" ]]; then
+  install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/8395.crt"
+  install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/8395.der"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/DigiCertGlobalRootG2.crt"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/DigiCertSHA2HighAssuranceServerCA.crt"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/GIAG2.crt"
@@ -145,6 +151,8 @@ if [[ "$CONFIGURATION" == "Profiling" ]]; then
   install_resource "${PODS_ROOT}/SAMKeychain/Support/SAMKeychain.bundle"
 fi
 if [[ "$CONFIGURATION" == "Testable Release" ]]; then
+  install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/8395.crt"
+  install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/8395.der"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/DigiCertGlobalRootG2.crt"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/DigiCertSHA2HighAssuranceServerCA.crt"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/GIAG2.crt"
@@ -161,6 +169,8 @@ if [[ "$CONFIGURATION" == "Testable Release" ]]; then
   install_resource "${PODS_ROOT}/SAMKeychain/Support/SAMKeychain.bundle"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
+  install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/8395.crt"
+  install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/8395.der"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/DigiCertGlobalRootG2.crt"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/DigiCertSHA2HighAssuranceServerCA.crt"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/GIAG2.crt"

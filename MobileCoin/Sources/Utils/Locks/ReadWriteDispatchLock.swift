@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2020 MobileCoin. All rights reserved.
+//  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
 
 import Foundation
@@ -19,8 +19,8 @@ import Foundation
 /// blocks are executed in the order that the `readSync` and`writeSync` methods are called. Note
 /// that this only means they are started in order. They can still finish out of order, depending on
 /// how long each block takes to finish.
-struct ReadWriteDispatchLock<Value> {
-    private let value: Value
+final class ReadWriteDispatchLock<Value> {
+    private var value: Value
 
     /// Concurrent `DispatchQueue` used as a read-write lock around data we want to have synchronous
     /// access to, `value`. Reads of this data occur within a `sync` block, while writes occur
@@ -50,9 +50,9 @@ struct ReadWriteDispatchLock<Value> {
         }
     }
 
-    func writeSync<T>(_ block: (Value) throws -> T) rethrows -> T {
+    func writeSync<T>(_ block: (inout Value) throws -> T) rethrows -> T {
         try concurrentExclusionQueue.sync(flags: .barrier) {
-            try block(value)
+            try block(&value)
         }
     }
 

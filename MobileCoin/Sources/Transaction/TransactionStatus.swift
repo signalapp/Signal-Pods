@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2020 MobileCoin. All rights reserved.
+//  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
 
 import Foundation
@@ -8,9 +8,6 @@ public enum TransactionStatus {
     case unknown
     case accepted(block: BlockMetadata)
     case failed
-
-    @available(*, deprecated, renamed: "unknown")
-    case pending
 
     init(_ acceptedStatus: Transaction.AcceptedStatus) {
         switch acceptedStatus {

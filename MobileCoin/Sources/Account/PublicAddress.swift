@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2020 MobileCoin. All rights reserved.
+//  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
 
 import Foundation
@@ -10,10 +10,10 @@ public struct PublicAddress {
         viewPublicKey: RistrettoPublic,
         spendPublicKey: RistrettoPublic,
         fogReportUrl: String,
-        fogAuthoritySig: Data,
-        fogReportId: String
+        fogReportId: String,
+        fogAuthoritySig: Data
     ) -> Result<PublicAddress, InvalidInputError> {
-        FogInfo.make(reportUrl: fogReportUrl, authoritySig: fogAuthoritySig, reportId: fogReportId)
+        FogInfo.make(reportUrl: fogReportUrl, reportId: fogReportId, authoritySig: fogAuthoritySig)
             .map { fogInfo in
                 PublicAddress(
                     viewPublicKey: viewPublicKey,
@@ -59,9 +59,9 @@ public struct PublicAddress {
 
     public var fogReportUrlString: String? { fogInfo?.reportUrlString }
 
-    var fogReportUrl: FogReportUrl? { fogInfo?.reportUrl }
-    var fogAuthoritySig: Data? { fogInfo?.authoritySig }
+    var fogReportUrl: FogUrl? { fogInfo?.reportUrl }
     var fogReportId: String? { fogInfo?.reportId }
+    var fogAuthoritySig: Data? { fogInfo?.authoritySig }
 }
 
 extension PublicAddress: Equatable {}
@@ -106,8 +106,8 @@ extension PublicAddress {
         if !publicAddress.fogReportURL.isEmpty {
             guard case .success(let maybeFogInfo) = FogInfo.make(
                 reportUrl: publicAddress.fogReportURL,
-                authoritySig: publicAddress.fogAuthoritySig,
-                reportId: publicAddress.fogReportID)
+                reportId: publicAddress.fogReportID,
+                authoritySig: publicAddress.fogAuthoritySig)
             else {
                 return nil
             }
@@ -135,33 +135,33 @@ extension External_PublicAddress {
 
 extension PublicAddress {
     struct FogInfo {
-        fileprivate static func make(reportUrl: String, authoritySig: Data, reportId: String)
+        fileprivate static func make(reportUrl: String, reportId: String, authoritySig: Data)
             -> Result<FogInfo, InvalidInputError>
         {
-            FogReportUrl.make(string: reportUrl).map { reportUrlTyped in
+            FogUrl.make(string: reportUrl).map { reportUrlTyped in
                 FogInfo(
                     reportUrlString: reportUrl,
                     reportUrl: reportUrlTyped,
-                    authoritySig: authoritySig,
-                    reportId: reportId)
+                    reportId: reportId,
+                    authoritySig: authoritySig)
             }
         }
 
         let reportUrlString: String
-        let reportUrl: FogReportUrl
-        let authoritySig: Data
+        let reportUrl: FogUrl
         let reportId: String
+        let authoritySig: Data
 
         private init(
             reportUrlString: String,
-            reportUrl: FogReportUrl,
-            authoritySig: Data,
-            reportId: String
+            reportUrl: FogUrl,
+            reportId: String,
+            authoritySig: Data
         ) {
             self.reportUrlString = reportUrlString
             self.reportUrl = reportUrl
-            self.authoritySig = authoritySig
             self.reportId = reportId
+            self.authoritySig = authoritySig
         }
     }
 }
@@ -186,7 +186,7 @@ extension PublicAddress.FogInfo {
         self.init(
             reportUrlString: accountKeyFogInfo.reportUrlString,
             reportUrl: accountKeyFogInfo.reportUrl,
-            authoritySig: authoritySig,
-            reportId: accountKeyFogInfo.reportId)
+            reportId: accountKeyFogInfo.reportId,
+            authoritySig: authoritySig)
     }
 }

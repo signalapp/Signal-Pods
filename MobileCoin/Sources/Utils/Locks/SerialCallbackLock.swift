@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2020 MobileCoin. All rights reserved.
+//  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
 
 import Foundation
@@ -15,8 +15,8 @@ import Foundation
 /// when the task is complete, which then releases the lock for the next task to acquire.
 ///
 /// Tasks are executed in the order that the `accessAsync` method is called.
-struct SerialCallbackLock<Value> {
-    private let value: Value
+final class SerialCallbackLock<Value> {
+    private var value: Value
 
     private let callbackQueue: SerialCallbackQueue
 
@@ -29,30 +29,30 @@ struct SerialCallbackLock<Value> {
         value
     }
 
-    func accessAsync(_ block: @escaping (Value, @escaping () -> Void) -> Void) {
+    func accessAsync(_ block: @escaping (inout Value, @escaping () -> Void) -> Void) {
         callbackQueue.append { completion in
-            block(self.value, completion)
+            block(&self.value, completion)
         }
     }
 
-    func priorityAccessAsync(_ block: @escaping (Value, @escaping () -> Void) -> Void) {
+    func priorityAccessAsync(_ block: @escaping (inout Value, @escaping () -> Void) -> Void) {
         callbackQueue.prepend { completion in
-            block(self.value, completion)
+            block(&self.value, completion)
         }
     }
 }
 
 extension SerialCallbackLock {
-    func accessAsync(_ block: @escaping (Value) -> Void) {
+    func accessAsync(_ block: @escaping (inout Value) -> Void) {
         callbackQueue.append { completion in
-            block(self.value)
+            block(&self.value)
             completion()
         }
     }
 
-    func priorityAccessAsync(_ block: @escaping (Value) -> Void) {
+    func priorityAccessAsync(_ block: @escaping (inout Value) -> Void) {
         callbackQueue.prepend { completion in
-            block(self.value)
+            block(&self.value)
             completion()
         }
     }
@@ -60,11 +60,11 @@ extension SerialCallbackLock {
 
 extension SerialCallbackLock {
     func accessAsync<Return>(
-        block: @escaping (Value, @escaping (Return) -> Void) -> Void,
+        block: @escaping (inout Value, @escaping (Return) -> Void) -> Void,
         completion: @escaping (Return) -> Void
     ) {
         accessAsync { value, callback in
-            block(value) { result in
+            block(&value) { result in
                 callback()
                 completion(result)
             }
@@ -72,11 +72,11 @@ extension SerialCallbackLock {
     }
 
     func priorityAccessAsync<Return>(
-        block: @escaping (Value, @escaping (Return) -> Void) -> Void,
+        block: @escaping (inout Value, @escaping (Return) -> Void) -> Void,
         completion: @escaping (Return) -> Void
     ) {
         priorityAccessAsync { value, callback in
-            block(value) { result in
+            block(&value) { result in
                 callback()
                 completion(result)
             }

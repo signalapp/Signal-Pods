@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2020 MobileCoin. All rights reserved.
+//  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
 
 import Foundation
@@ -12,13 +12,13 @@ enum AttestedCallError: Error {
 }
 
 extension AttestedCallError: CustomStringConvertible {
-    public var description: String {
+    var description: String {
         "Attested call error: " + {
             switch self {
             case .aeadError(let innerError):
                 return "\(innerError)"
             case .invalidInput(let reason):
-                return "Invalid input: " + reason
+                return "Invalid input: \(reason)"
             }
         }()
     }
@@ -99,7 +99,7 @@ extension AttestedGrpcCallable
         }
 
         return attestAkeCipher.decryptMessage(response)
-            .mapError { _ in .attestationFailure }
+            .mapError { _ in .attestationFailure() }
             .flatMap { plaintext in
                 let response: InnerResponse
                 do {
@@ -148,7 +148,7 @@ extension AttestedGrpcCallable
         attestAkeCipher: AttestAke.Cipher
     ) -> Result<(responseAad: InnerResponseAad, response: InnerResponse), AttestedConnectionError> {
         attestAkeCipher.decryptMessage(response)
-            .mapError { _ in .attestationFailure }
+            .mapError { _ in .attestationFailure() }
             .flatMap { plaintext in
                 let plaintextResponse: InnerResponse
                 let responseAad: InnerResponseAad

@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2020 MobileCoin. All rights reserved.
+//  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
 
 import Foundation
@@ -14,6 +14,16 @@ struct PartialTxOut: TxOutProtocol {
 
 extension PartialTxOut: Equatable {}
 extension PartialTxOut: Hashable {}
+
+extension PartialTxOut {
+    init(_ txOut: TxOut) {
+        self.init(
+            commitment: txOut.commitment,
+            maskedValue: txOut.maskedValue,
+            targetKey: txOut.targetKey,
+            publicKey: txOut.publicKey)
+    }
+}
 
 extension PartialTxOut {
     init?(_ txOut: External_TxOut) {
@@ -40,6 +50,20 @@ extension PartialTxOut {
         self.init(
             commitment: commitment,
             maskedValue: txOut.amount.maskedValue,
+            targetKey: targetKey,
+            publicKey: publicKey)
+    }
+
+    init?(_ txOutRecord: FogView_TxOutRecord) {
+        guard let commitment = Data32(txOutRecord.txOutAmountCommitmentData),
+              let targetKey = RistrettoPublic(txOutRecord.txOutTargetKeyData),
+              let publicKey = RistrettoPublic(txOutRecord.txOutPublicKeyData)
+        else {
+            return nil
+        }
+        self.init(
+            commitment: commitment,
+            maskedValue: txOutRecord.txOutAmountMaskedValue,
             targetKey: targetKey,
             publicKey: publicKey)
     }

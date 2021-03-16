@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2020 MobileCoin. All rights reserved.
+//  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
 
 // swiftlint:disable multiline_function_chains
@@ -9,6 +9,10 @@ import LibMobileCoin
 
 final class FogView {
     private let rngSet = FogRngSet()
+
+    var earliestRngStartBlockIndex: UInt64? {
+        rngSet.earliestRngRecordStartBlockIndex
+    }
 
     var allRngTxOutsFoundBlockCount: UInt64 {
         rngSet.knownBlockCount

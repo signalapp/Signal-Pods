@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2020 MobileCoin. All rights reserved.
+//  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
 
 import Foundation
@@ -14,7 +14,7 @@ final class FogResolver {
 
     convenience init(
         attestation: Attestation,
-        reportUrlsAndResponses: [(FogReportUrl, Report_ReportResponse)]
+        reportUrlsAndResponses: [(FogUrl, Report_ReportResponse)]
     ) {
         self.init(attestation: attestation)
         for (reportUrl, response) in reportUrlsAndResponses {
@@ -40,7 +40,7 @@ final class FogResolver {
         try body(ptr)
     }
 
-    private func addReportResponse(reportUrl: FogReportUrl, reportResponse: Report_ReportResponse) {
+    private func addReportResponse(reportUrl: FogUrl, reportResponse: Report_ReportResponse) {
         let serializedReportResponse: Data
         do {
             serializedReportResponse = try reportResponse.serializedData()
@@ -51,19 +51,28 @@ final class FogResolver {
         }
 
         serializedReportResponse.asMcBuffer { reportResponsePtr in
-            do {
-                try withMcError { errorPtr in
-                    mc_fog_resolver_add_report_response(
-                        ptr,
-                        reportUrl.url.absoluteString,
-                        reportResponsePtr,
-                        &errorPtr)
-                }.get()
-            } catch {
-                // Safety: mc_fog_resolver_add_report_response shouldn't fail deserialization since
-                // we just serialized it and roundtrip serialization should always succeed.
-                logger.fatalError(
-                    "Error: \(Self.self).\(#function): addReportResponse failed: \(error)")
+            switch withMcError({ errorPtr in
+                mc_fog_resolver_add_report_response(
+                    ptr,
+                    reportUrl.url.absoluteString,
+                    reportResponsePtr,
+                    &errorPtr)
+            }) {
+            case .success:
+                break
+            case .failure(let error):
+                switch error.errorCode {
+                case .invalidInput:
+                    // Safety: mc_fog_resolver_add_report_response shouldn't fail deserialization
+                    // since we just serialized it and roundtrip serialization should always
+                    // succeed.
+                    logger.fatalError("\(Self.self).\(#function): \(error)")
+                default:
+                    // Safety: mc_fog_resolver_add_report_response should not throw non-documented
+                    // errors.
+                    logger.fatalError(
+                        "\(Self.self).\(#function): Unhandled LibMobileCoin error: \(error)")
+                }
             }
         }
     }

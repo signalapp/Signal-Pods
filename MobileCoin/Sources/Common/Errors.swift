@@ -1,7 +1,7 @@
 // swiftlint:disable:this file_name
 
 //
-//  Copyright (c) 2020 MobileCoin. All rights reserved.
+//  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
 
 import Foundation
@@ -50,99 +50,110 @@ extension ConnectionError: CustomStringConvertible {
     }
 }
 
-@available(*, deprecated, renamed: "InvalidInputError")
-public typealias MalformedInput = InvalidInputError
-
-@available(*, deprecated)
-public struct SerializationError: Error {
-    let reason: String
-
-    init(_ reason: String) {
-        self.reason = reason
-    }
+public enum BalanceTransferEstimationError: Error {
+    case feeExceedsBalance(String = String())
+    case balanceOverflow(String = String())
 }
 
-@available(*, deprecated)
-extension SerializationError: CustomStringConvertible {
+extension BalanceTransferEstimationError: CustomStringConvertible {
     public var description: String {
-        "Serialization error: \(reason)"
+        "Balance transfer estimation error: " + {
+            switch self {
+            case .feeExceedsBalance(let reason):
+                return "Fee exceeds balance\(!reason.isEmpty ? ": \(reason)" : "")"
+            case .balanceOverflow(let reason):
+                return "Balance overflow\(!reason.isEmpty ? ": \(reason)" : "")"
+            }
+        }()
     }
 }
 
-@available(*, deprecated)
-public struct InsufficientBalance: Error {
-    let amountRequired: UInt64
-    let currentBalance: Balance
+public enum TransactionEstimationError: Error {
+    case invalidInput(String)
+    case insufficientBalance(String = String())
 }
 
-@available(*, deprecated)
-extension InsufficientBalance: CustomStringConvertible {
+extension TransactionEstimationError: CustomStringConvertible {
     public var description: String {
-        "Insufficient balance: amount required: \(amountRequired), current balance: " +
-            "\(currentBalance)"
+        "Transaction estimation error: " + {
+            switch self {
+            case .invalidInput(let reason):
+                return "Invalid input: \(reason)"
+            case .insufficientBalance(let reason):
+                return "Insufficient balance\(!reason.isEmpty ? ": \(reason)" : "")"
+            }
+        }()
     }
 }
 
-@available(*, deprecated)
-public struct ConnectionFailure: Error {
-    let reason: String
-
-    init(_ reason: String) {
-        self.reason = reason
-    }
+public enum TransactionPreparationError: Error {
+    case invalidInput(String)
+    case insufficientBalance(String = String())
+    case defragmentationRequired(String = String())
+    case connectionError(ConnectionError)
 }
 
-@available(*, deprecated)
-extension ConnectionFailure: CustomStringConvertible {
+extension TransactionPreparationError: CustomStringConvertible {
     public var description: String {
-        "Connection failure: \(reason)"
+        "Transaction preparation error: " + {
+            switch self {
+            case .invalidInput(let reason):
+                return "Invalid input: \(reason)"
+            case .insufficientBalance(let reason):
+                return "Insufficient balance\(!reason.isEmpty ? ": \(reason)" : "")"
+            case .defragmentationRequired(let reason):
+                return "Defragmentation required\(!reason.isEmpty ? ": \(reason)" : "")"
+            case .connectionError(let innerError):
+                return "\(innerError)"
+            }
+        }()
     }
 }
 
-@available(*, deprecated)
-public struct AuthorizationFailure: Error {
-    let reason: String
-
-    init(_ reason: String) {
-        self.reason = reason
-    }
+public enum DefragTransactionPreparationError: Error {
+    case invalidInput(String)
+    case insufficientBalance(String = String())
+    case connectionError(ConnectionError)
 }
 
-@available(*, deprecated)
-extension AuthorizationFailure: CustomStringConvertible {
+extension DefragTransactionPreparationError: CustomStringConvertible {
     public var description: String {
-        "Authorization failure: \(reason)"
+        "Defragmentation transaction preparation error: " + {
+            switch self {
+            case .invalidInput(let reason):
+                return "Invalid input: \(reason)"
+            case .insufficientBalance(let reason):
+                return "Insufficient balance\(!reason.isEmpty ? ": \(reason)" : "")"
+            case .connectionError(let innerError):
+                return "\(innerError)"
+            }
+        }()
     }
 }
 
-@available(*, deprecated)
-public struct InvalidReceipt: Error {
-    let reason: String
-
-    init(_ reason: String) {
-        self.reason = reason
-    }
+public enum TransactionSubmissionError: Error {
+    case connectionError(ConnectionError)
+    case invalidTransaction(String = String())
+    case feeError(String = String())
+    case tombstoneBlockTooFar(String = String())
+    case inputsAlreadySpent(String = String())
 }
 
-@available(*, deprecated)
-extension InvalidReceipt: CustomStringConvertible {
+extension TransactionSubmissionError: CustomStringConvertible {
     public var description: String {
-        "Invalid receipt error: \(reason)"
-    }
-}
-
-@available(*, deprecated)
-public struct InternalError: Error {
-    let reason: String
-
-    init(_ reason: String) {
-        self.reason = reason
-    }
-}
-
-@available(*, deprecated)
-extension InternalError: CustomStringConvertible {
-    public var description: String {
-        "Internal error: \(reason)"
+        "Transaction submission error: " + {
+            switch self {
+            case .connectionError(let connectionError):
+                return "\(connectionError)"
+            case .feeError(let reason):
+                return "Fee error\(!reason.isEmpty ? ": \(reason)" : "")"
+            case .invalidTransaction(let reason):
+                return "Invalid transaction\(!reason.isEmpty ? ": \(reason)" : "")"
+            case .tombstoneBlockTooFar(let reason):
+                return "Tombstone block too far\(!reason.isEmpty ? ": \(reason)" : "")"
+            case .inputsAlreadySpent(let reason):
+                return "Inputs already spent\(!reason.isEmpty ? ": \(reason)" : "")"
+            }
+        }()
     }
 }

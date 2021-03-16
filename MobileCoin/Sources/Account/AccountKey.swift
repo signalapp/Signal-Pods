@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2020 MobileCoin. All rights reserved.
+//  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
 
 // swiftlint:disable multiline_function_chains
@@ -11,8 +11,8 @@ public struct AccountKey {
     public static func make(
         rootEntropy: Data,
         fogReportUrl: String,
-        fogAuthoritySpki: Data,
-        fogReportId: String
+        fogReportId: String,
+        fogAuthoritySpki: Data
     ) -> Result<AccountKey, InvalidInputError> {
         guard let rootEntropy = Data32(rootEntropy) else {
             return .failure(InvalidInputError("rootEntropy must be 32 bytes in length"))
@@ -20,8 +20,8 @@ public struct AccountKey {
 
         return FogInfo.make(
             reportUrl: fogReportUrl,
-            authoritySpki: fogAuthoritySpki,
-            reportId: fogReportId
+            reportId: fogReportId,
+            authoritySpki: fogAuthoritySpki
         ).map { fogInfo in
             AccountKey(rootEntropy: rootEntropy, fogInfo: fogInfo)
         }
@@ -30,14 +30,14 @@ public struct AccountKey {
     static func make(
         rootEntropy: Data32,
         fogReportUrl: String,
-        fogAuthoritySpki: Data,
         fogReportId: String,
+        fogAuthoritySpki: Data,
         subaddressIndex: UInt64 = McConstants.DEFAULT_SUBADDRESS_INDEX
     ) -> Result<AccountKey, InvalidInputError> {
         FogInfo.make(
             reportUrl: fogReportUrl,
-            authoritySpki: fogAuthoritySpki,
-            reportId: fogReportId
+            reportId: fogReportId,
+            authoritySpki: fogAuthoritySpki
         ).map { fogInfo in
             AccountKey(
                 rootEntropy: rootEntropy,
@@ -104,9 +104,9 @@ public struct AccountKey {
     }
 
     var fogReportUrlString: String? { fogInfo?.reportUrlString }
-    var fogReportUrl: FogReportUrl? { fogInfo?.reportUrl }
-    var fogAuthoritySpki: Data? { fogInfo?.authoritySpki }
+    var fogReportUrl: FogUrl? { fogInfo?.reportUrl }
     var fogReportId: String? { fogInfo?.reportId }
+    var fogAuthoritySpki: Data? { fogInfo?.authoritySpki }
 
     var subaddressViewPrivateKey: RistrettoPrivate {
         AccountKeyUtils.subaddressPrivateKeys(
@@ -129,39 +129,6 @@ extension AccountKey: Equatable {}
 extension AccountKey: Hashable {}
 
 extension AccountKey {
-    @available(*, deprecated,
-        renamed: "AccountKey.make(rootEntropy:fogReportUrl:fogAuthoritySpki:fogReportId:)")
-    public static func make(
-        rootEntropy: Data,
-        fogReportUrl: String,
-        fogAuthorityFingerprint: Data,
-        fogReportId: String
-    ) -> Result<AccountKey, InvalidInputError> {
-        make(
-            rootEntropy: rootEntropy,
-            fogReportUrl: fogReportUrl,
-            fogAuthoritySpki: fogAuthorityFingerprint,
-            fogReportId: fogReportId)
-    }
-
-    @available(*, deprecated,
-        renamed: "AccountKey.make(rootEntropy:fogReportUrl:fogAuthoritySpki:fogReportId:)")
-    public init(
-        rootEntropy: Data,
-        fogReportUrl: String,
-        fogAuthorityFingerprint: Data,
-        fogReportId: String
-    ) throws {
-        let result = AccountKey.make(
-            rootEntropy: rootEntropy,
-            fogReportUrl: fogReportUrl,
-            fogAuthoritySpki: fogAuthorityFingerprint,
-            fogReportId: fogReportId)
-        self = try result.get()
-    }
-}
-
-extension AccountKey {
     init?(
         _ proto: External_AccountKey,
         subaddressIndex: UInt64 = McConstants.DEFAULT_SUBADDRESS_INDEX
@@ -176,8 +143,8 @@ extension AccountKey {
         if !proto.fogReportURL.isEmpty {
             guard case .success(let fogInfo) = FogInfo.make(
                 reportUrl: proto.fogReportURL,
-                authoritySpki: proto.fogAuthoritySpki,
-                reportId: proto.fogReportID)
+                reportId: proto.fogReportID,
+                authoritySpki: proto.fogAuthoritySpki)
             else {
                 return nil
             }
@@ -209,33 +176,33 @@ extension External_AccountKey {
 
 extension AccountKey {
     struct FogInfo {
-        fileprivate static func make(reportUrl: String, authoritySpki: Data, reportId: String)
+        fileprivate static func make(reportUrl: String, reportId: String, authoritySpki: Data)
             -> Result<FogInfo, InvalidInputError>
         {
-            FogReportUrl.make(string: reportUrl).map { reportUrlTyped in
+            FogUrl.make(string: reportUrl).map { reportUrlTyped in
                 FogInfo(
                     reportUrlString: reportUrl,
                     reportUrl: reportUrlTyped,
-                    authoritySpki: authoritySpki,
-                    reportId: reportId)
+                    reportId: reportId,
+                    authoritySpki: authoritySpki)
             }
         }
 
         let reportUrlString: String
-        let reportUrl: FogReportUrl
-        let authoritySpki: Data
+        let reportUrl: FogUrl
         let reportId: String
+        let authoritySpki: Data
 
         private init(
             reportUrlString: String,
-            reportUrl: FogReportUrl,
-            authoritySpki: Data,
-            reportId: String
+            reportUrl: FogUrl,
+            reportId: String,
+            authoritySpki: Data
         ) {
             self.reportUrlString = reportUrlString
             self.reportUrl = reportUrl
-            self.authoritySpki = authoritySpki
             self.reportId = reportId
+            self.authoritySpki = authoritySpki
         }
     }
 }

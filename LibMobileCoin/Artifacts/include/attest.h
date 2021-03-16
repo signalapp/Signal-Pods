@@ -1,3 +1,5 @@
+// Copyright (c) 2018-2021 The MobileCoin Foundation
+
 #ifndef ATTEST_H_
 #define ATTEST_H_
 
@@ -180,13 +182,14 @@ ssize_t mc_attest_ake_get_auth_request(
 )
 MC_ATTRIBUTE_NONNULL(1, 2);
 
-/// # Errors
-///
-/// * `LibMcError::Attestation`
-///
 /// # Preconditions
 ///
 /// * `attest_ake` - must be in the auth pending state.
+///
+/// # Errors
+///
+/// * `LibMcError::AttestationVerificationFailed`
+/// * `LibMcError::InvalidInput`
 bool mc_attest_ake_process_auth_response(
   McAttestAke* MC_NONNULL attest_ake,
   const McBuffer* MC_NONNULL auth_response_data,
@@ -197,14 +200,15 @@ MC_ATTRIBUTE_NONNULL(1, 2, 3);
 
 /* ==== Message Encryption ==== */
 
-/// # Errors
-///
-/// * `LibMcError::Encryption`
-///
 /// # Preconditions
 ///
 /// * `attest_ake` - must be in the attested state.
 /// * `out_ciphertext` - must be null or else length must be >= `ciphertext.len`.
+///
+/// # Errors
+///
+/// * `LibMcError::Aead`
+/// * `LibMcError::Cipher`
 ssize_t mc_attest_ake_encrypt(
   McAttestAke* MC_NONNULL attest_ake,
   const McBuffer* MC_NONNULL aad,
@@ -214,14 +218,15 @@ ssize_t mc_attest_ake_encrypt(
 )
 MC_ATTRIBUTE_NONNULL(1, 2, 3);
 
-/// # Errors
-///
-/// * `LibMcError::Encryption`
-///
 /// # Preconditions
 ///
 /// * `attest_ake` - must be in the attested state.
 /// * `out_plaintext` - length must be >= `ciphertext.len`.
+///
+/// # Errors
+///
+/// * `LibMcError::Aead`
+/// * `LibMcError::Cipher`
 ssize_t mc_attest_ake_decrypt(
   McAttestAke* MC_NONNULL attest_ake,
   const McBuffer* MC_NONNULL aad,

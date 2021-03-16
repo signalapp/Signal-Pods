@@ -1,9 +1,15 @@
 //
-//  Copyright (c) 2020 MobileCoin. All rights reserved.
+//  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
 
 import Foundation
 import LibMobileCoin
+
+public enum Base58DecodingResult {
+    case publicAddress(PublicAddress)
+    case paymentRequest(PaymentRequest)
+    case transferPayload(TransferPayload)
+}
 
 public enum Base58Coder {
     public static func encode(_ publicAddress: PublicAddress) -> String {
@@ -50,10 +56,4 @@ public enum Base58Coder {
             return nil
         }
     }
-}
-
-public enum Base58DecodingResult {
-    case publicAddress(PublicAddress)
-    case paymentRequest(PaymentRequest)
-    case transferPayload(TransferPayload)
 }

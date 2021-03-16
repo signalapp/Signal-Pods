@@ -1,8 +1,8 @@
 //
-//  Copyright (c) 2020 MobileCoin. All rights reserved.
+//  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
 
-// swiftlint:disable multiline_function_chains
+// swiftlint:disable closure_body_length multiline_function_chains
 
 import Foundation
 import LibMobileCoin
@@ -104,7 +104,32 @@ extension FogView {
                             accountKey: self.accountKey
                         ).map { newTxOuts in
                             print("processSearchResults: Found \(newTxOuts.count) new TxOuts")
-                            let missedBlocks = response.missedBlockRanges.map { $0.range }
+                            var missedBlocks = response.missedBlockRanges.map { $0.range }
+                            if let earliestRngStartBlockIndex = fogView.earliestRngStartBlockIndex {
+                                missedBlocks = missedBlocks.compactMap { range in
+                                    // Check that we don't view key scan missed blocks that occur
+                                    // before the first RngRecord's startBlock. This is a workaround
+                                    // for Fog Ingest needing to mark the blocks before the first
+                                    // run of Fog Ingest as missed blocks.
+                                    //
+                                    // This can be removed when Fog provides a guarantee that it
+                                    // won't report the blocks before Fog Ingest was run for the
+                                    // first time as missed.
+                                    guard range.lowerBound >= earliestRngStartBlockIndex else {
+                                        if range.upperBound <= earliestRngStartBlockIndex {
+                                            // Entire missed block range is before the earliest
+                                            // RngRecord's startBlock.
+                                            return nil
+                                        } else {
+                                            // Part of missed block range is before the ealiest
+                                            // RngRecord's startBlock, so we modify the missed
+                                            // blocks range.
+                                            return earliestRngStartBlockIndex..<range.upperBound
+                                        }
+                                    }
+                                    return range
+                                }
+                            }
                             let partialResults = (newTxOuts: newTxOuts, missedBlocks: missedBlocks)
 
                             partialResultsWithWriteLock(partialResults)

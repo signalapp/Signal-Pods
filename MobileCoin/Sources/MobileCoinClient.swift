@@ -1,10 +1,11 @@
 //
-//  Copyright (c) 2020 MobileCoin. All rights reserved.
+//  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
 
-// swiftlint:disable function_parameter_count line_length multiline_function_chains
+// swiftlint:disable function_parameter_count multiline_arguments multiline_function_chains
 
 import Foundation
+import NIOSSL
 
 public final class MobileCoinClient {
     /// - Returns: `InvalidInputError` when `accountKey` isn't configured to use Fog.
@@ -26,19 +27,20 @@ public final class MobileCoinClient {
     private let callbackQueue: DispatchQueue
 
     init(accountKey: AccountKeyWithFog, config: Config) {
-        let networkConfig: NetworkConfig
-        if let attestationConfig = config.attestationConfig {
-            networkConfig = NetworkConfig(
-                consensusUrl: config.consensusUrl,
-                fogViewUrl: config.fogViewUrl,
-                fogLedgerUrl: config.fogLedgerUrl,
-                attestation: attestationConfig)
-        } else {
-            networkConfig = NetworkConfig(
-                consensusUrl: config.consensusUrl,
-                fogViewUrl: config.fogViewUrl,
-                fogLedgerUrl: config.fogLedgerUrl)
-        }
+        let networkConfig: NetworkConfig = {
+            var networkConfig: NetworkConfig
+            if let attestationConfig = config.attestationConfig {
+                networkConfig = NetworkConfig(
+                    consensusUrl: config.consensusUrl,
+                    fogUrl: config.fogUrl,
+                    attestation: attestationConfig)
+            } else {
+            	networkConfig = NetworkConfig(consensusUrl: config.consensusUrl, fogUrl: config.fogUrl)
+            }
+            networkConfig.consensusTrustRoots = config.consensusTrustRoots
+            networkConfig.fogTrustRoots = config.fogTrustRoots
+            return networkConfig
+        }()
 
         logger.info("""
             Initializing MobileCoinClient:
@@ -98,37 +100,32 @@ public final class MobileCoinClient {
         }
     }
 
-    public func minimumFee(
-        amount: UInt64,
-        completion: @escaping (Result<UInt64, ConnectionError>) -> Void
-    ) {
-        FeeCalculator(targetQueue: serialQueue).minimumFee(amount: amount) { result in
-            self.callbackQueue.async {
-                completion(result)
-            }
-        }
+    public func amountTransferable(feeLevel: FeeLevel = .minimum)
+        -> Result<UInt64, BalanceTransferEstimationError>
+    {
+        Account.TransactionEstimator(
+            account: accountLock,
+            txOutSelectionStrategy: self.config.txOutSelectionStrategy
+        ).amountTransferable(feeLevel: feeLevel)
     }
 
-    public func baseFee(
-        amount: UInt64,
-        completion: @escaping (Result<UInt64, ConnectionError>) -> Void
-    ) {
-        FeeCalculator(targetQueue: serialQueue).baseFee(amount: amount) { result in
-            self.callbackQueue.async {
-                completion(result)
-            }
-        }
+    public func estimateTotalFee(
+        toSendAmount amount: UInt64,
+        feeLevel: FeeLevel = .minimum
+    ) -> Result<UInt64, TransactionEstimationError> {
+        Account.TransactionEstimator(
+            account: accountLock,
+            txOutSelectionStrategy: self.config.txOutSelectionStrategy
+        ).estimateTotalFee(toSendAmount: amount, feeLevel: feeLevel)
     }
 
-    public func priorityFee(
-        amount: UInt64,
-        completion: @escaping (Result<UInt64, ConnectionError>) -> Void
-    ) {
-        FeeCalculator(targetQueue: serialQueue).priorityFee(amount: amount) { result in
-            self.callbackQueue.async {
-                completion(result)
-            }
-        }
+    public func requiresDefragmentation(toSendAmount amount: UInt64, feeLevel: FeeLevel = .minimum)
+        -> Result<Bool, TransactionEstimationError>
+    {
+        Account.TransactionEstimator(
+            account: accountLock,
+            txOutSelectionStrategy: self.config.txOutSelectionStrategy
+        ).requiresDefragmentation(toSendAmount: amount, feeLevel: feeLevel)
     }
 
     public func prepareTransaction(
@@ -140,18 +137,60 @@ public final class MobileCoinClient {
         ) -> Void
     ) {
         inner.accessAsync {
-            Account.TransactionPreparer(
+            Account.TransactionOperations(
                 account: self.accountLock,
                 fogMerkleProofService: $0.serviceProvider.fogMerkleProofService,
                 fogResolverManager: $0.fogResolverManager,
                 txOutSelectionStrategy: self.config.txOutSelectionStrategy,
                 mixinSelectionStrategy: self.config.mixinSelectionStrategy,
                 targetQueue: self.serialQueue
-            ).prepareTransaction(
-                to: recipient,
-                amount: amount,
-                fee: fee
-            ) { result in
+            ).prepareTransaction(to: recipient, amount: amount, fee: fee) { result in
+                self.callbackQueue.async {
+                    completion(result)
+                }
+            }
+        }
+    }
+
+    public func prepareTransaction(
+        to recipient: PublicAddress,
+        amount: UInt64,
+        feeLevel: FeeLevel = .minimum,
+        completion: @escaping (
+            Result<(transaction: Transaction, receipt: Receipt), TransactionPreparationError>
+        ) -> Void
+    ) {
+        inner.accessAsync {
+            Account.TransactionOperations(
+                account: self.accountLock,
+                fogMerkleProofService: $0.serviceProvider.fogMerkleProofService,
+                fogResolverManager: $0.fogResolverManager,
+                txOutSelectionStrategy: self.config.txOutSelectionStrategy,
+                mixinSelectionStrategy: self.config.mixinSelectionStrategy,
+                targetQueue: self.serialQueue
+            ).prepareTransaction(to: recipient, amount: amount, feeLevel: feeLevel) { result in
+                self.callbackQueue.async {
+                    completion(result)
+                }
+            }
+        }
+    }
+
+    public func prepareDefragmentationStepTransactions(
+        toSendAmount amount: UInt64,
+        feeLevel: FeeLevel = .minimum,
+        completion: @escaping (Result<[Transaction], DefragTransactionPreparationError>) -> Void
+    ) {
+        inner.accessAsync {
+            Account.TransactionOperations(
+                account: self.accountLock,
+                fogMerkleProofService: $0.serviceProvider.fogMerkleProofService,
+                fogResolverManager: $0.fogResolverManager,
+                txOutSelectionStrategy: self.config.txOutSelectionStrategy,
+                mixinSelectionStrategy: self.config.mixinSelectionStrategy,
+                targetQueue: self.serialQueue
+            ).prepareDefragmentationStepTransactions(toSendAmount: amount, feeLevel: feeLevel)
+            { result in
                 self.callbackQueue.async {
                     completion(result)
                 }
@@ -161,16 +200,15 @@ public final class MobileCoinClient {
 
     public func submitTransaction(
         _ transaction: Transaction,
-        completion: @escaping (Result<(), ConnectionError>) -> Void
+        completion: @escaping (Result<(), TransactionSubmissionError>) -> Void
     ) {
         inner.accessAsync {
-            TransactionSubmitter(
-                consensusService: $0.serviceProvider.consensusService
-            ).submitTransaction(transaction) { result in
-                self.callbackQueue.async {
-                    completion(result)
+            TransactionSubmitter(consensusService: $0.serviceProvider.consensusService)
+                .submitTransaction(transaction) { result in
+                    self.callbackQueue.async {
+                        completion(result)
+                    }
                 }
-            }
         }
     }
 
@@ -180,6 +218,7 @@ public final class MobileCoinClient {
     ) {
         inner.accessAsync {
             TransactionStatusChecker(
+                account: self.accountLock,
                 fogUntrustedTxOutService: $0.serviceProvider.fogUntrustedTxOutService,
                 fogKeyImageService: $0.serviceProvider.fogKeyImageService,
                 targetQueue: self.serialQueue
@@ -191,35 +230,8 @@ public final class MobileCoinClient {
         }
     }
 
-    public func status(
-        of receipt: Receipt,
-        completion: @escaping (Result<ReceiptStatus, ReceiptStatusCheckError>) -> Void
-    ) {
-        inner.accessAsync {
-            ReceiptStatusChecker(
-                account: self.accountLock,
-                fogViewService: $0.serviceProvider.fogViewService,
-                fogKeyImageService: $0.serviceProvider.fogKeyImageService,
-                fogBlockService: $0.serviceProvider.fogBlockService,
-                fogQueryScalingStrategy: self.config.fogQueryScalingStrategy,
-                targetQueue: self.serialQueue
-            ).checkStatus(receipt) { result in
-                self.callbackQueue.async {
-                    completion(result)
-                }
-            }
-        }
-    }
-
-    public func defragmentAccount(completion: @escaping (Result<(), ConnectionError>) -> Void) {
-        Account.TxOutConsolidator(
-            account: accountLock,
-            targetQueue: serialQueue
-        ).consolidateTxOuts { result in
-            self.callbackQueue.async {
-                completion(result)
-            }
-        }
+    public func status(of receipt: Receipt) -> Result<ReceiptStatus, InvalidInputError> {
+        ReceiptStatusChecker(account: accountLock).status(receipt)
     }
 }
 
@@ -232,8 +244,7 @@ extension MobileCoinClient {
         let fogInfo = accountKey.fogInfo
         return """
             Consensus url: \(String(reflecting: config.consensusUrl.url))
-            Fog View url: \(String(reflecting: config.fogViewUrl.url))
-            Fog Ledger url: \(String(reflecting: config.fogLedgerUrl.url))
+            Fog url: \(String(reflecting: config.fogUrl.url))
             AccountKey Fog Report url: \(String(reflecting: fogInfo.reportUrl.url))
             AccountKey Fog Report id: \(String(reflecting: fogInfo.reportId))
             AccountKey Fog Report authority sPKI: 0x\(fogInfo.authoritySpki.hexEncodedString())
@@ -247,18 +258,7 @@ extension MobileCoinClient {
 }
 
 extension MobileCoinClient {
-    @available(*, deprecated, renamed: "MobileCoinClient.make(accountKey:config:)")
-    public convenience init(accountKey: AccountKey, config: Config) throws {
-        guard let accountKey = AccountKeyWithFog(accountKey: accountKey) else {
-            throw InvalidInputError("Accounts without fog URLs are not currently supported.")
-        }
-
-        self.init(accountKey: accountKey, config: config)
-    }
-}
-
-extension MobileCoinClient {
-    private final class Inner {
+    private struct Inner {
         let serviceProvider: ServiceProvider
         let fogResolverManager: FogResolverManager
 
@@ -271,59 +271,52 @@ extension MobileCoinClient {
 
 extension MobileCoinClient {
     public struct Config {
-        /// - Returns: `InvalidInputError` when `consensusUrl`, `fogViewUrl`, or `fogLedgerUrl` are
-        ///     not well-formed URLs with the appropriate schemes.
-        public static func make(consensusUrl: String, fogViewUrl: String, fogLedgerUrl: String)
+        /// - Returns: `InvalidInputError` when `consensusUrl` or `fogUrl` are not well-formed URLs
+        ///     with the appropriate schemes.
+        public static func make(consensusUrl: String, fogUrl: String)
             -> Result<Config, InvalidInputError>
         {
             ConsensusUrl.make(string: consensusUrl).flatMap { consensusUrl in
-                FogViewUrl.make(string: fogViewUrl).flatMap { fogViewUrl in
-                    FogLedgerUrl.make(string: fogLedgerUrl).map { fogLedgerUrl in
-                        Config(
-                            consensusUrl: consensusUrl,
-                            fogViewUrl: fogViewUrl,
-                            fogLedgerUrl: fogLedgerUrl)
-                    }
+                FogUrl.make(string: fogUrl).map { fogUrl in
+                    Config(consensusUrl: consensusUrl, fogUrl: fogUrl)
                 }
             }
         }
 
-        /// - Returns: `InvalidInputError` when `consensusUrl`, `fogViewUrl`, or `fogLedgerUrl` are
-        ///     not well-formed URLs with the appropriate schemes.
+        /// - Returns: `InvalidInputError` when `consensusUrl` or `fogUrl` are not well-formed URLs
+        ///     with the appropriate schemes.
         public static func make(
             consensusUrl: String,
             consensusAttestation: Attestation,
-            fogViewUrl: String,
+            fogUrl: String,
             fogViewAttestation: Attestation,
-            fogLedgerUrl: String,
             fogKeyImageAttestation: Attestation,
             fogMerkleProofAttestation: Attestation,
             fogReportAttestation: Attestation
         ) -> Result<Config, InvalidInputError> {
             ConsensusUrl.make(string: consensusUrl).flatMap { consensusUrl in
-                FogViewUrl.make(string: fogViewUrl).flatMap { fogViewUrl in
-                    FogLedgerUrl.make(string: fogLedgerUrl).map { fogLedgerUrl in
-                        let attestationConfig = NetworkConfig.AttestationConfig(
-                            consensus: consensusAttestation,
-                            fogView: fogViewAttestation,
-                            fogKeyImage: fogKeyImageAttestation,
-                            fogMerkleProof: fogMerkleProofAttestation,
-                            fogReport: fogReportAttestation)
-                        return Config(
-                            consensusUrl: consensusUrl,
-                            fogViewUrl: fogViewUrl,
-                            fogLedgerUrl: fogLedgerUrl,
-                            attestationConfig: attestationConfig)
-                    }
+                FogUrl.make(string: fogUrl).map { fogUrl in
+                    let attestationConfig = NetworkConfig.AttestationConfig(
+                        consensus: consensusAttestation,
+                        fogView: fogViewAttestation,
+                        fogKeyImage: fogKeyImageAttestation,
+                        fogMerkleProof: fogMerkleProofAttestation,
+                        fogReport: fogReportAttestation)
+                    return Config(
+                        consensusUrl: consensusUrl,
+                        fogUrl: fogUrl,
+                        attestationConfig: attestationConfig)
                 }
             }
         }
 
         fileprivate var consensusUrl: ConsensusUrl
-        fileprivate var fogViewUrl: FogViewUrl
-        fileprivate var fogLedgerUrl: FogLedgerUrl
+        fileprivate var fogUrl: FogUrl
 
         fileprivate var attestationConfig: NetworkConfig.AttestationConfig?
+
+        fileprivate var consensusTrustRoots: [NIOSSLCertificate]?
+        fileprivate var fogTrustRoots: [NIOSSLCertificate]?
 
         public var cacheStorageAdapter: StorageAdapter?
 
@@ -337,73 +330,35 @@ extension MobileCoinClient {
 
         init(
             consensusUrl: ConsensusUrl,
-            fogViewUrl: FogViewUrl,
-            fogLedgerUrl: FogLedgerUrl,
+            fogUrl: FogUrl,
             attestationConfig: NetworkConfig.AttestationConfig? = nil
         ) {
             self.consensusUrl = consensusUrl
-            self.fogViewUrl = fogViewUrl
-            self.fogLedgerUrl = fogLedgerUrl
+            self.fogUrl = fogUrl
             self.attestationConfig = attestationConfig
         }
-    }
-}
 
-extension MobileCoinClient.Config {
-    @available(*, deprecated, renamed:
-        "MobileCoinClient.Config.make(consensusUrl:consensusAttestation:fogViewUrl:fogViewAttestation:fogLedgerUrl:fogKeyImageAttestation:fogMerkleProofAttestation:fogReportAttestation:)")
-    /// - Returns: `InvalidInputError` when `consensusUrl`, `fogViewUrl`, or `fogLedgerUrl` are
-    ///     not well-formed URLs with the appropriate schemes.
-    public static func make(
-        consensusUrl: String,
-        consensusAttestation: Attestation,
-        fogViewUrl: String,
-        fogViewAttestation: Attestation,
-        fogLedgerUrl: String,
-        fogKeyImageAttestation: Attestation,
-        fogMerkleProofAttestation: Attestation,
-        fogIngestAttestation: Attestation
-    ) -> Result<MobileCoinClient.Config, InvalidInputError> {
-        make(
-            consensusUrl: consensusUrl,
-            consensusAttestation: consensusAttestation,
-            fogViewUrl: fogViewUrl,
-            fogViewAttestation: fogViewAttestation,
-            fogLedgerUrl: fogLedgerUrl,
-            fogKeyImageAttestation: fogKeyImageAttestation,
-            fogMerkleProofAttestation: fogMerkleProofAttestation,
-            fogReportAttestation: fogIngestAttestation)
-    }
+        public mutating func setConsensusTrustRoots(_ trustRoots: [Data])
+            -> Result<(), InvalidInputError>
+        {
+            do {
+                consensusTrustRoots =
+                    try trustRoots.map { try NIOSSLCertificate(bytes: Array($0), format: .der) }
+            } catch {
+                return .failure(InvalidInputError("Failed parsing Consensus trust roots: \(error)"))
+            }
+            return .success(())
+        }
 
-    @available(*, deprecated, renamed:
-        "MobileCoinClient.Config.make(consensusUrl:fogViewUrl:fogLedgerUrl:)")
-    public init(consensusUrl: String, fogViewUrl: String, fogLedgerUrl: String) throws {
-        self = try Self.make(
-            consensusUrl: consensusUrl,
-            fogViewUrl: fogViewUrl,
-            fogLedgerUrl: fogLedgerUrl).get()
-    }
-
-    @available(*, deprecated, renamed:
-        "MobileCoinClient.Config.make(consensusUrl:consensusAttestation:fogViewUrl:fogViewAttestation:fogLedgerUrl:fogKeyImageAttestation:fogMerkleProofAttestation:fogReportAttestation:)")
-    public init(
-        consensusUrl: String,
-        consensusAttestation: Attestation,
-        fogViewUrl: String,
-        fogViewAttestation: Attestation,
-        fogLedgerUrl: String,
-        fogKeyImageAttestation: Attestation,
-        fogMerkleProofAttestation: Attestation,
-        fogIngestAttestation: Attestation
-    ) throws {
-        self = try Self.make(
-            consensusUrl: consensusUrl,
-            consensusAttestation: consensusAttestation,
-            fogViewUrl: fogViewUrl,
-            fogViewAttestation: fogViewAttestation,
-            fogLedgerUrl: fogLedgerUrl,
-            fogKeyImageAttestation: fogKeyImageAttestation,
-            fogMerkleProofAttestation: fogMerkleProofAttestation,
-            fogReportAttestation: fogIngestAttestation).get()
+        public mutating func setFogTrustRoots(_ trustRoots: [Data]) -> Result<(), InvalidInputError>
+        {
+            do {
+                fogTrustRoots =
+                    try trustRoots.map { try NIOSSLCertificate(bytes: Array($0), format: .der) }
+            } catch {
+                return .failure(InvalidInputError("Failed parsing Fog trust roots: \(error)"))
+            }
+            return .success(())
+        }
     }
 }

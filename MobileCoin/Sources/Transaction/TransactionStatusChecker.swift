@@ -1,19 +1,22 @@
 //
-//  Copyright (c) 2020 MobileCoin. All rights reserved.
+//  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
 
 import Foundation
 import LibMobileCoin
 
 struct TransactionStatusChecker {
+    private let account: ReadWriteDispatchLock<Account>
     private let fogUntrustedTxOutFetcher: FogUntrustedTxOutFetcher
     private let fogKeyImageChecker: FogKeyImageChecker
 
     init(
+        account: ReadWriteDispatchLock<Account>,
         fogUntrustedTxOutService: FogUntrustedTxOutService,
         fogKeyImageService: FogKeyImageService,
         targetQueue: DispatchQueue?
     ) {
+        self.account = account
         self.fogUntrustedTxOutFetcher =
             FogUntrustedTxOutFetcher(fogUntrustedTxOutService: fogUntrustedTxOutService)
         self.fogKeyImageChecker =
@@ -25,7 +28,20 @@ struct TransactionStatusChecker {
         completion: @escaping (Result<TransactionStatus, ConnectionError>) -> Void
     ) {
         checkAcceptedStatus(transaction) {
-            completion($0.map { TransactionStatus($0) })
+            completion($0.map {
+                let status = TransactionStatus($0)
+                switch status {
+                case .accepted(block: let block):
+                    // Make sure we only return success if it will also be reflected in the balance,
+                    // otherwise, feign ignorance.
+                    guard block.index < self.account.readSync({ $0.knowableBlockCount }) else {
+                        return .unknown
+                    }
+                    return status
+                case .unknown, .failed:
+                    return status
+                }
+            })
         }
     }
 

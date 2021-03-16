@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2020 MobileCoin. All rights reserved.
+//  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
 
 import Foundation
@@ -31,7 +31,7 @@ final class Account {
     }
 
     /// The number of blocks for which we have complete knowledge of this Account's wallet.
-    private var knowableBlockCount: UInt64 {
+    var knowableBlockCount: UInt64 {
         var knowableBlockCount = allTxOutsFoundBlockCount
         for txOut in allTxOutTrackers {
             if case .unspent(let knownToBeUnspentBlockCount) = txOut.spentStatus {
@@ -42,11 +42,20 @@ final class Account {
     }
 
     var cachedBalance: Balance {
-        cachedBalance(atBlockCount: knowableBlockCount)
+        let blockCount = knowableBlockCount
+        let txOutValues = allTxOutTrackers
+            .filter { $0.receivedAndUnspent(asOfBlockCount: blockCount) }
+            .map { $0.knownTxOut.value }
+        return Balance(values: txOutValues, blockCount: blockCount)
     }
 
-    func cachedBalance(atBlockCount blockCount: UInt64) -> Balance {
-        let txOutValues = allTxOutTrackers.map { $0.netValue(atBlockCount: blockCount) }
+    func cachedBalance(atBlockCount blockCount: UInt64) -> Balance? {
+        guard blockCount <= knowableBlockCount else {
+            return nil
+        }
+        let txOutValues = allTxOutTrackers
+            .filter { $0.receivedAndUnspent(asOfBlockCount: blockCount) }
+            .map { $0.knownTxOut.value }
         return Balance(values: txOutValues, blockCount: blockCount)
     }
 
@@ -56,12 +65,45 @@ final class Account {
         return AccountActivity(txOuts: txOuts, blockCount: blockCount)
     }
 
-    var allTxOuts: [KnownTxOut] {
-        allTxOutTrackers.map { $0.knownTxOut }
+    func cachedAccountActivity(asOfBlockCount blockCount: UInt64) -> AccountActivity? {
+        guard blockCount <= knowableBlockCount else {
+            return nil
+        }
+        let txOuts = allTxOutTrackers.compactMap { OwnedTxOut($0, atBlockCount: blockCount) }
+        return AccountActivity(txOuts: txOuts, blockCount: blockCount)
+    }
+
+    var ownedTxOuts: [KnownTxOut] {
+        ownedTxOutsAndBlockCount.txOuts
+    }
+
+    var ownedTxOutsAndBlockCount: (txOuts: [KnownTxOut], blockCount: UInt64) {
+        let knowableBlockCount = self.knowableBlockCount
+        let txOuts = allTxOutTrackers
+            .filter { $0.received(asOfBlockCount: knowableBlockCount) }
+            .map { $0.knownTxOut }
+        return (txOuts: txOuts, blockCount: knowableBlockCount)
     }
 
     var unspentTxOuts: [KnownTxOut] {
-        allTxOutTrackers.filter { !$0.isSpent }.map { $0.knownTxOut }
+        unspentTxOutsAndBlockCount.txOuts
+    }
+
+    var unspentTxOutsAndBlockCount: (txOuts: [KnownTxOut], blockCount: UInt64) {
+        let knowableBlockCount = self.knowableBlockCount
+        let txOuts = allTxOutTrackers
+            .filter { $0.receivedAndUnspent(asOfBlockCount: knowableBlockCount) }
+            .map { $0.knownTxOut }
+        return (txOuts: txOuts, blockCount: knowableBlockCount)
+    }
+
+    func receivedAndUnspentTxOuts(atBlockCount blockCount: UInt64) -> [KnownTxOut]? {
+        guard blockCount <= knowableBlockCount else {
+            return nil
+        }
+        return allTxOutTrackers
+            .filter { $0.receivedAndUnspent(asOfBlockCount: blockCount) }
+            .map { $0.knownTxOut }
     }
 
     func addTxOuts(_ txOuts: [KnownTxOut]) {
@@ -84,22 +126,20 @@ final class Account {
         }
     }
 
-    func cachedSpentStatus(of keyImage: KeyImage) -> KeyImage.SpentStatus? {
-        allTxOutTrackers.map { $0.keyImageTracker }.first { $0.keyImage == keyImage }?.spentStatus
-    }
-
     /// Retrieves the `KnownTxOut`'s corresponding to `receipt` and verifies `receipt` is valid.
     private func ownedTxOut(for receipt: Receipt) -> Result<KnownTxOut?, InvalidInputError> {
         print("Checking received status of TxOut: Tx pubkey: " +
             "\(receipt.txOutPublicKey.base64EncodedString())")
-        if let lastTxOut = allTxOuts.last {
+        if let lastTxOut = ownedTxOuts.last {
             print("Last received TxOut: Tx pubkey: " +
                 "\(lastTxOut.publicKey.base64EncodedString())")
         }
 
         // First check if we've received the TxOut (either from Fog View or from view key scanning).
         // This has the benefit of providing a guarantee that the TxOut is owned by this account.
-        guard let ownedTxOut = ownedTxOut(withPublicKey: receipt.txOutPublicKeyTyped) else {
+        guard let ownedTxOut =
+                ownedTxOuts.first(where: { $0.publicKey == receipt.txOutPublicKeyTyped })
+        else {
             return .success(nil)
         }
 
@@ -120,10 +160,6 @@ final class Account {
         }
 
         return .success(ownedTxOut)
-    }
-
-    private func ownedTxOut(withPublicKey publicKey: RistrettoPublic) -> KnownTxOut? {
-        allTxOuts.first(where: { $0.publicKey == publicKey })
     }
 }
 
@@ -152,20 +188,31 @@ final class TxOutTracker {
         keyImageTracker.spentStatus
     }
 
-    func netValue(atBlockCount blockCount: UInt64) -> UInt64 {
-        guard knownTxOut.block.index < blockCount else {
-            return 0
-        }
-        if case .spent(block: let spentAtBlock) = keyImageTracker.spentStatus {
-            guard spentAtBlock.index >= blockCount else {
-                return 0
-            }
-        }
-        return knownTxOut.value
-    }
-
     var isSpent: Bool {
         keyImageTracker.isSpent
+    }
+
+    func receivedAndUnspent(asOfBlockCount blockCount: UInt64) -> Bool {
+        received(asOfBlockCount: blockCount) && !spent(asOfBlockCount: blockCount)
+    }
+
+    func received(asOfBlockCount blockCount: UInt64) -> Bool {
+        knownTxOut.block.index < blockCount
+    }
+
+    func spent(asOfBlockCount blockCount: UInt64) -> Bool {
+        if case .spent = keyImageTracker.spentStatus.status(atBlockCount: blockCount) {
+            return true
+        }
+        return false
+    }
+
+    func netValue(atBlockCount blockCount: UInt64) -> UInt64 {
+        if receivedAndUnspent(asOfBlockCount: blockCount) {
+            return knownTxOut.value
+        } else {
+            return 0
+        }
     }
 }
 

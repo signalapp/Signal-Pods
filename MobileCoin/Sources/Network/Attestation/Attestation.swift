@@ -1,8 +1,8 @@
 //
-//  Copyright (c) 2020 MobileCoin. All rights reserved.
+//  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
 
-// swiftlint:disable line_length multiline_function_chains
+// swiftlint:disable multiline_function_chains
 
 import Foundation
 
@@ -35,23 +35,6 @@ public struct Attestation {
     public init(mrEnclaves: [MrEnclave] = [], mrSigners: [MrSigner] = []) {
         self.mrEnclaves = mrEnclaves
         self.mrSigners = mrSigners
-    }
-
-    @available(*, deprecated, renamed: "init(mrEnclaves:mrSigners:)")
-    public init(
-        mrSigner: Data,
-        productId: UInt16,
-        minimumSecurityVersion: UInt16,
-        allowedConfigAdvisories: [String] = [],
-        allowedHardeningAdvisories: [String] = []
-    ) throws {
-        let mrSigner = try MrSigner.make(
-            mrSigner: mrSigner,
-            productId: productId,
-            minimumSecurityVersion: minimumSecurityVersion,
-            allowedConfigAdvisories: allowedConfigAdvisories,
-            allowedHardeningAdvisories: allowedHardeningAdvisories).get()
-        self.init(mrSigners: [mrSigner])
     }
 
     init(
@@ -112,19 +95,6 @@ extension Attestation {
                 allowedHardeningAdvisories: allowedHardeningAdvisories))
         }
 
-        @available(*, deprecated, renamed:
-            "Attestation.MrEnclave.make(mrEnclave:allowedConfigAdvisories:allowedHardeningAdvisories:)")
-        public init(
-            mrEnclave: Data,
-            allowedConfigAdvisories: [String] = [],
-            allowedHardeningAdvisories: [String] = []
-        ) throws {
-            self = try Self.make(
-                mrEnclave: mrEnclave,
-                allowedConfigAdvisories: allowedConfigAdvisories,
-                allowedHardeningAdvisories: allowedHardeningAdvisories).get()
-        }
-
         init(
             mrEnclave: Data32,
             allowedConfigAdvisories: [String] = [],
@@ -177,23 +147,6 @@ extension Attestation {
                 minimumSecurityVersion: minimumSecurityVersion,
                 allowedConfigAdvisories: allowedConfigAdvisories,
                 allowedHardeningAdvisories: allowedHardeningAdvisories))
-        }
-
-        @available(*, deprecated, renamed:
-            "Attestation.MrSigner.make(mrSigner:productId:minimumSecurityVersion:allowedConfigAdvisories:allowedHardeningAdvisories:)")
-        public init(
-            mrSigner: Data,
-            productId: UInt16,
-            minimumSecurityVersion: UInt16,
-            allowedConfigAdvisories: [String] = [],
-            allowedHardeningAdvisories: [String] = []
-        ) throws {
-            self = try Self.make(
-                mrSigner: mrSigner,
-                productId: productId,
-                minimumSecurityVersion: minimumSecurityVersion,
-                allowedConfigAdvisories: allowedConfigAdvisories,
-                allowedHardeningAdvisories: allowedHardeningAdvisories).get()
         }
 
         init(

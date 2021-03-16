@@ -1,20 +1,22 @@
 //
-//  Copyright (c) 2020 MobileCoin. All rights reserved.
+//  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
 
 import Foundation
 import GRPC
 import LibMobileCoin
+import NIOSSL
 
 final class FogUntrustedTxOutConnection: Connection, FogUntrustedTxOutService {
     private let client: FogLedger_FogUntrustedTxOutApiClient
 
     init(
-        url: FogLedgerUrl,
+        url: FogUrl,
+        trustRoots: [NIOSSLCertificate]?,
         channelManager: GrpcChannelManager,
         targetQueue: DispatchQueue?
     ) {
-        let channel = channelManager.channel(for: url)
+        let channel = channelManager.channel(for: url, trustRoots: trustRoots)
         self.client = FogLedger_FogUntrustedTxOutApiClient(channel: channel)
         super.init(url: url, targetQueue: targetQueue)
     }

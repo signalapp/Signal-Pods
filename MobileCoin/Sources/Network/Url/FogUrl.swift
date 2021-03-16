@@ -1,10 +1,10 @@
 //
-//  Copyright (c) 2020 MobileCoin. All rights reserved.
+//  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
 
 import Foundation
 
-typealias FogReportUrl = MobileCoinUrl<FogScheme>
+typealias FogUrl = MobileCoinUrl<FogScheme>
 
 struct FogScheme: Scheme {
     static let secureScheme = McConstants.FOG_SCHEME_SECURE

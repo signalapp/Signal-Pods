@@ -1,3 +1,5 @@
+// Copyright (c) 2018-2021 The MobileCoin Foundation
+
 #ifndef COMMON_H_
 #define COMMON_H_
 
@@ -42,13 +44,16 @@ typedef enum MC_ATTRIBUTE_ENUM_CLOSED {
   McErrorCodeUnknown = -1,
   McErrorCodePanic = -2,
 
-  McErrorCodeInvalidInputFormat = 100,
+  McErrorCodeInvalidInput = 100,
   McErrorCodeInvalidOutput = 101,
 
-  McErrorCodeSerializationFailure = 200,
-  McErrorCodeEncryptionFailure = 201,
+  McErrorCodeAttestationVerificationFailed = 200,
 
-  McErrorCodeAttestationFailed = 300,
+  McErrorCodeAead = 300,
+  McErrorCodeCipher = 301,
+  McErrorCodeUnsupportedCryptoBoxVersion = 302,
+
+  McErrorCodeTransactionCrypto = 400,
 } McErrorCode;
 
 /* ==== McError ==== */

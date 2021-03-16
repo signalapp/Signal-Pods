@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2020 MobileCoin. All rights reserved.
+//  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
 
 import Foundation
@@ -37,29 +37,35 @@ final class DefaultServiceProvider: ServiceProvider {
         self.consensus = ConsensusConnection(
             url: networkConfig.consensusUrl,
             attestation: networkConfig.consensusAttestation,
+            trustRoots: networkConfig.consensusTrustRoots,
             channelManager: channelManager,
             targetQueue: targetQueue)
         self.view = FogViewConnection(
-            url: networkConfig.fogViewUrl,
+            url: networkConfig.fogUrl,
             attestation: networkConfig.fogViewAttestation,
+            trustRoots: networkConfig.fogTrustRoots,
             channelManager: channelManager,
             targetQueue: targetQueue)
         self.merkleProof = FogMerkleProofConnection(
-            url: networkConfig.fogMerkleProofUrl,
+            url: networkConfig.fogUrl,
             attestation: networkConfig.fogMerkleProofAttestation,
+            trustRoots: networkConfig.fogTrustRoots,
             channelManager: channelManager,
             targetQueue: targetQueue)
         self.keyImage = FogKeyImageConnection(
-            url: networkConfig.fogKeyImageUrl,
+            url: networkConfig.fogUrl,
             attestation: networkConfig.fogKeyImageAttestation,
+            trustRoots: networkConfig.fogTrustRoots,
             channelManager: channelManager,
             targetQueue: targetQueue)
         self.block = FogBlockConnection(
-            url: networkConfig.fogBlockUrl,
+            url: networkConfig.fogUrl,
+            trustRoots: networkConfig.fogTrustRoots,
             channelManager: channelManager,
             targetQueue: targetQueue)
         self.untrustedTxOut = FogUntrustedTxOutConnection(
-            url: networkConfig.fogUntrustedTxOutUrl,
+            url: networkConfig.fogUrl,
+            trustRoots: networkConfig.fogTrustRoots,
             channelManager: channelManager,
             targetQueue: targetQueue)
     }
@@ -71,7 +77,7 @@ final class DefaultServiceProvider: ServiceProvider {
     var fogBlockService: FogBlockService { block }
     var fogUntrustedTxOutService: FogUntrustedTxOutConnection { untrustedTxOut }
 
-    func fogReportService(for fogReportUrl: FogReportUrl) -> FogReportService {
+    func fogReportService(for fogReportUrl: FogUrl) -> FogReportService {
         let config = GrpcChannelConfig(url: fogReportUrl)
         guard let reportConnection = reportUrlToReportConnection[config] else {
             let reportConnection = FogReportConnection(

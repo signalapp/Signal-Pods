@@ -1,52 +1,43 @@
 //
-//  Copyright (c) 2020 MobileCoin. All rights reserved.
+//  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
 
 // swiftlint:disable multiline_function_chains
 
 import Foundation
+import NIOSSL
 
 struct NetworkConfig {
     static func make(
         consensusUrl: String,
-        fogViewUrl: String,
-        fogLedgerUrl: String,
+        fogUrl: String,
         attestationConfig: AttestationConfig = .devMrSigner
     ) -> Result<NetworkConfig, InvalidInputError> {
         ConsensusUrl.make(string: consensusUrl).flatMap { consensusUrl in
-            FogViewUrl.make(string: fogViewUrl).flatMap { fogViewUrl in
-                FogLedgerUrl.make(string: fogLedgerUrl).map { fogLedgerUrl in
-                    NetworkConfig(
-                        consensusUrl: consensusUrl,
-                        fogViewUrl: fogViewUrl,
-                        fogLedgerUrl: fogLedgerUrl,
-                        attestation: attestationConfig)
-                }
+            FogUrl.make(string: fogUrl).map { fogUrl in
+                NetworkConfig(
+                    consensusUrl: consensusUrl,
+                    fogUrl: fogUrl,
+                    attestation: attestationConfig)
             }
         }
     }
 
     let consensusUrl: ConsensusUrl
-    let fogViewUrl: FogViewUrl
-    let fogKeyImageUrl: FogLedgerUrl
-    let fogMerkleProofUrl: FogLedgerUrl
-    let fogBlockUrl: FogLedgerUrl
-    let fogUntrustedTxOutUrl: FogLedgerUrl
+    let fogUrl: FogUrl
 
     private let attestationConfig: AttestationConfig
 
+    var consensusTrustRoots: [NIOSSLCertificate]?
+    var fogTrustRoots: [NIOSSLCertificate]?
+
     init(
         consensusUrl: ConsensusUrl,
-        fogViewUrl: FogViewUrl,
-        fogLedgerUrl: FogLedgerUrl,
+        fogUrl: FogUrl,
         attestation attestationConfig: AttestationConfig = .devMrSigner
     ) {
         self.consensusUrl = consensusUrl
-        self.fogViewUrl = fogViewUrl
-        self.fogKeyImageUrl = fogLedgerUrl
-        self.fogMerkleProofUrl = fogLedgerUrl
-        self.fogBlockUrl = fogLedgerUrl
-        self.fogUntrustedTxOutUrl = fogLedgerUrl
+        self.fogUrl = fogUrl
         self.attestationConfig = attestationConfig
     }
 

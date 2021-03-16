@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2020 MobileCoin. All rights reserved.
+//  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
 
 import Foundation
@@ -13,7 +13,7 @@ protocol ServiceProvider {
     var fogBlockService: FogBlockService { get }
     var fogUntrustedTxOutService: FogUntrustedTxOutConnection { get }
 
-    func fogReportService(for fogReportUrl: FogReportUrl) -> FogReportService
+    func fogReportService(for fogReportUrl: FogUrl) -> FogReportService
 
     func setAuthorization(credentials: BasicCredentials)
 }

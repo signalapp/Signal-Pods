@@ -1,7 +1,7 @@
 // swiftlint:disable:this file_name
 
 //
-//  Copyright (c) 2020 MobileCoin. All rights reserved.
+//  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
 
 import Foundation

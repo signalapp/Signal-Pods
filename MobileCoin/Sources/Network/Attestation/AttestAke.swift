@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2020 MobileCoin. All rights reserved.
+//  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
 
 // swiftlint:disable multiline_function_chains
@@ -13,23 +13,33 @@ enum AttestAkeError: Error {
 }
 
 extension AttestAkeError: CustomStringConvertible {
-    public var description: String {
+    var description: String {
         "Attest Ake error: " + {
             switch self {
             case .invalidInput(let reason):
-                return "Invalid input: " + reason
+                return "Invalid input: \(reason)"
             case .attestationVerificationFailed(let reason):
-                return "Attestation verification failed: " + reason
+                return "Attestation verification failed: \(reason)"
             }
         }()
     }
 }
 
-struct AeadError: Error {}
+enum AeadError: Error {
+    case aead(String)
+    case cipher(String)
+}
 
 extension AeadError: CustomStringConvertible {
-    public var description: String {
-        "Aead error"
+    var description: String {
+        "Aead error: " + {
+            switch self {
+            case .aead(let reason):
+                return "Aead: \(reason)"
+            case .cipher(let reason):
+                return "Cipher: \(reason)"
+            }
+        }()
     }
 }
 
@@ -208,7 +218,19 @@ private final class FfiAttestAke {
                         bytesPtr,
                         attestationVerifierPtr,
                         &errorPtr)
-                }.mapError { .invalidInput($0.description) }
+                }.mapError {
+                    switch $0.errorCode {
+                    case .invalidInput:
+                        return .invalidInput($0.description)
+                    case .attestationVerificationFailed:
+                        return .attestationVerificationFailed($0.description)
+                    default:
+                        // Safety: mc_attest_ake_process_auth_response should not throw
+                        // non-documented errors.
+                        logger.fatalError(
+                            "\(Self.self).\(#function): Unhandled LibMobileCoin error: \($0)")
+                    }
+                }
             }
         }
     }
@@ -218,7 +240,18 @@ private final class FfiAttestAke {
             plaintext.asMcBuffer { plaintextPtr in
                 Data.make(withMcMutableBuffer: { ciphertextOutPtr, errorPtr in
                     mc_attest_ake_encrypt(ptr, aadPtr, plaintextPtr, ciphertextOutPtr, &errorPtr)
-                }).mapError { _ in AeadError() }
+                }).mapError {
+                    switch $0.errorCode {
+                    case .aead:
+                        return .aead($0.description)
+                    case .cipher:
+                        return .cipher($0.description)
+                    default:
+                        // Safety: mc_attest_ake_encrypt should not throw non-documented errors.
+                        logger.fatalError(
+                            "\(Self.self).\(#function): Unhandled LibMobileCoin error: \($0)")
+                    }
+                }
             }
         }
     }
@@ -229,7 +262,18 @@ private final class FfiAttestAke {
                 Data.make(withEstimatedLengthMcMutableBuffer: ciphertext.count)
                 { plaintextOutPtr, errorPtr in
                     mc_attest_ake_decrypt(ptr, aadPtr, ciphertextPtr, plaintextOutPtr, &errorPtr)
-                }.mapError { _ in AeadError() }
+                }.mapError {
+                    switch $0.errorCode {
+                    case .aead:
+                        return .aead($0.description)
+                    case .cipher:
+                        return .cipher($0.description)
+                    default:
+                        // Safety: mc_attest_ake_decrypt should not throw non-documented errors.
+                        logger.fatalError(
+                            "\(Self.self).\(#function): Unhandled LibMobileCoin error: \($0)")
+                    }
+                }
             }
         }
     }

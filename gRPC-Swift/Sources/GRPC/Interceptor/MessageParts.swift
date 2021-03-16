@@ -75,3 +75,27 @@ public struct MessageMetadata: Equatable {
     self.flush = flush
   }
 }
+
+extension GRPCClientResponsePart {
+  @inlinable
+  internal var isEnd: Bool {
+    switch self {
+    case .end:
+      return true
+    case .metadata, .message:
+      return false
+    }
+  }
+}
+
+extension GRPCServerResponsePart {
+  @inlinable
+  internal var isEnd: Bool {
+    switch self {
+    case .end:
+      return true
+    case .metadata, .message:
+      return false
+    }
+  }
+}

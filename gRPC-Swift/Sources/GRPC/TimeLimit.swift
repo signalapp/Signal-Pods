@@ -26,14 +26,14 @@ import NIO
 ///   may therefore complete with `.deadlineExceeded` even if no time limit was set by the client.
 public struct TimeLimit: Equatable, CustomStringConvertible {
   // private but for shimming.
-  internal enum Wrapped: Equatable {
+  private enum Wrapped: Equatable {
     case none
     case timeout(TimeAmount)
     case deadline(NIODeadline)
   }
 
   // private but for shimming.
-  internal var wrapped: Wrapped
+  private var wrapped: Wrapped
 
   private init(_ wrapped: Wrapped) {
     self.wrapped = wrapped
@@ -83,6 +83,7 @@ public struct TimeLimit: Equatable, CustomStringConvertible {
 
 extension TimeLimit {
   /// Make a non-distant-future deadline from the give time limit.
+  @usableFromInline
   internal func makeDeadline() -> NIODeadline {
     switch self.wrapped {
     case .none:

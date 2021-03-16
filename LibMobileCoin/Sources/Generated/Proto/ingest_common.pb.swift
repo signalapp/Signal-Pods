@@ -7,6 +7,8 @@
 // For information on using the generated types, please see the documentation:
 //   https://github.com/apple/swift-protobuf/
 
+// Copyright (c) 2018-2021 The MobileCoin Foundation
+
 import Foundation
 import SwiftProtobuf
 
@@ -27,13 +29,9 @@ public enum IngestCommon_IngestControllerMode: SwiftProtobuf.Enum {
   //// Server is not actively consuming and scanning the blockchain
   case idle // = 0
 
-  //// Server is actively consuming and scanning the blockchain, and publishing fog reports
+  //// Server is actively consuming and scanning the blockchain,
+  //// and attempting to publish fog reports, unless DB says the key is retired.
   case active // = 1
-
-  //// Server is still scanning the blockchain, but not publishing fog reports.
-  //// Will transition to idle after scanning the block corresponding to the
-  //// last published fog report's pubkey expiry window.
-  case retiring // = 2
   case UNRECOGNIZED(Int)
 
   public init() {
@@ -44,7 +42,6 @@ public enum IngestCommon_IngestControllerMode: SwiftProtobuf.Enum {
     switch rawValue {
     case 0: self = .idle
     case 1: self = .active
-    case 2: self = .retiring
     default: self = .UNRECOGNIZED(rawValue)
     }
   }
@@ -53,7 +50,6 @@ public enum IngestCommon_IngestControllerMode: SwiftProtobuf.Enum {
     switch self {
     case .idle: return 0
     case .active: return 1
-    case .retiring: return 2
     case .UNRECOGNIZED(let i): return i
     }
   }
@@ -67,16 +63,12 @@ extension IngestCommon_IngestControllerMode: CaseIterable {
   public static var allCases: [IngestCommon_IngestControllerMode] = [
     .idle,
     .active,
-    .retiring,
   ]
 }
 
 #endif  // swift(>=4.2)
 
 //// A summary of the state of the ingest server
-//// TODO:
-//// - Add report of cryptobox version for fog hints?
-//// - Add git revision?
 public struct IngestCommon_IngestSummary {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
@@ -92,9 +84,6 @@ public struct IngestCommon_IngestSummary {
   //// This is how many more blocks we commit to scanning with this key.
   //// (If we don't scan that many blocks, then the ones we didn't scan are "missed blocks".)
   public var pubkeyExpiryWindow: UInt64 = 0
-
-  //// The block index at which the server will transition from retiring to idle.
-  public var retiringAt: UInt64 = 0
 
   //// The ingress public key of the server
   public var ingressPubkey: External_CompressedRistretto {
@@ -115,8 +104,8 @@ public struct IngestCommon_IngestSummary {
   //// The list of peers of this server. The list contains igp:// URIs
   public var peers: [String] = []
 
-  //// The current ingest invocation id of this server (only if Active or Retiring)
-  public var ingestInvocationID: Int32 = 0
+  //// The current ingest invocation id of this server (only if Active)
+  public var ingestInvocationID: Int64 = 0
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -174,7 +163,6 @@ extension IngestCommon_IngestControllerMode: SwiftProtobuf._ProtoNameProviding {
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     0: .same(proto: "Idle"),
     1: .same(proto: "Active"),
-    2: .same(proto: "Retiring"),
   ]
 }
 
@@ -184,12 +172,11 @@ extension IngestCommon_IngestSummary: SwiftProtobuf.Message, SwiftProtobuf._Mess
     1: .same(proto: "mode"),
     2: .standard(proto: "next_block_index"),
     3: .standard(proto: "pubkey_expiry_window"),
-    4: .standard(proto: "retiring_at"),
-    5: .standard(proto: "ingress_pubkey"),
-    6: .standard(proto: "egress_pubkey"),
-    7: .standard(proto: "kex_rng_version"),
-    8: .same(proto: "peers"),
-    9: .standard(proto: "ingest_invocation_id"),
+    4: .standard(proto: "ingress_pubkey"),
+    5: .standard(proto: "egress_pubkey"),
+    6: .standard(proto: "kex_rng_version"),
+    7: .same(proto: "peers"),
+    8: .standard(proto: "ingest_invocation_id"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -201,12 +188,11 @@ extension IngestCommon_IngestSummary: SwiftProtobuf.Message, SwiftProtobuf._Mess
       case 1: try { try decoder.decodeSingularEnumField(value: &self.mode) }()
       case 2: try { try decoder.decodeSingularUInt64Field(value: &self.nextBlockIndex) }()
       case 3: try { try decoder.decodeSingularUInt64Field(value: &self.pubkeyExpiryWindow) }()
-      case 4: try { try decoder.decodeSingularUInt64Field(value: &self.retiringAt) }()
-      case 5: try { try decoder.decodeSingularMessageField(value: &self._ingressPubkey) }()
-      case 6: try { try decoder.decodeSingularBytesField(value: &self.egressPubkey) }()
-      case 7: try { try decoder.decodeSingularUInt32Field(value: &self.kexRngVersion) }()
-      case 8: try { try decoder.decodeRepeatedStringField(value: &self.peers) }()
-      case 9: try { try decoder.decodeSingularInt32Field(value: &self.ingestInvocationID) }()
+      case 4: try { try decoder.decodeSingularMessageField(value: &self._ingressPubkey) }()
+      case 5: try { try decoder.decodeSingularBytesField(value: &self.egressPubkey) }()
+      case 6: try { try decoder.decodeSingularUInt32Field(value: &self.kexRngVersion) }()
+      case 7: try { try decoder.decodeRepeatedStringField(value: &self.peers) }()
+      case 8: try { try decoder.decodeSingularInt64Field(value: &self.ingestInvocationID) }()
       default: break
       }
     }
@@ -222,23 +208,20 @@ extension IngestCommon_IngestSummary: SwiftProtobuf.Message, SwiftProtobuf._Mess
     if self.pubkeyExpiryWindow != 0 {
       try visitor.visitSingularUInt64Field(value: self.pubkeyExpiryWindow, fieldNumber: 3)
     }
-    if self.retiringAt != 0 {
-      try visitor.visitSingularUInt64Field(value: self.retiringAt, fieldNumber: 4)
-    }
     if let v = self._ingressPubkey {
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 5)
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 4)
     }
     if !self.egressPubkey.isEmpty {
-      try visitor.visitSingularBytesField(value: self.egressPubkey, fieldNumber: 6)
+      try visitor.visitSingularBytesField(value: self.egressPubkey, fieldNumber: 5)
     }
     if self.kexRngVersion != 0 {
-      try visitor.visitSingularUInt32Field(value: self.kexRngVersion, fieldNumber: 7)
+      try visitor.visitSingularUInt32Field(value: self.kexRngVersion, fieldNumber: 6)
     }
     if !self.peers.isEmpty {
-      try visitor.visitRepeatedStringField(value: self.peers, fieldNumber: 8)
+      try visitor.visitRepeatedStringField(value: self.peers, fieldNumber: 7)
     }
     if self.ingestInvocationID != 0 {
-      try visitor.visitSingularInt32Field(value: self.ingestInvocationID, fieldNumber: 9)
+      try visitor.visitSingularInt64Field(value: self.ingestInvocationID, fieldNumber: 8)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -247,7 +230,6 @@ extension IngestCommon_IngestSummary: SwiftProtobuf.Message, SwiftProtobuf._Mess
     if lhs.mode != rhs.mode {return false}
     if lhs.nextBlockIndex != rhs.nextBlockIndex {return false}
     if lhs.pubkeyExpiryWindow != rhs.pubkeyExpiryWindow {return false}
-    if lhs.retiringAt != rhs.retiringAt {return false}
     if lhs._ingressPubkey != rhs._ingressPubkey {return false}
     if lhs.egressPubkey != rhs.egressPubkey {return false}
     if lhs.kexRngVersion != rhs.kexRngVersion {return false}

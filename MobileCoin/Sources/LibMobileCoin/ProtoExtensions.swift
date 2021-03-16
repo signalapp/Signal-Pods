@@ -1,7 +1,7 @@
 // swiftlint:disable:this file_name
 
 //
-//  Copyright (c) 2020 MobileCoin. All rights reserved.
+//  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
 
 import Foundation
@@ -91,29 +91,14 @@ extension FogView_TxOutSearchResult {
 }
 
 extension FogView_TxOutRecord {
-    var timestampDate: Date {
-        get { Date(timeIntervalSince1970: TimeInterval(timestamp)) }
-        set { timestamp = UInt64(newValue.timeIntervalSince1970) }
-    }
-
-    var timestampResultCodeEnum: Watcher_TimestampResultCode {
-        get {
-            Watcher_TimestampResultCode(rawValue: Int(timestampResultCode))
-                ?? .UNRECOGNIZED(Int(timestampResultCode))
-        }
-        set { timestampResultCode = UInt32(newValue.rawValue) }
-    }
-
-    var timestampStatus: BlockMetadata.TimestampStatus? {
-        switch timestampResultCodeEnum {
-        case .timestampFound:
-            return .known(timestamp: timestampDate)
-        case .unavailable:
-            return .unavailable
-        case .watcherBehind, .watcherDatabaseError, .blockIndexOutOfBounds:
-            return .temporarilyUnknown
-        case .unusedField, .UNRECOGNIZED:
-            return nil
+    var timestampDate: Date? {
+        get { timestamp != UInt64.max ? Date(timeIntervalSince1970: TimeInterval(timestamp)) : nil }
+        set {
+            if let newValue = newValue {
+                timestamp = UInt64(newValue.timeIntervalSince1970)
+            } else {
+                timestamp = UInt64.max
+            }
         }
     }
 }

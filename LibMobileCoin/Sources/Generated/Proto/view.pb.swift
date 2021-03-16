@@ -7,6 +7,8 @@
 // For information on using the generated types, please see the documentation:
 //   https://github.com/apple/swift-protobuf/
 
+// Copyright (c) 2018-2021 The MobileCoin Foundation
+
 import Foundation
 import SwiftProtobuf
 
@@ -201,6 +203,9 @@ public struct FogView_QueryResponse {
   //// and start_from_block_index can be the minimum start block of any of your rng records.
   public var highestProcessedBlockCount: UInt64 = 0
 
+  //// The timestamp of the block corresponding to highest_processed_block_count
+  public var highestProcessedBlockSignatureTimestamp: UInt64 = 0
+
   //// The next value to use for start_from_user_event_id. For the first query, this should
   //// be 0.
   public var nextStartFromUserEventID: Int64 = 0
@@ -226,7 +231,7 @@ public struct FogView_QueryResponse {
   public var txOutSearchResults: [FogView_TxOutSearchResult] = []
 
   //// Extra data: The index of the last known block.
-  //// This might be smaller than num_blocks if we missed some blocks.
+  //// This might be larger than highest_processed_block_count.
   //// This field doesn't have the same "cursor" semantics as the other fields.
   public var lastKnownBlockCount: UInt64 = 0
 
@@ -250,7 +255,7 @@ public struct FogView_RngRecord {
 
   //// The ingest invocation id that produced this record.
   //// This is used to match against DecommissionedIngestInvocation objects when querying for new events.
-  public var ingestInvocationID: Int32 = 0
+  public var ingestInvocationID: Int64 = 0
 
   //// A key-exchange message to be used by the client to create a VersionedKexRng
   public var pubkey: KexRng_KexRngPubkey {
@@ -279,7 +284,7 @@ public struct FogView_DecommissionedIngestInvocation {
   // methods supported on all messages.
 
   //// The ingest invocation id that was decommissioned.
-  public var ingestInvocationID: Int32 = 0
+  public var ingestInvocationID: Int64 = 0
 
   //// The last block index that was successfully ingested by this invocation.
   public var lastIngestedBlock: UInt64 = 0
@@ -363,20 +368,31 @@ public struct FogView_FogTxOut {
 
 //// The schema for the decrypted TxOutSearchResult ciphertext
 //// This is the information that the Ingest enclave produces for the user about their TxOut
+////
+//// Note: The fields of FogTxOut are flattened here because it reduces the size of the protobuf
+//// enough to make a difference for the quality of ORAM implementation, like ~10% better memory utilization
+////
+//// Note: Fog TxOutRecord DOES NOT include the encrypted fog hint of the original TxOut, because it is big,
+//// and the client cannot read it anyways. However, when using the TxOut to build transactions, you must have that
+//// or the merkle proofs will fail validation, at least for now.
+//// The fog merkle proof server gives you a TxOut with fog hint, as it appears in blockchain,
+//// and that's the version of the TxOut that you should use when building a transaction.
 public struct FogView_TxOutRecord {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  //// The TxOut that was recovered
-  public var txOut: FogView_FogTxOut {
-    get {return _txOut ?? FogView_FogTxOut()}
-    set {_txOut = newValue}
-  }
-  /// Returns true if `txOut` has been explicitly set.
-  public var hasTxOut: Bool {return self._txOut != nil}
-  /// Clears the value of `txOut`. Subsequent reads from it will return its default value.
-  public mutating func clearTxOut() {self._txOut = nil}
+  //// The (compressed ristretto) bytes of commitment associated to amount field in the TxOut that was recovered
+  public var txOutAmountCommitmentData: Data = Data()
+
+  //// The masked value associated to amount field in the TxOut that was recovered
+  public var txOutAmountMaskedValue: UInt64 = 0
+
+  //// The (compressed ristretto) bytes of the target key associated to the TxOut that was recovered
+  public var txOutTargetKeyData: Data = Data()
+
+  //// The (compressed ristretto) bytes of the public key associated to the TxOut that was recovered
+  public var txOutPublicKeyData: Data = Data()
 
   //// The global index of this TxOut in the set of all TxOuts in the entire block chain
   public var txOutGlobalIndex: UInt64 = 0
@@ -385,24 +401,34 @@ public struct FogView_TxOutRecord {
   public var blockIndex: UInt64 = 0
 
   //// The timestamp of the block containing this output.
-  //// The value is u64::MAX if the timestamp cannot be found. Callers must check the
-  //// timestamp_result_code to determine why the timestamp could not be found.
-  //// Note: The timestamps are based on untrusted reporting of time from the consensus validators.
+  //// Some blocks, like the origin block, don't have a timestamp, and this value is u64::MAX
+  //// Other blocks are expected to have timestamps.
+  ////
+  //// Note: The timestamp is based on untrusted reporting of time from ONE of the consensus validators.
+  //// Because it is a distributed system, it may not be the SAME consensus validator from block to block,
+  //// and the timestamps may not make even a minimal amount of sense when the validator differs.
+  ////
+  //// These timestamps are
+  //// - NOISY, forward and backwards in time, depending on system time settings of many different servers.
+  //// - NOT MONOTONIC: it's possible that you get a timestamp for block 101 that is before the timestamp for block 100.
+  //// - Not even CONSISTENT across fog services: It's possible you get a different timestamp for a TxOut in block 100,
+  ////   than you do for a key image in block 100 from the key image endpoint.
+  ////   This is unavoidable right now because it is possible that fog-ingest has different levels of
+  ////   connectivity from the fog-key-image service to the blockchain data sources.
+  ////
+  //// Timestamps are BEST-EFFORT and for a good user experience, the client software should attempt to reconcile these
+  //// timestamps, so that events that have a happens-before relationship in the system, have timestamps that reflect that.
+  //// Otherwise, we should expect users to be confused and disturbed about the occasional time-travelling transaction.
+  ////
+  //// We hope to improve the quality guarantees of these timestamps over time, but for now this is the best we
+  //// can do until some changes can be made to the consensus network and other services related to timestamps.
+  ////
   //// Represented as seconds of UTC time since Unix epoch 1970-01-01T00:00:00Z.
   public var timestamp: UInt64 = 0
-
-  //// The result code indicating whether the timestamp was found, can be tried again later, or will
-  //// never be found with the current configuration of the Fog View Service's watcher.
-  //// This is fixed32 to avoid leaking information about found / not found in the size of the encrypted
-  //// payload.
-  //// The possible values are described in enum TimestampResultCode.
-  public var timestampResultCode: UInt32 = 0
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
-
-  fileprivate var _txOut: FogView_FogTxOut? = nil
 }
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
@@ -494,13 +520,14 @@ extension FogView_QueryResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
   public static let protoMessageName: String = _protobuf_package + ".QueryResponse"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .standard(proto: "highest_processed_block_count"),
-    2: .standard(proto: "next_start_from_user_event_id"),
-    3: .standard(proto: "missed_block_ranges"),
-    4: .same(proto: "rngs"),
-    5: .standard(proto: "decommissioned_ingest_invocations"),
-    6: .standard(proto: "tx_out_search_results"),
-    7: .standard(proto: "last_known_block_count"),
-    8: .standard(proto: "last_known_block_cumulative_txo_count"),
+    2: .standard(proto: "highest_processed_block_signature_timestamp"),
+    3: .standard(proto: "next_start_from_user_event_id"),
+    4: .standard(proto: "missed_block_ranges"),
+    5: .same(proto: "rngs"),
+    6: .standard(proto: "decommissioned_ingest_invocations"),
+    7: .standard(proto: "tx_out_search_results"),
+    8: .standard(proto: "last_known_block_count"),
+    9: .standard(proto: "last_known_block_cumulative_txo_count"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -510,13 +537,14 @@ extension FogView_QueryResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
       case 1: try { try decoder.decodeSingularUInt64Field(value: &self.highestProcessedBlockCount) }()
-      case 2: try { try decoder.decodeSingularInt64Field(value: &self.nextStartFromUserEventID) }()
-      case 3: try { try decoder.decodeRepeatedMessageField(value: &self.missedBlockRanges) }()
-      case 4: try { try decoder.decodeRepeatedMessageField(value: &self.rngs) }()
-      case 5: try { try decoder.decodeRepeatedMessageField(value: &self.decommissionedIngestInvocations) }()
-      case 6: try { try decoder.decodeRepeatedMessageField(value: &self.txOutSearchResults) }()
-      case 7: try { try decoder.decodeSingularUInt64Field(value: &self.lastKnownBlockCount) }()
-      case 8: try { try decoder.decodeSingularUInt64Field(value: &self.lastKnownBlockCumulativeTxoCount) }()
+      case 2: try { try decoder.decodeSingularUInt64Field(value: &self.highestProcessedBlockSignatureTimestamp) }()
+      case 3: try { try decoder.decodeSingularInt64Field(value: &self.nextStartFromUserEventID) }()
+      case 4: try { try decoder.decodeRepeatedMessageField(value: &self.missedBlockRanges) }()
+      case 5: try { try decoder.decodeRepeatedMessageField(value: &self.rngs) }()
+      case 6: try { try decoder.decodeRepeatedMessageField(value: &self.decommissionedIngestInvocations) }()
+      case 7: try { try decoder.decodeRepeatedMessageField(value: &self.txOutSearchResults) }()
+      case 8: try { try decoder.decodeSingularUInt64Field(value: &self.lastKnownBlockCount) }()
+      case 9: try { try decoder.decodeSingularUInt64Field(value: &self.lastKnownBlockCumulativeTxoCount) }()
       default: break
       }
     }
@@ -526,32 +554,36 @@ extension FogView_QueryResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     if self.highestProcessedBlockCount != 0 {
       try visitor.visitSingularUInt64Field(value: self.highestProcessedBlockCount, fieldNumber: 1)
     }
+    if self.highestProcessedBlockSignatureTimestamp != 0 {
+      try visitor.visitSingularUInt64Field(value: self.highestProcessedBlockSignatureTimestamp, fieldNumber: 2)
+    }
     if self.nextStartFromUserEventID != 0 {
-      try visitor.visitSingularInt64Field(value: self.nextStartFromUserEventID, fieldNumber: 2)
+      try visitor.visitSingularInt64Field(value: self.nextStartFromUserEventID, fieldNumber: 3)
     }
     if !self.missedBlockRanges.isEmpty {
-      try visitor.visitRepeatedMessageField(value: self.missedBlockRanges, fieldNumber: 3)
+      try visitor.visitRepeatedMessageField(value: self.missedBlockRanges, fieldNumber: 4)
     }
     if !self.rngs.isEmpty {
-      try visitor.visitRepeatedMessageField(value: self.rngs, fieldNumber: 4)
+      try visitor.visitRepeatedMessageField(value: self.rngs, fieldNumber: 5)
     }
     if !self.decommissionedIngestInvocations.isEmpty {
-      try visitor.visitRepeatedMessageField(value: self.decommissionedIngestInvocations, fieldNumber: 5)
+      try visitor.visitRepeatedMessageField(value: self.decommissionedIngestInvocations, fieldNumber: 6)
     }
     if !self.txOutSearchResults.isEmpty {
-      try visitor.visitRepeatedMessageField(value: self.txOutSearchResults, fieldNumber: 6)
+      try visitor.visitRepeatedMessageField(value: self.txOutSearchResults, fieldNumber: 7)
     }
     if self.lastKnownBlockCount != 0 {
-      try visitor.visitSingularUInt64Field(value: self.lastKnownBlockCount, fieldNumber: 7)
+      try visitor.visitSingularUInt64Field(value: self.lastKnownBlockCount, fieldNumber: 8)
     }
     if self.lastKnownBlockCumulativeTxoCount != 0 {
-      try visitor.visitSingularUInt64Field(value: self.lastKnownBlockCumulativeTxoCount, fieldNumber: 8)
+      try visitor.visitSingularUInt64Field(value: self.lastKnownBlockCumulativeTxoCount, fieldNumber: 9)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: FogView_QueryResponse, rhs: FogView_QueryResponse) -> Bool {
     if lhs.highestProcessedBlockCount != rhs.highestProcessedBlockCount {return false}
+    if lhs.highestProcessedBlockSignatureTimestamp != rhs.highestProcessedBlockSignatureTimestamp {return false}
     if lhs.nextStartFromUserEventID != rhs.nextStartFromUserEventID {return false}
     if lhs.missedBlockRanges != rhs.missedBlockRanges {return false}
     if lhs.rngs != rhs.rngs {return false}
@@ -578,7 +610,7 @@ extension FogView_RngRecord: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
       // allocates stack space for every case branch when no optimizations are
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try { try decoder.decodeSingularInt32Field(value: &self.ingestInvocationID) }()
+      case 1: try { try decoder.decodeSingularInt64Field(value: &self.ingestInvocationID) }()
       case 2: try { try decoder.decodeSingularMessageField(value: &self._pubkey) }()
       case 3: try { try decoder.decodeSingularUInt64Field(value: &self.startBlock) }()
       default: break
@@ -588,7 +620,7 @@ extension FogView_RngRecord: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     if self.ingestInvocationID != 0 {
-      try visitor.visitSingularInt32Field(value: self.ingestInvocationID, fieldNumber: 1)
+      try visitor.visitSingularInt64Field(value: self.ingestInvocationID, fieldNumber: 1)
     }
     if let v = self._pubkey {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
@@ -621,7 +653,7 @@ extension FogView_DecommissionedIngestInvocation: SwiftProtobuf.Message, SwiftPr
       // allocates stack space for every case branch when no optimizations are
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try { try decoder.decodeSingularInt32Field(value: &self.ingestInvocationID) }()
+      case 1: try { try decoder.decodeSingularInt64Field(value: &self.ingestInvocationID) }()
       case 2: try { try decoder.decodeSingularUInt64Field(value: &self.lastIngestedBlock) }()
       default: break
       }
@@ -630,7 +662,7 @@ extension FogView_DecommissionedIngestInvocation: SwiftProtobuf.Message, SwiftPr
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     if self.ingestInvocationID != 0 {
-      try visitor.visitSingularInt32Field(value: self.ingestInvocationID, fieldNumber: 1)
+      try visitor.visitSingularInt64Field(value: self.ingestInvocationID, fieldNumber: 1)
     }
     if self.lastIngestedBlock != 0 {
       try visitor.visitSingularUInt64Field(value: self.lastIngestedBlock, fieldNumber: 2)
@@ -737,11 +769,13 @@ extension FogView_FogTxOut: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
 extension FogView_TxOutRecord: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = _protobuf_package + ".TxOutRecord"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .standard(proto: "tx_out"),
-    2: .standard(proto: "tx_out_global_index"),
-    3: .standard(proto: "block_index"),
-    4: .same(proto: "timestamp"),
-    5: .standard(proto: "timestamp_result_code"),
+    1: .standard(proto: "tx_out_amount_commitment_data"),
+    2: .standard(proto: "tx_out_amount_masked_value"),
+    3: .standard(proto: "tx_out_target_key_data"),
+    4: .standard(proto: "tx_out_public_key_data"),
+    5: .standard(proto: "tx_out_global_index"),
+    6: .standard(proto: "block_index"),
+    7: .same(proto: "timestamp"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -750,41 +784,51 @@ extension FogView_TxOutRecord: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
       // allocates stack space for every case branch when no optimizations are
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try { try decoder.decodeSingularMessageField(value: &self._txOut) }()
-      case 2: try { try decoder.decodeSingularFixed64Field(value: &self.txOutGlobalIndex) }()
-      case 3: try { try decoder.decodeSingularFixed64Field(value: &self.blockIndex) }()
-      case 4: try { try decoder.decodeSingularFixed64Field(value: &self.timestamp) }()
-      case 5: try { try decoder.decodeSingularFixed32Field(value: &self.timestampResultCode) }()
+      case 1: try { try decoder.decodeSingularBytesField(value: &self.txOutAmountCommitmentData) }()
+      case 2: try { try decoder.decodeSingularFixed64Field(value: &self.txOutAmountMaskedValue) }()
+      case 3: try { try decoder.decodeSingularBytesField(value: &self.txOutTargetKeyData) }()
+      case 4: try { try decoder.decodeSingularBytesField(value: &self.txOutPublicKeyData) }()
+      case 5: try { try decoder.decodeSingularFixed64Field(value: &self.txOutGlobalIndex) }()
+      case 6: try { try decoder.decodeSingularFixed64Field(value: &self.blockIndex) }()
+      case 7: try { try decoder.decodeSingularFixed64Field(value: &self.timestamp) }()
       default: break
       }
     }
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if let v = self._txOut {
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
+    if !self.txOutAmountCommitmentData.isEmpty {
+      try visitor.visitSingularBytesField(value: self.txOutAmountCommitmentData, fieldNumber: 1)
+    }
+    if self.txOutAmountMaskedValue != 0 {
+      try visitor.visitSingularFixed64Field(value: self.txOutAmountMaskedValue, fieldNumber: 2)
+    }
+    if !self.txOutTargetKeyData.isEmpty {
+      try visitor.visitSingularBytesField(value: self.txOutTargetKeyData, fieldNumber: 3)
+    }
+    if !self.txOutPublicKeyData.isEmpty {
+      try visitor.visitSingularBytesField(value: self.txOutPublicKeyData, fieldNumber: 4)
     }
     if self.txOutGlobalIndex != 0 {
-      try visitor.visitSingularFixed64Field(value: self.txOutGlobalIndex, fieldNumber: 2)
+      try visitor.visitSingularFixed64Field(value: self.txOutGlobalIndex, fieldNumber: 5)
     }
     if self.blockIndex != 0 {
-      try visitor.visitSingularFixed64Field(value: self.blockIndex, fieldNumber: 3)
+      try visitor.visitSingularFixed64Field(value: self.blockIndex, fieldNumber: 6)
     }
     if self.timestamp != 0 {
-      try visitor.visitSingularFixed64Field(value: self.timestamp, fieldNumber: 4)
-    }
-    if self.timestampResultCode != 0 {
-      try visitor.visitSingularFixed32Field(value: self.timestampResultCode, fieldNumber: 5)
+      try visitor.visitSingularFixed64Field(value: self.timestamp, fieldNumber: 7)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: FogView_TxOutRecord, rhs: FogView_TxOutRecord) -> Bool {
-    if lhs._txOut != rhs._txOut {return false}
+    if lhs.txOutAmountCommitmentData != rhs.txOutAmountCommitmentData {return false}
+    if lhs.txOutAmountMaskedValue != rhs.txOutAmountMaskedValue {return false}
+    if lhs.txOutTargetKeyData != rhs.txOutTargetKeyData {return false}
+    if lhs.txOutPublicKeyData != rhs.txOutPublicKeyData {return false}
     if lhs.txOutGlobalIndex != rhs.txOutGlobalIndex {return false}
     if lhs.blockIndex != rhs.blockIndex {return false}
     if lhs.timestamp != rhs.timestamp {return false}
-    if lhs.timestampResultCode != rhs.timestampResultCode {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

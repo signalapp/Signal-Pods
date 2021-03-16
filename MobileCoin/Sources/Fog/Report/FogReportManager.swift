@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2020 MobileCoin. All rights reserved.
+//  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
 
 import Foundation
@@ -18,7 +18,7 @@ final class FogReportManager {
     }
 
     func reportResponse(
-        for reportUrl: FogReportUrl,
+        for reportUrl: FogUrl,
         completion: @escaping (Result<Report_ReportResponse, ConnectionError>) -> Void
     ) {
         let reportService = serviceProvider.fogReportService(for: reportUrl)
@@ -30,7 +30,7 @@ final class FogReportManager {
     }
 
     func reportResponse(
-        for reportUrl: FogReportUrl,
+        for reportUrl: FogUrl,
         reportParams: [(reportId: String, desiredMinPubkeyExpiry: UInt64)],
         completion: @escaping (Result<Report_ReportResponse, ConnectionError>) -> Void
     ) {
@@ -47,7 +47,7 @@ final class FogReportManager {
 }
 
 extension FogReportManager {
-    private class Inner {
+    private struct Inner {
         private let sharedSerialExclusionQueue: DispatchQueue
 
         private var networkConfigToServer: [GrpcChannelConfig: FogReportServer] = [:]
@@ -58,7 +58,7 @@ extension FogReportManager {
                 target: targetQueue)
         }
 
-        func reportServer(for reportUrl: FogReportUrl) -> FogReportServer {
+        mutating func reportServer(for reportUrl: FogUrl) -> FogReportServer {
             let config = GrpcChannelConfig(url: reportUrl)
             return networkConfigToServer[config] ?? {
                 let reportServer = FogReportServer(serialExclusionQueue: sharedSerialExclusionQueue)

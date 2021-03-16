@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2020 MobileCoin. All rights reserved.
+//  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
 
 import Foundation
@@ -22,6 +22,22 @@ struct KeyImage {
                 return 0
             case .unspent(let knownToBeUnspentBlockCount):
                 return knownToBeUnspentBlockCount
+            }
+        }
+
+        /// - Returns: `nil` when `blockCount` exceeds our knowledge about the spent status.
+        func status(atBlockCount blockCount: UInt64) -> SpentStatus? {
+            switch self {
+            case .spent(block: let spentAtBlock):
+                guard spentAtBlock.index < blockCount else {
+                    return nil
+                }
+                return .spent(block: spentAtBlock)
+            case .unspent(knownToBeUnspentBlockCount: let knownToBeUnspentBlockCount):
+                guard knownToBeUnspentBlockCount >= blockCount else {
+                    return nil
+                }
+                return .unspent(knownToBeUnspentBlockCount: blockCount)
             }
         }
     }

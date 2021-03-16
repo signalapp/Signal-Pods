@@ -1,10 +1,10 @@
 //
-//  Copyright (c) 2020 MobileCoin. All rights reserved.
+//  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
 
 import Foundation
 
-final class SerialCallbackQueue {
+struct SerialCallbackQueue {
     private let inner: SerialDispatchLock<Inner>
 
     init(targetQueue: DispatchQueue?) {
@@ -52,10 +52,10 @@ extension SerialCallbackQueue {
 
 extension SerialDispatchLock where Value == SerialCallbackQueue.Inner {
     fileprivate func accessAsyncAndStartIfNeeded(
-        _ block: @escaping (SerialCallbackQueue.Inner) -> Void
+        _ block: @escaping (inout SerialCallbackQueue.Inner) -> Void
     ) {
         accessAsync {
-            block($0)
+            block(&$0)
 
             if !$0.started {
                 let nextTask = $0.startNextTask()
@@ -75,24 +75,24 @@ extension SerialDispatchLock where Value == SerialCallbackQueue.Inner {
 }
 
 extension SerialCallbackQueue {
-    fileprivate class Inner {
+    fileprivate struct Inner {
         private var pendingTasks: [(@escaping () -> Void) -> Void] = []
         fileprivate private(set) var started = false
 
-        func prependTask(_ block: @escaping (@escaping () -> Void) -> Void) {
+        mutating func prependTask(_ block: @escaping (@escaping () -> Void) -> Void) {
             pendingTasks.insert(block, at: 0)
         }
 
-        func appendTask(_ block: @escaping (@escaping () -> Void) -> Void) {
+        mutating func appendTask(_ block: @escaping (@escaping () -> Void) -> Void) {
             pendingTasks.append(block)
         }
 
-        func startNextTask() -> (@escaping () -> Void) -> Void {
+        mutating func startNextTask() -> (@escaping () -> Void) -> Void {
             started = true
             return pendingTasks.removeFirst()
         }
 
-        func nextTaskOrStop() -> ((@escaping () -> Void) -> Void)? {
+        mutating func nextTaskOrStop() -> ((@escaping () -> Void) -> Void)? {
             if !pendingTasks.isEmpty {
                 return pendingTasks.removeFirst()
             } else {

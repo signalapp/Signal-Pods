@@ -7,7 +7,7 @@
 // For information on using the generated types, please see the documentation:
 //   https://github.com/apple/swift-protobuf/
 
-// Copyright (c) 2018-2020 MobileCoin Inc.
+// Copyright (c) 2018-2021 MobileCoin Inc.
 
 import Foundation
 import SwiftProtobuf

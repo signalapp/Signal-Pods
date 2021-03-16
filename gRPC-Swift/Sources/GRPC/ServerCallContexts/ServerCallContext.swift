@@ -28,7 +28,7 @@ public protocol ServerCallContext: AnyObject {
   /// Request headers for this request.
   var headers: HPACKHeaders { get }
 
-  /// A 'UserInfo' dictionary.
+  /// A 'UserInfo' dictionary which is shared with the interceptor contexts for this RPC.
   var userInfo: UserInfo { get set }
 
   /// The logger used for this call.
@@ -42,9 +42,18 @@ public protocol ServerCallContext: AnyObject {
 
 /// Base class providing data provided to the framework user for all server calls.
 open class ServerCallContextBase: ServerCallContext {
+  /// The event loop this call is served on.
   public let eventLoop: EventLoop
+
+  /// Request headers for this request.
   public let headers: HPACKHeaders
+
+  /// The logger used for this call.
   public let logger: Logger
+
+  /// Whether compression should be enabled for responses, defaulting to `true`. Note that for
+  /// this value to take effect compression must have been enabled on the server and a compression
+  /// algorithm must have been negotiated with the client.
   public var compressionEnabled: Bool = true
 
   /// - Important: While `UserInfo` has value-semantics, this property retrieves from, and sets a
@@ -61,7 +70,8 @@ open class ServerCallContextBase: ServerCallContext {
   }
 
   /// A reference to an underlying `UserInfo`. We share this with the interceptors.
-  private let userInfoRef: Ref<UserInfo>
+  @usableFromInline
+  internal let userInfoRef: Ref<UserInfo>
 
   /// Metadata to return at the end of the RPC. If this is required it should be updated before
   /// the `responsePromise` or `statusPromise` is fulfilled.
@@ -76,6 +86,7 @@ open class ServerCallContextBase: ServerCallContext {
     self.init(eventLoop: eventLoop, headers: headers, logger: logger, userInfoRef: .init(userInfo))
   }
 
+  @inlinable
   internal init(
     eventLoop: EventLoop,
     headers: HPACKHeaders,
@@ -86,50 +97,5 @@ open class ServerCallContextBase: ServerCallContext {
     self.headers = headers
     self.userInfoRef = userInfoRef
     self.logger = logger
-  }
-
-  @available(*, deprecated, renamed: "init(eventLoop:headers:logger:userInfo:)")
-  public init(eventLoop: EventLoop, request: HTTPRequestHead, logger: Logger) {
-    self.eventLoop = eventLoop
-    self.headers = HPACKHeaders(httpHeaders: request.headers, normalizeHTTPHeaders: false)
-    self.logger = logger
-    self.userInfoRef = .init(UserInfo())
-  }
-
-  /// Processes an error, transforming it into a 'GRPCStatus' and any trailers to send to the peer.
-  internal func processObserverError(
-    _ error: Error,
-    delegate: ServerErrorDelegate?
-  ) -> (GRPCStatus, HPACKHeaders) {
-    // Observe the error if we have a delegate.
-    delegate?.observeRequestHandlerError(error, headers: self.headers)
-
-    // What status are we terminating this RPC with?
-    // - If we have a delegate, try transforming the error. If the delegate returns trailers, merge
-    //   them with any on the call context.
-    // - If we don't have a delegate, then try to transform the error to a status.
-    // - Fallback to a generic error.
-    let status: GRPCStatus
-    let trailers: HPACKHeaders
-
-    if let transformed = delegate?.transformRequestHandlerError(error, headers: self.headers) {
-      status = transformed.status
-      if var transformedTrailers = transformed.trailers {
-        // The delegate returned trailers: merge in those from the context as well.
-        transformedTrailers.add(contentsOf: self.trailers)
-        trailers = transformedTrailers
-      } else {
-        trailers = self.trailers
-      }
-    } else if let grpcStatusTransformable = error as? GRPCStatusTransformable {
-      status = grpcStatusTransformable.makeGRPCStatus()
-      trailers = self.trailers
-    } else {
-      // Eh... well, we don't what status to use. Use a generic one.
-      status = .processingError
-      trailers = self.trailers
-    }
-
-    return (status, trailers)
   }
 }

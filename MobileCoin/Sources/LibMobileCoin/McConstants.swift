@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2020 MobileCoin. All rights reserved.
+//  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
 
 import Foundation
@@ -172,6 +172,8 @@ extension McConstants {
 
 extension McConstants {
 
+    static let MOB_URI_SCHEME = "mob"
+
     /// The part before the '://' of a URL.
     static let CONSENSUS_SCHEME_SECURE = "mc"
     static let CONSENSUS_SCHEME_INSECURE = "insecure-mc"
@@ -179,22 +181,6 @@ extension McConstants {
     /// Default port numbers
     static let CONSENSUS_DEFAULT_SECURE_PORT = 443
     static let CONSENSUS_DEFAULT_INSECURE_PORT = 3223
-
-    /// The part before the '://' of a URL.
-    static let FOG_VIEW_SCHEME_SECURE = "fog-view"
-    static let FOG_VIEW_SCHEME_INSECURE = "insecure-fog-view"
-
-    /// Default port numbers
-    static let FOG_VIEW_DEFAULT_SECURE_PORT = 443
-    static let FOG_VIEW_DEFAULT_INSECURE_PORT = 3225
-
-    /// The part before the '://' of a URL.
-    static let FOG_LEDGER_SCHEME_SECURE = "fog-ledger"
-    static let FOG_LEDGER_SCHEME_INSECURE = "insecure-fog-ledger"
-
-    /// Default port numbers
-    static let FOG_LEDGER_DEFAULT_SECURE_PORT = 443
-    static let FOG_LEDGER_DEFAULT_INSECURE_PORT = 3223
 
     /// The part before the '://' of a URL.
     static let FOG_SCHEME_SECURE = "fog"

@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2020 MobileCoin. All rights reserved.
+//  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
 
 import Foundation
@@ -10,7 +10,7 @@ final class FogReportConnection: Connection, FogReportService {
     private let client: Report_ReportAPIClient
 
     init(
-        url: FogReportUrl,
+        url: FogUrl,
         channelManager: GrpcChannelManager,
         targetQueue: DispatchQueue?
     ) {

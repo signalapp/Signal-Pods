@@ -115,9 +115,9 @@ public struct External_AccountKey {
   //// which one to use when sending to this account.
   public var fogReportID: String = String()
 
-  //// Optional fingerprint of fog authority key.
+  //// Optional fog authority subjectPublicKeyInfo.
   //// Empty when not in use.
-  public var fogAuthorityFingerprint: Data = Data()
+  public var fogAuthoritySpki: Data = Data()
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -163,10 +163,10 @@ public struct External_PublicAddress {
   //// which one to use when sending to this account.
   public var fogReportID: String = String()
 
-  //// Signature of fog authority fingerprint using private key which
-  //// corresponds to view_public_key.
-  //// This should be a Schnorrkel signature.
-  public var fogAuthorityFingerprintSig: Data = Data()
+  //// View key signature over the fog authority subjectPublicKeyInfo.
+  ////
+  //// This must be parseable as a RistrettoSignature.
+  public var fogAuthoritySig: Data = Data()
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -200,9 +200,9 @@ public struct External_RootIdentity {
   //// Optional fog report id, same as in AccountKey
   public var fogReportID: String = String()
 
-  //// Optional fingerprint of fog authority key.
+  //// Optional fog authority subjectPublicKeyInfo.
   //// Empty when not in use.
-  public var fogAuthorityFingerprint: Data = Data()
+  public var fogAuthoritySpki: Data = Data()
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -669,6 +669,49 @@ public struct External_Receipt {
   fileprivate var _amount: External_Amount? = nil
 }
 
+//// The signature over an IAS JSON reponse, created by Intel
+public struct External_VerificationSignature {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var contents: Data = Data()
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
+//// The IAS verification report response encoded as a protocol buffer
+public struct External_VerificationReport {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  //// The IAS-generated signature over the response string
+  public var sig: External_VerificationSignature {
+    get {return _sig ?? External_VerificationSignature()}
+    set {_sig = newValue}
+  }
+  /// Returns true if `sig` has been explicitly set.
+  public var hasSig: Bool {return self._sig != nil}
+  /// Clears the value of `sig`. Subsequent reads from it will return its default value.
+  public mutating func clearSig() {self._sig = nil}
+
+  //// A list of byte strings representing the DER-encoded certificate
+  //// chain provided by IAS.
+  public var chain: [Data] = []
+
+  //// The raw report body JSON, as a byte sequence
+  public var httpBody: String = String()
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+
+  fileprivate var _sig: External_VerificationSignature? = nil
+}
+
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
 fileprivate let _protobuf_package = "external"
@@ -808,7 +851,7 @@ extension External_AccountKey: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
     2: .standard(proto: "spend_private_key"),
     3: .standard(proto: "fog_report_url"),
     4: .standard(proto: "fog_report_id"),
-    5: .standard(proto: "fog_authority_fingerprint"),
+    5: .standard(proto: "fog_authority_spki"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -821,7 +864,7 @@ extension External_AccountKey: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
       case 2: try { try decoder.decodeSingularMessageField(value: &self._spendPrivateKey) }()
       case 3: try { try decoder.decodeSingularStringField(value: &self.fogReportURL) }()
       case 4: try { try decoder.decodeSingularStringField(value: &self.fogReportID) }()
-      case 5: try { try decoder.decodeSingularBytesField(value: &self.fogAuthorityFingerprint) }()
+      case 5: try { try decoder.decodeSingularBytesField(value: &self.fogAuthoritySpki) }()
       default: break
       }
     }
@@ -840,8 +883,8 @@ extension External_AccountKey: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
     if !self.fogReportID.isEmpty {
       try visitor.visitSingularStringField(value: self.fogReportID, fieldNumber: 4)
     }
-    if !self.fogAuthorityFingerprint.isEmpty {
-      try visitor.visitSingularBytesField(value: self.fogAuthorityFingerprint, fieldNumber: 5)
+    if !self.fogAuthoritySpki.isEmpty {
+      try visitor.visitSingularBytesField(value: self.fogAuthoritySpki, fieldNumber: 5)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -851,7 +894,7 @@ extension External_AccountKey: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
     if lhs._spendPrivateKey != rhs._spendPrivateKey {return false}
     if lhs.fogReportURL != rhs.fogReportURL {return false}
     if lhs.fogReportID != rhs.fogReportID {return false}
-    if lhs.fogAuthorityFingerprint != rhs.fogAuthorityFingerprint {return false}
+    if lhs.fogAuthoritySpki != rhs.fogAuthoritySpki {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -864,7 +907,7 @@ extension External_PublicAddress: SwiftProtobuf.Message, SwiftProtobuf._MessageI
     2: .standard(proto: "spend_public_key"),
     3: .standard(proto: "fog_report_url"),
     4: .standard(proto: "fog_report_id"),
-    5: .standard(proto: "fog_authority_fingerprint_sig"),
+    5: .standard(proto: "fog_authority_sig"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -877,7 +920,7 @@ extension External_PublicAddress: SwiftProtobuf.Message, SwiftProtobuf._MessageI
       case 2: try { try decoder.decodeSingularMessageField(value: &self._spendPublicKey) }()
       case 3: try { try decoder.decodeSingularStringField(value: &self.fogReportURL) }()
       case 4: try { try decoder.decodeSingularStringField(value: &self.fogReportID) }()
-      case 5: try { try decoder.decodeSingularBytesField(value: &self.fogAuthorityFingerprintSig) }()
+      case 5: try { try decoder.decodeSingularBytesField(value: &self.fogAuthoritySig) }()
       default: break
       }
     }
@@ -896,8 +939,8 @@ extension External_PublicAddress: SwiftProtobuf.Message, SwiftProtobuf._MessageI
     if !self.fogReportID.isEmpty {
       try visitor.visitSingularStringField(value: self.fogReportID, fieldNumber: 4)
     }
-    if !self.fogAuthorityFingerprintSig.isEmpty {
-      try visitor.visitSingularBytesField(value: self.fogAuthorityFingerprintSig, fieldNumber: 5)
+    if !self.fogAuthoritySig.isEmpty {
+      try visitor.visitSingularBytesField(value: self.fogAuthoritySig, fieldNumber: 5)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -907,7 +950,7 @@ extension External_PublicAddress: SwiftProtobuf.Message, SwiftProtobuf._MessageI
     if lhs._spendPublicKey != rhs._spendPublicKey {return false}
     if lhs.fogReportURL != rhs.fogReportURL {return false}
     if lhs.fogReportID != rhs.fogReportID {return false}
-    if lhs.fogAuthorityFingerprintSig != rhs.fogAuthorityFingerprintSig {return false}
+    if lhs.fogAuthoritySig != rhs.fogAuthoritySig {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -919,7 +962,7 @@ extension External_RootIdentity: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     1: .standard(proto: "root_entropy"),
     2: .standard(proto: "fog_report_url"),
     3: .standard(proto: "fog_report_id"),
-    5: .standard(proto: "fog_authority_fingerprint"),
+    5: .standard(proto: "fog_authority_spki"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -931,7 +974,7 @@ extension External_RootIdentity: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       case 1: try { try decoder.decodeSingularMessageField(value: &self._rootEntropy) }()
       case 2: try { try decoder.decodeSingularStringField(value: &self.fogReportURL) }()
       case 3: try { try decoder.decodeSingularStringField(value: &self.fogReportID) }()
-      case 5: try { try decoder.decodeSingularBytesField(value: &self.fogAuthorityFingerprint) }()
+      case 5: try { try decoder.decodeSingularBytesField(value: &self.fogAuthoritySpki) }()
       default: break
       }
     }
@@ -947,8 +990,8 @@ extension External_RootIdentity: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     if !self.fogReportID.isEmpty {
       try visitor.visitSingularStringField(value: self.fogReportID, fieldNumber: 3)
     }
-    if !self.fogAuthorityFingerprint.isEmpty {
-      try visitor.visitSingularBytesField(value: self.fogAuthorityFingerprint, fieldNumber: 5)
+    if !self.fogAuthoritySpki.isEmpty {
+      try visitor.visitSingularBytesField(value: self.fogAuthoritySpki, fieldNumber: 5)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -957,7 +1000,7 @@ extension External_RootIdentity: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     if lhs._rootEntropy != rhs._rootEntropy {return false}
     if lhs.fogReportURL != rhs.fogReportURL {return false}
     if lhs.fogReportID != rhs.fogReportID {return false}
-    if lhs.fogAuthorityFingerprint != rhs.fogAuthorityFingerprint {return false}
+    if lhs.fogAuthoritySpki != rhs.fogAuthoritySpki {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -1692,6 +1735,82 @@ extension External_Receipt: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
     if lhs._confirmation != rhs._confirmation {return false}
     if lhs.tombstoneBlock != rhs.tombstoneBlock {return false}
     if lhs._amount != rhs._amount {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension External_VerificationSignature: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".VerificationSignature"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "contents"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularBytesField(value: &self.contents) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.contents.isEmpty {
+      try visitor.visitSingularBytesField(value: self.contents, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: External_VerificationSignature, rhs: External_VerificationSignature) -> Bool {
+    if lhs.contents != rhs.contents {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension External_VerificationReport: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".VerificationReport"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "sig"),
+    2: .same(proto: "chain"),
+    3: .standard(proto: "http_body"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularMessageField(value: &self._sig) }()
+      case 2: try { try decoder.decodeRepeatedBytesField(value: &self.chain) }()
+      case 3: try { try decoder.decodeSingularStringField(value: &self.httpBody) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if let v = self._sig {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
+    }
+    if !self.chain.isEmpty {
+      try visitor.visitRepeatedBytesField(value: self.chain, fieldNumber: 2)
+    }
+    if !self.httpBody.isEmpty {
+      try visitor.visitSingularStringField(value: self.httpBody, fieldNumber: 3)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: External_VerificationReport, rhs: External_VerificationReport) -> Bool {
+    if lhs._sig != rhs._sig {return false}
+    if lhs.chain != rhs.chain {return false}
+    if lhs.httpBody != rhs.httpBody {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

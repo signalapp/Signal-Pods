@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2020 MobileCoin. All rights reserved.
+//  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
 
 import Foundation
@@ -31,13 +31,13 @@ extension LedgerTxOut: Hashable {}
 
 extension LedgerTxOut {
     init?(_ txOutRecord: FogView_TxOutRecord) {
-        guard let partialTxOut = PartialTxOut(txOutRecord.txOut) else {
+        guard let partialTxOut = PartialTxOut(txOutRecord) else {
             return nil
         }
         let globalIndex = txOutRecord.txOutGlobalIndex
         let block = BlockMetadata(
             index: txOutRecord.blockIndex,
-            timestampStatus: txOutRecord.timestampStatus)
+            timestamp: txOutRecord.timestampDate)
         self.init(partialTxOut, globalIndex: globalIndex, block: block)
     }
 }

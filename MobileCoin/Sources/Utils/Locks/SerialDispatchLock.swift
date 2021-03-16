@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2020 MobileCoin. All rights reserved.
+//  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
 
 import Foundation
@@ -16,8 +16,8 @@ import Foundation
 ///
 /// The lock is held for the duration of the block that is passed to `accessAsync`. The blocks are
 /// executed in the order that the `accessAsync` method is called.
-struct SerialDispatchLock<Value> {
-    private let value: Value
+final class SerialDispatchLock<Value> {
+    private var value: Value
 
     let serialExclusionQueue: DispatchQueue
 
@@ -37,9 +37,9 @@ struct SerialDispatchLock<Value> {
         value
     }
 
-    func accessAsync(_ block: @escaping (Value) -> Void) {
+    func accessAsync(_ block: @escaping (inout Value) -> Void) {
         serialExclusionQueue.async {
-            block(self.value)
+            block(&self.value)
         }
     }
 
