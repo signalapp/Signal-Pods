@@ -3,8 +3,8 @@
 //
 
 import Foundation
-import AxolotlKit
 import Curve25519Kit
+import SignalCoreKit
 import SignalClient
 
 @objc
@@ -164,33 +164,21 @@ fileprivate extension SMKMessageType {
 
     private let kSMKSecretSessionCipherMacLength: UInt = 10
 
-    private let sessionStore: SignalClient.SessionStore
-    private let preKeyStore: SignalClient.PreKeyStore
-    private let signedPreKeyStore: SignalClient.SignedPreKeyStore
-    private let identityStore: SignalClient.IdentityKeyStore
+    private let sessionStore: SessionStore
+    private let preKeyStore: PreKeyStore
+    private let signedPreKeyStore: SignedPreKeyStore
+    private let identityStore: IdentityKeyStore
 
     // public SecretSessionCipher(SignalProtocolStore signalProtocolStore) {
-    public init(sessionStore: SignalClient.SessionStore,
-                preKeyStore: SignalClient.PreKeyStore,
-                signedPreKeyStore: SignalClient.SignedPreKeyStore,
-                identityStore: SignalClient.IdentityKeyStore) throws {
+    public init(sessionStore: SessionStore,
+                preKeyStore: PreKeyStore,
+                signedPreKeyStore: SignedPreKeyStore,
+                identityStore: IdentityKeyStore) throws {
 
         self.sessionStore = sessionStore
         self.preKeyStore = preKeyStore
         self.signedPreKeyStore = signedPreKeyStore
         self.identityStore = identityStore
-    }
-
-    @objc(initWithSessionStore:preKeyStore:signedPreKeyStore:identityStore:error:)
-    public convenience init(transitionalSessionStore sessionStore: AxolotlKit.SessionStore,
-                            preKeyStore: AxolotlKit.PreKeyStore,
-                            signedPreKeyStore: AxolotlKit.SignedPreKeyStore,
-                            identityStore: AxolotlKit.IdentityKeyStore) throws {
-        try self.init(
-            sessionStore: sessionStore as! SignalClient.SessionStore,
-            preKeyStore: preKeyStore as! SignalClient.PreKeyStore,
-            signedPreKeyStore: signedPreKeyStore as! SignalClient.SignedPreKeyStore,
-            identityStore: identityStore as! SignalClient.IdentityKeyStore)
     }
 
     // MARK: - Public
@@ -200,7 +188,7 @@ fileprivate extension SMKMessageType {
                                              deviceId: Int32,
                                              paddedPlaintext: Data,
                                              senderCertificate: SenderCertificate,
-                                             protocolContext: SPKProtocolWriteContext?) throws -> Data {
+                                             protocolContext: StoreContext?) throws -> Data {
         guard deviceId > 0 else {
             throw SMKError.assertionError(description: "\(logTag) invalid deviceId")
         }
@@ -213,25 +201,24 @@ fileprivate extension SMKMessageType {
                                             from: senderCertificate,
                                             sessionStore: sessionStore,
                                             identityStore: identityStore,
-                                            context: (protocolContext as! StoreContext?) ?? NullContext()))
+                                            context: protocolContext ?? NullContext()))
     }
 
     // public Pair<SignalProtocolAddress, byte[]> decrypt(CertificateValidator validator, byte[] ciphertext, long timestamp)
     //    throws InvalidMetadataMessageException, InvalidMetadataVersionException, ProtocolInvalidMessageException, ProtocolInvalidKeyException, ProtocolNoSessionException, ProtocolLegacyMessageException, ProtocolInvalidVersionException, ProtocolDuplicateMessageException, ProtocolInvalidKeyIdException, ProtocolUntrustedIdentityException
-    @objc
-    public func throwswrapped_decryptMessage(certificateValidator: SMKCertificateValidatorObjC,
+    public func throwswrapped_decryptMessage(certificateValidator: SMKCertificateValidator,
                                              cipherTextData: Data,
                                              timestamp: UInt64,
                                              localE164: String?,
                                              localUuid: UUID?,
                                              localDeviceId: Int32,
-                                             protocolContext: SPKProtocolWriteContext?) throws -> SMKDecryptResult {
+                                             protocolContext: StoreContext?) throws -> SMKDecryptResult {
         guard timestamp > 0 else {
             throw SMKError.assertionError(description: "\(logTag) invalid timestamp")
         }
 
         // Allow nil contexts for testing.
-        let context = (protocolContext as! StoreContext?) ?? NullContext()
+        let context = protocolContext ?? NullContext()
         let messageContent = try UnidentifiedSenderMessageContent(message: cipherTextData,
                                                                   identityStore: self.identityStore,
                                                                   context: context)
@@ -247,7 +234,6 @@ fileprivate extension SMKMessageType {
 
         do {
             // validator.validate(content.getSenderCertificate(), timestamp);
-            let certificateValidator = certificateValidator as! SMKCertificateValidator
             try certificateValidator.throwswrapped_validate(
                 senderCertificate: messageContent.senderCertificate,
                 validationTime: timestamp)

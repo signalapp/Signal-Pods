@@ -213,7 +213,6 @@ fi
 
 if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/AFNetworking/AFNetworking.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/AxolotlKit/AxolotlKit.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/BonMot/BonMot.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/CGRPCZlib/CGRPCZlib.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/CNIOAtomics/CNIOAtomics.framework"
@@ -227,7 +226,6 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/Curve25519Kit/Curve25519Kit.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/GRDB.swift/GRDB.framework"
   install_framework "${PODS_ROOT}/GRKOpenSSLFramework/OpenSSL-iOS/bin/openssl.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/HKDFKit/HKDFKit.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/LibMobileCoin/LibMobileCoin.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Logging/Logging.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Mantle/Mantle.framework"
@@ -255,7 +253,6 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/SwiftNIOTransportServices/NIOTransportServices.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SwiftProtobuf/SwiftProtobuf.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/YYImage/YYImage.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/YapDatabase/YapDatabase.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/ZKGroup/ZKGroup.framework"
   install_framework "${PODS_ROOT}/ZXingObjC/ZXingObjC.framework"
   install_dsym "${PODS_ROOT}/ZXingObjC/ZXingObjC.framework.dSYM"
@@ -270,7 +267,6 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
 fi
 if [[ "$CONFIGURATION" == "App Store Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/AFNetworking/AFNetworking.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/AxolotlKit/AxolotlKit.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/BonMot/BonMot.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/CGRPCZlib/CGRPCZlib.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/CNIOAtomics/CNIOAtomics.framework"
@@ -284,7 +280,6 @@ if [[ "$CONFIGURATION" == "App Store Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/Curve25519Kit/Curve25519Kit.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/GRDB.swift/GRDB.framework"
   install_framework "${PODS_ROOT}/GRKOpenSSLFramework/OpenSSL-iOS/bin/openssl.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/HKDFKit/HKDFKit.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/LibMobileCoin/LibMobileCoin.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Logging/Logging.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Mantle/Mantle.framework"
@@ -312,7 +307,6 @@ if [[ "$CONFIGURATION" == "App Store Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/SwiftNIOTransportServices/NIOTransportServices.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SwiftProtobuf/SwiftProtobuf.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/YYImage/YYImage.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/YapDatabase/YapDatabase.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/ZKGroup/ZKGroup.framework"
   install_framework "${PODS_ROOT}/ZXingObjC/ZXingObjC.framework"
   install_dsym "${PODS_ROOT}/ZXingObjC/ZXingObjC.framework.dSYM"
@@ -327,7 +321,6 @@ if [[ "$CONFIGURATION" == "App Store Release" ]]; then
 fi
 if [[ "$CONFIGURATION" == "Profiling" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/AFNetworking/AFNetworking.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/AxolotlKit/AxolotlKit.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/BonMot/BonMot.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/CGRPCZlib/CGRPCZlib.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/CNIOAtomics/CNIOAtomics.framework"
@@ -341,7 +334,6 @@ if [[ "$CONFIGURATION" == "Profiling" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/Curve25519Kit/Curve25519Kit.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/GRDB.swift/GRDB.framework"
   install_framework "${PODS_ROOT}/GRKOpenSSLFramework/OpenSSL-iOS/bin/openssl.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/HKDFKit/HKDFKit.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/LibMobileCoin/LibMobileCoin.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Logging/Logging.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Mantle/Mantle.framework"
@@ -369,7 +361,6 @@ if [[ "$CONFIGURATION" == "Profiling" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/SwiftNIOTransportServices/NIOTransportServices.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SwiftProtobuf/SwiftProtobuf.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/YYImage/YYImage.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/YapDatabase/YapDatabase.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/ZKGroup/ZKGroup.framework"
   install_framework "${PODS_ROOT}/ZXingObjC/ZXingObjC.framework"
   install_dsym "${PODS_ROOT}/ZXingObjC/ZXingObjC.framework.dSYM"
@@ -384,7 +375,6 @@ if [[ "$CONFIGURATION" == "Profiling" ]]; then
 fi
 if [[ "$CONFIGURATION" == "Testable Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/AFNetworking/AFNetworking.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/AxolotlKit/AxolotlKit.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/BonMot/BonMot.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/CGRPCZlib/CGRPCZlib.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/CNIOAtomics/CNIOAtomics.framework"
@@ -398,7 +388,6 @@ if [[ "$CONFIGURATION" == "Testable Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/Curve25519Kit/Curve25519Kit.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/GRDB.swift/GRDB.framework"
   install_framework "${PODS_ROOT}/GRKOpenSSLFramework/OpenSSL-iOS/bin/openssl.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/HKDFKit/HKDFKit.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/LibMobileCoin/LibMobileCoin.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Logging/Logging.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Mantle/Mantle.framework"
@@ -426,7 +415,6 @@ if [[ "$CONFIGURATION" == "Testable Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/SwiftNIOTransportServices/NIOTransportServices.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SwiftProtobuf/SwiftProtobuf.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/YYImage/YYImage.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/YapDatabase/YapDatabase.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/ZKGroup/ZKGroup.framework"
   install_framework "${PODS_ROOT}/ZXingObjC/ZXingObjC.framework"
   install_dsym "${PODS_ROOT}/ZXingObjC/ZXingObjC.framework.dSYM"
@@ -441,7 +429,6 @@ if [[ "$CONFIGURATION" == "Testable Release" ]]; then
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/AFNetworking/AFNetworking.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/AxolotlKit/AxolotlKit.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/BonMot/BonMot.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/CGRPCZlib/CGRPCZlib.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/CNIOAtomics/CNIOAtomics.framework"
@@ -455,7 +442,6 @@ if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/Curve25519Kit/Curve25519Kit.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/GRDB.swift/GRDB.framework"
   install_framework "${PODS_ROOT}/GRKOpenSSLFramework/OpenSSL-iOS/bin/openssl.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/HKDFKit/HKDFKit.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/LibMobileCoin/LibMobileCoin.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Logging/Logging.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Mantle/Mantle.framework"
@@ -483,7 +469,6 @@ if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/SwiftNIOTransportServices/NIOTransportServices.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SwiftProtobuf/SwiftProtobuf.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/YYImage/YYImage.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/YapDatabase/YapDatabase.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/ZKGroup/ZKGroup.framework"
   install_framework "${PODS_ROOT}/ZXingObjC/ZXingObjC.framework"
   install_dsym "${PODS_ROOT}/ZXingObjC/ZXingObjC.framework.dSYM"

@@ -100,14 +100,14 @@ class MockClient: NSObject {
         let bobSignedPreKey = bobMockClient.generateMockSignedPreKey()
 
         // PreKeyBundle bobBundle             = new PreKeyBundle(1, 1, 1, bobPreKey.getPublicKey(), 2, bobSignedPreKey.getKeyPair().getPublicKey(), bobSignedPreKey.getSignature(), bobIdentityKey.getPublicKey());
-        let bobBundle = try! SignalClient.PreKeyBundle(registrationId: UInt32(bitPattern: bobMockClient.registrationId),
-                                                       deviceId: UInt32(bitPattern: bobMockClient.deviceId),
-                                                       prekeyId: bobPreKey.id,
-                                                       prekey: bobPreKey.publicKey,
-                                                       signedPrekeyId: bobSignedPreKey.id,
-                                                       signedPrekey: bobSignedPreKey.publicKey,
-                                                       signedPrekeySignature: bobSignedPreKey.signature,
-                                                       identity: bobIdentityKey.identityKey)
+        let bobBundle = try! PreKeyBundle(registrationId: UInt32(bitPattern: bobMockClient.registrationId),
+                                          deviceId: UInt32(bitPattern: bobMockClient.deviceId),
+                                          prekeyId: bobPreKey.id,
+                                          prekey: bobPreKey.publicKey,
+                                          signedPrekeyId: bobSignedPreKey.id,
+                                          signedPrekey: bobSignedPreKey.publicKey,
+                                          signedPrekeySignature: bobSignedPreKey.signature,
+                                          identity: bobIdentityKey.identityKey)
 
         // SessionBuilder aliceSessionBuilder = new SessionBuilder(aliceStore, new SignalProtocolAddress("+14152222222", 1));
         // aliceSessionBuilder.process(bobBundle);

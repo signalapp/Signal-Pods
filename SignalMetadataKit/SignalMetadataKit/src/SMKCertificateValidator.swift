@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2020 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2021 Open Whisper Systems. All rights reserved.
 //
 
 import Foundation
@@ -11,10 +11,7 @@ public enum SMKCertificateError: Error {
     case invalidCertificate(description: String)
 }
 
-@objc(SMKCertificateValidator)
-public protocol SMKCertificateValidatorObjC {}
-
-public protocol SMKCertificateValidator: SMKCertificateValidatorObjC {
+public protocol SMKCertificateValidator {
     func throwswrapped_validate(senderCertificate: SenderCertificate, validationTime: UInt64) throws
     func throwswrapped_validate(serverCertificate: ServerCertificate) throws
 }
