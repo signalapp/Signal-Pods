@@ -9,6 +9,7 @@ struct TransactionSubmitter {
     private let consensusService: ConsensusService
 
     init(consensusService: ConsensusService) {
+        logger.info("")
         self.consensusService = consensusService
     }
 
@@ -16,6 +17,7 @@ struct TransactionSubmitter {
         _ transaction: Transaction,
         completion: @escaping (Result<(), TransactionSubmissionError>) -> Void
     ) {
+        logger.info("")
         consensusService.proposeTx(External_Tx(transaction)) {
             completion($0.mapError { .connectionError($0) }.flatMap { self.processResponse($0) })
         }
@@ -24,6 +26,7 @@ struct TransactionSubmitter {
     func processResponse(_ response: ConsensusCommon_ProposeTxResponse)
         -> Result<(), TransactionSubmissionError>
     {
+        logger.info("")
         switch response.result {
         case .ok:
             return .success(())

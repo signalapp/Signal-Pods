@@ -16,6 +16,7 @@ extension Optional where Wrapped: CStructWrapper {
     func withUnsafeCStructPointer<R>(
         _ body: (UnsafePointer<Wrapped.CStruct>?) throws -> R
     ) rethrows -> R {
+        logger.info("")
         if let unwrapped = self {
             return try unwrapped.withUnsafeCStructPointer { ptr in
                 try body(ptr)

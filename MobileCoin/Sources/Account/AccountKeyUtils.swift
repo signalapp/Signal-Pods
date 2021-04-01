@@ -8,34 +8,12 @@ import Foundation
 import LibMobileCoin
 
 enum AccountKeyUtils {
-    static func privateKeys(fromRootEntropy rootEntropy: Data32)
-        -> (viewPrivateKey: RistrettoPrivate, spendPrivateKey: RistrettoPrivate)
-    {
-        var viewPrivateKeyOut = Data32()
-        var spendPrivateKeyOut = Data32()
-        rootEntropy.asMcBuffer { rootEntropyPtr in
-            viewPrivateKeyOut.asMcMutableBuffer { viewPrivateKeyOutPtr in
-                spendPrivateKeyOut.asMcMutableBuffer { spendPrivateKeyOutPtr in
-                    withMcInfallible {
-                        mc_account_private_keys_from_root_entropy(
-                            rootEntropyPtr,
-                            viewPrivateKeyOutPtr,
-                            spendPrivateKeyOutPtr)
-                    }
-                }
-            }
-        }
-        // Safety: It's safe to skip validation because mc_account_private_keys_from_root_entropy
-        // should always return valid RistrettoPrivate values on success.
-        return (RistrettoPrivate(skippingValidation: viewPrivateKeyOut),
-                RistrettoPrivate(skippingValidation: spendPrivateKeyOut))
-    }
-
     static func subaddressPrivateKeys(
         viewPrivateKey: RistrettoPrivate,
         spendPrivateKey: RistrettoPrivate,
         subaddressIndex: UInt64
     ) -> (subaddressViewPrivateKey: RistrettoPrivate, subaddressSpendPrivateKey: RistrettoPrivate) {
+        logger.info("")
         var subaddressViewPrivateKeyOut = Data32()
         var subaddressSpendPrivateKeyOut = Data32()
         viewPrivateKey.asMcBuffer { viewKeyBufferPtr in
@@ -65,6 +43,7 @@ enum AccountKeyUtils {
         spendPrivateKey: RistrettoPrivate,
         subaddressIndex: UInt64
     ) -> (viewPublicKey: RistrettoPublic, spendPublicKey: RistrettoPublic) {
+        logger.info("")
         var viewPublicKeyOut = Data32()
         var spendPublicKeyOut = Data32()
         viewPrivateKey.asMcBuffer { viewKeyBufferPtr in
@@ -98,7 +77,8 @@ enum AccountKeyUtils {
         authoritySpki: Data,
         subaddressIndex: UInt64
     ) -> Data {
-        McAccountKey.withUnsafePointer(
+        logger.info("")
+        return McAccountKey.withUnsafePointer(
             viewPrivateKey: viewPrivateKey,
             spendPrivateKey: spendPrivateKey,
             reportUrl: reportUrl,
@@ -125,7 +105,8 @@ extension McAccountKey {
         authoritySpki: Data,
         body: (UnsafePointer<McAccountKey>) throws -> T
     ) rethrows -> T {
-        try McAccountKeyFogInfo.withUnsafePointer(
+        logger.info("")
+        return try McAccountKeyFogInfo.withUnsafePointer(
             reportUrl: reportUrl,
             reportId: reportId,
             authoritySpki: authoritySpki
@@ -147,7 +128,8 @@ extension McAccountKey {
         spendPrivateKey: RistrettoPrivate,
         body: (UnsafePointer<McAccountKey>) throws -> T
     ) rethrows -> T {
-        try viewPrivateKey.asMcBuffer { viewKeyBufferPtr in
+        logger.info("")
+        return try viewPrivateKey.asMcBuffer { viewKeyBufferPtr in
             try spendPrivateKey.asMcBuffer { spendKeyBufferPtr in
                 var publicAddress = McAccountKey(
                     view_private_key: viewKeyBufferPtr,
@@ -165,7 +147,8 @@ extension AccountKey: CStructWrapper {
     func withUnsafeCStructPointer<R>(
         _ body: (UnsafePointer<McAccountKey>) throws -> R
     ) rethrows -> R {
-        try fogInfo.withUnsafeCStructPointer { fogInfoPtr in
+        logger.info("")
+        return try fogInfo.withUnsafeCStructPointer { fogInfoPtr in
             try viewPrivateKey.asMcBuffer { viewKeyBufferPtr in
                 try spendPrivateKey.asMcBuffer { spendKeyBufferPtr in
                     var publicAddress = McAccountKey(
@@ -186,7 +169,8 @@ extension McAccountKeyFogInfo {
         authoritySpki: Data,
         body: (UnsafePointer<McAccountKeyFogInfo>) throws -> T
     ) rethrows -> T {
-        try reportUrl.withCString { reportUrlPtr in
+        logger.info("")
+        return try reportUrl.withCString { reportUrlPtr in
             try reportId.withCString { reportIdPtr in
                 try authoritySpki.asMcBuffer { authoritySpkiPtr in
                     var mcFogInfo = McAccountKeyFogInfo(
@@ -206,7 +190,8 @@ extension AccountKey.FogInfo: CStructWrapper {
     func withUnsafeCStructPointer<R>(
         _ body: (UnsafePointer<McAccountKeyFogInfo>) throws -> R
     ) rethrows -> R {
-        try McAccountKeyFogInfo.withUnsafePointer(
+        logger.info("")
+        return try McAccountKeyFogInfo.withUnsafePointer(
             reportUrl: reportUrlString,
             reportId: reportId,
             authoritySpki: authoritySpki,
@@ -220,7 +205,8 @@ extension PublicAddress: CStructWrapper {
     func withUnsafeCStructPointer<R>(
         _ body: (UnsafePointer<McPublicAddress>) throws -> R
     ) rethrows -> R {
-        try viewPublicKey.asMcBuffer { viewKeyBufferPtr in
+        logger.info("")
+        return try viewPublicKey.asMcBuffer { viewKeyBufferPtr in
             try spendPublicKey.asMcBuffer { spendKeyBufferPtr in
                 try fogInfo.withUnsafeCStructPointer { fogInfoPtr in
                     var publicAddress = McPublicAddress(
@@ -240,7 +226,8 @@ extension PublicAddress.FogInfo: CStructWrapper {
     func withUnsafeCStructPointer<R>(
         _ body: (UnsafePointer<McPublicAddressFogInfo>) throws -> R
     ) rethrows -> R {
-        try reportUrlString.withCString { reportUrlPtr in
+        logger.info("")
+        return try reportUrlString.withCString { reportUrlPtr in
             try reportId.withCString { reportIdPtr in
                 try authoritySig.asMcBuffer { authoritySigPtr in
                     var mcFogInfo = McPublicAddressFogInfo(

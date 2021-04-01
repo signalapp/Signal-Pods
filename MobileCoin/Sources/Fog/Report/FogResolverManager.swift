@@ -17,6 +17,7 @@ final class FogResolverManager {
         serviceProvider: ServiceProvider,
         targetQueue: DispatchQueue?
     ) {
+        logger.info("fogReportAttestation: \(fogReportAttestation)")
         self.serialQueue = DispatchQueue(label: "com.mobilecoin.\(Self.self)", target: targetQueue)
         self.reportAttestation = fogReportAttestation
         self.reportManager = FogReportManager(
@@ -28,6 +29,7 @@ final class FogResolverManager {
         addresses: [PublicAddress],
         completion: @escaping (Result<FogResolver, ConnectionError>) -> Void
     ) {
+        logger.info("addresses: \(addresses.map { "\(redacting: $0)" })")
         let reportUrls = Set(addresses.compactMap { $0.fogReportUrl })
         reportUrls.mapAsync({ reportUrl, callback in
             reportManager.reportResponse(for: reportUrl) {
@@ -49,6 +51,8 @@ final class FogResolverManager {
         desiredMinPubkeyExpiry: UInt64,
         completion: @escaping (Result<FogResolver, ConnectionError>) -> Void
     ) {
+        logger.info("\(addresses.map { "\(redacting: $0)" }), " +
+            "desiredMinPubkeyExpiry: \(desiredMinPubkeyExpiry)")
         let fogInfos = addresses.compactMap { $0.fogInfo }
 
         let reportUrlsToFogInfos = Dictionary(grouping: fogInfos, by: { $0.reportUrl })

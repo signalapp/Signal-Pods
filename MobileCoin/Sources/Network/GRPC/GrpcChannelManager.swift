@@ -11,6 +11,10 @@ final class GrpcChannelManager {
     private let eventLoopGroup = PlatformSupport.makeEventLoopGroup(loopCount: 1)
     private var addressToChannel: [GrpcChannelConfig: GRPCChannel] = [:]
 
+    func channel(for config: ConnectionConfigProtocol) -> GRPCChannel {
+        channel(for: config.url, trustRoots: config.trustRoots)
+    }
+
     func channel(for url: MobileCoinUrlProtocol, trustRoots: [NIOSSLCertificate]? = nil)
         -> GRPCChannel
     {

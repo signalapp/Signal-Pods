@@ -33,20 +33,20 @@ final class FogRng {
     static func make(subaddressViewPrivateKey: RistrettoPrivate, fogRngKey: FogRngKey)
         -> Result<FogRng, FogRngError>
     {
-        subaddressViewPrivateKey.asMcBuffer { viewPrivateKeyPtr in
+        logger.info("fogRngKey(pubkey): \(fogRngKey.pubkey)")
+        return subaddressViewPrivateKey.asMcBuffer { viewPrivateKeyPtr in
             fogRngKey.pubkey.asMcBuffer { pubkeyPtr in
                 withMcError { errorPtr in
                     mc_fog_rng_create(viewPrivateKeyPtr, pubkeyPtr, fogRngKey.version, &errorPtr)
                 }.mapError {
                     switch $0.errorCode {
                     case .invalidInput:
-                        return .invalidKey($0.description)
+                        return .invalidKey("\(redacting: $0.description)")
                     case .unsupportedCryptoBoxVersion:
-                        return .unsupportedCryptoBoxVersion($0.description)
+                        return .unsupportedCryptoBoxVersion("\(redacting: $0.description)")
                     default:
                         // Safety: mc_fog_rng_create should not throw non-documented errors.
-                        logger.fatalError(
-                            "\(Self.self).\(#function): Unhandled LibMobileCoin error: \($0)")
+                        logger.fatalError("Unhandled LibMobileCoin error: \(redacting: $0)")
                     }
                 }.map { ptr in
                     FogRng(ptr)
@@ -57,19 +57,21 @@ final class FogRng {
 
     /// - Returns: `.failure` when the input is not deserializable.
     static func make(serializedData: Data) -> Result<FogRng, FogRngError> {
-        serializedData.asMcBuffer { dataPtr in
+        logger.info("serializedData: \(redacting: serializedData)")
+        return serializedData.asMcBuffer { dataPtr in
             withMcError { errorPtr in
                 mc_fog_rng_deserialize_proto(dataPtr, &errorPtr)
             }.mapError {
                 switch $0.errorCode {
                 case .invalidInput:
-                    return .invalidKey($0.description)
+                    logger.warning("invalid key: \(redacting: $0.description)")
+                    return .invalidKey("\(redacting: $0.description)")
                 case .unsupportedCryptoBoxVersion:
-                    return .unsupportedCryptoBoxVersion($0.description)
+                    logger.warning("unsupported crypto box version: \(redacting: $0.description)")
+                    return .unsupportedCryptoBoxVersion("\(redacting: $0.description)")
                 default:
                     // Safety: mc_fog_rng_deserialize_proto should not throw non-documented errors.
-                    logger.fatalError(
-                        "\(Self.self).\(#function): Unhandled LibMobileCoin error: \($0)")
+                    logger.fatalError("Unhandled LibMobileCoin error: \(redacting: $0)")
                 }
             }
         }.map { ptr in
@@ -81,6 +83,7 @@ final class FogRng {
     private let outputSize: Int
 
     private init(_ ptr: OpaquePointer) {
+        logger.info("")
         self.ptr = ptr
         self.outputSize = withMcInfallibleReturningOptional {
             let len = mc_fog_rng_get_output_len(ptr)
@@ -89,6 +92,7 @@ final class FogRng {
     }
 
     deinit {
+        logger.info("")
         mc_fog_rng_free(ptr)
     }
 
@@ -117,6 +121,7 @@ final class FogRng {
     }
 
     func outputs(count: Int) -> [Data] {
+        logger.info("\(count)")
         let rngCopy = clone()
         return (0..<count).map { _ in
             rngCopy.advance()
@@ -125,7 +130,8 @@ final class FogRng {
 
     @discardableResult
     func advance() -> Data {
-        Data(withFixedLengthMcMutableBufferInfallible: outputSize) { bufferPtr in
+        logger.info("")
+        return Data(withFixedLengthMcMutableBufferInfallible: outputSize) { bufferPtr in
             mc_fog_rng_advance(ptr, bufferPtr)
         }
     }

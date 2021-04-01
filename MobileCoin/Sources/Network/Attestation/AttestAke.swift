@@ -51,6 +51,7 @@ final class AttestAke {
         rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)? = nil,
         rngContext: Any? = nil
     ) -> Attest_AuthMessage {
+        logger.info("responderId: \(responderId)")
         var request = Attest_AuthMessage()
         request.data = authBeginRequestData(
             responderId: responderId,
@@ -64,6 +65,7 @@ final class AttestAke {
         rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)? = nil,
         rngContext: Any? = nil
     ) -> Data {
+        logger.info("responderId: \(responderId)")
         let ffi = FfiAttestAke()
         let requestData = ffi.authBeginRequestData(
             responderId: responderId,
@@ -77,7 +79,8 @@ final class AttestAke {
     func authEnd(authResponse: Attest_AuthMessage, attestationVerifier: AttestationVerifier)
         -> Result<Cipher, AttestAkeError>
     {
-        authEnd(
+        logger.info("")
+        return authEnd(
             authResponseData: authResponse.data,
             attestationVerifier: attestationVerifier)
     }
@@ -86,8 +89,13 @@ final class AttestAke {
     func authEnd(authResponseData: Data, attestationVerifier: AttestationVerifier)
         -> Result<Cipher, AttestAkeError>
     {
+        logger.info("authResponseData: \(redacting: authResponseData)")
         guard case .authPending(let attestAke) = state else {
-            return .failure(.invalidInput("\(Self.self).\(#function): Error: authEnd can only be " +
+            logger.info("""
+                failure - Error: authEnd can only be called \
+                when there is an auth pending.
+                """)
+            return .failure(.invalidInput("Error: authEnd can only be " +
                 "called when there is an auth pending."))
         }
 
@@ -138,6 +146,7 @@ extension AttestAke {
         func encryptMessage(aad: Data, plaintext: Data)
             -> Result<Attest_Message, AeadError>
         {
+            logger.info("aad: \(redacting: aad), plaintext: \(redacting: plaintext)")
             var message = Attest_Message()
             message.aad = aad
             message.channelID = binding
@@ -148,15 +157,18 @@ extension AttestAke {
         }
 
         func encrypt(aad: Data, plaintext: Data) -> Result<Data, AeadError> {
-            ffi.encrypt(aad: aad, plaintext: plaintext)
+            logger.info("aad: \(redacting: aad), plaintext: \(redacting: plaintext)")
+            return ffi.encrypt(aad: aad, plaintext: plaintext)
         }
 
         func decryptMessage(_ message: Attest_Message) -> Result<Data, AeadError> {
-            decrypt(aad: message.aad, ciphertext: message.data)
+            logger.info("")
+            return decrypt(aad: message.aad, ciphertext: message.data)
         }
 
         func decrypt(aad: Data, ciphertext: Data) -> Result<Data, AeadError> {
-            ffi.decrypt(aad: aad, ciphertext: ciphertext)
+            logger.info("")
+            return ffi.decrypt(aad: aad, ciphertext: ciphertext)
         }
     }
 }
@@ -173,11 +185,13 @@ private final class FfiAttestAke {
     private let ptr: OpaquePointer
 
     init() {
+        logger.info("")
         // Safety: mc_attest_ake_create should never return nil.
         self.ptr = withMcInfallible(mc_attest_ake_create)
     }
 
     deinit {
+        logger.info("")
         mc_attest_ake_free(ptr)
     }
 
@@ -200,7 +214,8 @@ private final class FfiAttestAke {
         rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)? = nil,
         rngContext: Any? = nil
     ) -> Data {
-        withMcRngCallback(rng: rng, rngContext: rngContext) { rngCallbackPtr in
+        logger.info("responderId: \(responderId)")
+        return withMcRngCallback(rng: rng, rngContext: rngContext) { rngCallbackPtr in
             Data(withMcMutableBufferInfallible: { bufferPtr in
                 mc_attest_ake_get_auth_request(ptr, responderId, rngCallbackPtr, bufferPtr)
             })
@@ -210,7 +225,8 @@ private final class FfiAttestAke {
     func authEnd(authResponseData: Data, attestationVerifier: AttestationVerifier)
         -> Result<(), AttestAkeError>
     {
-        authResponseData.asMcBuffer { bytesPtr in
+        logger.info("authResponseData: \(redacting: authResponseData)")
+        return authResponseData.asMcBuffer { bytesPtr in
             attestationVerifier.withUnsafeOpaquePointer { attestationVerifierPtr in
                 withMcError { errorPtr in
                     mc_attest_ake_process_auth_response(
@@ -221,14 +237,13 @@ private final class FfiAttestAke {
                 }.mapError {
                     switch $0.errorCode {
                     case .invalidInput:
-                        return .invalidInput($0.description)
+                        return .invalidInput("\(redacting: $0.description)")
                     case .attestationVerificationFailed:
-                        return .attestationVerificationFailed($0.description)
+                        return .attestationVerificationFailed("\(redacting: $0.description)")
                     default:
                         // Safety: mc_attest_ake_process_auth_response should not throw
                         // non-documented errors.
-                        logger.fatalError(
-                            "\(Self.self).\(#function): Unhandled LibMobileCoin error: \($0)")
+                        logger.fatalError("Unhandled LibMobileCoin error: \(redacting: $0)")
                     }
                 }
             }
@@ -236,20 +251,20 @@ private final class FfiAttestAke {
     }
 
     func encrypt(aad: Data, plaintext: Data) -> Result<Data, AeadError> {
-        aad.asMcBuffer { aadPtr in
+        logger.info("")
+        return aad.asMcBuffer { aadPtr in
             plaintext.asMcBuffer { plaintextPtr in
                 Data.make(withMcMutableBuffer: { ciphertextOutPtr, errorPtr in
                     mc_attest_ake_encrypt(ptr, aadPtr, plaintextPtr, ciphertextOutPtr, &errorPtr)
                 }).mapError {
                     switch $0.errorCode {
                     case .aead:
-                        return .aead($0.description)
+                        return .aead("\(redacting: $0.description)")
                     case .cipher:
-                        return .cipher($0.description)
+                        return .cipher("\(redacting: $0.description)")
                     default:
                         // Safety: mc_attest_ake_encrypt should not throw non-documented errors.
-                        logger.fatalError(
-                            "\(Self.self).\(#function): Unhandled LibMobileCoin error: \($0)")
+                        logger.fatalError("Unhandled LibMobileCoin error: \(redacting: $0)")
                     }
                 }
             }
@@ -257,7 +272,8 @@ private final class FfiAttestAke {
     }
 
     func decrypt(aad: Data, ciphertext: Data) -> Result<Data, AeadError> {
-        aad.asMcBuffer { aadPtr in
+        logger.info("")
+        return aad.asMcBuffer { aadPtr in
             ciphertext.asMcBuffer { ciphertextPtr in
                 Data.make(withEstimatedLengthMcMutableBuffer: ciphertext.count)
                 { plaintextOutPtr, errorPtr in
@@ -265,13 +281,12 @@ private final class FfiAttestAke {
                 }.mapError {
                     switch $0.errorCode {
                     case .aead:
-                        return .aead($0.description)
+                        return .aead("\(redacting: $0.description)")
                     case .cipher:
-                        return .cipher($0.description)
+                        return .cipher("\(redacting: $0.description)")
                     default:
                         // Safety: mc_attest_ake_decrypt should not throw non-documented errors.
-                        logger.fatalError(
-                            "\(Self.self).\(#function): Unhandled LibMobileCoin error: \($0)")
+                        logger.fatalError("Unhandled LibMobileCoin error: \(redacting: $0)")
                     }
                 }
             }

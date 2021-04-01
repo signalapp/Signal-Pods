@@ -14,7 +14,8 @@ enum TxOutUtils {
         publicKey: RistrettoPublic,
         viewPrivateKey: RistrettoPrivate
     ) -> Bool {
-        commitment.asMcBuffer { commitmentPtr in
+        logger.info("")
+        return commitment.asMcBuffer { commitmentPtr in
             var mcAmount = McTxOutAmount(commitment: commitmentPtr, masked_value: maskedValue)
             return publicKey.asMcBuffer { publicKeyPtr in
                 viewPrivateKey.asMcBuffer { viewPrivateKeyPtr in
@@ -40,7 +41,8 @@ enum TxOutUtils {
         viewPrivateKey: RistrettoPrivate,
         subaddressSpendPrivateKey: RistrettoPrivate
     ) -> Bool {
-        targetKey.asMcBuffer { targetKeyBufferPtr in
+        logger.info("")
+        return targetKey.asMcBuffer { targetKeyBufferPtr in
             publicKey.asMcBuffer { publicKeyBufferPtr in
                 viewPrivateKey.asMcBuffer { viewKeyBufferPtr in
                     subaddressSpendPrivateKey.asMcBuffer { spendPrivateKeyBufferPtr in
@@ -67,7 +69,8 @@ enum TxOutUtils {
         publicKey: RistrettoPublic,
         viewPrivateKey: RistrettoPrivate
     ) -> RistrettoPublic {
-        targetKey.asMcBuffer { targetKeyBufferPtr in
+        logger.info("")
+        return targetKey.asMcBuffer { targetKeyBufferPtr in
             publicKey.asMcBuffer { publicKeyBufferPtr in
                 viewPrivateKey.asMcBuffer { viewPrivateKeyPtr in
                     switch Data32.make(withMcMutableBuffer: { bufferPtr, errorPtr in
@@ -89,11 +92,11 @@ enum TxOutUtils {
                             // Safety: This condition indicates a programming error and can only
                             // happen if arguments to mc_tx_out_get_subaddress_spend_public_key are
                             // supplied incorrectly.
-                            logger.fatalError("\(Self.self).\(#function) error: \(error)")
+                            logger.fatalError("error: \(error)")
                         default:
                             // Safety: mc_fog_resolver_add_report_response should not throw
                             // non-documented errors.
-                            logger.fatalError("\(Self.self).\(#function): Unhandled " +
+                            logger.fatalError("Unhandled " +
                                 "LibMobileCoin error: \(error)")
                         }
                     }
@@ -110,7 +113,8 @@ enum TxOutUtils {
         publicKey: RistrettoPublic,
         viewPrivateKey: RistrettoPrivate
     ) -> UInt64? {
-        commitment.asMcBuffer { commitmentPtr in
+        logger.info("")
+        return commitment.asMcBuffer { commitmentPtr in
             var mcAmount = McTxOutAmount(commitment: commitmentPtr, masked_value: maskedValue)
             return publicKey.asMcBuffer { publicKeyPtr in
                 viewPrivateKey.asMcBuffer { viewKeyBufferPtr in
@@ -136,10 +140,10 @@ enum TxOutUtils {
                         case .invalidInput:
                             // Safety: This condition indicates a programming error and can only
                             // happen if arguments to mc_tx_out_get_value are supplied incorrectly.
-                            logger.fatalError("\(Self.self).\(#function) error: \(error)")
+                            logger.fatalError("error: \(error)")
                         default:
                             // Safety: mc_tx_out_get_value should not throw non-documented errors.
-                            logger.fatalError("\(Self.self).\(#function): Unhandled " +
+                            logger.fatalError("Unhandled " +
                                 "LibMobileCoin error: \(error)")
                         }
                     }
@@ -157,7 +161,8 @@ enum TxOutUtils {
         viewPrivateKey: RistrettoPrivate,
         subaddressSpendPrivateKey: RistrettoPrivate
     ) -> KeyImage? {
-        targetKey.asMcBuffer { targetKeyPtr in
+        logger.info("")
+        return targetKey.asMcBuffer { targetKeyPtr in
             publicKey.asMcBuffer { publicKeyPtr in
                 viewPrivateKey.asMcBuffer { viewKeyBufferPtr in
                     subaddressSpendPrivateKey.asMcBuffer { spendKeyBufferPtr in
@@ -185,11 +190,11 @@ enum TxOutUtils {
                                 // Safety: This condition indicates a programming error and can only
                                 // happen if arguments to mc_tx_out_get_key_image are supplied
                                 // incorrectly.
-                                logger.fatalError("\(Self.self).\(#function) error: \(error)")
+                                logger.fatalError("error: \(error)")
                             default:
                                 // Safety: mc_tx_out_get_key_image should not throw non-documented
                                 // errors.
-                                logger.fatalError("\(Self.self).\(#function): Unhandled " +
+                                logger.fatalError("Unhandled " +
                                     "LibMobileCoin error: \(error)")
                             }
                         }
@@ -204,7 +209,8 @@ enum TxOutUtils {
         confirmationNumber: TxOutConfirmationNumber,
         viewPrivateKey: RistrettoPrivate
     ) -> Bool {
-        publicKey.asMcBuffer { publicKeyPtr in
+        logger.info("")
+        return publicKey.asMcBuffer { publicKeyPtr in
             confirmationNumber.asMcBuffer { confirmationNumberPtr in
                 viewPrivateKey.asMcBuffer { viewKeyBufferPtr in
                     var result = false

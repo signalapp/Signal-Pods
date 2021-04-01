@@ -23,6 +23,7 @@ final class FogResolver {
     }
 
     private init(attestation: Attestation) {
+        logger.info("attestation: \(attestation)")
         let verifier = AttestationVerifier(attestation: attestation)
         // Safety: mc_fog_resolver_create should never return nil.
         self.ptr = verifier.withUnsafeOpaquePointer { verifierPtr in
@@ -33,21 +34,23 @@ final class FogResolver {
     }
 
     deinit {
+        logger.info("")
         mc_fog_resolver_free(ptr)
     }
 
     func withUnsafeOpaquePointer<R>(_ body: (OpaquePointer) throws -> R) rethrows -> R {
-        try body(ptr)
+        logger.info("")
+        return try body(ptr)
     }
 
     private func addReportResponse(reportUrl: FogUrl, reportResponse: Report_ReportResponse) {
+        logger.info("")
         let serializedReportResponse: Data
         do {
             serializedReportResponse = try reportResponse.serializedData()
         } catch {
             // Safety: Protobuf binary serialization is no fail when not using proto2 or `Any`.
-            logger.fatalError(
-                "Error: \(Self.self).\(#function): Protobuf serialization failed: \(error)")
+            logger.fatalError("Protobuf serialization failed: \(redacting: error)")
         }
 
         serializedReportResponse.asMcBuffer { reportResponsePtr in
@@ -66,12 +69,11 @@ final class FogResolver {
                     // Safety: mc_fog_resolver_add_report_response shouldn't fail deserialization
                     // since we just serialized it and roundtrip serialization should always
                     // succeed.
-                    logger.fatalError("\(Self.self).\(#function): \(error)")
+                    logger.fatalError("\(error)")
                 default:
                     // Safety: mc_fog_resolver_add_report_response should not throw non-documented
                     // errors.
-                    logger.fatalError(
-                        "\(Self.self).\(#function): Unhandled LibMobileCoin error: \(error)")
+                    logger.fatalError("Unhandled LibMobileCoin error: \(redacting: error)")
                 }
             }
         }

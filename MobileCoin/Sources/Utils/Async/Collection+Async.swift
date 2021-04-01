@@ -40,7 +40,7 @@ extension Collection {
                         let returnedResults = results.compactMap { $0 }
                         guard returnedResults.count == taskCount else {
                             if OSAtomicIncrement32(&callbackFailureInvoked) == 1 {
-                                logger.fatalError("Error: \(Self.self).\(#function): " +
+                                logger.fatalError("Error: " +
                                     "returnedResults.count (\(returnedResults.count)) != " +
                                     "taskCount (\(taskCount)), results: \(results)")
                             }

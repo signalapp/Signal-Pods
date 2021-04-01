@@ -12,6 +12,7 @@ extension Data32 {
         withMcMutableBuffer body:
             (UnsafeMutablePointer<McMutableBuffer>, inout UnsafeMutablePointer<McError>?) -> Bool
     ) -> Result<Data32, LibMobileCoinError> {
+        logger.info("")
         var bytes = Data32()
         return bytes.asMcMutableBuffer { bufferPtr in
             withMcError { errorPtr in
@@ -32,7 +33,7 @@ extension Data32 {
         }.map { numBytesReturned in
             guard numBytesReturned == 32 else {
                 // This condition indicates a programming error.
-                logger.fatalError("Error: \(Self.self).\(#function): LibMobileCoin function " +
+                logger.fatalError("Error: LibMobileCoin function " +
                     "returned unexpected byte count (\(numBytesReturned)). Expected 32.")
             }
             return bytes
@@ -44,7 +45,7 @@ extension Data32 {
         asMcMutableBuffer { bufferPtr in
             guard body(bufferPtr) else {
                 // This condition indicates a programming error.
-                logger.fatalError("Error: \(Self.self).\(#function): Infallible LibMobileCoin " +
+                logger.fatalError("Error: Infallible LibMobileCoin " +
                     "function failed.")
             }
         }
@@ -57,12 +58,12 @@ extension Data32 {
         }
         guard numBytesReturned > 0 else {
             // This condition indicates a programming error.
-            logger.fatalError("Error: \(Self.self).\(#function): Infallible LibMobileCoin " +
+            logger.fatalError("Error: Infallible LibMobileCoin " +
                 "function failed.")
         }
         guard numBytesReturned == 32 else {
             // This condition indicates a programming error.
-            logger.fatalError("Error: \(Self.self).\(#function): LibMobileCoin function returned " +
+            logger.fatalError("Error: LibMobileCoin function returned " +
                 "unexpected byte count (\(numBytesReturned)). Expected 32.")
         }
     }

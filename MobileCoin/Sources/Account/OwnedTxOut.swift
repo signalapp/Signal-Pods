@@ -24,6 +24,7 @@ public struct OwnedTxOut {
         receivedBlock: BlockMetadata,
         spentBlock: BlockMetadata?
     ) {
+        logger.info("")
         self.publicKeyTyped = knownTxOut.publicKey
         self.value = knownTxOut.value
         self.keyImageTyped = knownTxOut.keyImage

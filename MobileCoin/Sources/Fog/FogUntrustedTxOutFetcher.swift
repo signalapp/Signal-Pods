@@ -9,6 +9,7 @@ struct FogUntrustedTxOutFetcher {
     private let fogUntrustedTxOutService: FogUntrustedTxOutService
 
     init(fogUntrustedTxOutService: FogUntrustedTxOutService) {
+        logger.info("")
         self.fogUntrustedTxOutService = fogUntrustedTxOutService
     }
 
@@ -18,11 +19,14 @@ struct FogUntrustedTxOutFetcher {
             Result<(result: FogLedger_TxOutResult, blockCount: UInt64), ConnectionError>
         ) -> Void
     ) {
+        logger.info("outputPublicKey: \(redacting: outputPublicKey)")
         getTxOuts(outputPublicKeys: [outputPublicKey]) {
             completion($0.flatMap { results, blockCount in
                 guard let result =
                         results.first(where: { $0.txOutPubkey.data == outputPublicKey.data })
                 else {
+                    logger.info("failure - Fog UntrustedTxOut service failed to " +
+                        "return the requested TxOut: \(redacting: results)")
                     return .failure(.invalidServerResponse(
                         "Fog UntrustedTxOut service failed to return the requested TxOut. " +
                         "\(results)"))
@@ -39,6 +43,7 @@ struct FogUntrustedTxOutFetcher {
                 Result<(results: [FogLedger_TxOutResult], blockCount: UInt64), ConnectionError>
             ) -> Void
     ) {
+        logger.info("outputPublicKeys: \(redacting: outputPublicKeys)")
         var request = FogLedger_TxOutRequest()
         request.txOutPubkeys = outputPublicKeys.map { External_CompressedRistretto($0) }
         fogUntrustedTxOutService.getTxOuts(request: request) {
@@ -49,6 +54,8 @@ struct FogUntrustedTxOutFetcher {
 
                 let outputPublicKeys = outputPublicKeys.map { $0.data }
                 guard let results = publicKeyToResult[outputPublicKeys] else {
+                    logger.info("failure - Fog UntrustedTxOut service failed to " +
+                        "return the requested TxOuts: \(redacting: response.results)")
                     return .failure(.invalidServerResponse(
                         "Fog UntrustedTxOut service failed to return the requested TxOuts. " +
                         "\(response)"))

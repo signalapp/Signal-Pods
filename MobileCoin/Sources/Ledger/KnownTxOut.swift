@@ -10,6 +10,7 @@ struct KnownTxOut: TxOutProtocol {
     let keyImage: KeyImage
 
     init?(_ ledgerTxOut: LedgerTxOut, accountKey: AccountKey) {
+        logger.info("")
         guard let value = ledgerTxOut.value(accountKey: accountKey),
               let keyImage = ledgerTxOut.keyImage(accountKey: accountKey)
         else {

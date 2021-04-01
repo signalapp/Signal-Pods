@@ -14,7 +14,8 @@ public struct Attestation {
         allowedConfigAdvisories: [String] = [],
         allowedHardeningAdvisories: [String] = []
     ) -> Result<Attestation, InvalidInputError> {
-        MrSigner.make(
+        logger.info("")
+        return MrSigner.make(
             mrSigner: mrSigner,
             productId: productId,
             minimumSecurityVersion: minimumSecurityVersion,
@@ -29,10 +30,12 @@ public struct Attestation {
     let mrSigners: [MrSigner]
 
     public init(_ mrSigner: MrSigner) {
+        logger.info("")
         self.init(mrEnclaves: [], mrSigners: [mrSigner])
     }
 
     public init(mrEnclaves: [MrEnclave] = [], mrSigners: [MrSigner] = []) {
+        logger.info("")
         self.mrEnclaves = mrEnclaves
         self.mrSigners = mrSigners
     }
@@ -44,6 +47,7 @@ public struct Attestation {
         allowedConfigAdvisories: [String] = [],
         allowedHardeningAdvisories: [String] = []
     ) {
+        logger.info("")
         let mrSigner = MrSigner(
             mrSigner: mrSigner,
             productId: productId,
@@ -85,8 +89,13 @@ extension Attestation {
             allowedConfigAdvisories: [String] = [],
             allowedHardeningAdvisories: [String] = []
         ) -> Result<MrEnclave, InvalidInputError> {
+            logger.info("")
             guard let mrEnclave32 = Data32(mrEnclave) else {
-                return .failure(InvalidInputError("\(Self.self).\(#function): mrEnclave must be " +
+                logger.info("""
+                    failure - mrEnclave must be 32 bytes in length. \
+                    \(mrEnclave.count) != 32
+                    """)
+                return .failure(InvalidInputError("mrEnclave must be " +
                     "32 bytes in length. \(mrEnclave.count) != 32"))
             }
             return .success(MrEnclave(
@@ -100,6 +109,7 @@ extension Attestation {
             allowedConfigAdvisories: [String] = [],
             allowedHardeningAdvisories: [String] = []
         ) {
+            logger.info("")
             self.mrEnclave = mrEnclave
             self.allowedConfigAdvisories = allowedConfigAdvisories
             self.allowedHardeningAdvisories = allowedHardeningAdvisories
@@ -136,8 +146,13 @@ extension Attestation {
             allowedConfigAdvisories: [String] = [],
             allowedHardeningAdvisories: [String] = []
         ) -> Result<MrSigner, InvalidInputError> {
+            logger.info("")
             guard let mrSigner32 = Data32(mrSigner) else {
-                return .failure(InvalidInputError("\(Self.self).\(#function): mrSigner must be " +
+                logger.info("""
+                    failure - mrSigner must be 32 bytes in length. \
+                    \(mrSigner.count) != 32
+                    """)
+                return .failure(InvalidInputError("mrSigner must be " +
                     "32 bytes in length. \(mrSigner.count) != 32"))
             }
 
@@ -156,6 +171,7 @@ extension Attestation {
             allowedConfigAdvisories: [String] = [],
             allowedHardeningAdvisories: [String] = []
         ) {
+            logger.info("")
             self.mrSigner = mrSigner
             self.productId = productId
             self.minimumSecurityVersion = minimumSecurityVersion

@@ -8,39 +8,23 @@ import Foundation
 import LibMobileCoin
 
 public struct AccountKey {
-    public static func make(
-        rootEntropy: Data,
-        fogReportUrl: String,
-        fogReportId: String,
-        fogAuthoritySpki: Data
-    ) -> Result<AccountKey, InvalidInputError> {
-        guard let rootEntropy = Data32(rootEntropy) else {
-            return .failure(InvalidInputError("rootEntropy must be 32 bytes in length"))
-        }
-
-        return FogInfo.make(
-            reportUrl: fogReportUrl,
-            reportId: fogReportId,
-            authoritySpki: fogAuthoritySpki
-        ).map { fogInfo in
-            AccountKey(rootEntropy: rootEntropy, fogInfo: fogInfo)
-        }
-    }
-
     static func make(
-        rootEntropy: Data32,
+        viewPrivateKey: RistrettoPrivate,
+        spendPrivateKey: RistrettoPrivate,
         fogReportUrl: String,
         fogReportId: String,
         fogAuthoritySpki: Data,
         subaddressIndex: UInt64 = McConstants.DEFAULT_SUBADDRESS_INDEX
     ) -> Result<AccountKey, InvalidInputError> {
-        FogInfo.make(
+        logger.info("")
+        return FogInfo.make(
             reportUrl: fogReportUrl,
             reportId: fogReportId,
             authoritySpki: fogAuthoritySpki
         ).map { fogInfo in
             AccountKey(
-                rootEntropy: rootEntropy,
+                viewPrivateKey: viewPrivateKey,
+                spendPrivateKey: spendPrivateKey,
                 fogInfo: fogInfo,
                 subaddressIndex: subaddressIndex)
         }
@@ -54,25 +38,12 @@ public struct AccountKey {
     public let publicAddress: PublicAddress
 
     init(
-        rootEntropy: Data32,
-        fogInfo: FogInfo? = nil,
-        subaddressIndex: UInt64 = McConstants.DEFAULT_SUBADDRESS_INDEX
-    ) {
-        let (viewPrivateKey, spendPrivateKey) = AccountKeyUtils.privateKeys(
-            fromRootEntropy: rootEntropy)
-        self.init(
-            viewPrivateKey: viewPrivateKey,
-            spendPrivateKey: spendPrivateKey,
-            fogInfo: fogInfo,
-            subaddressIndex: subaddressIndex)
-    }
-
-    init(
         viewPrivateKey: RistrettoPrivate,
         spendPrivateKey: RistrettoPrivate,
         fogInfo: FogInfo? = nil,
         subaddressIndex: UInt64 = McConstants.DEFAULT_SUBADDRESS_INDEX
     ) {
+        logger.info("")
         self.viewPrivateKey = viewPrivateKey
         self.spendPrivateKey = spendPrivateKey
         self.fogInfo = fogInfo
@@ -86,6 +57,7 @@ public struct AccountKey {
 
     /// - Returns: `nil` when the input is not deserializable.
     public init?(serializedData: Data) {
+        logger.info("")
         guard let proto = try? External_AccountKey(serializedData: serializedData) else {
             return nil
         }
@@ -98,8 +70,7 @@ public struct AccountKey {
             return try proto.serializedData()
         } catch {
             // Safety: Protobuf binary serialization is no fail when not using proto2 or `Any`.
-            logger.fatalError(
-                "Error: \(Self.self).\(#function): Protobuf serialization failed: \(error)")
+            logger.fatalError("Protobuf serialization failed: \(redacting: error)")
         }
     }
 
@@ -133,6 +104,7 @@ extension AccountKey {
         _ proto: External_AccountKey,
         subaddressIndex: UInt64 = McConstants.DEFAULT_SUBADDRESS_INDEX
     ) {
+        logger.info("")
         guard let viewPrivateKey = RistrettoPrivate(proto.viewPrivateKey.data),
               let spendPrivateKey = RistrettoPrivate(proto.spendPrivateKey.data)
         else {
@@ -163,6 +135,7 @@ extension AccountKey {
 
 extension External_AccountKey {
     init(_ accountKey: AccountKey) {
+        logger.info("")
         self.init()
         self.viewPrivateKey = External_RistrettoPrivate(accountKey.viewPrivateKey)
         self.spendPrivateKey = External_RistrettoPrivate(accountKey.spendPrivateKey)
@@ -199,6 +172,7 @@ extension AccountKey {
             reportId: String,
             authoritySpki: Data
         ) {
+            logger.info("")
             self.reportUrlString = reportUrlString
             self.reportUrl = reportUrl
             self.reportId = reportId
@@ -214,19 +188,19 @@ struct AccountKeyWithFog {
     let accountKey: AccountKey
 
     init?(accountKey: AccountKey) {
+        logger.info("\(redacting: accountKey.publicAddress)")
+
         guard accountKey.fogInfo != nil else {
             return nil
         }
-
         self.accountKey = accountKey
     }
 
     var fogInfo: AccountKey.FogInfo {
         guard let fogInfo = accountKey.fogInfo else {
             // Safety: accountKey is guaranteed to have fogInfo.
-            logger.fatalError("\(Self.self).\(#function): accountKey doesn't have fogInfo.")
+            logger.fatalError("accountKey doesn't have fogInfo")
         }
-
         return fogInfo
     }
 }

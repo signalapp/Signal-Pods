@@ -10,6 +10,7 @@ public enum ReceiptStatus {
     case failed
 
     init(_ receivedStatus: Receipt.ReceivedStatus) {
+        logger.info("")
         switch receivedStatus {
         case .notReceived:
             self = .unknown

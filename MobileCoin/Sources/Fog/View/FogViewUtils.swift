@@ -14,13 +14,13 @@ enum FogViewUtils {
         rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)?,
         rngContext: Any?
     ) -> Result<Data, InvalidInputError> {
+        logger.info("")
         let plaintext: Data
         do {
             plaintext = try txOutRecord.serializedData()
         } catch {
             // Safety: Protobuf binary serialization is no fail when not using proto2 or `Any`.
-            logger.fatalError(
-                "Error: \(Self.self).\(#function): Protobuf serialization failed: \(error)")
+            logger.fatalError("Protobuf serialization failed: \(redacting: error)")
         }
         return VersionedCryptoBox.encrypt(
             plaintext: plaintext,
@@ -33,7 +33,8 @@ enum FogViewUtils {
         ciphertext: Data,
         accountKey: AccountKey
     ) -> Result<FogView_TxOutRecord, VersionedCryptoBoxError> {
-        VersionedCryptoBox.decrypt(
+        logger.info("")
+        return VersionedCryptoBox.decrypt(
             ciphertext: ciphertext,
             privateKey: accountKey.subaddressViewPrivateKey
         ).flatMap { decrypted in

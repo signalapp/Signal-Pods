@@ -12,6 +12,7 @@ final class FogViewKeyScanner {
     private let fogBlockService: FogBlockService
 
     init(accountKey: AccountKey, fogBlockService: FogBlockService) {
+        logger.info("")
         self.accountKey = accountKey
         self.fogBlockService = fogBlockService
     }
@@ -20,16 +21,16 @@ final class FogViewKeyScanner {
         blockRanges: [Range<UInt64>],
         completion: @escaping (Result<[KnownTxOut], ConnectionError>) -> Void
     ) {
-        print("view key scanning blocks: " +
-            blockRanges.map { "[\($0.lowerBound), \($0.upperBound))" }.joined(separator: ", "))
+        logger.info("")
         fetchBlocksTxOuts(ranges: blockRanges) {
             completion($0.map { blocksTxOuts in
-                print("Scanning \(blockRanges.map { $0.count }.reduce(0, +)) missed blocks " +
-                    "containing \(blocksTxOuts.count) TxOuts")
+                logger.info(
+                    "\(blockRanges.map { $0.count }.reduce(0, +)) missed " +
+                        "blocks containing \(blocksTxOuts.count) TxOuts")
                 let foundTxOuts = blocksTxOuts.compactMap {
                     KnownTxOut($0, accountKey: self.accountKey)
                 }
-                print("Found \(foundTxOuts.count) missed TxOuts")
+                logger.info(": Found \(redacting: foundTxOuts.count) missed TxOuts")
                 return foundTxOuts
             })
         }
@@ -48,9 +49,12 @@ final class FogViewKeyScanner {
                         responseBlock.globalTxoCount - UInt64(responseBlock.outputs.count)
                     return responseBlock.outputs.enumerated().map { outputIndex, output in
                         guard let partialTxOut = PartialTxOut(output) else {
+                            logger.info("failure - Fog Block service returned " +
+                                            "invalid output: \(output)")
                             return .failure(.invalidServerResponse(
                                 "Fog Block service returned invalid output: \(output)"))
                         }
+
                         return .success(LedgerTxOut(
                             partialTxOut,
                             globalIndex: globalIndexStart + UInt64(outputIndex),

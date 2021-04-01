@@ -14,7 +14,7 @@ extension DataConvertible {
             guard let bufferPtr = ptr.baseAddress else {
                 // This indicates a programming error. Pointer returned from withUnsafeBytes
                 // shouldn't have a nil baseAddress.
-                logger.fatalError("Error: \(#function): ptr.baseAddress == nil.")
+                logger.fatalError("ptr.baseAddress == nil.")
             }
             var buffer = McBuffer(buffer: bufferPtr, len: ptr.count)
             return try body(&buffer)
@@ -31,7 +31,7 @@ extension MutableData {
             guard let bufferPtr = ptr.baseAddress else {
                 // This indicates a programming error. Pointer returned from withUnsafeMutableBytes
                 // shouldn't have a nil baseAddress.
-                logger.fatalError("Error: \(#function): ptr.baseAddress == nil.")
+                logger.fatalError("ptr.baseAddress == nil.")
             }
             var buffer = McMutableBuffer(buffer: bufferPtr, len: ptr.count)
             return try body(&buffer)

@@ -12,6 +12,7 @@ struct FogKeyImageChecker {
     private let fogKeyImageService: FogKeyImageService
 
     init(fogKeyImageService: FogKeyImageService, targetQueue: DispatchQueue?) {
+        logger.info("")
         self.serialQueue = DispatchQueue(label: "com.mobilecoin.\(Self.self)", target: targetQueue)
         self.fogKeyImageService = fogKeyImageService
     }
@@ -21,6 +22,7 @@ struct FogKeyImageChecker {
         nextKeyImageQueryBlockIndex: UInt64 = 0,
         completion: @escaping (Result<KeyImage.SpentStatus, ConnectionError>) -> Void
     ) {
+        logger.info("")
         checkKeyImages(
             keyImageQueries: [(keyImage, nextKeyImageQueryBlockIndex: nextKeyImageQueryBlockIndex)]
         ) {
@@ -39,6 +41,7 @@ struct FogKeyImageChecker {
         maxKeyImagesPerQuery: Int,
         completion: @escaping (Result<[KeyImage.SpentStatus], ConnectionError>) -> Void
     ) {
+        logger.info("")
         checkKeyImages(
             keyImageQueries: keyImageQueries.map { ($0, nextKeyImageQueryBlockIndex: 0) },
             maxKeyImagesPerQuery: maxKeyImagesPerQuery,
@@ -50,6 +53,7 @@ struct FogKeyImageChecker {
         maxKeyImagesPerQuery: Int,
         completion: @escaping (Result<[KeyImage.SpentStatus], ConnectionError>) -> Void
     ) {
+        logger.info("")
         let queryArrays = keyImageQueries.chunked(maxLength: maxKeyImagesPerQuery).map { Array($0) }
         queryArrays.mapAsync({ chunk, callback in
             checkKeyImages(keyImageQueries: chunk, completion: callback)
@@ -62,6 +66,7 @@ struct FogKeyImageChecker {
         keyImageQueries: [KeyImage],
         completion: @escaping (Result<[KeyImage.SpentStatus], ConnectionError>) -> Void
     ) {
+        logger.info("")
         checkKeyImages(
             keyImageQueries: keyImageQueries.map { ($0, nextKeyImageQueryBlockIndex: 0) },
             completion: completion)
@@ -71,6 +76,7 @@ struct FogKeyImageChecker {
         keyImageQueries: [(KeyImage, nextKeyImageQueryBlockIndex: UInt64)],
         completion: @escaping (Result<[KeyImage.SpentStatus], ConnectionError>) -> Void
     ) {
+        logger.info("")
         var request = FogLedger_CheckKeyImagesRequest()
         request.queries = keyImageQueries.map {
             var query = FogLedger_KeyImageQuery()

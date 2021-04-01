@@ -7,7 +7,8 @@ import LibMobileCoin
 
 enum CryptoUtils {
     static func ristrettoPrivateValidate(_ bytes: Data) -> Bool {
-        bytes.asMcBuffer { bytesPtr in
+        logger.info("")
+        return bytes.asMcBuffer { bytesPtr in
             var valid = false
             withMcInfallible {
                 mc_ristretto_private_validate(bytesPtr, &valid)
@@ -17,7 +18,8 @@ enum CryptoUtils {
     }
 
     static func ristrettoPublicValidate(_ bytes: Data) -> Bool {
-        bytes.asMcBuffer { bytesPtr in
+        logger.info("")
+        return bytes.asMcBuffer { bytesPtr in
             var valid = false
             withMcInfallible {
                 mc_ristretto_public_validate(bytesPtr, &valid)

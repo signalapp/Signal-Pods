@@ -5,11 +5,56 @@
 import Foundation
 
 extension AccountKey {
-    public static func rootEntropy(fromMnemonic mnemonic: String, accountIndex: UInt32)
-        -> Result<Data, InvalidInputError>
-    {
-        Bip39Utils.seed(fromMnemonic: mnemonic).map { seed in
-            Bip44Utils.ed25519PrivateKey(fromSeed: seed, accountIndex: accountIndex).data
+    public static func make(
+        entropy: Data,
+        fogReportUrl: String,
+        fogReportId: String,
+        fogAuthoritySpki: Data,
+        accountIndex: UInt32 = 0
+    ) -> Result<AccountKey, InvalidInputError> {
+        logger.info("")
+        return Bip39Utils.mnemonic(fromEntropy: entropy).flatMap { mnemonic in
+            make(
+                mnemonic: mnemonic.phrase,
+                fogReportUrl: fogReportUrl,
+                fogReportId: fogReportId,
+                fogAuthoritySpki: fogAuthoritySpki,
+                accountIndex: accountIndex)
         }
+    }
+
+    public static func make(
+        mnemonic: String,
+        fogReportUrl: String,
+        fogReportId: String,
+        fogAuthoritySpki: Data,
+        accountIndex: UInt32 = 0
+    ) -> Result<AccountKey, InvalidInputError> {
+        logger.info("")
+        return Slip10Utils.accountPrivateKeys(fromMnemonic: mnemonic, accountIndex: accountIndex)
+            .flatMap {
+                AccountKey.make(
+                    viewPrivateKey: $0.viewPrivateKey,
+                    spendPrivateKey: $0.spendPrivateKey,
+                    fogReportUrl: fogReportUrl,
+                    fogReportId: fogReportId,
+                    fogAuthoritySpki: fogAuthoritySpki)
+            }
+    }
+
+    init(
+        mnemonic: Mnemonic,
+        fogInfo: FogInfo? = nil,
+        accountIndex: UInt32 = 0,
+        subaddressIndex: UInt64 = McConstants.DEFAULT_SUBADDRESS_INDEX
+    ) {
+        logger.info("")
+        let (viewPrivateKey, spendPrivateKey) =
+            Slip10Utils.accountPrivateKeys(fromMnemonic: mnemonic, accountIndex: accountIndex)
+        self.init(
+            viewPrivateKey: viewPrivateKey,
+            spendPrivateKey: spendPrivateKey,
+            fogInfo: fogInfo,
+            subaddressIndex: subaddressIndex)
     }
 }

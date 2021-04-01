@@ -34,6 +34,7 @@ public struct Receipt {
         confirmationNumber: TxOutConfirmationNumber,
         tombstoneBlockIndex: UInt64
     ) {
+        logger.info("")
         self.txOutPublicKeyTyped = txOut.publicKey
         self.commitment = txOut.commitment
         self.maskedValue = txOut.maskedValue
@@ -43,6 +44,7 @@ public struct Receipt {
 
     /// - Returns: `nil` when the input is not deserializable.
     public init?(serializedData: Data) {
+        logger.info("")
         guard let proto = try? External_Receipt(serializedData: serializedData) else {
             return nil
         }
@@ -54,9 +56,8 @@ public struct Receipt {
         do {
             return try proto.serializedData()
         } catch {
-            // Safety: Protobuf binary serialization is no fail when not using proto2 or `Any`
-            logger.fatalError(
-                "Error: \(Self.self).\(#function): Protobuf serialization failed: \(error)")
+            // Safety: Protobuf binary serialization is no fail when not using proto2 or `Any`.
+            logger.fatalError("Protobuf serialization failed: \(redacting: error)")
         }
     }
 
@@ -66,25 +67,29 @@ public struct Receipt {
     }
 
     func matchesTxOut(_ txOut: TxOutProtocol) -> Bool {
-        txOutPublicKeyTyped == txOut.publicKey
+        logger.info("")
+        return txOutPublicKeyTyped == txOut.publicKey
             && commitment == txOut.commitment
             && maskedValue == txOut.maskedValue
     }
 
     func validateConfirmationNumber(accountKey: AccountKey) -> Bool {
-        TxOutUtils.validateConfirmationNumber(
+        logger.info("")
+        return TxOutUtils.validateConfirmationNumber(
             publicKey: txOutPublicKeyTyped,
             confirmationNumber: confirmationNumber,
             viewPrivateKey: accountKey.viewPrivateKey)
     }
 
     func unmaskValue(accountKey: AccountKey) -> Result<UInt64, InvalidInputError> {
+        logger.info("")
         guard let value = TxOutUtils.value(
             commitment: commitment,
             maskedValue: maskedValue,
             publicKey: txOutPublicKeyTyped,
             viewPrivateKey: accountKey.viewPrivateKey)
         else {
+            logger.info("")
             return .failure(InvalidInputError("accountKey does not own Receipt"))
         }
         return .success(value)
@@ -99,6 +104,7 @@ public struct Receipt {
     /// subaddress of the `accountKey`, but not which one.
     @discardableResult
     public func validateAndUnmaskValue(accountKey: AccountKey) -> UInt64? {
+        logger.info("")
         guard validateConfirmationNumber(accountKey: accountKey) else {
             return nil
         }
@@ -140,8 +146,12 @@ extension Receipt {
               let commitment = Data32(proto.amount.commitment.data),
               let confirmationNumber = TxOutConfirmationNumber(proto.confirmation)
         else {
+            logger.info("Failed to initialize receipt with External_Receipt")
             return nil
         }
+
+        logger.info("")
+
         self.txOutPublicKeyTyped = txOutPublicKey
         self.commitment = commitment
         self.maskedValue = proto.amount.maskedValue
@@ -152,6 +162,7 @@ extension Receipt {
 
 extension External_Receipt {
     init(_ receipt: Receipt) {
+        logger.info("")
         self.init()
         self.publicKey = External_CompressedRistretto(receipt.txOutPublicKey)
         self.amount.commitment = External_CompressedRistretto(receipt.commitment)

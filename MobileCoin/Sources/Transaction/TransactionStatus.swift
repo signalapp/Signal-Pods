@@ -10,6 +10,7 @@ public enum TransactionStatus {
     case failed
 
     init(_ acceptedStatus: Transaction.AcceptedStatus) {
+        logger.info("")
         switch acceptedStatus {
         case .notAccepted:
             self = .unknown

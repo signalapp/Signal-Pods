@@ -16,6 +16,7 @@ struct TransactionStatusChecker {
         fogKeyImageService: FogKeyImageService,
         targetQueue: DispatchQueue?
     ) {
+        logger.info("")
         self.account = account
         self.fogUntrustedTxOutFetcher =
             FogUntrustedTxOutFetcher(fogUntrustedTxOutService: fogUntrustedTxOutService)
@@ -27,6 +28,7 @@ struct TransactionStatusChecker {
         _ transaction: Transaction,
         completion: @escaping (Result<TransactionStatus, ConnectionError>) -> Void
     ) {
+        logger.info("")
         checkAcceptedStatus(transaction) {
             completion($0.map {
                 let status = TransactionStatus($0)
@@ -49,6 +51,7 @@ struct TransactionStatusChecker {
         _ transaction: Transaction,
         completion: @escaping (Result<Transaction.AcceptedStatus, ConnectionError>) -> Void
     ) {
+        logger.info("")
         performAsync(body1: { callback in
             fogUntrustedTxOutFetcher.getTxOut(
                 outputPublicKey: transaction.anyOutput.publicKey,
@@ -77,6 +80,7 @@ struct TransactionStatusChecker {
         // We assume the output public key is unique, therefore checking the existence of the output
         // is enough to confirm Tx was accepted. However, at the moment we still need the key image
         // check in order to get the block in which the Tx was accepted.
+        logger.info("")
         switch outputResult.resultCode {
         case .found:
             switch keyImageSpentStatus {

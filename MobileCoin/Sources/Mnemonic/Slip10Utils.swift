@@ -2,42 +2,86 @@
 //  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
 
+// swiftlint:disable multiline_function_chains operator_usage_whitespace
+
 import Foundation
 import LibMobileCoin
 
 /// See https://github.com/satoshilabs/slips/blob/master/slip-0010.md
 enum Slip10Utils {
-    static func ed25519PrivateKey(fromSeed seed: Data, path: [UInt32]) -> Data32 {
-        seed.asMcBuffer { seedPtr in
-            let path = Slip10Indices(path)
-            return path.withUnsafeOpaquePointer { pathPtr in
-                Data32(withMcMutableBufferInfallible: { bufferPtr in
-                    mc_slip10_derive_ed25519_private_key(seedPtr, pathPtr, bufferPtr)
-                })
+    static func accountPrivateKeys(fromMnemonic mnemonic: Mnemonic, accountIndex: UInt32)
+        -> (viewPrivateKey: RistrettoPrivate, spendPrivateKey: RistrettoPrivate)
+    {
+        logger.info("")
+        var viewPrivateKeyOut = Data32()
+        var spendPrivateKeyOut = Data32()
+        viewPrivateKeyOut.asMcMutableBuffer { viewPrivateKeyOutPtr in
+            spendPrivateKeyOut.asMcMutableBuffer { spendPrivateKeyOutPtr in
+                switch withMcError({ errorPtr in
+                    mc_slip10_account_private_keys_from_mnemonic(
+                        mnemonic.phrase,
+                        accountIndex,
+                        viewPrivateKeyOutPtr,
+                        spendPrivateKeyOutPtr,
+                        &errorPtr)
+                }) {
+                case .success:
+                    break
+                case .failure(let error):
+                    switch error.errorCode {
+                    case .invalidInput:
+                        // Safety: mnemonic is guaranteed to satisfy
+                        // mc_slip10_account_private_keys_from_mnemonic preconditions.
+                        logger.fatalError(
+                            "LibMobileCoin invalidInput error: \(redacting: error.description)")
+                    default:
+                        // Safety: mc_slip10_account_private_keys_from_mnemonic should not throw
+                        // non-documented errors.
+                        logger.fatalError("Unhandled LibMobileCoin error: \(redacting: error)")
+                    }
+                }
             }
         }
+        // Safety: It's safe to skip validation because
+        // mc_slip10_account_private_keys_from_mnemonic should always return valid
+        // RistrettoPrivate values on success.
+        return (RistrettoPrivate(skippingValidation: viewPrivateKeyOut),
+                RistrettoPrivate(skippingValidation: spendPrivateKeyOut))
     }
-}
 
-private final class Slip10Indices {
-    private let ptr: OpaquePointer
-
-    init(_ indices: [UInt32]) {
-        self.ptr = withMcInfallible(mc_slip10_indices_create)
-        for index in indices {
-            add(index)
+    static func accountPrivateKeys(fromMnemonic mnemonic: String, accountIndex: UInt32)
+        -> Result<(viewPrivateKey: RistrettoPrivate, spendPrivateKey: RistrettoPrivate),
+                  InvalidInputError>
+    {
+        logger.info("")
+        var viewPrivateKeyOut = Data32()
+        var spendPrivateKeyOut = Data32()
+        return viewPrivateKeyOut.asMcMutableBuffer { viewPrivateKeyOutPtr in
+            spendPrivateKeyOut.asMcMutableBuffer { spendPrivateKeyOutPtr in
+                withMcError { errorPtr in
+                    mc_slip10_account_private_keys_from_mnemonic(
+                        mnemonic,
+                        accountIndex,
+                        viewPrivateKeyOutPtr,
+                        spendPrivateKeyOutPtr,
+                        &errorPtr)
+                }.mapError {
+                    switch $0.errorCode {
+                    case .invalidInput:
+                        return InvalidInputError("\(redacting: $0.description)")
+                    default:
+                        // Safety: mc_slip10_account_private_keys_from_mnemonic should not throw
+                        // non-documented errors.
+                        logger.fatalError("Unhandled LibMobileCoin error: \(redacting: $0)")
+                    }
+                }
+            }
+        }.map {
+            // Safety: It's safe to skip validation because
+            // mc_slip10_account_private_keys_from_mnemonic should always return valid
+            // RistrettoPrivate values on success.
+            return (RistrettoPrivate(skippingValidation: viewPrivateKeyOut),
+                    RistrettoPrivate(skippingValidation: spendPrivateKeyOut))
         }
-    }
-
-    deinit {
-        mc_slip10_indices_free(ptr)
-    }
-
-    private func add(_ index: UInt32) {
-        withMcInfallible { mc_slip10_indices_add(ptr, index) }
-    }
-
-    func withUnsafeOpaquePointer<R>(_ body: (OpaquePointer) throws -> R) rethrows -> R {
-        try body(ptr)
     }
 }

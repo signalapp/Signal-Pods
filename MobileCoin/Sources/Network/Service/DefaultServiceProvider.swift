@@ -16,56 +16,31 @@ final class DefaultServiceProvider: ServiceProvider {
     private let untrustedTxOut: FogUntrustedTxOutConnection
 
     private var reportUrlToReportConnection: [GrpcChannelConfig: FogReportConnection] = [:]
-    private var authorizationCredentials: BasicCredentials? {
-        didSet {
-            if let credentials = authorizationCredentials {
-                consensus.setAuthorization(credentials: credentials)
-                view.setAuthorization(credentials: credentials)
-                merkleProof.setAuthorization(credentials: credentials)
-                keyImage.setAuthorization(credentials: credentials)
-                block.setAuthorization(credentials: credentials)
-                untrustedTxOut.setAuthorization(credentials: credentials)
-                for connection in reportUrlToReportConnection.values {
-                    connection.setAuthorization(credentials: credentials)
-                }
-            }
-        }
-    }
 
     init(networkConfig: NetworkConfig, targetQueue: DispatchQueue?) {
         self.targetQueue = targetQueue
         self.consensus = ConsensusConnection(
-            url: networkConfig.consensusUrl,
-            attestation: networkConfig.consensusAttestation,
-            trustRoots: networkConfig.consensusTrustRoots,
+            config: networkConfig.consensus,
             channelManager: channelManager,
             targetQueue: targetQueue)
         self.view = FogViewConnection(
-            url: networkConfig.fogUrl,
-            attestation: networkConfig.fogViewAttestation,
-            trustRoots: networkConfig.fogTrustRoots,
+            config: networkConfig.fogView,
             channelManager: channelManager,
             targetQueue: targetQueue)
         self.merkleProof = FogMerkleProofConnection(
-            url: networkConfig.fogUrl,
-            attestation: networkConfig.fogMerkleProofAttestation,
-            trustRoots: networkConfig.fogTrustRoots,
+            config: networkConfig.fogMerkleProof,
             channelManager: channelManager,
             targetQueue: targetQueue)
         self.keyImage = FogKeyImageConnection(
-            url: networkConfig.fogUrl,
-            attestation: networkConfig.fogKeyImageAttestation,
-            trustRoots: networkConfig.fogTrustRoots,
+            config: networkConfig.fogKeyImage,
             channelManager: channelManager,
             targetQueue: targetQueue)
         self.block = FogBlockConnection(
-            url: networkConfig.fogUrl,
-            trustRoots: networkConfig.fogTrustRoots,
+            config: networkConfig.fogBlock,
             channelManager: channelManager,
             targetQueue: targetQueue)
         self.untrustedTxOut = FogUntrustedTxOutConnection(
-            url: networkConfig.fogUrl,
-            trustRoots: networkConfig.fogTrustRoots,
+            config: networkConfig.fogUntrustedTxOut,
             channelManager: channelManager,
             targetQueue: targetQueue)
     }
@@ -84,16 +59,21 @@ final class DefaultServiceProvider: ServiceProvider {
                 url: fogReportUrl,
                 channelManager: channelManager,
                 targetQueue: targetQueue)
-            if let credentials = authorizationCredentials {
-                reportConnection.setAuthorization(credentials: credentials)
-            }
             reportUrlToReportConnection[config] = reportConnection
             return reportConnection
         }
         return reportConnection
     }
 
-    func setAuthorization(credentials: BasicCredentials) {
-        authorizationCredentials = credentials
+    func setConsensusAuthorization(credentials: BasicCredentials) {
+        consensus.setAuthorization(credentials: credentials)
+    }
+
+    func setFogAuthorization(credentials: BasicCredentials) {
+        view.setAuthorization(credentials: credentials)
+        merkleProof.setAuthorization(credentials: credentials)
+        keyImage.setAuthorization(credentials: credentials)
+        block.setAuthorization(credentials: credentials)
+        untrustedTxOut.setAuthorization(credentials: credentials)
     }
 }

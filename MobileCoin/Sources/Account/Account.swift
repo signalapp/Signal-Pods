@@ -10,15 +10,17 @@ final class Account {
     let fogView = FogView()
 
     var allTxOutTrackers: [TxOutTracker] = []
-    var unscannedMissedBlocksRanges: [Range<UInt64>] = []
 
     init(accountKey: AccountKeyWithFog) {
+        logger.info("")
         self.accountKey = accountKey.accountKey
     }
 
     var publicAddress: PublicAddress {
         accountKey.publicAddress
     }
+
+    var unscannedMissedBlocksRanges: [Range<UInt64>] { fogView.unscannedMissedBlocksRanges }
 
     private var allTxOutsFoundBlockCount: UInt64 {
         var allTxOutsFoundBlockCount = fogView.allRngTxOutsFoundBlockCount
@@ -50,7 +52,12 @@ final class Account {
     }
 
     func cachedBalance(atBlockCount blockCount: UInt64) -> Balance? {
+        logger.info("atBlockCount: \(blockCount)")
         guard blockCount <= knowableBlockCount else {
+            logger.info("""
+                error - blockCount: \(blockCount) > \
+                knowableBlockCount: \(knowableBlockCount)
+                """)
             return nil
         }
         let txOutValues = allTxOutTrackers
@@ -66,7 +73,12 @@ final class Account {
     }
 
     func cachedAccountActivity(asOfBlockCount blockCount: UInt64) -> AccountActivity? {
+        logger.info("asOfBlockCount: \(blockCount)")
         guard blockCount <= knowableBlockCount else {
+            logger.info("""
+                error - blockCount: \(blockCount) > \
+                knowableBlockCount: \(knowableBlockCount)
+                """)
             return nil
         }
         let txOuts = allTxOutTrackers.compactMap { OwnedTxOut($0, atBlockCount: blockCount) }
@@ -98,7 +110,12 @@ final class Account {
     }
 
     func receivedAndUnspentTxOuts(atBlockCount blockCount: UInt64) -> [KnownTxOut]? {
+        logger.info("atBlockCount: \(blockCount)")
         guard blockCount <= knowableBlockCount else {
+            logger.info("""
+                error - blockCount: \(blockCount) > \
+                knowableBlockCount: \(knowableBlockCount)
+                """)
             return nil
         }
         return allTxOutTrackers
@@ -107,20 +124,37 @@ final class Account {
     }
 
     func addTxOuts(_ txOuts: [KnownTxOut]) {
+        logger.info("txOuts: \(redacting: txOuts)")
         allTxOutTrackers.append(contentsOf: txOuts.map { TxOutTracker($0) })
+    }
+
+    func addViewKeyScanResults(scannedBlockRanges: [Range<UInt64>], foundTxOuts: [KnownTxOut]) {
+        addTxOuts(foundTxOuts)
+        fogView.markBlocksAsScanned(blockRanges: scannedBlockRanges)
     }
 
     func cachedReceivedStatus(of receipt: Receipt)
         -> Result<Receipt.ReceivedStatus, InvalidInputError>
     {
-        ownedTxOut(for: receipt).map {
+        logger.info("receipt.txOutPublicKey: \(redacting: receipt.txOutPublicKey)")
+        return ownedTxOut(for: receipt).map {
             if let ownedTxOut = $0 {
+                logger.info("received - txOut.publicKey: \(redacting: ownedTxOut.publicKey)")
                 return .received(block: ownedTxOut.block)
             } else {
                 let knownToBeNotReceivedBlockCount = allTxOutsFoundBlockCount
                 guard receipt.txTombstoneBlockIndex > knownToBeNotReceivedBlockCount else {
+                    logger.info("""
+                        tombstone exceeded - receipt.txTombstoneBlockIndex: \
+                        \(receipt.txTombstoneBlockIndex) > \
+                        knownToBeNotReceivedBlockCount: \(knownToBeNotReceivedBlockCount)
+                        """)
                     return .tombstoneExceeded
                 }
+                logger.info("""
+                    not received - \
+                    knownToBeNotReceivedBlockCount: \(knownToBeNotReceivedBlockCount)
+                    """)
                 return .notReceived(knownToBeNotReceivedBlockCount: knownToBeNotReceivedBlockCount)
             }
         }
@@ -128,11 +162,12 @@ final class Account {
 
     /// Retrieves the `KnownTxOut`'s corresponding to `receipt` and verifies `receipt` is valid.
     private func ownedTxOut(for receipt: Receipt) -> Result<KnownTxOut?, InvalidInputError> {
-        print("Checking received status of TxOut: Tx pubkey: " +
-            "\(receipt.txOutPublicKey.base64EncodedString())")
+        logger.info("""
+            receipt.txOutPublicKey: \(redacting: receipt.txOutPublicKey), \
+            account: \(redacting: accountKey.publicAddress)
+            """)
         if let lastTxOut = ownedTxOuts.last {
-            print("Last received TxOut: Tx pubkey: " +
-                "\(lastTxOut.publicKey.base64EncodedString())")
+            logger.info("Last received TxOut: Tx pubkey: \(redacting: lastTxOut.publicKey)")
         }
 
         // First check if we've received the TxOut (either from Fog View or from view key scanning).
@@ -140,6 +175,7 @@ final class Account {
         guard let ownedTxOut =
                 ownedTxOuts.first(where: { $0.publicKey == receipt.txOutPublicKeyTyped })
         else {
+            logger.info("success - txOut owned by this account")
             return .success(nil)
         }
 
@@ -149,6 +185,10 @@ final class Account {
         // Note: This doesn't verify the confirmation number or tombstone block (since neither are
         // saved to the ledger).
         guard receipt.matchesTxOut(ownedTxOut) else {
+            logger.info("""
+                failure - Receipt data doesn't match \
+                the corresponding TxOut found in the ledger
+                """)
             return .failure(InvalidInputError(
                 "Receipt data doesn't match the corresponding TxOut found in the ledger."))
         }
@@ -156,9 +196,15 @@ final class Account {
         // Verify that the confirmation number validates for this account key. This provides a
         // guarantee that the sender of the Receipt was the creator of the TxOut that we received.
         guard receipt.validateConfirmationNumber(accountKey: accountKey) else {
+            logger.info("""
+                failure - receipt confirmation \
+                number: \(redacting: receipt.confirmationNumber) is invalid \
+                for this account
+                """)
             return .failure(InvalidInputError("Receipt confirmation number is invalid."))
         }
 
+        logger.info("success - txOut owned by this account")
         return .success(ownedTxOut)
     }
 }
@@ -166,11 +212,21 @@ final class Account {
 extension Account {
     /// - Returns: `.failure` if `accountKey` doesn't use Fog.
     static func make(accountKey: AccountKey) -> Result<Account, InvalidInputError> {
+        logger.info("")
         guard let accountKey = AccountKeyWithFog(accountKey: accountKey) else {
+            logger.info("failure - accounts without fog URLs are not currently supported")
             return .failure(InvalidInputError(
                 "Accounts without fog URLs are not currently supported."))
         }
+
+        logger.info("success - accountKey uses Fog")
         return .success(Account(accountKey: accountKey))
+    }
+}
+
+extension Account: CustomRedactingStringConvertible {
+    var redactingDescription: String {
+        publicAddress.redactingDescription
     }
 }
 
@@ -180,6 +236,7 @@ final class TxOutTracker {
     var keyImageTracker: KeyImageSpentTracker
 
     init(_ knownTxOut: KnownTxOut) {
+        logger.info("knownTxOut.publicKey: \(redacting: knownTxOut.publicKey)")
         self.knownTxOut = knownTxOut
         self.keyImageTracker = KeyImageSpentTracker(knownTxOut.keyImage)
     }
@@ -193,14 +250,17 @@ final class TxOutTracker {
     }
 
     func receivedAndUnspent(asOfBlockCount blockCount: UInt64) -> Bool {
-        received(asOfBlockCount: blockCount) && !spent(asOfBlockCount: blockCount)
+        logger.info("asOfBlockCount: \(blockCount)")
+        return received(asOfBlockCount: blockCount) && !spent(asOfBlockCount: blockCount)
     }
 
     func received(asOfBlockCount blockCount: UInt64) -> Bool {
-        knownTxOut.block.index < blockCount
+        logger.info("asOfBlockCount: \(blockCount)")
+        return knownTxOut.block.index < blockCount
     }
 
     func spent(asOfBlockCount blockCount: UInt64) -> Bool {
+        logger.info("asOfBlockCount: \(blockCount)")
         if case .spent = keyImageTracker.spentStatus.status(atBlockCount: blockCount) {
             return true
         }
@@ -208,6 +268,7 @@ final class TxOutTracker {
     }
 
     func netValue(atBlockCount blockCount: UInt64) -> UInt64 {
+        logger.info("asOfBlockCount: \(blockCount)")
         if receivedAndUnspent(asOfBlockCount: blockCount) {
             return knownTxOut.value
         } else {
@@ -218,7 +279,12 @@ final class TxOutTracker {
 
 extension OwnedTxOut {
     fileprivate init?(_ txOutTracker: TxOutTracker, atBlockCount blockCount: UInt64) {
+        logger.info("""
+            txOut.publicKey: \(redacting: txOutTracker.knownTxOut.publicKey), \
+            atBlockCount: \(blockCount)
+            """)
         guard txOutTracker.knownTxOut.block.index < blockCount else {
+            logger.info("knownTxout block index < blockCount")
             return nil
         }
         let receivedBlock = txOutTracker.knownTxOut.block

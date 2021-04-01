@@ -12,6 +12,7 @@ public struct AccountActivity {
     public let blockCount: UInt64
 
     init(txOuts: [OwnedTxOut], blockCount: UInt64) {
+        logger.info("txOuts: \(redacting: txOuts.map { $0.publicKey }), blockCount: \(blockCount)")
         self.txOuts = Set(txOuts)
         self.blockCount = blockCount
     }

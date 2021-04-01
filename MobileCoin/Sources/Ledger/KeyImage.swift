@@ -9,6 +9,7 @@ struct KeyImage {
     let data32: Data32
 
     init(_ data: Data32) {
+        logger.info("")
         self.data32 = data
     }
 
@@ -27,6 +28,7 @@ struct KeyImage {
 
         /// - Returns: `nil` when `blockCount` exceeds our knowledge about the spent status.
         func status(atBlockCount blockCount: UInt64) -> SpentStatus? {
+            logger.info("")
             switch self {
             case .spent(block: let spentAtBlock):
                 guard spentAtBlock.index < blockCount else {
@@ -47,6 +49,7 @@ extension KeyImage: DataConvertibleImpl {
     typealias Iterator = Data.Iterator
 
     init?(_ data: Data) {
+        logger.info("")
         guard let data32 = Data32(data.data) else {
             return nil
         }
@@ -58,12 +61,14 @@ extension KeyImage: DataConvertibleImpl {
 
 extension KeyImage {
     init?(_ keyImage: External_KeyImage) {
+        logger.info("")
         self.init(keyImage.data)
     }
 }
 
 extension External_KeyImage {
     init(_ keyImage: KeyImage) {
+        logger.info("")
         self.init(keyImage.data32)
     }
 }

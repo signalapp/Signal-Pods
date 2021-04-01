@@ -11,20 +11,17 @@ final class FogViewConnection: AttestedConnection, FogViewService {
     private let client: FogView_FogViewAPIClient
 
     init(
-        url: FogUrl,
-        attestation: Attestation,
-        trustRoots: [NIOSSLCertificate]?,
+        config: AttestedConnectionConfig<FogUrl>,
         channelManager: GrpcChannelManager,
         targetQueue: DispatchQueue?,
         rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)? = securityRNG,
         rngContext: Any? = nil
     ) {
-        let channel = channelManager.channel(for: url, trustRoots: trustRoots)
+        let channel = channelManager.channel(for: config)
         self.client = FogView_FogViewAPIClient(channel: channel)
         super.init(
             client: self.client,
-            url: url,
-            attestation: attestation,
+            config: config,
             targetQueue: targetQueue,
             rng: rng,
             rngContext: rngContext)

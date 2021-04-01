@@ -10,6 +10,7 @@ public struct InvalidInputError: Error {
     let reason: String
 
     init(_ reason: String) {
+        logger.info("reason: \(reason)")
         self.reason = reason
     }
 }

@@ -13,6 +13,7 @@ extension Account {
             account: ReadWriteDispatchLock<Account>,
             txOutSelectionStrategy: TxOutSelectionStrategy
         ) {
+            logger.info("")
             self.account = account
             self.txOutSelector = TxOutSelector(txOutSelectionStrategy: txOutSelectionStrategy)
         }
@@ -20,6 +21,7 @@ extension Account {
         func amountTransferable(feeLevel: FeeLevel)
             -> Result<UInt64, BalanceTransferEstimationError>
         {
+            logger.info("feeLevel: \(feeLevel)")
             let txOuts = account.readSync { $0.unspentTxOuts }
             return txOutSelector.amountTransferable(feeLevel: feeLevel, txOuts: txOuts)
         }
@@ -27,7 +29,9 @@ extension Account {
         func estimateTotalFee(toSendAmount amount: UInt64, feeLevel: FeeLevel)
             -> Result<UInt64, TransactionEstimationError>
         {
+            logger.info("toSendAmount: \(redacting: amount), feeLevel: \(feeLevel)")
             guard amount > 0 else {
+                logger.info("failure - Cannot spend 0 MOB")
                 return .failure(.invalidInput("Cannot spend 0 MOB"))
             }
 
@@ -41,7 +45,9 @@ extension Account {
         func requiresDefragmentation(toSendAmount amount: UInt64, feeLevel: FeeLevel)
             -> Result<Bool, TransactionEstimationError>
         {
+            logger.info("toSendAmount: \(redacting: amount), feeLevel: \(feeLevel)")
             guard amount > 0 else {
+                logger.info("failure - Cannot spend 0 MOB")
                 return .failure(.invalidInput("Cannot spend 0 MOB"))
             }
 

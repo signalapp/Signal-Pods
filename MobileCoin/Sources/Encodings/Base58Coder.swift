@@ -13,18 +13,21 @@ public enum Base58DecodingResult {
 
 public enum Base58Coder {
     public static func encode(_ publicAddress: PublicAddress) -> String {
+        logger.info("")
         var wrapper = Printable_PrintableWrapper()
         wrapper.publicAddress = External_PublicAddress(publicAddress)
         return wrapper.base58EncodedString()
     }
 
     public static func encode(_ paymentRequest: PaymentRequest) -> String {
+        logger.info("")
         var wrapper = Printable_PrintableWrapper()
         wrapper.paymentRequest = Printable_PaymentRequest(paymentRequest)
         return wrapper.base58EncodedString()
     }
 
     public static func encode(_ transferPayload: TransferPayload) -> String {
+        logger.info("")
         var wrapper = Printable_PrintableWrapper()
         wrapper.transferPayload = Printable_TransferPayload(transferPayload)
         return wrapper.base58EncodedString()
@@ -32,6 +35,7 @@ public enum Base58Coder {
 
     /// - Returns: `nil` when the input is not decodable.
     public static func decode(_ base58String: String) -> Base58DecodingResult? {
+        logger.info("")
         guard let wrapper = Printable_PrintableWrapper(base58Encoded: base58String) else {
             return nil
         }

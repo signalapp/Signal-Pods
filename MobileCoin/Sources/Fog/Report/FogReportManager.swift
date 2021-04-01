@@ -12,6 +12,7 @@ final class FogReportManager {
     private let serviceProvider: ServiceProvider
 
     init(serviceProvider: ServiceProvider, targetQueue: DispatchQueue?) {
+        logger.info("")
         self.inner = .init(Inner(targetQueue: targetQueue), targetQueue: targetQueue)
         self.serialQueue = DispatchQueue(label: "com.mobilecoin.\(Self.self)", target: targetQueue)
         self.serviceProvider = serviceProvider
@@ -21,6 +22,7 @@ final class FogReportManager {
         for reportUrl: FogUrl,
         completion: @escaping (Result<Report_ReportResponse, ConnectionError>) -> Void
     ) {
+        logger.info("reportUrl: \(reportUrl.url)")
         let reportService = serviceProvider.fogReportService(for: reportUrl)
 
         self.inner.accessAsync {
@@ -34,6 +36,7 @@ final class FogReportManager {
         reportParams: [(reportId: String, desiredMinPubkeyExpiry: UInt64)],
         completion: @escaping (Result<Report_ReportResponse, ConnectionError>) -> Void
     ) {
+        logger.info("reportUrl: \(reportUrl.url), reportParams: \(reportParams)")
         let reportService = serviceProvider.fogReportService(for: reportUrl)
 
         self.inner.accessAsync {
@@ -53,6 +56,7 @@ extension FogReportManager {
         private var networkConfigToServer: [GrpcChannelConfig: FogReportServer] = [:]
 
         init(targetQueue: DispatchQueue?) {
+            logger.info("")
             self.sharedSerialExclusionQueue = DispatchQueue(
                 label: "com.mobilecoin.\(FogReportServer.self)",
                 target: targetQueue)

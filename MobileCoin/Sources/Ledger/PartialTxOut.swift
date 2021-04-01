@@ -27,6 +27,7 @@ extension PartialTxOut {
 
 extension PartialTxOut {
     init?(_ txOut: External_TxOut) {
+        logger.info("")
         guard let commitment = Data32(txOut.amount.commitment.data),
               let targetKey = RistrettoPublic(txOut.targetKey.data),
               let publicKey = RistrettoPublic(txOut.publicKey.data)
@@ -41,6 +42,7 @@ extension PartialTxOut {
     }
 
     init?(_ txOut: FogView_FogTxOut) {
+        logger.info("")
         guard let commitment = Data32(txOut.amount.commitment.data),
               let targetKey = RistrettoPublic(txOut.targetKey.data),
               let publicKey = RistrettoPublic(txOut.publicKey.data)

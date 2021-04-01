@@ -20,6 +20,7 @@ extension Account {
             fogQueryScalingStrategy: FogQueryScalingStrategy,
             targetQueue: DispatchQueue?
         ) {
+            logger.info("")
             self.account = account
             self.txOutFetcher = FogView.TxOutFetcher(
                 fogView: account.mapLockWithoutLocking { $0.fogView },
@@ -36,12 +37,20 @@ extension Account {
         }
 
         func updateBalance(completion: @escaping (Result<Balance, ConnectionError>) -> Void) {
+            logger.info("")
             checkForNewTxOuts {
-                guard $0.successOr(completion: completion) != nil else { return }
+                guard $0.successOr(completion: completion) != nil else {
+                    logger.info("failure")
+                    return
+                }
 
                 self.viewKeyScanUnscannedMissedBlocks {
-                    guard $0.successOr(completion: completion) != nil else { return }
+                    guard $0.successOr(completion: completion) != nil else {
+                        logger.info("failure")
+                        return
+                    }
 
+                    logger.info("checking for spent txOuts")
                     self.checkForSpentTxOuts {
                         completion($0.map {
                             self.account.readSync { $0.cachedBalance }
@@ -52,30 +61,31 @@ extension Account {
         }
 
         func checkForNewTxOuts(completion: @escaping (Result<(), ConnectionError>) -> Void) {
-            txOutFetcher.fetchTxOuts(partialResultsWithWriteLock: {
+            logger.info("")
+            txOutFetcher.fetchTxOuts(partialResultsWithWriteLock: { newTxOuts in
                 let account = self.account.accessWithoutLocking
-                account.addTxOuts($0.newTxOuts)
-                account.unscannedMissedBlocksRanges.append(contentsOf: $0.missedBlocks)
+                account.addTxOuts(newTxOuts)
             }, completion: completion)
         }
 
         func viewKeyScanUnscannedMissedBlocks(
             completion: @escaping (Result<(), ConnectionError>) -> Void
         ) {
-            let unscannedRanges = account.readSync { $0.unscannedMissedBlocksRanges }
-            viewKeyScanner.viewKeyScanBlocks(blockRanges: unscannedRanges) {
+            logger.info("")
+            let unscannedBlockRanges = account.readSync { $0.unscannedMissedBlocksRanges }
+            viewKeyScanner.viewKeyScanBlocks(blockRanges: unscannedBlockRanges) {
                 completion($0.map { foundTxOuts in
                     self.account.writeSync {
-                        $0.addTxOuts(foundTxOuts)
-                        for range in unscannedRanges {
-                            $0.unscannedMissedBlocksRanges.removeAll(where: { $0 == range })
-                        }
+                        $0.addViewKeyScanResults(
+                            scannedBlockRanges: unscannedBlockRanges,
+                            foundTxOuts: foundTxOuts)
                     }
                 })
             }
         }
 
         func checkForSpentTxOuts(completion: @escaping (Result<(), ConnectionError>) -> Void) {
+            logger.info("")
             let keyImageTrackers = account.mapLock { account in
                 account.allTxOutTrackers.filter { !$0.isSpent }.map { $0.keyImageTracker }
             }

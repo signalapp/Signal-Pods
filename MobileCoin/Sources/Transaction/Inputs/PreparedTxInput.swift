@@ -9,14 +9,17 @@ struct PreparedTxInput {
     static func make(knownTxOut: KnownTxOut, ring: [(TxOut, TxOutMembershipProof)])
         -> Result<PreparedTxInput, InvalidInputError>
     {
+        logger.info("")
         let ring = ring.sorted { $0.0.publicKey.lexicographicallyPrecedes($1.0.publicKey) }
 
         guard let realInputIndex =
                 ring.firstIndex(where: { $0.0.publicKey == knownTxOut.publicKey })
         else {
+            logger.info("failure - txOut not found in ring")
             return .failure(InvalidInputError("TxOut not found in ring"))
         }
 
+        logger.info("success")
         return .success(
             PreparedTxInput(knownTxOut: knownTxOut, ring: ring, realInputIndex: realInputIndex))
     }
@@ -27,6 +30,7 @@ struct PreparedTxInput {
 
     private init(knownTxOut: KnownTxOut, ring: [(TxOut, TxOutMembershipProof)], realInputIndex: Int)
     {
+        logger.info("")
         self.knownTxOut = knownTxOut
         self.ring = ring
         self.realInputIndex = realInputIndex

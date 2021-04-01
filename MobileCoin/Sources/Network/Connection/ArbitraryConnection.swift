@@ -5,18 +5,12 @@
 import Foundation
 import GRPC
 
-class Connection {
+class ArbitraryConnection {
     private let inner: SerialDispatchLock<Inner>
 
-    init(config: ConnectionConfigProtocol, targetQueue: DispatchQueue?) {
-        let inner = Inner(config: config)
+    init(url: MobileCoinUrlProtocol, targetQueue: DispatchQueue?) {
+        let inner = Inner(url: url)
         self.inner = .init(inner, targetQueue: targetQueue)
-    }
-
-    func setAuthorization(credentials: BasicCredentials) {
-        inner.accessAsync {
-            $0.setAuthorization(credentials: credentials)
-        }
     }
 
     func performCall<Call: GrpcCallable>(
@@ -36,18 +30,13 @@ class Connection {
     }
 }
 
-extension Connection {
+extension ArbitraryConnection {
     private struct Inner {
         private let session: ConnectionSession
 
-        init(config: ConnectionConfigProtocol) {
+        init(url: MobileCoinUrlProtocol) {
             logger.info("")
-            self.session = ConnectionSession(config: config)
-        }
-
-        func setAuthorization(credentials: BasicCredentials) {
-            logger.info("")
-            session.authorizationCredentials = credentials
+            self.session = ConnectionSession(url: url)
         }
 
         func requestCallOptions() -> CallOptions {
@@ -59,10 +48,6 @@ extension Connection {
         func processResponse<Response>(callResult: UnaryCallResult<Response>)
             -> Result<Response, ConnectionError>
         {
-            guard callResult.status.code != .unauthenticated else {
-                return .failure(.authorizationFailure(String(describing: callResult.status)))
-            }
-
             guard callResult.status.isOk, let response = callResult.response else {
                 return .failure(.connectionFailure(String(describing: callResult.status)))
             }

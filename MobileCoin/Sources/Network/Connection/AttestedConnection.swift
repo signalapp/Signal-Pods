@@ -31,22 +31,18 @@ class AttestedConnection {
 
     init(
         client: AttestableGrpcClient,
-        url: MobileCoinUrlProtocol,
-        attestation: Attestation,
+        config: AttestedConnectionConfigProtocol,
         targetQueue: DispatchQueue?,
         rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)? = securityRNG,
         rngContext: Any? = nil
     ) {
-        let inner = Inner(
-            client: client,
-            url: url,
-            attestation: attestation,
-            rng: rng,
-            rngContext: rngContext)
+        logger.info("")
+        let inner = Inner(client: client, config: config, rng: rng, rngContext: rngContext)
         self.inner = .init(inner, targetQueue: targetQueue)
     }
 
     func setAuthorization(credentials: BasicCredentials) {
+        logger.info("")
         inner.priorityAccessAsync {
             $0.setAuthorization(credentials: credentials)
         }
@@ -57,6 +53,7 @@ class AttestedConnection {
         request: Call.InnerRequest,
         completion: @escaping (Result<Call.InnerResponse, ConnectionError>) -> Void
     ) where Call.InnerRequestAad == (), Call.InnerResponseAad == () {
+        logger.info("")
         performAttestedCall(call, requestAad: (), request: request, completion: completion)
     }
 
@@ -66,6 +63,7 @@ class AttestedConnection {
         request: Call.InnerRequest,
         completion: @escaping (Result<Call.InnerResponse, ConnectionError>) -> Void
     ) where Call.InnerResponseAad == () {
+        logger.info("")
         performAttestedCall(call, requestAad: requestAad, request: request) {
             completion($0.map { $0.response })
         }
@@ -79,6 +77,7 @@ class AttestedConnection {
                    ConnectionError>
         ) -> Void
     ) where Call.InnerRequestAad == () {
+        logger.info("")
         performAttestedCall(call, requestAad: (), request: request, completion: completion)
     }
 
@@ -91,6 +90,7 @@ class AttestedConnection {
                    ConnectionError>
         ) -> Void
     ) {
+        logger.info("")
         inner.accessAsync(block: { inner, callback in
             inner.performAttestedCall(
                 call,
@@ -123,21 +123,22 @@ extension AttestedConnection {
 
         init(
             client: AttestableGrpcClient,
-            url: MobileCoinUrlProtocol,
-            attestation: Attestation,
+            config: AttestedConnectionConfigProtocol,
             rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)? = securityRNG,
             rngContext: Any? = nil
         ) {
-            self.session = ConnectionSession(url: url)
+            logger.info("")
+            self.session = ConnectionSession(config: config)
             self.client = client
             self.attestAke = AttestAke()
-            self.responderId = url.responderId
-            self.attestationVerifier = AttestationVerifier(attestation: attestation)
+            self.responderId = config.url.responderId
+            self.attestationVerifier = AttestationVerifier(attestation: config.attestation)
             self.rng = rng
             self.rngContext = rngContext
         }
 
         func setAuthorization(credentials: BasicCredentials) {
+            logger.info("")
             session.authorizationCredentials = credentials
         }
 
@@ -150,6 +151,7 @@ extension AttestedConnection {
                        ConnectionError>
             ) -> Void
         ) {
+            logger.info("")
             if let attestAkeCipher = attestAke.cipher {
                 doPerformAttestedCall(
                     call,
@@ -193,6 +195,7 @@ extension AttestedConnection {
                        ConnectionError>
             ) -> Void
         ) {
+            logger.info("")
             auth {
                 guard let attestAkeCipher = $0.successOr(completion: completion) else { return }
 
@@ -218,6 +221,7 @@ extension AttestedConnection {
         private func auth(
             completion: @escaping (Result<AttestAke.Cipher, ConnectionError>) -> Void
         ) {
+            logger.info("")
             let request = attestAke.authBeginRequest(
                 responderId: responderId,
                 rng: rng,
@@ -262,6 +266,7 @@ extension AttestedConnection {
                        AttestedConnectionError>
             ) -> Void
         ) {
+            logger.info("")
             guard let processedRequest =
                     call.processRequest(
                         requestAad: requestAad,
@@ -283,6 +288,7 @@ extension AttestedConnection {
             request: Call.Request,
             completion: @escaping (Result<Call.Response, AttestedConnectionError>) -> Void
         ) {
+            logger.info("")
             let callOptions = requestCallOptions()
 
             call.call(request: request, callOptions: callOptions) {
@@ -291,6 +297,7 @@ extension AttestedConnection {
         }
 
         private func requestCallOptions() -> CallOptions {
+            logger.info("")
             var callOptions = CallOptions()
             session.addRequestHeaders(to: &callOptions.customMetadata)
             return callOptions
@@ -299,18 +306,23 @@ extension AttestedConnection {
         private func processResponse<Response>(callResult: UnaryCallResult<Response>)
             -> Result<Response, AttestedConnectionError>
         {
+            logger.info("")
             // Basic credential authorization failure
             guard callResult.status.code != .unauthenticated else {
+                logger.info("failure - connectionError - \(String(describing: callResult.status))")
                 return .failure(
                     .connectionError(.authorizationFailure(String(describing: callResult.status))))
             }
 
             // Attestation failure, reattest
             guard callResult.status.code != .permissionDenied else {
+                logger.info("failure - attestation failure")
                 return .failure(.attestationFailure())
             }
 
             guard callResult.status.isOk, let response = callResult.response else {
+                logger.info(
+                    "failure - connection failure - \(String(describing: callResult.status))")
                 return .failure(
                     .connectionError(.connectionFailure(String(describing: callResult.status))))
             }
@@ -319,6 +331,7 @@ extension AttestedConnection {
                 session.processResponse(headers: initialMetadata)
             }
 
+            logger.info("success")
             return .success(response)
         }
     }
