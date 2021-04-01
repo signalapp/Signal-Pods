@@ -10,17 +10,18 @@ final class Account {
     let fogView = FogView()
 
     var allTxOutTrackers: [TxOutTracker] = []
+    var unscannedMissedBlocksRanges: [Range<UInt64>] = []
 
     init(accountKey: AccountKeyWithFog) {
         logger.info("")
         self.accountKey = accountKey.accountKey
     }
 
+    var debugDescription: String { publicAddress.debugDescription }
+
     var publicAddress: PublicAddress {
         accountKey.publicAddress
     }
-
-    var unscannedMissedBlocksRanges: [Range<UInt64>] { fogView.unscannedMissedBlocksRanges }
 
     private var allTxOutsFoundBlockCount: UInt64 {
         var allTxOutsFoundBlockCount = fogView.allRngTxOutsFoundBlockCount
@@ -128,11 +129,6 @@ final class Account {
         allTxOutTrackers.append(contentsOf: txOuts.map { TxOutTracker($0) })
     }
 
-    func addViewKeyScanResults(scannedBlockRanges: [Range<UInt64>], foundTxOuts: [KnownTxOut]) {
-        addTxOuts(foundTxOuts)
-        fogView.markBlocksAsScanned(blockRanges: scannedBlockRanges)
-    }
-
     func cachedReceivedStatus(of receipt: Receipt)
         -> Result<Receipt.ReceivedStatus, InvalidInputError>
     {
@@ -164,7 +160,7 @@ final class Account {
     private func ownedTxOut(for receipt: Receipt) -> Result<KnownTxOut?, InvalidInputError> {
         logger.info("""
             receipt.txOutPublicKey: \(redacting: receipt.txOutPublicKey), \
-            account: \(redacting: accountKey.publicAddress)
+            account: \(accountKey.publicAddress.debugDescription)
             """)
         if let lastTxOut = ownedTxOuts.last {
             logger.info("Last received TxOut: Tx pubkey: \(redacting: lastTxOut.publicKey)")
@@ -221,12 +217,6 @@ extension Account {
 
         logger.info("success - accountKey uses Fog")
         return .success(Account(accountKey: accountKey))
-    }
-}
-
-extension Account: CustomRedactingStringConvertible {
-    var redactingDescription: String {
-        publicAddress.redactingDescription
     }
 }
 

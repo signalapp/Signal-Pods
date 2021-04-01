@@ -314,11 +314,12 @@ final class TransactionBuilder {
                     }.mapError {
                         switch $0.errorCode {
                         case .invalidInput:
-                            return .invalidInput("\(redacting: $0.description)")
+                            return .invalidInput($0.description)
                         default:
                             // Safety: mc_transaction_builder_add_input should not throw
                             // non-documented errors.
-                            logger.fatalError("Unhandled LibMobileCoin error: \(redacting: $0)")
+                            logger.fatalError(
+                                "Unhandled LibMobileCoin error: \($0)")
                         }
                     }
                 }
@@ -348,13 +349,14 @@ final class TransactionBuilder {
                     }).mapError {
                         switch $0.errorCode {
                         case .invalidInput:
-                            return .invalidInput("\(redacting: $0.description)")
+                            return .invalidInput($0.description)
                         case .attestationVerificationFailed:
-                            return .attestationVerificationFailed("\(redacting: $0.description)")
+                            return .attestationVerificationFailed($0.description)
                         default:
                             // Safety: mc_transaction_builder_add_output should not throw
                             // non-documented errors.
-                            logger.fatalError("Unhandled LibMobileCoin error: \(redacting: $0)")
+                            logger.fatalError(
+                                "Unhandled LibMobileCoin error: \($0)")
                         }
                     }
                 }
@@ -387,10 +389,11 @@ final class TransactionBuilder {
             }).mapError {
                 switch $0.errorCode {
                 case .invalidInput:
-                    return .invalidInput("\(redacting: $0.description)")
+                    return .invalidInput($0.description)
                 default:
                     // Safety: mc_transaction_builder_build should not throw non-documented errors.
-                    logger.fatalError("Unhandled LibMobileCoin error: \(redacting: $0)")
+                    logger.fatalError(
+                        "Unhandled LibMobileCoin error: \($0)")
                 }
             }
         }.map { txBytes in

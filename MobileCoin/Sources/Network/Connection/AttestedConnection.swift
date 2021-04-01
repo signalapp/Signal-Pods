@@ -31,13 +31,19 @@ class AttestedConnection {
 
     init(
         client: AttestableGrpcClient,
-        config: AttestedConnectionConfigProtocol,
+        url: MobileCoinUrlProtocol,
+        attestation: Attestation,
         targetQueue: DispatchQueue?,
         rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)? = securityRNG,
         rngContext: Any? = nil
     ) {
         logger.info("")
-        let inner = Inner(client: client, config: config, rng: rng, rngContext: rngContext)
+        let inner = Inner(
+            client: client,
+            url: url,
+            attestation: attestation,
+            rng: rng,
+            rngContext: rngContext)
         self.inner = .init(inner, targetQueue: targetQueue)
     }
 
@@ -123,16 +129,17 @@ extension AttestedConnection {
 
         init(
             client: AttestableGrpcClient,
-            config: AttestedConnectionConfigProtocol,
+            url: MobileCoinUrlProtocol,
+            attestation: Attestation,
             rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)? = securityRNG,
             rngContext: Any? = nil
         ) {
             logger.info("")
-            self.session = ConnectionSession(config: config)
+            self.session = ConnectionSession(url: url)
             self.client = client
             self.attestAke = AttestAke()
-            self.responderId = config.url.responderId
-            self.attestationVerifier = AttestationVerifier(attestation: config.attestation)
+            self.responderId = url.responderId
+            self.attestationVerifier = AttestationVerifier(attestation: attestation)
             self.rng = rng
             self.rngContext = rngContext
         }

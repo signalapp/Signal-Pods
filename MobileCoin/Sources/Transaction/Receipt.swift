@@ -56,8 +56,9 @@ public struct Receipt {
         do {
             return try proto.serializedData()
         } catch {
-            // Safety: Protobuf binary serialization is no fail when not using proto2 or `Any`.
-            logger.fatalError("Protobuf serialization failed: \(redacting: error)")
+            // Safety: Protobuf binary serialization is no fail when not using proto2 or `Any`
+            logger.fatalError(
+                "Error: Protobuf serialization failed: \(error)")
         }
     }
 

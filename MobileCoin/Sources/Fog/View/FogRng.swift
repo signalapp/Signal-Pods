@@ -41,12 +41,13 @@ final class FogRng {
                 }.mapError {
                     switch $0.errorCode {
                     case .invalidInput:
-                        return .invalidKey("\(redacting: $0.description)")
+                        return .invalidKey($0.description)
                     case .unsupportedCryptoBoxVersion:
-                        return .unsupportedCryptoBoxVersion("\(redacting: $0.description)")
+                        return .unsupportedCryptoBoxVersion($0.description)
                     default:
                         // Safety: mc_fog_rng_create should not throw non-documented errors.
-                        logger.fatalError("Unhandled LibMobileCoin error: \(redacting: $0)")
+                        logger.fatalError(
+                            "Unhandled LibMobileCoin error: \($0)")
                     }
                 }.map { ptr in
                     FogRng(ptr)
@@ -65,13 +66,14 @@ final class FogRng {
                 switch $0.errorCode {
                 case .invalidInput:
                     logger.warning("invalid key: \(redacting: $0.description)")
-                    return .invalidKey("\(redacting: $0.description)")
+                    return .invalidKey($0.description)
                 case .unsupportedCryptoBoxVersion:
                     logger.warning("unsupported crypto box version: \(redacting: $0.description)")
-                    return .unsupportedCryptoBoxVersion("\(redacting: $0.description)")
+                    return .unsupportedCryptoBoxVersion($0.description)
                 default:
                     // Safety: mc_fog_rng_deserialize_proto should not throw non-documented errors.
-                    logger.fatalError("Unhandled LibMobileCoin error: \(redacting: $0)")
+                    logger.fatalError(
+                        "Unhandled LibMobileCoin error: \(redacting: $0.description)")
                 }
             }
         }.map { ptr in

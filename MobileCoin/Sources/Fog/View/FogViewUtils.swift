@@ -20,7 +20,8 @@ enum FogViewUtils {
             plaintext = try txOutRecord.serializedData()
         } catch {
             // Safety: Protobuf binary serialization is no fail when not using proto2 or `Any`.
-            logger.fatalError("Protobuf serialization failed: \(redacting: error)")
+            logger.fatalError(
+                "Error: Protobuf serialization failed: \(error)")
         }
         return VersionedCryptoBox.encrypt(
             plaintext: plaintext,

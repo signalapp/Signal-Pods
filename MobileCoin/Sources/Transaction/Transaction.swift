@@ -23,8 +23,9 @@ public struct Transaction {
         do {
             return try proto.serializedData()
         } catch {
-            // Safety: Protobuf binary serialization is no fail when not using proto2 or `Any`.
-            logger.fatalError("Protobuf serialization failed: \(redacting: error)")
+            // Safety: Protobuf binary serialization is no fail when not using proto2 or `Any`
+            logger.fatalError(
+                "Error: Protobuf serialization failed: \(error)")
         }
     }
 
@@ -103,8 +104,9 @@ extension Transaction {
             do {
                 txOutData = try $0.serializedData()
             } catch {
-                // Safety: Protobuf binary serialization is no fail when not using proto2 or `Any`.
-                logger.fatalError("Protobuf serialization failed: \(redacting: error)")
+                // Safety: Protobuf binary serialization is no fail when not using proto2 or `Any`
+                logger.fatalError(
+                    "Error: Protobuf serialization failed: \(error)")
             }
             guard let txOut = TxOut(serializedData: txOutData) else {
                 logger.fatalError("serialization failure")

@@ -75,8 +75,9 @@ extension AttestedGrpcCallable
         do {
             plaintext = try request.serializedData()
         } catch {
-            // Safety: Protobuf binary serialization is no fail when not using proto2 or `Any`.
-            logger.fatalError("Protobuf serialization failed: \(redacting: error)")
+            // Safety: Protobuf binary serialization is no fail when not using proto2 or `Any`
+            logger.fatalError(
+                "Error: Protobuf serialization failed: \(error)")
         }
 
         return attestAkeCipher.encryptMessage(aad: aad, plaintext: plaintext)
@@ -128,8 +129,9 @@ extension AttestedGrpcCallable
             aad = try requestAad.serializedData()
             plaintext = try request.serializedData()
         } catch {
-            // Safety: Protobuf binary serialization is no fail when not using proto2 or `Any`.
-            logger.fatalError("Protobuf serialization failed: \(redacting: error)")
+            // Safety: Protobuf binary serialization is no fail when not using proto2 or `Any`
+            logger.fatalError(
+                "Error: Protobuf serialization failed: \(error)")
         }
 
         return attestAkeCipher.encryptMessage(aad: aad, plaintext: plaintext)

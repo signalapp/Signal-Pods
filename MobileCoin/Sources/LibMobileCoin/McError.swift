@@ -28,7 +28,8 @@ func withMcError(_ body: (inout UnsafeMutablePointer<McError>?) -> OpaquePointer
             logger.fatalError("Error: \(#function): \(error)")
         }
         guard err.errorCode != .panic else {
-            logger.fatalError("LibMobileCoin function panicked: \(redacting: err.description)")
+            logger.fatalError(
+                "Error: \(#function): LibMobileCoin function panicked: \(err.description)")
         }
         return .failure(err)
     }
@@ -57,7 +58,8 @@ func withMcError(_ body: (inout UnsafeMutablePointer<McError>?) -> Bool)
             logger.fatalError("Error: \(#function): \(error)")
         }
         guard err.errorCode != .panic else {
-            logger.fatalError("LibMobileCoin function panicked: \(redacting: err.description)")
+            logger.fatalError(
+                "Error: \(#function): LibMobileCoin function panicked: \(err.description)")
         }
         return .failure(err)
     }
@@ -87,7 +89,8 @@ func withMcErrorReturningOptional<T>(_ body: (inout UnsafeMutablePointer<McError
             logger.fatalError("Error: \(#function): \(error)")
         }
         guard err.errorCode != .panic else {
-            logger.fatalError("LibMobileCoin function panicked: \(redacting: err.description)")
+            logger.fatalError(
+                "Error: \(#function): LibMobileCoin function panicked: \(err.description)")
         }
         return .failure(err)
     }
@@ -111,7 +114,8 @@ func withMcErrorReturningArrayCount(_ body: (inout UnsafeMutablePointer<McError>
             logger.fatalError("Error: \(#function): \(error)")
         }
         guard err.errorCode != .panic else {
-            logger.fatalError("LibMobileCoin function panicked: \(redacting: err.description)")
+            logger.fatalError(
+                "Error: \(#function): LibMobileCoin function panicked: \(err.description)")
         }
         return .failure(err)
     }

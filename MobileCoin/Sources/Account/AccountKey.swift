@@ -8,9 +8,29 @@ import Foundation
 import LibMobileCoin
 
 public struct AccountKey {
+    public static func make(
+        rootEntropy: Data,
+        fogReportUrl: String,
+        fogReportId: String,
+        fogAuthoritySpki: Data
+    ) -> Result<AccountKey, InvalidInputError> {
+        logger.info("")
+        guard let rootEntropy = Data32(rootEntropy) else {
+            logger.info("failure - rootEntropy must be 32 bytes in length")
+            return .failure(InvalidInputError("rootEntropy must be 32 bytes in length"))
+        }
+
+        return FogInfo.make(
+            reportUrl: fogReportUrl,
+            reportId: fogReportId,
+            authoritySpki: fogAuthoritySpki
+        ).map { fogInfo in
+            AccountKey(rootEntropy: rootEntropy, fogInfo: fogInfo)
+        }
+    }
+
     static func make(
-        viewPrivateKey: RistrettoPrivate,
-        spendPrivateKey: RistrettoPrivate,
+        rootEntropy: Data32,
         fogReportUrl: String,
         fogReportId: String,
         fogAuthoritySpki: Data,
@@ -23,8 +43,7 @@ public struct AccountKey {
             authoritySpki: fogAuthoritySpki
         ).map { fogInfo in
             AccountKey(
-                viewPrivateKey: viewPrivateKey,
-                spendPrivateKey: spendPrivateKey,
+                rootEntropy: rootEntropy,
                 fogInfo: fogInfo,
                 subaddressIndex: subaddressIndex)
         }
@@ -36,6 +55,21 @@ public struct AccountKey {
     let subaddressIndex: UInt64
 
     public let publicAddress: PublicAddress
+
+    init(
+        rootEntropy: Data32,
+        fogInfo: FogInfo? = nil,
+        subaddressIndex: UInt64 = McConstants.DEFAULT_SUBADDRESS_INDEX
+    ) {
+        logger.info("")
+        let (viewPrivateKey, spendPrivateKey) = AccountKeyUtils.privateKeys(
+            fromRootEntropy: rootEntropy)
+        self.init(
+            viewPrivateKey: viewPrivateKey,
+            spendPrivateKey: spendPrivateKey,
+            fogInfo: fogInfo,
+            subaddressIndex: subaddressIndex)
+    }
 
     init(
         viewPrivateKey: RistrettoPrivate,
@@ -70,7 +104,8 @@ public struct AccountKey {
             return try proto.serializedData()
         } catch {
             // Safety: Protobuf binary serialization is no fail when not using proto2 or `Any`.
-            logger.fatalError("Protobuf serialization failed: \(redacting: error)")
+            logger.fatalError(
+                "Error: Protobuf serialization failed: \(redacting: error.localizedDescription)")
         }
     }
 
@@ -188,19 +223,20 @@ struct AccountKeyWithFog {
     let accountKey: AccountKey
 
     init?(accountKey: AccountKey) {
-        logger.info("\(redacting: accountKey.publicAddress)")
-
+        logger.info(accountKey.publicAddress.debugDescription)
         guard accountKey.fogInfo != nil else {
             return nil
         }
+
         self.accountKey = accountKey
     }
 
     var fogInfo: AccountKey.FogInfo {
         guard let fogInfo = accountKey.fogInfo else {
             // Safety: accountKey is guaranteed to have fogInfo.
-            logger.fatalError("accountKey doesn't have fogInfo")
+            logger.fatalError("accountKey doesn't have fogInfo.")
         }
+
         return fogInfo
     }
 }

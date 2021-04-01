@@ -11,17 +11,20 @@ final class ConsensusConnection: AttestedConnection, ConsensusService {
     private let client: ConsensusClient_ConsensusClientAPIClient
 
     init(
-        config: AttestedConnectionConfig<ConsensusUrl>,
+        url: ConsensusUrl,
+        attestation: Attestation,
+        trustRoots: [NIOSSLCertificate]?,
         channelManager: GrpcChannelManager,
         targetQueue: DispatchQueue?,
         rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)? = securityRNG,
         rngContext: Any? = nil
     ) {
-        let channel = channelManager.channel(for: config)
+        let channel = channelManager.channel(for: url, trustRoots: trustRoots)
         self.client = ConsensusClient_ConsensusClientAPIClient(channel: channel)
         super.init(
             client: Attest_AttestedApiClient(channel: channel),
-            config: config,
+            url: url,
+            attestation: attestation,
             targetQueue: targetQueue,
             rng: rng,
             rngContext: rngContext)

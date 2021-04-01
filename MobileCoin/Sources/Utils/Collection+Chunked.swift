@@ -14,6 +14,7 @@ extension Collection {
             guard distance(from: startIndex, to: endIndex) > 0 else {
                 break
             }
+
             chunks.append(self[startIndex ..< Swift.min(nextIndex, self.endIndex)])
         }
         return chunks

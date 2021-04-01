@@ -11,17 +11,20 @@ final class FogKeyImageConnection: AttestedConnection, FogKeyImageService {
     private let client: FogLedger_FogKeyImageAPIClient
 
     init(
-        config: AttestedConnectionConfig<FogUrl>,
+        url: FogUrl,
+        attestation: Attestation,
+        trustRoots: [NIOSSLCertificate]?,
         channelManager: GrpcChannelManager,
         targetQueue: DispatchQueue?,
         rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)? = securityRNG,
         rngContext: Any? = nil
     ) {
-        let channel = channelManager.channel(for: config)
+        let channel = channelManager.channel(for: url, trustRoots: trustRoots)
         self.client = FogLedger_FogKeyImageAPIClient(channel: channel)
         super.init(
             client: self.client,
-            config: config,
+            url: url,
+            attestation: attestation,
             targetQueue: targetQueue,
             rng: rng,
             rngContext: rngContext)

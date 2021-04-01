@@ -2,6 +2,8 @@
 //  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
 
+// swiftlint:disable colon
+
 import Foundation
 
 struct AnyInfiniteIterator<Element> {
@@ -29,8 +31,8 @@ private class AnyInfiniteIteratorBoxBase<Element>: InfiniteIteratorProtocol {
     }
 }
 
-private final class InfiniteIteratorBox<Base>: AnyInfiniteIteratorBoxBase<Base.Element>
-    where Base: InfiniteIteratorProtocol
+private final class InfiniteIteratorBox<Base: InfiniteIteratorProtocol>:
+    AnyInfiniteIteratorBoxBase<Base.Element>
 {
     init(_ base: Base) { self._base = base }
 
