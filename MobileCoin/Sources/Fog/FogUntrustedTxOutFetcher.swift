@@ -26,10 +26,10 @@ struct FogUntrustedTxOutFetcher {
                         results.first(where: { $0.txOutPubkey.data == outputPublicKey.data })
                 else {
                     logger.info("failure - Fog UntrustedTxOut service failed to " +
-                                    "return the requested TxOut: \(redacting: results)")
+                        "return the requested TxOut: \(redacting: results)")
                     return .failure(.invalidServerResponse(
                         "Fog UntrustedTxOut service failed to return the requested TxOut. " +
-                            "\(results)"))
+                        "\(results)"))
                 }
                 return .success((result, blockCount: blockCount))
             })
@@ -55,7 +55,7 @@ struct FogUntrustedTxOutFetcher {
                 let outputPublicKeys = outputPublicKeys.map { $0.data }
                 guard let results = publicKeyToResult[outputPublicKeys] else {
                     logger.info("failure - Fog UntrustedTxOut service failed to " +
-                                    "return the requested TxOuts: \(redacting: response.results)")
+                        "return the requested TxOuts: \(redacting: response.results)")
                     return .failure(.invalidServerResponse(
                         "Fog UntrustedTxOut service failed to return the requested TxOuts. " +
                         "\(response)"))

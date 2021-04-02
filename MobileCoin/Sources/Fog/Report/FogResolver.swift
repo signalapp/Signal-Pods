@@ -50,8 +50,7 @@ final class FogResolver {
             serializedReportResponse = try reportResponse.serializedData()
         } catch {
             // Safety: Protobuf binary serialization is no fail when not using proto2 or `Any`.
-            logger.fatalError(
-                "ERROR - Protobuf serialization failed: \(error)")
+            logger.fatalError("Protobuf serialization failed: \(redacting: error)")
         }
 
         serializedReportResponse.asMcBuffer { reportResponsePtr in
@@ -74,8 +73,7 @@ final class FogResolver {
                 default:
                     // Safety: mc_fog_resolver_add_report_response should not throw non-documented
                     // errors.
-                    logger.fatalError(
-                        "ERROR - Unhandled LibMobileCoin error: \(error)")
+                    logger.fatalError("Unhandled LibMobileCoin error: \(redacting: error)")
                 }
             }
         }

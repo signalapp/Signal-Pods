@@ -20,37 +20,27 @@ final class DefaultServiceProvider: ServiceProvider {
     init(networkConfig: NetworkConfig, targetQueue: DispatchQueue?) {
         self.targetQueue = targetQueue
         self.consensus = ConsensusConnection(
-            url: networkConfig.consensusUrl,
-            attestation: networkConfig.consensusAttestation,
-            trustRoots: networkConfig.consensusTrustRoots,
+            config: networkConfig.consensus,
             channelManager: channelManager,
             targetQueue: targetQueue)
         self.view = FogViewConnection(
-            url: networkConfig.fogUrl,
-            attestation: networkConfig.fogViewAttestation,
-            trustRoots: networkConfig.fogTrustRoots,
+            config: networkConfig.fogView,
             channelManager: channelManager,
             targetQueue: targetQueue)
         self.merkleProof = FogMerkleProofConnection(
-            url: networkConfig.fogUrl,
-            attestation: networkConfig.fogMerkleProofAttestation,
-            trustRoots: networkConfig.fogTrustRoots,
+            config: networkConfig.fogMerkleProof,
             channelManager: channelManager,
             targetQueue: targetQueue)
         self.keyImage = FogKeyImageConnection(
-            url: networkConfig.fogUrl,
-            attestation: networkConfig.fogKeyImageAttestation,
-            trustRoots: networkConfig.fogTrustRoots,
+            config: networkConfig.fogKeyImage,
             channelManager: channelManager,
             targetQueue: targetQueue)
         self.block = FogBlockConnection(
-            url: networkConfig.fogUrl,
-            trustRoots: networkConfig.fogTrustRoots,
+            config: networkConfig.fogBlock,
             channelManager: channelManager,
             targetQueue: targetQueue)
         self.untrustedTxOut = FogUntrustedTxOutConnection(
-            url: networkConfig.fogUrl,
-            trustRoots: networkConfig.fogTrustRoots,
+            config: networkConfig.fogUntrustedTxOut,
             channelManager: channelManager,
             targetQueue: targetQueue)
     }
@@ -75,8 +65,11 @@ final class DefaultServiceProvider: ServiceProvider {
         return reportConnection
     }
 
-    func setAuthorization(credentials: BasicCredentials) {
+    func setConsensusAuthorization(credentials: BasicCredentials) {
         consensus.setAuthorization(credentials: credentials)
+    }
+
+    func setFogAuthorization(credentials: BasicCredentials) {
         view.setAuthorization(credentials: credentials)
         merkleProof.setAuthorization(credentials: credentials)
         keyImage.setAuthorization(credentials: credentials)

@@ -11,14 +11,13 @@ final class FogBlockConnection: Connection, FogBlockService {
     private let client: FogLedger_FogBlockAPIClient
 
     init(
-        url: FogUrl,
-        trustRoots: [NIOSSLCertificate]?,
+        config: ConnectionConfig<FogUrl>,
         channelManager: GrpcChannelManager,
         targetQueue: DispatchQueue?
     ) {
-        let channel = channelManager.channel(for: url, trustRoots: trustRoots)
+        let channel = channelManager.channel(for: config)
         self.client = FogLedger_FogBlockAPIClient(channel: channel)
-        super.init(url: url, targetQueue: targetQueue)
+        super.init(config: config, targetQueue: targetQueue)
     }
 
     func getBlocks(

@@ -237,14 +237,13 @@ private final class FfiAttestAke {
                 }.mapError {
                     switch $0.errorCode {
                     case .invalidInput:
-                        return .invalidInput($0.description)
+                        return .invalidInput("\(redacting: $0.description)")
                     case .attestationVerificationFailed:
-                        return .attestationVerificationFailed($0.description)
+                        return .attestationVerificationFailed("\(redacting: $0.description)")
                     default:
                         // Safety: mc_attest_ake_process_auth_response should not throw
                         // non-documented errors.
-                        logger.fatalError(
-                            "Unhandled LibMobileCoin error: \($0)")
+                        logger.fatalError("Unhandled LibMobileCoin error: \(redacting: $0)")
                     }
                 }
             }
@@ -260,13 +259,12 @@ private final class FfiAttestAke {
                 }).mapError {
                     switch $0.errorCode {
                     case .aead:
-                        return .aead($0.description)
+                        return .aead("\(redacting: $0.description)")
                     case .cipher:
-                        return .cipher($0.description)
+                        return .cipher("\(redacting: $0.description)")
                     default:
                         // Safety: mc_attest_ake_encrypt should not throw non-documented errors.
-                        logger.fatalError(
-                            "Unhandled LibMobileCoin error: \($0)")
+                        logger.fatalError("Unhandled LibMobileCoin error: \(redacting: $0)")
                     }
                 }
             }
@@ -283,13 +281,12 @@ private final class FfiAttestAke {
                 }.mapError {
                     switch $0.errorCode {
                     case .aead:
-                        return .aead($0.description)
+                        return .aead("\(redacting: $0.description)")
                     case .cipher:
-                        return .cipher($0.description)
+                        return .cipher("\(redacting: $0.description)")
                     default:
                         // Safety: mc_attest_ake_decrypt should not throw non-documented errors.
-                        logger.fatalError(
-                            "Unhandled LibMobileCoin error: \($0)")
+                        logger.fatalError("Unhandled LibMobileCoin error: \(redacting: $0)")
                     }
                 }
             }

@@ -74,9 +74,14 @@ public struct Report_Report {
   /// Clears the value of `report`. Subsequent reads from it will return its default value.
   public mutating func clearReport() {self._report = nil}
 
-  //// The last block at which a well-formed client may use this pubkey.
-  //// The tombstone block of a Tx formed using this pubkey should not exceed this.
-  //// This number is likely to be e.g. current block height + 50,
+  //// The first block index in which a well-formed client may not use this public key.
+  //// This is the same semantic as tombstone block of a Tx, which is the first block index
+  //// in which the Tx cannot appear.
+  ////
+  //// The tombstone block of a Tx formed using this public key should not exceed this number.
+  //// This constraint is enforced in the TransactionBuilder.
+  ////
+  //// This number is likely to be e.g. next block index + 50,
   //// and may be updated (larger) if you come back to the server later.
   public var pubkeyExpiry: UInt64 = 0
 

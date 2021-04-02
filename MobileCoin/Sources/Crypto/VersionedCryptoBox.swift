@@ -46,12 +46,11 @@ enum VersionedCryptoBox {
                     }).mapError {
                         switch $0.errorCode {
                         case .aead:
-                            return InvalidInputError($0.description)
+                            return InvalidInputError("\(redacting: $0.description)")
                         default:
                             // Safety: mc_versioned_crypto_box_encrypt should not throw
                             // non-documented errors.
-                            logger.fatalError(
-                                "Unhandled LibMobileCoin error: \(redacting: $0.description)")
+                            logger.fatalError("Unhandled LibMobileCoin error: \(redacting: $0)")
                         }
                     }
                 }
@@ -77,16 +76,15 @@ enum VersionedCryptoBox {
                     switch $0.errorCode {
                     case .aead:
                         return .invalidInput(
-                            "VersionedCryptoBox decryption error: \($0.description)")
+                            "VersionedCryptoBox decryption error: \(redacting: $0.description)")
                     case .unsupportedCryptoBoxVersion:
-                        return .unsupportedVersion($0.description)
+                        return .unsupportedVersion("\(redacting: $0.description)")
                     case .invalidInput:
-                        logger.fatalError("error: \($0.description)")
+                        logger.fatalError("error: \(redacting: $0.description)")
                     default:
                         // Safety: mc_tx_out_get_key_image should not throw non-documented
                         // errors.
-                        logger.fatalError(
-                            "Unhandled LibMobileCoin error: \(redacting: $0.description)")
+                        logger.fatalError("Unhandled LibMobileCoin error: \(redacting: $0)")
                     }
                 }
             }

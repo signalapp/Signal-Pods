@@ -8,30 +8,6 @@ import Foundation
 import LibMobileCoin
 
 enum AccountKeyUtils {
-    static func privateKeys(fromRootEntropy rootEntropy: Data32)
-        -> (viewPrivateKey: RistrettoPrivate, spendPrivateKey: RistrettoPrivate)
-    {
-        logger.info("")
-        var viewPrivateKeyOut = Data32()
-        var spendPrivateKeyOut = Data32()
-        rootEntropy.asMcBuffer { rootEntropyPtr in
-            viewPrivateKeyOut.asMcMutableBuffer { viewPrivateKeyOutPtr in
-                spendPrivateKeyOut.asMcMutableBuffer { spendPrivateKeyOutPtr in
-                    withMcInfallible {
-                        mc_account_private_keys_from_root_entropy(
-                            rootEntropyPtr,
-                            viewPrivateKeyOutPtr,
-                            spendPrivateKeyOutPtr)
-                    }
-                }
-            }
-        }
-        // Safety: It's safe to skip validation because mc_account_private_keys_from_root_entropy
-        // should always return valid RistrettoPrivate values on success.
-        return (RistrettoPrivate(skippingValidation: viewPrivateKeyOut),
-                RistrettoPrivate(skippingValidation: spendPrivateKeyOut))
-    }
-
     static func subaddressPrivateKeys(
         viewPrivateKey: RistrettoPrivate,
         spendPrivateKey: RistrettoPrivate,

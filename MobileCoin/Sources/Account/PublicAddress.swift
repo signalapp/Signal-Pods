@@ -52,8 +52,7 @@ public struct PublicAddress {
             return try proto.serializedData()
         } catch {
             // Safety: Protobuf binary serialization is no fail when not using proto2 or `Any`.
-            logger.fatalError(
-                "Error: Protobuf serialization failed: \(error)")
+            logger.fatalError("Protobuf serialization failed: \(redacting: error)")
         }
     }
 
@@ -68,18 +67,27 @@ public struct PublicAddress {
     var fogReportUrl: FogUrl? { fogInfo?.reportUrl }
     var fogReportId: String? { fogInfo?.reportId }
     var fogAuthoritySig: Data? { fogInfo?.authoritySig }
-
-    var debugDescription: String {
-        "(viewPublicKey, spendPublicKey): " +
-            "(\(redacting: viewPublicKey), \(redacting: spendPublicKey)), " +
-            "fogReportUrl: \(String(describing: fogReportUrl?.url)), " +
-            "fogReportId: \(String(describing: fogReportId)), " +
-            "fogAuthoritySig: \(redacting: String(describing: fogAuthoritySig))"
-    }
 }
 
 extension PublicAddress: Equatable {}
 extension PublicAddress: Hashable {}
+
+extension PublicAddress: CustomRedactingStringConvertible {
+    var redactingDescription: String {
+        var params = [
+            "viewPublicKey=\(redacting: viewPublicKey.base64EncodedString())",
+            "spendPublicKey=\(redacting: spendPublicKey.base64EncodedString())",
+        ]
+        if let fogInfo = fogInfo {
+            params += [
+                "fogReportUrl: \(fogInfo.reportUrlString)",
+                "fogReportId: \(fogInfo.reportId)",
+                "fogAuthoritySig: \(redacting: fogInfo.authoritySig)",
+            ]
+        }
+        return "PublicAddress(\(params.joined(separator: ", ")))"
+    }
+}
 
 extension PublicAddress {
     init(

@@ -8,14 +8,14 @@ import GRPC
 class Connection {
     private let inner: SerialDispatchLock<Inner>
 
-    init(url: MobileCoinUrlProtocol, targetQueue: DispatchQueue?) {
-        let inner = Inner(session: ConnectionSession(url: url))
+    init(config: ConnectionConfigProtocol, targetQueue: DispatchQueue?) {
+        let inner = Inner(config: config)
         self.inner = .init(inner, targetQueue: targetQueue)
     }
 
     func setAuthorization(credentials: BasicCredentials) {
         inner.accessAsync {
-            $0.session.authorizationCredentials = credentials
+            $0.setAuthorization(credentials: credentials)
         }
     }
 
@@ -38,7 +38,17 @@ class Connection {
 
 extension Connection {
     private struct Inner {
-        let session: ConnectionSession
+        private let session: ConnectionSession
+
+        init(config: ConnectionConfigProtocol) {
+            logger.info("")
+            self.session = ConnectionSession(config: config)
+        }
+
+        func setAuthorization(credentials: BasicCredentials) {
+            logger.info("")
+            session.authorizationCredentials = credentials
+        }
 
         func requestCallOptions() -> CallOptions {
             var callOptions = CallOptions()

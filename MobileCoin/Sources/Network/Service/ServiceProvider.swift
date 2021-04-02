@@ -15,5 +15,6 @@ protocol ServiceProvider {
 
     func fogReportService(for fogReportUrl: FogUrl) -> FogReportService
 
-    func setAuthorization(credentials: BasicCredentials)
+    func setConsensusAuthorization(credentials: BasicCredentials)
+    func setFogAuthorization(credentials: BasicCredentials)
 }

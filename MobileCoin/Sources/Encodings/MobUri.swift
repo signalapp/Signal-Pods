@@ -15,7 +15,8 @@ public enum MobUri {
         logger.info("")
         guard let uri = URL(string: uriString) else {
             logger.info("Could not parse MobURI as URL: \(redacting: uriString)")
-            return .failure(InvalidInputError("Could not parse MobUri as URL: \(uriString)"))
+            return .failure(
+                InvalidInputError("Could not parse MobUri as URL: \(redacting: uriString)"))
         }
         guard let scheme = uri.scheme else {
             logger.info("MobUri scheme cannot be empty.")
@@ -81,8 +82,7 @@ extension MobUri.Payload {
             let payloadString = pathComponents[1]
             guard let decodingResult = Base58Coder.decode(payloadString) else {
                 return .failure(InvalidInputError(
-                                    "MobUri payload base-58 decoding " +
-                                        "failed. payload \(redacting: payloadString)"))
+                    "MobUri payload base-58 decoding failed. Payload: \(redacting: payloadString)"))
             }
 
             return .success(MobUri.Payload(decodingResult))

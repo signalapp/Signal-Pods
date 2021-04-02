@@ -65,13 +65,6 @@ extension FogCommon_BlockRange {
 
 // MARK: - Fog View
 
-extension FogView_QueryResponse {
-    var missedBlockRangeValues: [Range<UInt64>] {
-        get { missedBlockRanges.map { $0.startBlock..<$0.endBlock } }
-        set { missedBlockRanges = newValue.map { FogCommon_BlockRange($0) } }
-    }
-}
-
 extension FogView_RngRecord {
     init(nonce fogRngKey: FogRngKey, startBlock: UInt64) {
         self.init()

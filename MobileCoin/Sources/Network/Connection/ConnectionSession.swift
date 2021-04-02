@@ -7,7 +7,7 @@ import GRPC
 import NIOHPACK
 import NIOHTTP1
 
-class ConnectionSession {
+final class ConnectionSession {
     private static var ephemeralCookieStorage: HTTPCookieStorage {
         guard let cookieStorage = URLSessionConfiguration.ephemeral.httpCookieStorage else {
             // Safety: URLSessionConfiguration.ephemeral.httpCookieStorage will always return
@@ -21,9 +21,14 @@ class ConnectionSession {
     private let cookieStorage: HTTPCookieStorage
     var authorizationCredentials: BasicCredentials?
 
-    init(url: MobileCoinUrlProtocol) {
+    convenience init(config: ConnectionConfigProtocol) {
+        self.init(url: config.url, authorization: config.authorization)
+    }
+
+    init(url: MobileCoinUrlProtocol, authorization: BasicCredentials? = nil) {
         self.url = url.httpBasedUrl
         self.cookieStorage = Self.ephemeralCookieStorage
+        self.authorizationCredentials = authorization
     }
 
     func addRequestHeaders(to hpackHeaders: inout HPACKHeaders) {

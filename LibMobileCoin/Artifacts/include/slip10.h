@@ -9,35 +9,25 @@
 extern "C" {
 #endif
 
-/* ==== Types ==== */
-
-typedef struct _McSlip10Indices McSlip10Indices;
-
-/* ==== McSlip10Indices ==== */
-
-McSlip10Indices* MC_NULLABLE mc_slip10_indices_create(void);
-
-void mc_slip10_indices_free(
-  McSlip10Indices* MC_NULLABLE indices
-);
-
-bool mc_slip10_indices_add(
-  McSlip10Indices* MC_NONNULL indices,
-  uint32_t index
-)
-MC_ATTRIBUTE_NONNULL(1);
-
 /* ==== McSlip10 ==== */
 
 /// # Preconditions
 ///
-/// * `out_key` - length must be >= 32.
-bool mc_slip10_derive_ed25519_private_key(
-  const McBuffer* MC_NONNULL seed,
-  const McSlip10Indices* MC_NONNULL path,
-  McMutableBuffer* MC_NONNULL out_key
+/// * `mnemonic` - must be a nul-terminated C string containing valid UTF-8.
+/// * `out_view_private_key` - length must be >= 32.
+/// * `out_spend_private_key` - length must be >= 32.
+///
+/// # Errors
+///
+/// * `LibMcError::InvalidInput`
+bool mc_slip10_account_private_keys_from_mnemonic(
+  const char* MC_NONNULL mnemonic,
+  uint32_t account_index,
+  McMutableBuffer* MC_NONNULL out_view_private_key,
+  McMutableBuffer* MC_NONNULL out_spend_private_key,
+  McError* MC_NULLABLE * MC_NULLABLE out_error
 )
-MC_ATTRIBUTE_NONNULL(1, 2, 3);
+MC_ATTRIBUTE_NONNULL(1, 3, 4);
 
 #ifdef __cplusplus
 }

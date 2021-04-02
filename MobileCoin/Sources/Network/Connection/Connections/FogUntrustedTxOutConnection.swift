@@ -11,14 +11,13 @@ final class FogUntrustedTxOutConnection: Connection, FogUntrustedTxOutService {
     private let client: FogLedger_FogUntrustedTxOutApiClient
 
     init(
-        url: FogUrl,
-        trustRoots: [NIOSSLCertificate]?,
+        config: ConnectionConfig<FogUrl>,
         channelManager: GrpcChannelManager,
         targetQueue: DispatchQueue?
     ) {
-        let channel = channelManager.channel(for: url, trustRoots: trustRoots)
+        let channel = channelManager.channel(for: config)
         self.client = FogLedger_FogUntrustedTxOutApiClient(channel: channel)
-        super.init(url: url, targetQueue: targetQueue)
+        super.init(config: config, targetQueue: targetQueue)
     }
 
     func getTxOuts(

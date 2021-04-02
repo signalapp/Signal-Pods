@@ -43,8 +43,8 @@ extension Account {
                 Result<(transaction: Transaction, receipt: Receipt), TransactionPreparationError>
             ) -> Void
         ) {
-            logger.info("recipient: \(recipient.debugDescription), " +
-                            "amount: \(redacting: amount), fee: \(fee)")
+            logger.info(
+                "recipient: \(redacting: recipient), amount: \(redacting: amount), fee: \(fee)")
             guard amount > 0 else {
                 logger.info("failure - Cannot spend 0 MOB")
                 serialQueue.async {
@@ -69,8 +69,8 @@ extension Account {
                 })
             {
             case .success(let txOutsToSpend):
-                logger.info("success - txOutsToSpend: " +
-                                "\(redacting: txOutsToSpend.map { $0.publicKey })")
+                logger.info(
+                    "success - txOutsToSpend: \(redacting: txOutsToSpend.map { $0.publicKey })")
                 transactionPreparer.prepareTransaction(
                     inputs: txOutsToSpend,
                     recipient: recipient,
@@ -79,7 +79,7 @@ extension Account {
                     tombstoneBlockIndex: tombstoneBlockIndex,
                     completion: completion)
             case .failure(let error):
-                logger.info("failure - error: \(error.localizedDescription)")
+                logger.info("failure - error: \(error)")
                 serialQueue.async {
                     completion(.failure(error))
                 }
@@ -94,8 +94,8 @@ extension Account {
                 Result<(transaction: Transaction, receipt: Receipt), TransactionPreparationError>
             ) -> Void
         ) {
-            logger.info("recipient: \(recipient.debugDescription), " +
-                            "amount: \(redacting: amount), feeLevel: \(feeLevel)")
+            logger.info("recipient: \(redacting: recipient), amount: \(redacting: amount), " +
+                "feeLevel: \(feeLevel)")
             guard amount > 0 else {
                 logger.info("failure - Cannot spend 0 MOB")
                 serialQueue.async {
@@ -132,7 +132,7 @@ extension Account {
                     tombstoneBlockIndex: tombstoneBlockIndex,
                     completion: completion)
             case .failure(let error):
-                logger.info("failure - error: \(error.localizedDescription)")
+                logger.info("failure - error: \(error)")
                 serialQueue.async {
                     completion(.failure(error))
                 }

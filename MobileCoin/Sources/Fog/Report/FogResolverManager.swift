@@ -29,7 +29,7 @@ final class FogResolverManager {
         addresses: [PublicAddress],
         completion: @escaping (Result<FogResolver, ConnectionError>) -> Void
     ) {
-        logger.info("addresses: \(addresses.map { $0.debugDescription })")
+        logger.info("addresses: \(addresses.map { "\(redacting: $0)" })")
         let reportUrls = Set(addresses.compactMap { $0.fogReportUrl })
         reportUrls.mapAsync({ reportUrl, callback in
             reportManager.reportResponse(for: reportUrl) {
@@ -51,8 +51,8 @@ final class FogResolverManager {
         desiredMinPubkeyExpiry: UInt64,
         completion: @escaping (Result<FogResolver, ConnectionError>) -> Void
     ) {
-        logger.info("\(addresses.map { $0.debugDescription }), " +
-                        "desiredMinPubkeyExpiry: \(desiredMinPubkeyExpiry)")
+        logger.info("\(addresses.map { "\(redacting: $0)" }), " +
+            "desiredMinPubkeyExpiry: \(desiredMinPubkeyExpiry)")
         let fogInfos = addresses.compactMap { $0.fogInfo }
 
         let reportUrlsToFogInfos = Dictionary(grouping: fogInfos, by: { $0.reportUrl })

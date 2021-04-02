@@ -62,10 +62,9 @@ extension Account {
 
         func checkForNewTxOuts(completion: @escaping (Result<(), ConnectionError>) -> Void) {
             logger.info("")
-            txOutFetcher.fetchTxOuts(partialResultsWithWriteLock: {
+            txOutFetcher.fetchTxOuts(partialResultsWithWriteLock: { newTxOuts in
                 let account = self.account.accessWithoutLocking
-                account.addTxOuts($0.newTxOuts)
-                account.unscannedMissedBlocksRanges.append(contentsOf: $0.missedBlocks)
+                account.addTxOuts(newTxOuts)
             }, completion: completion)
         }
 
@@ -73,14 +72,13 @@ extension Account {
             completion: @escaping (Result<(), ConnectionError>) -> Void
         ) {
             logger.info("")
-            let unscannedRanges = account.readSync { $0.unscannedMissedBlocksRanges }
-            viewKeyScanner.viewKeyScanBlocks(blockRanges: unscannedRanges) {
+            let unscannedBlockRanges = account.readSync { $0.unscannedMissedBlocksRanges }
+            viewKeyScanner.viewKeyScanBlocks(blockRanges: unscannedBlockRanges) {
                 completion($0.map { foundTxOuts in
                     self.account.writeSync {
-                        $0.addTxOuts(foundTxOuts)
-                        for range in unscannedRanges {
-                            $0.unscannedMissedBlocksRanges.removeAll(where: { $0 == range })
-                        }
+                        $0.addViewKeyScanResults(
+                            scannedBlockRanges: unscannedBlockRanges,
+                            foundTxOuts: foundTxOuts)
                     }
                 })
             }
