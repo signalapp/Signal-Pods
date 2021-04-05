@@ -7,6 +7,7 @@ import LibMobileCoin
 
 extension Account {
     struct BalanceUpdater {
+        private let serialQueue: DispatchQueue
         private let account: ReadWriteDispatchLock<Account>
         private let txOutFetcher: FogView.TxOutFetcher
         private let viewKeyScanner: FogViewKeyScanner
@@ -20,7 +21,9 @@ extension Account {
             fogQueryScalingStrategy: FogQueryScalingStrategy,
             targetQueue: DispatchQueue?
         ) {
-            logger.info("")
+            self.serialQueue = DispatchQueue(
+                label: "com.mobilecoin.\(Account.self).\(Self.self)",
+                target: targetQueue)
             self.account = account
             self.txOutFetcher = FogView.TxOutFetcher(
                 fogView: account.mapLockWithoutLocking { $0.fogView },
@@ -37,32 +40,41 @@ extension Account {
         }
 
         func updateBalance(completion: @escaping (Result<Balance, ConnectionError>) -> Void) {
-            logger.info("")
+            logger.info("Updating balance...", logFunction: false)
             checkForNewTxOuts {
                 guard $0.successOr(completion: completion) != nil else {
-                    logger.info("failure")
+                    logger.warning("Failed to update balance.", logFunction: false)
                     return
                 }
 
                 self.viewKeyScanUnscannedMissedBlocks {
                     guard $0.successOr(completion: completion) != nil else {
-                        logger.info("failure")
+                        logger.warning("Failed to update balance.", logFunction: false)
                         return
                     }
 
-                    logger.info("checking for spent txOuts")
                     self.checkForSpentTxOuts {
-                        completion($0.map {
-                            self.account.readSync { $0.cachedBalance }
-                        })
+                        guard $0.successOr(completion: completion) != nil else {
+                            logger.warning("Failed to update balance.", logFunction: false)
+                            return
+                        }
+
+                        let balance = self.account.readSync { $0.cachedBalance }
+
+                        logger.info(
+                            "Update balance successful. balance: \(redacting: balance)",
+                            logFunction: false)
+                        completion(.success(balance))
                     }
                 }
             }
         }
 
         func checkForNewTxOuts(completion: @escaping (Result<(), ConnectionError>) -> Void) {
-            logger.info("")
             txOutFetcher.fetchTxOuts(partialResultsWithWriteLock: { newTxOuts in
+                logger.info(
+                    "Found \(redacting: newTxOuts.count) new TxOuts using Fog View",
+                    logFunction: false)
                 let account = self.account.accessWithoutLocking
                 account.addTxOuts(newTxOuts)
             }, completion: completion)
@@ -71,8 +83,14 @@ extension Account {
         func viewKeyScanUnscannedMissedBlocks(
             completion: @escaping (Result<(), ConnectionError>) -> Void
         ) {
-            logger.info("")
             let unscannedBlockRanges = account.readSync { $0.unscannedMissedBlocksRanges }
+            guard !unscannedBlockRanges.isEmpty else {
+                logger.debug("0 unscanned missed blocks, skipping.", logFunction: false)
+                serialQueue.async {
+                    completion(.success(()))
+                }
+                return
+            }
             viewKeyScanner.viewKeyScanBlocks(blockRanges: unscannedBlockRanges) {
                 completion($0.map { foundTxOuts in
                     self.account.writeSync {
@@ -85,7 +103,6 @@ extension Account {
         }
 
         func checkForSpentTxOuts(completion: @escaping (Result<(), ConnectionError>) -> Void) {
-            logger.info("")
             let keyImageTrackers = account.mapLock { account in
                 account.allTxOutTrackers.filter { !$0.isSpent }.map { $0.keyImageTracker }
             }

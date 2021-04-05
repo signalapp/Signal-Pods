@@ -15,7 +15,6 @@ public struct PaymentRequest {
     /// * Providing an empty string for `memo` is the same as passing `nil`, meaning no memo is
     ///     specified.
     public init(publicAddress: PublicAddress, value: UInt64? = nil, memo: String? = nil) {
-        logger.info("")
         self.publicAddress = publicAddress
 
         if let value = value, value != 0 {
@@ -37,7 +36,6 @@ extension PaymentRequest: Hashable {}
 
 extension PaymentRequest {
     init?(_ paymentRequest: Printable_PaymentRequest) {
-        logger.info("")
         guard let publicAddress = PublicAddress(paymentRequest.publicAddress) else {
             return nil
         }
@@ -49,7 +47,6 @@ extension PaymentRequest {
 
 extension Printable_PaymentRequest {
     init(_ paymentRequest: PaymentRequest) {
-        logger.info("")
         self.init()
         self.publicAddress = External_PublicAddress(paymentRequest.publicAddress)
         if let value = paymentRequest.value {

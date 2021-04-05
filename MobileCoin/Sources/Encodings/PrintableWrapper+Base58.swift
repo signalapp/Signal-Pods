@@ -9,16 +9,17 @@ import LibMobileCoin
 
 extension Printable_PrintableWrapper {
     init?(base58Encoded base58String: String) {
-        logger.info("")
         guard case .success(let decodedData) =
             Data.make(withMcMutableBuffer: { bufferPtr, errorPtr in
                 mc_printable_wrapper_b58_decode(base58String, bufferPtr, &errorPtr)
             })
         else {
+            logger.warning("PrintableWrapper base-58 decoding failed.")
             return nil
         }
 
         guard let printableWrapper = try? Self(serializedData: decodedData) else {
+            logger.warning("Printable_PrintableWrapper deserialization failed.")
             return nil
         }
 
@@ -26,7 +27,6 @@ extension Printable_PrintableWrapper {
     }
 
     func base58EncodedString() -> String {
-        logger.info("")
         let serialized: Data
         do {
             serialized = try serializedData()

@@ -19,8 +19,7 @@ extension MixinSelectionStrategy {
         selectionRange: PartialRangeUpTo<UInt64>?,
         excludedTxOutIndices: [UInt64] = []
     ) -> [Set<UInt64>] {
-        logger.info("")
-        return selectMixinIndices(
+        selectMixinIndices(
             forRealTxOutIndices: realTxOutIndices,
             selectionRange: selectionRange,
             excludedTxOutIndices: excludedTxOutIndices,

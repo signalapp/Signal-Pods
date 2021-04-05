@@ -9,11 +9,25 @@
 import Foundation
 import LibMobileCoin
 
+struct FogViewQueryRequestWrapper {
+    var requestAad = FogView_QueryRequestAAD()
+    var request = FogView_QueryRequest()
+}
+
 protocol FogViewService {
     func query(
         requestAad: FogView_QueryRequestAAD,
         request: FogView_QueryRequest,
         completion: @escaping (Result<FogView_QueryResponse, ConnectionError>) -> Void)
+}
+
+extension FogViewService {
+    func query(
+        requestWrapper wrapper: FogViewQueryRequestWrapper,
+        completion: @escaping (Result<FogView_QueryResponse, ConnectionError>) -> Void
+    ) {
+        query(requestAad: wrapper.requestAad, request: wrapper.request, completion: completion)
+    }
 }
 
 protocol FogMerkleProofService {

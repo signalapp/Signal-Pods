@@ -21,7 +21,6 @@ struct TransactionPreparer {
         mixinSelectionStrategy: MixinSelectionStrategy,
         targetQueue: DispatchQueue?
     ) {
-        logger.info("")
         self.serialQueue = DispatchQueue(
             label: "com.mobilecoin.\(Account.self).\(Self.self)",
             target: targetQueue)
@@ -42,13 +41,14 @@ struct TransactionPreparer {
             Result<Transaction, DefragTransactionPreparationError>
         ) -> Void
     ) {
-        logger.info("")
         guard UInt64.safeCompare(
                 sumOfValues: inputs.map { $0.value },
                 isGreaterThanValue: fee)
         else {
-            logger.warning("failure - sumOfValues inputs: \(redacting: inputs) " +
-                            "isGreaterThanValue fee: \(redacting: fee)")
+            logger.warning(
+                "Insufficient balance for self-addressed transaction: sum of inputs: " +
+                    "\(redacting: inputs.map { $0.value }) <= fee: \(redacting: fee)",
+                logFunction: false)
             serialQueue.async {
                 completion(.failure(.insufficientBalance()))
             }
@@ -88,19 +88,23 @@ struct TransactionPreparer {
             Result<(transaction: Transaction, receipt: Receipt), TransactionPreparationError>
         ) -> Void
     ) {
-        logger.info("")
         guard amount > 0, let amount = PositiveUInt64(amount) else {
-            logger.warning("cannot spend 0 MOB")
+            let errorMessage = "Cannot spend 0 MOB"
+            logger.error(errorMessage, logFunction: false)
             serialQueue.async {
-                completion(.failure(.invalidInput("Cannot spend 0 MOB")))
+                completion(.failure(.invalidInput(errorMessage)))
             }
             return
         }
         guard UInt64.safeCompare(
                 sumOfValues: inputs.map { $0.value },
-                isGreaterThanSumOfValues: [amount.value, fee])
+                isGreaterThanOrEqualToSumOfValues: [amount.value, fee])
         else {
-            logger.warning("sum of inputs is greater than amount + fee")
+            logger.warning(
+                "Insufficient balance to prepare transaction: sum of inputs: " +
+                    "\(redacting: inputs.map { $0.value }) < amount: \(redacting: amount) + fee: " +
+                    "\(redacting: fee)",
+                logFunction: false)
             serialQueue.async {
                 completion(.failure(.insufficientBalance()))
             }
@@ -137,11 +141,11 @@ struct TransactionPreparer {
         merkleRootBlock: UInt64? = nil,
         completion: @escaping (Result<[PreparedTxInput], ConnectionError>) -> Void
     ) {
-        logger.info("")
         let inputsMixinIndices = mixinSelectionStrategy.selectMixinIndices(
             forRealTxOutIndices: inputs.map { $0.globalIndex },
             selectionRange: ledgerTxOutCount.map { ..<$0 }
         ).map { Array($0) }
+
         // There's a chance that a txo we selected as a mixin is in a block that's greater than
         // the highest block of our inputs, in which case, using the highest block of our inputs
         // as the requested merkleRootBlock might cause getOutputs to fail. However, the current
@@ -154,24 +158,22 @@ struct TransactionPreparer {
             merkleRootBlock: merkleRootBlock,
             maxNumIndicesPerQuery: 100
         ) {
-            self.processResults(
+            self.processFetchResults(
+                $0,
                 inputs: inputs,
                 ledgerTxOutCount: ledgerTxOutCount,
-                results: $0,
                 completion: completion)
         }
     }
 
-    private func processResults(
+    private func processFetchResults(
+        _ results: Result<[[(TxOut, TxOutMembershipProof)]], FogMerkleProofFetcherError>,
         inputs: [KnownTxOut],
         ledgerTxOutCount: UInt64?,
-        results: Result<[[(TxOut, TxOutMembershipProof)]], FogMerkleProofFetcherError>,
         completion: @escaping (Result<[PreparedTxInput], ConnectionError>) -> Void
     ) {
-        logger.info("")
         switch results {
         case .success(let inputsMixinOutputs):
-            logger.info("Processing results successful")
             completion(zip(inputs, inputsMixinOutputs).map { knownTxOut, mixinOutputs in
                 PreparedTxInput.make(knownTxOut: knownTxOut, ring: mixinOutputs)
                     .mapError { .invalidServerResponse(String(describing: $0)) }
@@ -179,20 +181,15 @@ struct TransactionPreparer {
         case .failure(let error):
             switch error {
             case .connectionError(let connectionError):
-                logger.warning("failure - connection error")
+                logger.warning("failure - connection error: \(connectionError)")
                 completion(.failure(connectionError))
             case let .outOfBounds(blockCount: blockCount, ledgerTxOutCount: responseTxOutCount):
                 if let ledgerTxOutCount = ledgerTxOutCount {
-                    logger.warning(
-                        "Fog GetMerkleProof returned " +
-                        "doesNotExist, even though txo indices were limited by " +
-                        "globalTxoCount returned by previous call to GetMerkleProof. " +
-                        "Previously returned globalTxoCount: \(ledgerTxOutCount)")
-                    completion(.failure(.invalidServerResponse(
-                        "Fog GetMerkleProof returned " +
-                        "doesNotExist, even though txo indices were limited by " +
-                        "globalTxoCount returned by previous call to GetMerkleProof. " +
-                        "Previously returned globalTxoCount: \(ledgerTxOutCount)")))
+                    let errorMessage = "Fog GetMerkleProof returned doesNotExist, even though " +
+                        "txo indices were limited by globalTxoCount returned by previous call to " +
+                        "GetMerkleProof. Previously returned globalTxoCount: \(ledgerTxOutCount)"
+                    logger.error(errorMessage, logFunction: false)
+                    completion(.failure(.invalidServerResponse(errorMessage)))
                 } else {
                     // Re-select mixins, making sure we limit mixin indices to txo count
                     // returned by the server. Uses blockCount returned by server for

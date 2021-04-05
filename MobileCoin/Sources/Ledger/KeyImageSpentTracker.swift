@@ -10,7 +10,6 @@ final class KeyImageSpentTracker {
     var spentStatus: KeyImage.SpentStatus
 
     init(_ keyImage: KeyImage) {
-        logger.info("")
         self.keyImage = keyImage
         self.spentStatus = .unspent(knownToBeUnspentBlockCount: 0)
     }

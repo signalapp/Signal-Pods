@@ -12,7 +12,6 @@ struct FogKeyImageChecker {
     private let fogKeyImageService: FogKeyImageService
 
     init(fogKeyImageService: FogKeyImageService, targetQueue: DispatchQueue?) {
-        logger.info("")
         self.serialQueue = DispatchQueue(label: "com.mobilecoin.\(Self.self)", target: targetQueue)
         self.fogKeyImageService = fogKeyImageService
     }
@@ -22,7 +21,6 @@ struct FogKeyImageChecker {
         nextKeyImageQueryBlockIndex: UInt64 = 0,
         completion: @escaping (Result<KeyImage.SpentStatus, ConnectionError>) -> Void
     ) {
-        logger.info("")
         checkKeyImages(
             keyImageQueries: [(keyImage, nextKeyImageQueryBlockIndex: nextKeyImageQueryBlockIndex)]
         ) {
@@ -41,7 +39,6 @@ struct FogKeyImageChecker {
         maxKeyImagesPerQuery: Int,
         completion: @escaping (Result<[KeyImage.SpentStatus], ConnectionError>) -> Void
     ) {
-        logger.info("")
         checkKeyImages(
             keyImageQueries: keyImageQueries.map { ($0, nextKeyImageQueryBlockIndex: 0) },
             maxKeyImagesPerQuery: maxKeyImagesPerQuery,
@@ -66,7 +63,6 @@ struct FogKeyImageChecker {
         keyImageQueries: [KeyImage],
         completion: @escaping (Result<[KeyImage.SpentStatus], ConnectionError>) -> Void
     ) {
-        logger.info("")
         checkKeyImages(
             keyImageQueries: keyImageQueries.map { ($0, nextKeyImageQueryBlockIndex: 0) },
             completion: completion)

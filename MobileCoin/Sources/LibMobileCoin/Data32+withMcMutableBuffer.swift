@@ -12,7 +12,6 @@ extension Data32 {
         withMcMutableBuffer body:
             (UnsafeMutablePointer<McMutableBuffer>, inout UnsafeMutablePointer<McError>?) -> Bool
     ) -> Result<Data32, LibMobileCoinError> {
-        logger.info("")
         var bytes = Data32()
         return bytes.asMcMutableBuffer { bufferPtr in
             withMcError { errorPtr in

@@ -16,8 +16,7 @@ public struct AccountKey {
         fogAuthoritySpki: Data,
         subaddressIndex: UInt64 = McConstants.DEFAULT_SUBADDRESS_INDEX
     ) -> Result<AccountKey, InvalidInputError> {
-        logger.info("")
-        return FogInfo.make(
+        FogInfo.make(
             reportUrl: fogReportUrl,
             reportId: fogReportId,
             authoritySpki: fogAuthoritySpki
@@ -43,7 +42,6 @@ public struct AccountKey {
         fogInfo: FogInfo? = nil,
         subaddressIndex: UInt64 = McConstants.DEFAULT_SUBADDRESS_INDEX
     ) {
-        logger.info("")
         self.viewPrivateKey = viewPrivateKey
         self.spendPrivateKey = spendPrivateKey
         self.fogInfo = fogInfo
@@ -57,8 +55,8 @@ public struct AccountKey {
 
     /// - Returns: `nil` when the input is not deserializable.
     public init?(serializedData: Data) {
-        logger.info("")
         guard let proto = try? External_AccountKey(serializedData: serializedData) else {
+            logger.warning("External_AccountKey deserialization failed.")
             return nil
         }
         self.init(proto)
@@ -104,7 +102,6 @@ extension AccountKey {
         _ proto: External_AccountKey,
         subaddressIndex: UInt64 = McConstants.DEFAULT_SUBADDRESS_INDEX
     ) {
-        logger.info("")
         guard let viewPrivateKey = RistrettoPrivate(proto.viewPrivateKey.data),
               let spendPrivateKey = RistrettoPrivate(proto.spendPrivateKey.data)
         else {
@@ -135,7 +132,6 @@ extension AccountKey {
 
 extension External_AccountKey {
     init(_ accountKey: AccountKey) {
-        logger.info("")
         self.init()
         self.viewPrivateKey = External_RistrettoPrivate(accountKey.viewPrivateKey)
         self.spendPrivateKey = External_RistrettoPrivate(accountKey.spendPrivateKey)
@@ -172,7 +168,6 @@ extension AccountKey {
             reportId: String,
             authoritySpki: Data
         ) {
-            logger.info("")
             self.reportUrlString = reportUrlString
             self.reportUrl = reportUrl
             self.reportId = reportId
@@ -188,8 +183,6 @@ struct AccountKeyWithFog {
     let accountKey: AccountKey
 
     init?(accountKey: AccountKey) {
-        logger.info("\(redacting: accountKey.publicAddress)")
-
         guard accountKey.fogInfo != nil else {
             return nil
         }

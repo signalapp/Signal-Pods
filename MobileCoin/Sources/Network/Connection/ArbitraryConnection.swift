@@ -35,7 +35,6 @@ extension ArbitraryConnection {
         private let session: ConnectionSession
 
         init(url: MobileCoinUrlProtocol) {
-            logger.info("")
             self.session = ConnectionSession(url: url)
         }
 

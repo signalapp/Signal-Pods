@@ -10,7 +10,6 @@ struct TxOutMembershipProof {
 
     /// - Returns: `nil` when the input is not deserializable.
     init?(serializedData: Data) {
-        logger.info("")
         self.serializedData = serializedData
     }
 }
@@ -20,7 +19,6 @@ extension TxOutMembershipProof: Hashable {}
 
 extension TxOutMembershipProof {
     init?(_ txOutMembershipProof: External_TxOutMembershipProof) {
-        logger.info("")
         let serializedData: Data
         do {
             serializedData = try txOutMembershipProof.serializedData()

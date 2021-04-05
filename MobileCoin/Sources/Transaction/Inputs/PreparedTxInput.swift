@@ -9,7 +9,6 @@ struct PreparedTxInput {
     static func make(knownTxOut: KnownTxOut, ring: [(TxOut, TxOutMembershipProof)])
         -> Result<PreparedTxInput, InvalidInputError>
     {
-        logger.info("")
         let ring = ring.sorted { $0.0.publicKey.lexicographicallyPrecedes($1.0.publicKey) }
 
         guard let realInputIndex =
@@ -30,7 +29,6 @@ struct PreparedTxInput {
 
     private init(knownTxOut: KnownTxOut, ring: [(TxOut, TxOutMembershipProof)], realInputIndex: Int)
     {
-        logger.info("")
         self.knownTxOut = knownTxOut
         self.ring = ring
         self.realInputIndex = realInputIndex

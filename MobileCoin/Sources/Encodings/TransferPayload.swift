@@ -11,7 +11,6 @@ public struct TransferPayload {
     public let memo: String?
 
     init(rootEntropy: Data32, txOutPublicKey: RistrettoPublic, memo: String? = nil) {
-        logger.info("")
         self.rootEntropy32 = rootEntropy
         self.txOutPublicKey = txOutPublicKey
         self.memo = memo?.isEmpty == false ? memo : nil
@@ -27,7 +26,6 @@ extension TransferPayload: Hashable {}
 
 extension TransferPayload {
     init?(_ transferPayload: Printable_TransferPayload) {
-        logger.info("")
         guard let rootEntropy = Data32(transferPayload.entropy),
               let txOutPublicKey = RistrettoPublic(transferPayload.txOutPublicKey.data)
         else {
@@ -41,7 +39,6 @@ extension TransferPayload {
 
 extension Printable_TransferPayload {
     init(_ transferPayload: TransferPayload) {
-        logger.info("")
         self.init()
         self.entropy = transferPayload.rootEntropy
         self.txOutPublicKey = External_CompressedRistretto(transferPayload.txOutPublicKey)

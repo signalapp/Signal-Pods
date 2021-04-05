@@ -41,12 +41,10 @@ extension Connection {
         private let session: ConnectionSession
 
         init(config: ConnectionConfigProtocol) {
-            logger.info("")
             self.session = ConnectionSession(config: config)
         }
 
         func setAuthorization(credentials: BasicCredentials) {
-            logger.info("")
             session.authorizationCredentials = credentials
         }
 

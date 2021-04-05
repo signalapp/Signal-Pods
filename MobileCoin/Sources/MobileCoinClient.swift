@@ -13,9 +13,9 @@ public final class MobileCoinClient {
         -> Result<MobileCoinClient, InvalidInputError>
     {
         guard let accountKey = AccountKeyWithFog(accountKey: accountKey) else {
-            logger.error("Accounts without fog URLs are not currently supported.")
-            return .failure(
-                InvalidInputError("Accounts without fog URLs are not currently supported."))
+            let errorMessage = "Accounts without fog URLs are not currently supported."
+            logger.error(errorMessage)
+            return .failure(InvalidInputError(errorMessage))
         }
 
         return .success(MobileCoinClient(accountKey: accountKey, config: config))
@@ -34,7 +34,7 @@ public final class MobileCoinClient {
         logger.info("""
             Initializing \(Self.self):
             \(Self.configDescription(accountKey: accountKey, config: config))
-            """)
+            """, logFunction: false)
 
         self.serialQueue = DispatchQueue(label: "com.mobilecoin.\(Self.self)")
         self.callbackQueue = config.callbackQueue ?? DispatchQueue.main
@@ -63,20 +63,17 @@ public final class MobileCoinClient {
     }
 
     public func setConsensusBasicAuthorization(username: String, password: String) {
-        logger.info("username: \(redacting: username), password: \(redacting: password)")
         let credentials = BasicCredentials(username: username, password: password)
         inner.accessAsync { $0.serviceProvider.setConsensusAuthorization(credentials: credentials) }
     }
 
     public func setFogBasicAuthorization(username: String, password: String) {
-        logger.info("username: \(redacting: username), password: \(redacting: password)")
         let credentials = BasicCredentials(username: username, password: password)
         inner.accessAsync { $0.serviceProvider.setFogAuthorization(credentials: credentials) }
     }
 
     public func updateBalance(completion: @escaping (Result<Balance, ConnectionError>) -> Void) {
         inner.accessAsync {
-            logger.info("")
             Account.BalanceUpdater(
                 account: self.accountLock,
                 fogViewService: $0.serviceProvider.fogViewService,
@@ -85,7 +82,6 @@ public final class MobileCoinClient {
                 fogQueryScalingStrategy: self.fogQueryScalingStrategy,
                 targetQueue: self.serialQueue
             ).updateBalance { result in
-                logger.info("updateBalance result: \(redacting: result)")
                 self.callbackQueue.async {
                     completion(result)
                 }
@@ -96,38 +92,29 @@ public final class MobileCoinClient {
     public func amountTransferable(feeLevel: FeeLevel = .minimum)
         -> Result<UInt64, BalanceTransferEstimationError>
     {
-        logger.info("feeLevel: \(feeLevel)")
-        let amountTransferable = Account.TransactionEstimator(
+        Account.TransactionEstimator(
             account: accountLock,
             txOutSelectionStrategy: self.txOutSelectionStrategy
         ).amountTransferable(feeLevel: feeLevel)
-        logger.info("amountTransferable result: \(redacting: amountTransferable)")
-        return amountTransferable
     }
 
     public func estimateTotalFee(
         toSendAmount amount: UInt64,
         feeLevel: FeeLevel = .minimum
     ) -> Result<UInt64, TransactionEstimationError> {
-        logger.info("toSendAmount: \(redacting: amount), feeLevel: \(feeLevel)")
-        let totalFee = Account.TransactionEstimator(
+        Account.TransactionEstimator(
             account: accountLock,
             txOutSelectionStrategy: self.txOutSelectionStrategy
         ).estimateTotalFee(toSendAmount: amount, feeLevel: feeLevel)
-        logger.info("totalFee result: \(redacting: totalFee)")
-        return totalFee
     }
 
     public func requiresDefragmentation(toSendAmount amount: UInt64, feeLevel: FeeLevel = .minimum)
         -> Result<Bool, TransactionEstimationError>
     {
-        logger.info("toSendAmount: \(redacting: amount), feeLevel: \(feeLevel)")
-        let requiresDefragmentation = Account.TransactionEstimator(
+        Account.TransactionEstimator(
             account: accountLock,
             txOutSelectionStrategy: self.txOutSelectionStrategy
         ).requiresDefragmentation(toSendAmount: amount, feeLevel: feeLevel)
-        logger.info("requiresDefragmentation result: \(redacting: requiresDefragmentation)")
-        return requiresDefragmentation
     }
 
     public func prepareTransaction(
@@ -139,8 +126,6 @@ public final class MobileCoinClient {
         ) -> Void
     ) {
         inner.accessAsync {
-            logger.info("recipient: \(redacting: recipient), amount: \(redacting: amount), " +
-                "fee: \(redacting: fee)")
             Account.TransactionOperations(
                 account: self.accountLock,
                 fogMerkleProofService: $0.serviceProvider.fogMerkleProofService,
@@ -165,8 +150,6 @@ public final class MobileCoinClient {
         ) -> Void
     ) {
         inner.accessAsync {
-            logger.info("recipient: \(redacting: recipient), amount: \(redacting: amount), " +
-                "feeLevel: \(feeLevel)")
             Account.TransactionOperations(
                 account: self.accountLock,
                 fogMerkleProofService: $0.serviceProvider.fogMerkleProofService,
@@ -187,7 +170,6 @@ public final class MobileCoinClient {
         feeLevel: FeeLevel = .minimum,
         completion: @escaping (Result<[Transaction], DefragTransactionPreparationError>) -> Void
     ) {
-        logger.info("toSendAmount: \(redacting: amount), feeLevel: \(feeLevel)")
         inner.accessAsync {
             Account.TransactionOperations(
                 account: self.accountLock,
@@ -209,7 +191,6 @@ public final class MobileCoinClient {
         _ transaction: Transaction,
         completion: @escaping (Result<(), TransactionSubmissionError>) -> Void
     ) {
-        logger.info("transaction: \(redacting: transaction.serializedData)")
         inner.accessAsync {
             TransactionSubmitter(consensusService: $0.serviceProvider.consensusService)
                 .submitTransaction(transaction) { result in
@@ -224,7 +205,6 @@ public final class MobileCoinClient {
         of transaction: Transaction,
         completion: @escaping (Result<TransactionStatus, ConnectionError>) -> Void
     ) {
-        logger.info("transaction: \(redacting: transaction.serializedData)")
         inner.accessAsync {
             TransactionStatusChecker(
                 account: self.accountLock,
@@ -240,8 +220,7 @@ public final class MobileCoinClient {
     }
 
     public func status(of receipt: Receipt) -> Result<ReceiptStatus, InvalidInputError> {
-        logger.info("receipt: \(redacting: receipt.serializedData)")
-        return ReceiptStatusChecker(account: accountLock).status(receipt)
+        ReceiptStatusChecker(account: accountLock).status(receipt)
     }
 }
 
@@ -249,13 +228,11 @@ extension MobileCoinClient {
     private static func configDescription(accountKey: AccountKeyWithFog, config: Config) -> String {
         let fogInfo = accountKey.fogInfo
         return """
-            Consensus url: \(String(reflecting: config.networkConfig.consensusUrl.url))
-            AccountKey Public Address View Key: \
-            \(redacting: accountKey.accountKey.publicAddress.viewPublicKey)
-            AccountKey Public Address Spend Key: \
-            \(redacting: accountKey.accountKey.publicAddress.spendPublicKey)
-            Fog url: \(String(reflecting: config.networkConfig.fogUrl.url))
-            AccountKey Fog Report url: \(String(reflecting: fogInfo.reportUrl.url))
+            Consensus url: \(config.networkConfig.consensusUrl.url)
+            Fog url: \(config.networkConfig.fogUrl.url)
+            AccountKey PublicAddress: \
+            \(redacting: Base58Coder.encode(accountKey.accountKey.publicAddress))
+            AccountKey Fog Report url: \(fogInfo.reportUrl.url)
             AccountKey Fog Report id: \(String(reflecting: fogInfo.reportId))
             AccountKey Fog Report authority sPKI: 0x\(fogInfo.authoritySpki.hexEncodedString())
             Consensus attestation: \(config.networkConfig.consensus.attestation)
@@ -273,7 +250,6 @@ extension MobileCoinClient {
         let fogResolverManager: FogResolverManager
 
         init(serviceProvider: ServiceProvider, fogResolverManager: FogResolverManager) {
-            logger.info("")
             self.serviceProvider = serviceProvider
             self.fogResolverManager = fogResolverManager
         }
@@ -323,34 +299,40 @@ extension MobileCoinClient {
         var fogQueryScalingStrategy: FogQueryScalingStrategy = DefaultFogQueryScalingStrategy()
 
         init(networkConfig: NetworkConfig) {
-            logger.info("consensusUrl: \(networkConfig.consensusUrl.url), fogUrl: " +
-                "\(networkConfig.fogUrl.url)")
             self.networkConfig = networkConfig
         }
 
         public mutating func setConsensusTrustRoots(_ trustRoots: [Data])
             -> Result<(), InvalidInputError>
         {
-            do {
-                networkConfig.consensusTrustRoots =
-                    try trustRoots.map { try NIOSSLCertificate(bytes: Array($0), format: .der) }
-            } catch {
-                logger.error("Failed parsing Consensus trust roots: \(error)")
-                return .failure(InvalidInputError("Failed parsing Consensus trust roots: \(error)"))
+            Self.parseTrustRoots(trustRootsBytes: trustRoots).map { trustRoots in
+                networkConfig.consensusTrustRoots = trustRoots
             }
-            return .success(())
         }
 
         public mutating func setFogTrustRoots(_ trustRoots: [Data]) -> Result<(), InvalidInputError>
         {
-            do {
-                networkConfig.fogTrustRoots =
-                    try trustRoots.map { try NIOSSLCertificate(bytes: Array($0), format: .der) }
-            } catch {
-                logger.error("Failed parsing Fog trust roots: \(error)")
-                return .failure(InvalidInputError("Failed parsing Fog trust roots: \(error)"))
+            Self.parseTrustRoots(trustRootsBytes: trustRoots).map { trustRoots in
+                networkConfig.fogTrustRoots = trustRoots
             }
-            return .success(())
+        }
+
+        private static func parseTrustRoots(trustRootsBytes: [Data])
+            -> Result<[NIOSSLCertificate], InvalidInputError>
+        {
+            var trustRoots: [NIOSSLCertificate] = []
+            for trustRootBytes in trustRootsBytes {
+                do {
+                    trustRoots.append(
+                        try NIOSSLCertificate(bytes: Array(trustRootBytes), format: .der))
+                } catch {
+                    let errorMessage = "Error parsing trust root certificate: " +
+                        "\(trustRootBytes.base64EncodedString()) - Error: \(error)"
+                    logger.error(errorMessage)
+                    return .failure(InvalidInputError(errorMessage))
+                }
+            }
+            return .success(trustRoots)
         }
 
         public mutating func setConsensusBasicAuthorization(username: String, password: String) {

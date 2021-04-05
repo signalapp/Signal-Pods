@@ -17,7 +17,6 @@ final class FogResolverManager {
         serviceProvider: ServiceProvider,
         targetQueue: DispatchQueue?
     ) {
-        logger.info("fogReportAttestation: \(fogReportAttestation)")
         self.serialQueue = DispatchQueue(label: "com.mobilecoin.\(Self.self)", target: targetQueue)
         self.reportAttestation = fogReportAttestation
         self.reportManager = FogReportManager(

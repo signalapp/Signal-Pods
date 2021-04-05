@@ -13,7 +13,6 @@ struct SpendableTxOutsWithAmount {
 
     /// - Returns: `nil` when sum value of `txOuts` is less than `amount`.
     init?(_ txOuts: [KnownTxOut], totalingAtLeast amount: UInt64) {
-        logger.info("")
         guard txOuts.map({ $0.value }).reduce(0, +) >= amount else {
             logger.info("total value of txOuts less than amount")
             return nil

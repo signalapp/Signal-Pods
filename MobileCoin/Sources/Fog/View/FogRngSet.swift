@@ -21,22 +21,21 @@ final class FogRngSet {
     }
 
     func searchAttempt(
-        requestedBlockCount: UInt64?,
+        targetBlockCount: UInt64?,
         numOutputs: PositiveInt,
         minOutputsPerSelectedRng: Int
-    ) -> FogSearchAttempt {
-        logger.info("requestedBlockCount: \(String(describing: requestedBlockCount)), " +
-            "numOutputs: \(numOutputs.value), minOutputsPerSelectedRng: " +
-            "\(minOutputsPerSelectedRng)")
+    ) -> FogRngSetSearchAttempt {
         // Max rngs we can select while maintaining the requested minimum outputs per selected rng.
         let maxRngs = 0 < minOutputsPerSelectedRng && minOutputsPerSelectedRng <= numOutputs.value
             ? numOutputs.value / minOutputsPerSelectedRng : numOutputs.value
 
         let selectedRngs =
-            selectRngsForSearch(requestedBlockCount: requestedBlockCount, maxRngs: maxRngs)
+            selectRngsForSearch(requestedBlockCount: targetBlockCount, maxRngs: maxRngs)
         guard !selectedRngs.isEmpty else {
-            logger.info("selectedRngs are empty")
-            return FogSearchAttempt()
+            logger.info(
+                "No active Fog rngs as of block count: \(rngRecordsKnownBlockCount)",
+                logFunction: false)
+            return FogRngSetSearchAttempt()
         }
 
         // Num of outputs to generate per selected rng.
@@ -50,7 +49,7 @@ final class FogRngSet {
                 let rngSearchAttempt = rngTracker.searchAttempt(numOutputs: numOutputs)
                 return (ingestInvocationId, rngSearchAttempt)
             }
-        return FogSearchAttempt(
+        return FogRngSetSearchAttempt(
             ingestInvocationIdToRngSearchAttempt: Dictionary(
                 uniqueKeysWithValues: ingestInvocationIdAndRngSearchAttempt))
     }
@@ -58,8 +57,6 @@ final class FogRngSet {
     private func selectRngsForSearch(requestedBlockCount: UInt64?, maxRngs: Int)
         -> [Int64: RngTracker]
     {
-        logger.info(
-            "requestedBlockCount: \(String(describing: requestedBlockCount)), maxRngs: \(maxRngs)")
         // Filter for rngs that are still active.
         var eligibleRngTrackers = ingestInvocationIdToRngTrackers.filter { $0.value.active }
 
@@ -96,16 +93,29 @@ final class FogRngSet {
         highestProcessedBlockCount: UInt64,
         accountKey: AccountKey
     ) -> Result<(), ConnectionError> {
-        logger.info(
-            "rngRecords: \(rngRecords), highestProcessedBlockCount: \(highestProcessedBlockCount)")
         for rngRecord in rngRecords
             where ingestInvocationIdToRngTrackers[rngRecord.ingestInvocationID] == nil
         {
+            logger.info(
+                "New RngRecord: ingestInvocationID: \(rngRecord.ingestInvocationID), pubkey: " +
+                    "\(rngRecord.pubkey.pubkey.base64EncodedString()), version: " +
+                    "\(rngRecord.pubkey.version), startBlockIndex: \(rngRecord.startBlock)",
+                logFunction: false)
+
             switch RngTracker.make(rngRecord: rngRecord, accountKey: accountKey) {
             case .success(let rngTracker):
                 ingestInvocationIdToRngTrackers[rngRecord.ingestInvocationID] = rngTracker
             case .failure(let error):
-                return .failure(error)
+                switch error {
+                case .invalidKey(let reason):
+                    let errorMessage = "Fog View returned invalid key rng key: \(reason)"
+                    logger.error(errorMessage, logFunction: false)
+                    return .failure(.invalidServerResponse(errorMessage))
+                case .unsupportedCryptoBoxVersion(let reason):
+                    let errorMessage = "Fog View returned unsupported kex rng version: \(reason)"
+                    logger.error(errorMessage, logFunction: false)
+                    return .failure(.outdatedClient(errorMessage))
+                }
             }
         }
 
@@ -113,6 +123,10 @@ final class FogRngSet {
         // `highestProcessedBlockCount` (while accounting for the possibility that we already have
         // more up-to-date information already).
         if highestProcessedBlockCount > rngRecordsKnownBlockCount {
+            logger.info(
+                "FogRngSet updated rngRecordsKnownBlockCount from \(rngRecordsKnownBlockCount) " +
+                    "to \(highestProcessedBlockCount)",
+                logFunction: false)
             rngRecordsKnownBlockCount = highestProcessedBlockCount
         }
 
@@ -122,38 +136,47 @@ final class FogRngSet {
     private func processDecommissionedRngs(
         _ decommissionedRngs: [FogView_DecommissionedIngestInvocation]
     ) {
-        logger.info("decommissionedRngs: \(decommissionedRngs)")
         for decommissionedRng in decommissionedRngs {
             if let rngTracker =
                 ingestInvocationIdToRngTrackers[decommissionedRng.ingestInvocationID]
             {
+                logger.info(
+                    "Rng decommissioned: ingestInvocationID: " +
+                        "\(decommissionedRng.ingestInvocationID), lastIngestedBlockIndex: " +
+                        "\(decommissionedRng.lastIngestedBlock)",
+                    logFunction: false)
                 rngTracker.decommissioned = true
+            } else {
+                logger.error(
+                    "Fog View decommissioned unknown ingestInvocation. ingestInvocationID: " +
+                        "\(decommissionedRng.ingestInvocationID), lastIngestedBlock: " +
+                        "\(decommissionedRng.lastIngestedBlock), current " +
+                        "rngRecordsKnownBlockCount: \(rngRecordsKnownBlockCount)",
+                    logFunction: false)
             }
         }
     }
 
     func processTxOutSearchResults(
         queryResponse: FogView_QueryResponse,
-        searchAttempt: FogSearchAttempt
+        rngSetSearchAttempt: FogRngSetSearchAttempt
     ) -> Result<[FogView_TxOutSearchResult], ConnectionError> {
         processTxOutSearchResults(
             queryResponse.txOutSearchResults,
             highestProcessedBlockCount: queryResponse.highestProcessedBlockCount,
-            searchAttempt: searchAttempt)
+            rngSetSearchAttempt: rngSetSearchAttempt)
     }
 
     private func processTxOutSearchResults(
         _ txOutSearchResults: [FogView_TxOutSearchResult],
         highestProcessedBlockCount: UInt64,
-        searchAttempt: FogSearchAttempt
+        rngSetSearchAttempt: FogRngSetSearchAttempt
     ) -> Result<[FogView_TxOutSearchResult], ConnectionError> {
-        logger.info("txOutSearchResults: \(redacting: txOutSearchResults), " +
-            "highestProcessedBlockCount: \(highestProcessedBlockCount)")
         let searchKeyToTxOutResult = Dictionary(
             txOutSearchResults.map { ($0.searchKey, $0) },
             uniquingKeysWith: { key1, _ in key1 })
 
-        return searchAttempt.ingestInvocationIdToRngSearchAttempt
+        return rngSetSearchAttempt.ingestInvocationIdToRngSearchAttempt
             .map { ingestInvocationId, rngSearchAttempt
                     -> Result<[FogView_TxOutSearchResult], ConnectionError> in
                 guard let rngTracker = ingestInvocationIdToRngTrackers[ingestInvocationId] else {
@@ -167,11 +190,15 @@ final class FogRngSet {
 
                 // Filter for only the outputs we searched for.
                 let rngSearchKeyToTxOutResult: [Data: FogView_TxOutSearchResult] = Dictionary(
-                    rngSearchAttempt.searchKeys.map { $0.bytes }.compactMap {
-                        if let txOutResult = searchKeyToTxOutResult[$0] {
-                            return ($0, txOutResult)
+                    rngSearchAttempt.searchKeys.map { $0.bytes }.compactMap { searchKeyBytes in
+                        guard let txOutResult = searchKeyToTxOutResult[searchKeyBytes] else {
+                            logger.error(
+                                "Searched key not in search results. searched key: " +
+                                    "\(searchKeyBytes.base64EncodedString())",
+                                logFunction: false)
+                            return nil
                         }
-                        return nil
+                        return (searchKeyBytes, txOutResult)
                     },
                     uniquingKeysWith: { key1, _ in key1 })
 
@@ -213,7 +240,6 @@ private final class RngTracker {
     var knownBlockCount: UInt64
 
     init(rng: FogRng, startBlockIndex: UInt64) {
-        logger.info("startBlockIndex: \(startBlockIndex)")
         self.rng = rng
         self.startBlockIndex = startBlockIndex
         // We assign a blockCount with the value of a blockIndex because, if X is the block index of
@@ -224,18 +250,17 @@ private final class RngTracker {
     }
 
     func searchAttempt(numOutputs: Int) -> FogRngSearchAttempt {
-        logger.info("numOutputs: \(numOutputs)")
         let outputs = rng.outputs(count: numOutputs)
         let searchKeys = outputs.map { FogSearchKey($0) }
-        return FogRngSearchAttempt(searchKeys: searchKeys)
+
+        // Note: converting directly from blockCount to blockIndex is valid here.
+        return FogRngSearchAttempt(searchKeys: searchKeys, startFromBlockIndex: knownBlockCount)
     }
 
     func processSearchKeyResults(
         rngSearchKeyToTxOutResult: [Data: FogView_TxOutSearchResult],
         highestProcessedBlockCount: UInt64
     ) -> Result<[FogView_TxOutSearchResult], ConnectionError> {
-        logger.info("rngSearchKeyToTxOutResult: \(redacting: rngSearchKeyToTxOutResult), " +
-            "highestProcessedBlockCount: \(highestProcessedBlockCount)")
         var foundTxOutResults: [FogView_TxOutSearchResult] = []
 
         searchResultLoop: while true {
@@ -246,19 +271,20 @@ private final class RngTracker {
                 // this search attempt was made. Either way, if the next output we need wasn't one
                 // of the ones searched for or wasn't in the search results, then there's nothing
                 // else we can do with this rng.
-                logger.info(
-                    "found all outputs OR processed txos since this search attempt was made.")
+                logger.debug(
+                    "Next rng output not found in searched keys. rng output: " +
+                        "\(redacting: output.base64EncodedString())",
+                    logFunction: false)
                 break
             }
 
             switch txOutResult.resultCodeEnum {
             case .found:
-                logger.info("found txOutResult")
                 foundTxOutResults.append(txOutResult)
                 rng.advance()
             case .notFound:
                 // The search key failed to return a `TxOut` during this search attempt.
-                logger.warning("failed to return a txOut during this search attempt")
+
                 if highestProcessedBlockCount > knownBlockCount {
                     // `highestProcessedBlockCount` is the number of blocks that fog guarantees it
                     // finished processing when performing the search, so we store
@@ -272,57 +298,52 @@ private final class RngTracker {
                 // Break on the first miss
                 break searchResultLoop
             case .rateLimited:
-                logger.warning("return error code: RateLimited")
-                return .failure(.serverRateLimited("Fog View return error code: RateLimited."))
+                let errorMessage = "Fog View error response: rateLimited"
+                logger.warning(errorMessage, logFunction: false)
+                return .failure(.serverRateLimited(errorMessage))
             case .badSearchKey, .internalError, .intentionallyUnused, .UNRECOGNIZED:
-                logger.warning("Fog view result error")
-                return .failure(.invalidServerResponse("Fog View result error: " +
-                    "\(txOutResult.resultCodeEnum), response: \(txOutResult)"))
+                let errorMessage = "Fog view error response: \(txOutResult.resultCodeEnum), " +
+                    "txOutResult.searchKey: \(redacting: txOutResult.searchKey)"
+                logger.error(errorMessage, logFunction: false)
+                return .failure(.invalidServerResponse(errorMessage))
             }
         }
 
-        logger.info("success - foundTxOutResults")
         return .success(foundTxOutResults)
     }
 }
 
 extension RngTracker {
     static func make(rngRecord: FogView_RngRecord, accountKey: AccountKey)
-        -> Result<RngTracker, ConnectionError>
+        -> Result<RngTracker, FogRngError>
     {
-        logger.info("rngRecordPubKey: \(rngRecord.pubkey.pubkey)")
-        switch FogRng.make(accountKey: accountKey, fogRngKey: FogRngKey(rngRecord.pubkey)) {
-        case .success(let rng):
-            logger.info("success")
-            return .success(RngTracker(rng: rng, startBlockIndex: rngRecord.startBlock))
-        case .failure(.invalidKey):
-            logger.warning("failure, fog view returned invalid key rng key")
-            return .failure(.invalidServerResponse("Fog view returned invalid kex rng key."))
-        case .failure(.unsupportedCryptoBoxVersion):
-            logger.warning("failure, fog view returned unsupported kex rng version")
-            return .failure(.outdatedClient("Fog view returned unsupported kex rng version."))
+        FogRng.make(fogRngPubkey: rngRecord.pubkey, accountKey: accountKey).map { rng in
+            RngTracker(rng: rng, rngRecord: rngRecord)
         }
     }
 
     convenience init(rng: FogRng, rngRecord: FogView_RngRecord) {
-        logger.info("")
         self.init(rng: rng, startBlockIndex: rngRecord.startBlock)
     }
 }
 
-struct FogSearchAttempt {
+struct FogRngSetSearchAttempt {
     fileprivate let ingestInvocationIdToRngSearchAttempt: [Int64: FogRngSearchAttempt]
 
     fileprivate init(ingestInvocationIdToRngSearchAttempt: [Int64: FogRngSearchAttempt]? = nil) {
-        logger.info("")
         self.ingestInvocationIdToRngSearchAttempt = ingestInvocationIdToRngSearchAttempt ?? [:]
     }
 
     var searchKeys: [FogSearchKey] {
         ingestInvocationIdToRngSearchAttempt.values.flatMap { $0.searchKeys }
     }
+
+    var lowestStartFromBlockIndex: UInt64 {
+        ingestInvocationIdToRngSearchAttempt.values.map { $0.startFromBlockIndex }.min() ?? 0
+    }
 }
 
 private struct FogRngSearchAttempt {
     let searchKeys: [FogSearchKey]
+    let startFromBlockIndex: UInt64
 }

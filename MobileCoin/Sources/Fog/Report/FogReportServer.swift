@@ -13,7 +13,6 @@ final class FogReportServer {
     private let serialConnectionQueue: SerialCallbackQueue
 
     init(serialExclusionQueue: DispatchQueue) {
-        logger.info("")
         self.inner = .init(Inner(), serialExclusionQueue: serialExclusionQueue)
         self.serialConnectionQueue = .init(targetQueue: serialExclusionQueue)
     }
@@ -22,7 +21,6 @@ final class FogReportServer {
         reportService: FogReportService,
         completion: @escaping (Result<Report_ReportResponse, ConnectionError>) -> Void
     ) {
-        logger.info("")
         fetchReports(reportService: reportService, completion: completion)
     }
 

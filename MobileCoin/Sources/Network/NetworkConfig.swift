@@ -28,7 +28,6 @@ struct NetworkConfig {
     var fogAuthorization: BasicCredentials?
 
     init(consensusUrl: ConsensusUrl, fogUrl: FogUrl, attestation: AttestationConfig) {
-        logger.info("consensusUrl: \(consensusUrl), fogUrl: \(fogUrl)")
         self.consensusUrl = consensusUrl
         self.fogUrl = fogUrl
         self.attestation = attestation

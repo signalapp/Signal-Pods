@@ -9,12 +9,10 @@ struct SelectionTxOut {
     let blockIndex: UInt64
 
     init(_ txOut: KnownTxOut) {
-        logger.info("")
         self.init(value: txOut.value, blockIndex: txOut.block.index)
     }
 
     init(value: UInt64, blockIndex: UInt64) {
-        logger.info("")
         self.value = value
         self.blockIndex = blockIndex
     }
@@ -60,8 +58,7 @@ extension TxOutSelectionStrategy {
     func amountTransferable(feeLevel: FeeLevel, txOuts: [SelectionTxOut])
         -> Result<UInt64, BalanceTransferEstimationError>
     {
-        logger.info("")
-        return amountTransferable(
+        amountTransferable(
             feeLevel: feeLevel,
             txOuts: txOuts,
             maxInputsPerTransaction: McConstants.MAX_INPUTS)
@@ -72,8 +69,7 @@ extension TxOutSelectionStrategy {
         feeLevel: FeeLevel,
         txOuts: [SelectionTxOut]
     ) -> Result<(totalFee: UInt64, requiresDefrag: Bool), TxOutSelectionError> {
-        logger.info("")
-        return estimateTotalFee(
+        estimateTotalFee(
             toSendAmount: amount,
             feeLevel: feeLevel,
             txOuts: txOuts,
@@ -85,8 +81,7 @@ extension TxOutSelectionStrategy {
         fee: UInt64,
         fromTxOuts txOuts: [SelectionTxOut]
     ) -> Result<[Int], TransactionInputSelectionError> {
-        logger.info("")
-        return selectTransactionInputs(
+        selectTransactionInputs(
             amount: amount,
             fee: fee,
             fromTxOuts: txOuts,
@@ -98,8 +93,7 @@ extension TxOutSelectionStrategy {
         feeLevel: FeeLevel,
         fromTxOuts txOuts: [SelectionTxOut]
     ) -> Result<(inputIds: [Int], fee: UInt64), TransactionInputSelectionError> {
-        logger.info("")
-        return selectTransactionInputs(
+        selectTransactionInputs(
             amount: amount,
             feeLevel: feeLevel,
             fromTxOuts: txOuts,
@@ -111,8 +105,7 @@ extension TxOutSelectionStrategy {
         feeLevel: FeeLevel,
         fromTxOuts txOuts: [SelectionTxOut]
     ) -> Result<[(inputIds: [Int], fee: UInt64)], TxOutSelectionError> {
-        logger.info("")
-        return selectInputsForDefragTransactions(
+        selectInputsForDefragTransactions(
             toSendAmount: amount,
             feeLevel: feeLevel,
             fromTxOuts: txOuts,

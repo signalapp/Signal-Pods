@@ -18,7 +18,6 @@ public struct BlockMetadata {
     }
 
     init(index: UInt64, timestamp: Date?) {
-        logger.info("index: \(index), timestamp: \(String(describing: timestamp))")
         let timestampStatus: TimestampStatus?
         if let timestamp = timestamp {
             timestampStatus = .known(timestamp: timestamp)
@@ -29,7 +28,6 @@ public struct BlockMetadata {
     }
 
     init(index: UInt64, timestampStatus: TimestampStatus?) {
-        logger.info("index: \(index), timestampStatus: \(String(describing: timestampStatus))")
         self.index = index
         self.timestampStatus = timestampStatus
     }

@@ -21,7 +21,6 @@ extension Account {
             mixinSelectionStrategy: MixinSelectionStrategy,
             targetQueue: DispatchQueue?
         ) {
-            logger.info("")
             self.serialQueue = DispatchQueue(
                 label: "com.mobilecoin.\(Account.self).\(Self.self))",
                 target: targetQueue)
@@ -43,12 +42,16 @@ extension Account {
                 Result<(transaction: Transaction, receipt: Receipt), TransactionPreparationError>
             ) -> Void
         ) {
+            logger.info("Preparing transaction with provided fee...", logFunction: false)
             logger.info(
-                "recipient: \(redacting: recipient), amount: \(redacting: amount), fee: \(fee)")
+                "recipient: \(redacting: recipient), amount: \(redacting: amount), fee: " +
+                    "\(redacting: fee)",
+                logFunction: false)
             guard amount > 0 else {
-                logger.info("failure - Cannot spend 0 MOB")
+                let errorMessage = "Cannot spend 0 MOB"
+                logger.error(errorMessage, logFunction: false)
                 serialQueue.async {
-                    completion(.failure(.invalidInput("Cannot spend 0 MOB")))
+                    completion(.failure(.invalidInput(errorMessage)))
                 }
                 return
             }
@@ -94,12 +97,16 @@ extension Account {
                 Result<(transaction: Transaction, receipt: Receipt), TransactionPreparationError>
             ) -> Void
         ) {
-            logger.info("recipient: \(redacting: recipient), amount: \(redacting: amount), " +
-                "feeLevel: \(feeLevel)")
+            logger.info("Preparing transaction with fee level...", logFunction: false)
+            logger.info(
+                "recipient: \(redacting: recipient), amount: \(redacting: amount), feeLevel: " +
+                    "\(feeLevel)",
+                logFunction: false)
             guard amount > 0 else {
-                logger.info("failure - Cannot spend 0 MOB")
+                let errorMessage = "Cannot spend 0 MOB"
+                logger.error(errorMessage, logFunction: false)
                 serialQueue.async {
-                    completion(.failure(.invalidInput("Cannot spend 0 MOB")))
+                    completion(.failure(.invalidInput(errorMessage)))
                 }
                 return
             }
@@ -123,7 +130,7 @@ extension Account {
                 })
             {
             case .success(let (inputs: inputs, fee: fee)):
-                logger.info("success - fee: \(fee)")
+                logger.info("success - fee: \(redacting: fee)")
                 transactionPreparer.prepareTransaction(
                     inputs: inputs,
                     recipient: recipient,
@@ -144,11 +151,13 @@ extension Account {
             feeLevel: FeeLevel,
             completion: @escaping (Result<[Transaction], DefragTransactionPreparationError>) -> Void
         ) {
+            logger.info("Preparing defragmentation step transactions...", logFunction: false)
             logger.info("toSendAmount: \(redacting: amount), feeLevel: \(feeLevel)")
             guard amount > 0 else {
-                logger.info("failure - Cannot spend 0 MOB")
+                let errorMessage = "Cannot spend 0 MOB"
+                logger.error(errorMessage, logFunction: false)
                 serialQueue.async {
-                    completion(.failure(.invalidInput("Cannot spend 0 MOB")))
+                    completion(.failure(.invalidInput(errorMessage)))
                 }
                 return
             }
@@ -163,7 +172,11 @@ extension Account {
                 fromTxOuts: unspentTxOuts)
             {
             case .success(let defragTxInputs):
-                logger.info("success")
+                if !defragTxInputs.isEmpty {
+                    logger.info(
+                        "Preparing \(defragTxInputs.count) defrag transactions",
+                        logFunction: false)
+                }
                 defragTxInputs.mapAsync({ defragInputs, callback in
                     transactionPreparer.prepareSelfAddressedTransaction(
                         inputs: defragInputs.inputs,
@@ -172,7 +185,7 @@ extension Account {
                         completion: callback)
                 }, serialQueue: serialQueue, completion: completion)
             case .failure:
-                logger.info("failure")
+                logger.warning("failure")
                 serialQueue.async {
                     completion(.failure(.insufficientBalance()))
                 }

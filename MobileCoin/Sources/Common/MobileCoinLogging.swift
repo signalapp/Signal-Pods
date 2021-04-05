@@ -20,6 +20,8 @@ public enum MobileCoinLogging {
 internal let logger = Logger(label: "com.mobilecoin", factory: ContextPrefixLogHandler.init)
 
 private struct ContextPrefixLogHandler: LogHandler {
+    static let ENABLE_LOG_FUNCTION_METADATA_KEY = "LOG_FUNCTION_METADATA_KEY"
+
     private var logger: Logger
 
     subscript(metadataKey metadataKey: String) -> Logger.Metadata.Value? {
@@ -52,10 +54,19 @@ private struct ContextPrefixLogHandler: LogHandler {
         function: String,
         line: UInt
     ) {
-        let filename = URL(fileURLWithPath: file, isDirectory: false).lastPathComponent
+        var (message, metadata) = (message, metadata)
+
+        // Remove log function metadata entry and add file/line/function name if it was enabled.
+        if metadata?
+            .removeValue(forKey: ContextPrefixLogHandler.ENABLE_LOG_FUNCTION_METADATA_KEY) != nil
+        {
+            let filename = URL(fileURLWithPath: file, isDirectory: false).lastPathComponent
+            message = "\(filename):\(line):\(function) - \(message)"
+        }
+
         logger.log(
             level: level,
-            "\(filename):\(line):\(function) - \(message)",
+            message,
             metadata: metadata,
             source: source,
             file: file,
@@ -64,7 +75,7 @@ private struct ContextPrefixLogHandler: LogHandler {
     }
 }
 
-// `logSensitiveDataInternal` gets locked in place upon first read.
+// The value of `logSensitiveDataInternal` gets locked in place upon first read.
 private let logSensitiveDataInternal = ImmutableOnceReadLock(false)
 
 extension Logger {
@@ -128,9 +139,151 @@ extension Logger {
 
 extension Logger {
     func trace(
+        _ message: @autoclosure () -> Logger.Message,
+        metadata: @autoclosure () -> Logger.Metadata? = nil,
+        source: @autoclosure () -> String? = nil,
+        logFunction: Bool = true,
+        file: String = #file,
+        function: String = #function,
+        line: UInt = #line
+    ) {
+        let metadata = logFunction ? { Self.addingLogFunctionKey(metadata()) } : metadata
+        trace(
+            message(),
+            metadata: metadata(),
+            source: source(),
+            file: file,
+            function: function,
+            line: line)
+    }
+
+    func debug(
+        _ message: @autoclosure () -> Logger.Message,
+        metadata: @autoclosure () -> Logger.Metadata? = nil,
+        source: @autoclosure () -> String? = nil,
+        logFunction: Bool = true,
+        file: String = #file,
+        function: String = #function,
+        line: UInt = #line
+    ) {
+        let metadata = logFunction ? { Self.addingLogFunctionKey(metadata()) } : metadata
+        debug(
+            message(),
+            metadata: metadata(),
+            source: source(),
+            file: file,
+            function: function,
+            line: line)
+    }
+
+    func info(
+        _ message: @autoclosure () -> Logger.Message,
+        metadata: @autoclosure () -> Logger.Metadata? = nil,
+        source: @autoclosure () -> String? = nil,
+        logFunction: Bool = true,
+        file: String = #file,
+        function: String = #function,
+        line: UInt = #line
+    ) {
+        let metadata = logFunction ? { Self.addingLogFunctionKey(metadata()) } : metadata
+        info(
+            message(),
+            metadata: metadata(),
+            source: source(),
+            file: file,
+            function: function,
+            line: line)
+    }
+
+    func notice(
+        _ message: @autoclosure () -> Logger.Message,
+        metadata: @autoclosure () -> Logger.Metadata? = nil,
+        source: @autoclosure () -> String? = nil,
+        logFunction: Bool = true,
+        file: String = #file,
+        function: String = #function,
+        line: UInt = #line
+    ) {
+        let metadata = logFunction ? { Self.addingLogFunctionKey(metadata()) } : metadata
+        notice(
+            message(),
+            metadata: metadata(),
+            source: source(),
+            file: file,
+            function: function,
+            line: line)
+    }
+
+    func warning(
+        _ message: @autoclosure () -> Logger.Message,
+        metadata: @autoclosure () -> Logger.Metadata? = nil,
+        source: @autoclosure () -> String? = nil,
+        logFunction: Bool = true,
+        file: String = #file,
+        function: String = #function,
+        line: UInt = #line
+    ) {
+        let metadata = logFunction ? { Self.addingLogFunctionKey(metadata()) } : metadata
+        warning(
+            message(),
+            metadata: metadata(),
+            source: source(),
+            file: file,
+            function: function,
+            line: line)
+    }
+
+    func error(
+        _ message: @autoclosure () -> Logger.Message,
+        metadata: @autoclosure () -> Logger.Metadata? = nil,
+        source: @autoclosure () -> String? = nil,
+        logFunction: Bool = true,
+        file: String = #file,
+        function: String = #function,
+        line: UInt = #line
+    ) {
+        let metadata = logFunction ? { Self.addingLogFunctionKey(metadata()) } : metadata
+        error(
+            message(),
+            metadata: metadata(),
+            source: source(),
+            file: file,
+            function: function,
+            line: line)
+    }
+
+    func critical(
+        _ message: @autoclosure () -> Logger.Message,
+        metadata: @autoclosure () -> Logger.Metadata? = nil,
+        source: @autoclosure () -> String? = nil,
+        logFunction: Bool = true,
+        file: String = #file,
+        function: String = #function,
+        line: UInt = #line
+    ) {
+        let metadata = logFunction ? { Self.addingLogFunctionKey(metadata()) } : metadata
+        critical(
+            message(),
+            metadata: metadata(),
+            source: source(),
+            file: file,
+            function: function,
+            line: line)
+    }
+
+    private static func addingLogFunctionKey(_ metadata: Logger.Metadata?) -> Logger.Metadata {
+        var metadata = metadata ?? Logger.Metadata()
+        metadata[ContextPrefixLogHandler.ENABLE_LOG_FUNCTION_METADATA_KEY] = "1"
+        return metadata
+    }
+}
+
+extension Logger {
+    func trace(
         _ message: @autoclosure () -> String,
         metadata: @autoclosure () -> Logging.Logger.Metadata? = nil,
         source: @autoclosure () -> String? = nil,
+        logFunction: Bool = true,
         file: String = #file,
         function: String = #function,
         line: UInt = #line
@@ -139,6 +292,7 @@ extension Logger {
             Message(stringLiteral: message()),
             metadata: metadata(),
             source: source(),
+            logFunction: logFunction,
             file: file,
             function: function,
             line: line)
@@ -148,6 +302,7 @@ extension Logger {
         _ message: @autoclosure () -> String,
         metadata: @autoclosure () -> Logging.Logger.Metadata? = nil,
         source: @autoclosure () -> String? = nil,
+        logFunction: Bool = true,
         file: String = #file,
         function: String = #function,
         line: UInt = #line
@@ -156,6 +311,7 @@ extension Logger {
             Message(stringLiteral: message()),
             metadata: metadata(),
             source: source(),
+            logFunction: logFunction,
             file: file,
             function: function,
             line: line)
@@ -165,6 +321,7 @@ extension Logger {
         _ message: @autoclosure () -> String,
         metadata: @autoclosure () -> Logging.Logger.Metadata? = nil,
         source: @autoclosure () -> String? = nil,
+        logFunction: Bool = true,
         file: String = #file,
         function: String = #function,
         line: UInt = #line
@@ -173,6 +330,7 @@ extension Logger {
             Message(stringLiteral: message()),
             metadata: metadata(),
             source: source(),
+            logFunction: logFunction,
             file: file,
             function: function,
             line: line)
@@ -182,6 +340,7 @@ extension Logger {
         _ message: @autoclosure () -> String,
         metadata: @autoclosure () -> Logging.Logger.Metadata? = nil,
         source: @autoclosure () -> String? = nil,
+        logFunction: Bool = true,
         file: String = #file,
         function: String = #function,
         line: UInt = #line
@@ -190,6 +349,7 @@ extension Logger {
             Message(stringLiteral: message()),
             metadata: metadata(),
             source: source(),
+            logFunction: logFunction,
             file: file,
             function: function,
             line: line)
@@ -199,6 +359,7 @@ extension Logger {
         _ message: @autoclosure () -> String,
         metadata: @autoclosure () -> Logging.Logger.Metadata? = nil,
         source: @autoclosure () -> String? = nil,
+        logFunction: Bool = true,
         file: String = #file,
         function: String = #function,
         line: UInt = #line
@@ -207,6 +368,7 @@ extension Logger {
             Message(stringLiteral: message()),
             metadata: metadata(),
             source: source(),
+            logFunction: logFunction,
             file: file,
             function: function,
             line: line)
@@ -216,6 +378,7 @@ extension Logger {
         _ message: @autoclosure () -> String,
         metadata: @autoclosure () -> Logging.Logger.Metadata? = nil,
         source: @autoclosure () -> String? = nil,
+        logFunction: Bool = true,
         file: String = #file,
         function: String = #function,
         line: UInt = #line
@@ -224,6 +387,7 @@ extension Logger {
             Message(stringLiteral: message()),
             metadata: metadata(),
             source: source(),
+            logFunction: logFunction,
             file: file,
             function: function,
             line: line)
@@ -233,6 +397,7 @@ extension Logger {
         _ message: @autoclosure () -> String,
         metadata: @autoclosure () -> Logging.Logger.Metadata? = nil,
         source: @autoclosure () -> String? = nil,
+        logFunction: Bool = true,
         file: String = #file,
         function: String = #function,
         line: UInt = #line
@@ -241,6 +406,7 @@ extension Logger {
             Message(stringLiteral: message()),
             metadata: metadata(),
             source: source(),
+            logFunction: logFunction,
             file: file,
             function: function,
             line: line)

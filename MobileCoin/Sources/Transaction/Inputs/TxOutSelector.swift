@@ -43,15 +43,13 @@ final class TxOutSelector {
     private let txOutSelectionStrategy: TxOutSelectionStrategy
 
     init(txOutSelectionStrategy: TxOutSelectionStrategy) {
-        logger.info("")
         self.txOutSelectionStrategy = txOutSelectionStrategy
     }
 
     func amountTransferable(feeLevel: FeeLevel, txOuts: [KnownTxOut])
         -> Result<UInt64, BalanceTransferEstimationError>
     {
-        logger.info("")
-        return txOutSelectionStrategy.amountTransferable(
+        txOutSelectionStrategy.amountTransferable(
             feeLevel: feeLevel,
             txOuts: txOuts.map(SelectionTxOut.init))
     }
@@ -61,8 +59,7 @@ final class TxOutSelector {
         feeLevel: FeeLevel,
         txOuts: [KnownTxOut]
     ) -> Result<(totalFee: UInt64, requiresDefrag: Bool), TxOutSelectionError> {
-        logger.info("")
-        return txOutSelectionStrategy.estimateTotalFee(
+        txOutSelectionStrategy.estimateTotalFee(
             toSendAmount: amount,
             feeLevel: feeLevel,
             txOuts: txOuts.map(SelectionTxOut.init))
@@ -73,8 +70,7 @@ final class TxOutSelector {
         fee: UInt64,
         fromTxOuts txOuts: [KnownTxOut]
     ) -> Result<[KnownTxOut], TransactionInputSelectionError> {
-        logger.info("")
-        return txOutSelectionStrategy.selectTransactionInputs(
+        txOutSelectionStrategy.selectTransactionInputs(
             amount: amount,
             fee: fee,
             fromTxOuts: txOuts.map(SelectionTxOut.init)
@@ -86,8 +82,7 @@ final class TxOutSelector {
         feeLevel: FeeLevel,
         fromTxOuts txOuts: [KnownTxOut]
     ) -> Result<(inputs: [KnownTxOut], fee: UInt64), TransactionInputSelectionError> {
-        logger.info("")
-        return txOutSelectionStrategy.selectTransactionInputs(
+        txOutSelectionStrategy.selectTransactionInputs(
             amount: amount,
             feeLevel: feeLevel,
             fromTxOuts: txOuts.map(SelectionTxOut.init)
@@ -99,8 +94,7 @@ final class TxOutSelector {
         feeLevel: FeeLevel,
         fromTxOuts txOuts: [KnownTxOut]
     ) -> Result<[(inputs: [KnownTxOut], fee: UInt64)], TxOutSelectionError> {
-        logger.info("")
-        return txOutSelectionStrategy.selectInputsForDefragTransactions(
+        txOutSelectionStrategy.selectInputsForDefragTransactions(
             toSendAmount: amount,
             feeLevel: feeLevel,
             fromTxOuts: txOuts.map(SelectionTxOut.init)

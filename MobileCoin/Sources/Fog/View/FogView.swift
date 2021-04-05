@@ -22,25 +22,39 @@ final class FogView {
         rngSet.rngRecordsKnownBlockCount
     }
 
-    func searchAttempt(
-        requestedBlockCount: UInt64?,
-        numOutputs: PositiveInt,
-        minOutputsPerSelectedRng: Int
-    ) -> FogSearchAttempt {
-        logger.info("")
-        return rngSet.searchAttempt(
-            requestedBlockCount: requestedBlockCount,
+    func queryRequest(targetBlockCount: UInt64?, numOutputs: PositiveInt)
+        -> (FogViewQueryRequestWrapper, FogSearchAttempt)
+    {
+        let rngSetSearchAttempt = rngSet.searchAttempt(
+            targetBlockCount: targetBlockCount,
             numOutputs: numOutputs,
-            minOutputsPerSelectedRng: minOutputsPerSelectedRng)
+            minOutputsPerSelectedRng: min(2, numOutputs.value))
+        let searchAttempt = FogSearchAttempt(
+            rngSetSearchAttempt: rngSetSearchAttempt,
+            targetBlockCount: targetBlockCount)
+
+        var wrapper = FogViewQueryRequestWrapper()
+        wrapper.requestAad.startFromUserEventID = nextStartFromUserEventId
+        wrapper.requestAad.startFromBlockIndex = rngSetSearchAttempt.lowestStartFromBlockIndex
+        wrapper.request.getTxos = rngSetSearchAttempt.searchKeys.map { $0.bytes }
+
+        logger.info(
+            "Fog view query params: startFromUserEventID: " +
+            "\(wrapper.requestAad.startFromUserEventID), startFromBlockIndex: " +
+            "\(wrapper.requestAad.startFromBlockIndex)",
+            logFunction: false)
+
+        return (wrapper, searchAttempt)
     }
 
     func processQueryResponse(
         _ queryResponse: FogView_QueryResponse,
         searchAttempt: FogSearchAttempt,
         accountKey: AccountKey
-    ) -> Result<[KnownTxOut], ConnectionError> {
-        logger.info("")
-        return rngSet.processRngs(queryResponse: queryResponse, accountKey: accountKey).flatMap {
+    ) -> Result<(newTxOuts: [KnownTxOut], nextRoundTargetBlockCount: UInt64?), ConnectionError> {
+        logger.info("Processing Fog View query response...", logFunction: false)
+
+        return rngSet.processRngs(queryResponse: queryResponse, accountKey: accountKey).map {
             processMissedBlockRanges(queryResponse.missedBlockRanges)
 
             if queryResponse.nextStartFromUserEventID > nextStartFromUserEventId {
@@ -50,25 +64,33 @@ final class FogView {
                 // Fog repo for the canonical list.)
                 nextStartFromUserEventId = queryResponse.nextStartFromUserEventID
             }
-
-            return rngSet.processTxOutSearchResults(
+        }.flatMap {
+            rngSet.processTxOutSearchResults(
                 queryResponse: queryResponse,
-                searchAttempt: searchAttempt
-            ).flatMap { searchResults in
-                searchResults.map { searchResult in
-                    Self.decryptSearchResult(searchResult, accountKey: accountKey)
-                }.collectResult().map { decryptedTxOuts in
-                    // Filter out TxOuts that don't belong to this account.
-                    decryptedTxOuts.compactMap { txOut in
-                        guard let knownTxOut = KnownTxOut(txOut, accountKey: accountKey) else {
-                            logger.warning(
-                                "TxOut received from Fog View is not owned by this account.")
-                            return nil
-                        }
-                        return knownTxOut
-                    }
-                }
-            }
+                rngSetSearchAttempt: searchAttempt.rngSetSearchAttempt)
+        }.flatMap { searchResults in
+            searchResults.map { searchResult in
+                Self.decryptSearchResult(searchResult, accountKey: accountKey)
+            }.collectResult()
+        }.flatMap { txOutRecords in
+            txOutRecords.map { txOutRecord in
+                LedgerTxOut.make(txOutRecord: txOutRecord)
+            }.collectResult()
+        }.map { txOuts in
+            let foundTxOuts = Self.ownedTxOuts(validating: txOuts, accountKey: accountKey)
+
+            // After the first call we know the current number of blocks processed by the fog
+            // ingest server, so we'll use that to try to build a complete view of the ledger
+            // for our account up to this number of blocks. We keep using this
+            // `targetBlockCount` because the ledger is always growing and we have to stop and
+            // declare the balance check finished at some point.
+            let targetBlockCount =
+                searchAttempt.targetBlockCount ?? queryResponse.highestProcessedBlockCount
+
+            let performAdditionalSearchRounds = allRngTxOutsFoundBlockCount < targetBlockCount
+            let nextRoundTargetBlockCount = performAdditionalSearchRounds ? targetBlockCount : nil
+
+            return (foundTxOuts, nextRoundTargetBlockCount)
         }
     }
 
@@ -108,46 +130,63 @@ final class FogView {
     private static func decryptSearchResult(
         _ searchResult: FogView_TxOutSearchResult,
         accountKey: AccountKey
-    ) -> Result<LedgerTxOut, ConnectionError> {
-        logger.info("")
-        return FogViewUtils.decryptTxOutRecord(
+    ) -> Result<FogView_TxOutRecord, ConnectionError> {
+        FogViewUtils.decryptTxOutRecord(
             ciphertext: searchResult.ciphertext,
             accountKey: accountKey
         ).mapError { error in
             switch error {
-            case .invalidInput(let reason):
-                logger.warning(
-                    "Warning: could not decrypt TxOut returned from Fog View, base64 " +
-                        "ciphertext: \(redacting: searchResult.ciphertext.base64EncodedString())," +
-                        " error: \(error)")
-                return .invalidServerResponse(reason)
-            case .unsupportedVersion(let reason):
-                logger.warning(
-                    "Warning: could not decrypt TxOut returned from Fog View, base64 " +
-                        "ciphertext: \(redacting: searchResult.ciphertext.base64EncodedString())," +
-                        " error: \(error)")
-                return .outdatedClient(reason)
+            case .invalidInput:
+                let errorMessage = "Could not decrypt TxOut returned from Fog View, ciphertext: " +
+                    "\(redacting: searchResult.ciphertext.base64EncodedString()), error: " +
+                    "\(error)"
+                logger.error(errorMessage)
+                return .invalidServerResponse(errorMessage)
+            case .unsupportedVersion:
+                let errorMessage = "Could not decrypt TxOut returned from Fog View, ciphertext: " +
+                    "\(redacting: searchResult.ciphertext.base64EncodedString()), error: " +
+                    "\(error)"
+                logger.error(errorMessage)
+                return .outdatedClient(errorMessage)
             }
-        }.flatMap { txOutRecord in
-            ledgerTxOut(from: txOutRecord)
         }
     }
 
-    private static func ledgerTxOut(from txOutRecord: FogView_TxOutRecord)
+    /// Filters out TxOuts that don't belong to this account.
+    private static func ownedTxOuts(
+        validating txOuts: [LedgerTxOut],
+        accountKey: AccountKey
+    ) -> [KnownTxOut] {
+        let ownedTxOuts = txOuts.compactMap { txOut -> KnownTxOut? in
+            guard let knownTxOut = txOut.decrypt(accountKey: accountKey) else {
+                logger.warning(
+                    "TxOut received from Fog View is not owned by this account. txOut: " +
+                    "\(redacting: txOut.targetKey.data.base64EncodedString())",
+                    logFunction: false)
+                return nil
+            }
+            return knownTxOut
+        }
+        return ownedTxOuts
+    }
+}
+
+struct FogSearchAttempt {
+    fileprivate let rngSetSearchAttempt: FogRngSetSearchAttempt
+    fileprivate let targetBlockCount: UInt64?
+
+    var searchKeys: [FogSearchKey] { rngSetSearchAttempt.searchKeys }
+}
+
+extension LedgerTxOut {
+    fileprivate static func make(txOutRecord: FogView_TxOutRecord)
         -> Result<LedgerTxOut, ConnectionError>
     {
         guard let ledgerTxOut = LedgerTxOut(txOutRecord) else {
-            let serializedTxOutRecord: Data
-            do {
-                serializedTxOutRecord = try txOutRecord.serializedData()
-            } catch {
-                // Safety: Protobuf binary serialization is no fail when not using proto2 or `Any`.
-                logger.fatalError("Protobuf serialization failed: \(redacting: error)")
-            }
-            logger.info("Invalid TxOut returned from Fog View.")
-            return .failure(.invalidServerResponse(
-                "Invalid TxOut returned from Fog View. Base64-encoded TxOutRecord: " +
-                "\(serializedTxOutRecord.base64EncodedString())"))
+            let errorMessage = "Invalid TxOut returned from Fog View. TxOutRecord: " +
+                "\(redacting: txOutRecord.serializedDataInfallible.base64EncodedString())"
+            logger.error(errorMessage)
+            return .failure(.invalidServerResponse(errorMessage))
         }
         return .success(ledgerTxOut)
     }

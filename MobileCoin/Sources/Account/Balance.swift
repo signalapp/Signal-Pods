@@ -24,7 +24,6 @@ public struct Balance {
     }
 
     init(amountLow: UInt64, amountHigh: UInt8, blockCount: UInt64) {
-        logger.info("")
         self.amountPicoMobLow = amountLow
         self.amountPicoMobHigh = amountHigh
         self.blockCount = blockCount
@@ -32,7 +31,6 @@ public struct Balance {
 
     /// - Returns: `nil` when the amount is too large to fit in a `UInt64`.
     public func amountPicoMob() -> UInt64? {
-        logger.info("")
         guard amountPicoMobHigh == 0 else {
             return nil
         }

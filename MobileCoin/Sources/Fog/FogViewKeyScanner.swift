@@ -12,7 +12,6 @@ final class FogViewKeyScanner {
     private let fogBlockService: FogBlockService
 
     init(accountKey: AccountKey, fogBlockService: FogBlockService) {
-        logger.info("")
         self.accountKey = accountKey
         self.fogBlockService = fogBlockService
     }
@@ -21,16 +20,24 @@ final class FogViewKeyScanner {
         blockRanges: [Range<UInt64>],
         completion: @escaping (Result<[KnownTxOut], ConnectionError>) -> Void
     ) {
-        logger.info("")
+        logger.info(
+            "Fetching block ranges: \(blockRanges.map { "[\($0.lowerBound), \($0.upperBound))" })",
+            logFunction: false)
+
         fetchBlocksTxOuts(ranges: blockRanges) {
             completion($0.map { blocksTxOuts in
                 logger.info(
-                    "\(blockRanges.map { $0.count }.reduce(0, +)) missed " +
-                        "blocks containing \(blocksTxOuts.count) TxOuts")
+                    "View key scanning blocks: " +
+                        "\(blockRanges.map { "[\($0.lowerBound), \($0.upperBound))" }) " +
+                        "containing \(blocksTxOuts.count) TxOuts",
+                    logFunction: false)
+
                 let foundTxOuts = blocksTxOuts.compactMap {
-                    KnownTxOut($0, accountKey: self.accountKey)
+                    $0.decrypt(accountKey: self.accountKey)
                 }
-                logger.info(": Found \(redacting: foundTxOuts.count) missed TxOuts")
+                logger.info(
+                    "View key scanning missed blocks found \(redacting: foundTxOuts.count) TxOuts",
+                    logFunction: false)
                 return foundTxOuts
             })
         }
@@ -49,10 +56,10 @@ final class FogViewKeyScanner {
                         responseBlock.globalTxoCount - UInt64(responseBlock.outputs.count)
                     return responseBlock.outputs.enumerated().map { outputIndex, output in
                         guard let partialTxOut = PartialTxOut(output) else {
-                            logger.info("failure - Fog Block service returned " +
-                                            "invalid output: \(output)")
-                            return .failure(.invalidServerResponse(
-                                "Fog Block service returned invalid output: \(output)"))
+                            let errorMessage =
+                                "Fog Block service returned invalid TxOut: \(output)"
+                            logger.error(errorMessage, logFunction: false)
+                            return .failure(.invalidServerResponse(errorMessage))
                         }
 
                         return .success(LedgerTxOut(

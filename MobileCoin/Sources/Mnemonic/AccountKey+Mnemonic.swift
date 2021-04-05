@@ -48,7 +48,6 @@ extension AccountKey {
         accountIndex: UInt32 = 0,
         subaddressIndex: UInt64 = McConstants.DEFAULT_SUBADDRESS_INDEX
     ) {
-        logger.info("")
         let (viewPrivateKey, spendPrivateKey) =
             Slip10Utils.accountPrivateKeys(fromMnemonic: mnemonic, accountIndex: accountIndex)
         self.init(

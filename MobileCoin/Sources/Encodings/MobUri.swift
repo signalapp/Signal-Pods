@@ -56,7 +56,6 @@ public enum MobUri {
 
 extension MobUri.Payload {
     static func make(pathComponents: [String]) -> Result<MobUri.Payload, InvalidInputError> {
-        logger.info("")
         // Foundation.URL returns "/" as the first value in pathComponents, so we normalize by
         // removing it.
         guard let firstComponent = pathComponents.first else {
@@ -90,7 +89,6 @@ extension MobUri.Payload {
     }
 
     init(_ base58DecodingResult: Base58DecodingResult) {
-        logger.info("")
         switch base58DecodingResult {
         case .publicAddress(let publicAddress):
             self = .publicAddress(publicAddress)

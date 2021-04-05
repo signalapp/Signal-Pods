@@ -10,7 +10,6 @@ struct FogRngKey {
     let version: UInt32
 
     init(pubkey: Data, version: UInt32) {
-        logger.info("Initializing FogRngKey: \(pubkey), version: \(version)")
         self.pubkey = pubkey
         self.version = version
     }
@@ -21,7 +20,6 @@ extension FogRngKey: Hashable {}
 
 extension FogRngKey {
     init(_ pubkey: KexRng_KexRngPubkey) {
-        logger.info("pubkey: \(pubkey.pubkey), version: \(pubkey.version)")
         self.pubkey = pubkey.pubkey
         self.version = pubkey.version
     }
@@ -29,7 +27,6 @@ extension FogRngKey {
 
 extension KexRng_KexRngPubkey {
     init(_ fogRngKey: FogRngKey) {
-        logger.info("fogRngKey(pubkey): \(fogRngKey.pubkey), version: \(fogRngKey.version)")
         self.init()
         self.pubkey = fogRngKey.pubkey
         self.version = fogRngKey.version

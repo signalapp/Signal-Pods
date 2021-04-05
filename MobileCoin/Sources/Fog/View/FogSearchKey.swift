@@ -8,7 +8,6 @@ struct FogSearchKey {
     let bytes: Data
 
     init(_ bytes: Data) {
-        logger.info("bytes: \(redacting: bytes)")
         self.bytes = bytes
     }
 }

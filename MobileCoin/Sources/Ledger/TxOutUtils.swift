@@ -14,8 +14,7 @@ enum TxOutUtils {
         publicKey: RistrettoPublic,
         viewPrivateKey: RistrettoPrivate
     ) -> Bool {
-        logger.info("")
-        return commitment.asMcBuffer { commitmentPtr in
+        commitment.asMcBuffer { commitmentPtr in
             var mcAmount = McTxOutAmount(commitment: commitmentPtr, masked_value: maskedValue)
             return publicKey.asMcBuffer { publicKeyPtr in
                 viewPrivateKey.asMcBuffer { viewPrivateKeyPtr in
@@ -41,8 +40,7 @@ enum TxOutUtils {
         viewPrivateKey: RistrettoPrivate,
         subaddressSpendPrivateKey: RistrettoPrivate
     ) -> Bool {
-        logger.info("")
-        return targetKey.asMcBuffer { targetKeyBufferPtr in
+        targetKey.asMcBuffer { targetKeyBufferPtr in
             publicKey.asMcBuffer { publicKeyBufferPtr in
                 viewPrivateKey.asMcBuffer { viewKeyBufferPtr in
                     subaddressSpendPrivateKey.asMcBuffer { spendPrivateKeyBufferPtr in
@@ -69,8 +67,7 @@ enum TxOutUtils {
         publicKey: RistrettoPublic,
         viewPrivateKey: RistrettoPrivate
     ) -> RistrettoPublic {
-        logger.info("")
-        return targetKey.asMcBuffer { targetKeyBufferPtr in
+        targetKey.asMcBuffer { targetKeyBufferPtr in
             publicKey.asMcBuffer { publicKeyBufferPtr in
                 viewPrivateKey.asMcBuffer { viewPrivateKeyPtr in
                     switch Data32.make(withMcMutableBuffer: { bufferPtr, errorPtr in
@@ -113,8 +110,7 @@ enum TxOutUtils {
         publicKey: RistrettoPublic,
         viewPrivateKey: RistrettoPrivate
     ) -> UInt64? {
-        logger.info("")
-        return commitment.asMcBuffer { commitmentPtr in
+        commitment.asMcBuffer { commitmentPtr in
             var mcAmount = McTxOutAmount(commitment: commitmentPtr, masked_value: maskedValue)
             return publicKey.asMcBuffer { publicKeyPtr in
                 viewPrivateKey.asMcBuffer { viewKeyBufferPtr in
@@ -161,8 +157,7 @@ enum TxOutUtils {
         viewPrivateKey: RistrettoPrivate,
         subaddressSpendPrivateKey: RistrettoPrivate
     ) -> KeyImage? {
-        logger.info("")
-        return targetKey.asMcBuffer { targetKeyPtr in
+        targetKey.asMcBuffer { targetKeyPtr in
             publicKey.asMcBuffer { publicKeyPtr in
                 viewPrivateKey.asMcBuffer { viewKeyBufferPtr in
                     subaddressSpendPrivateKey.asMcBuffer { spendKeyBufferPtr in
@@ -209,8 +204,7 @@ enum TxOutUtils {
         confirmationNumber: TxOutConfirmationNumber,
         viewPrivateKey: RistrettoPrivate
     ) -> Bool {
-        logger.info("")
-        return publicKey.asMcBuffer { publicKeyPtr in
+        publicKey.asMcBuffer { publicKeyPtr in
             confirmationNumber.asMcBuffer { confirmationNumberPtr in
                 viewPrivateKey.asMcBuffer { viewKeyBufferPtr in
                     var result = false

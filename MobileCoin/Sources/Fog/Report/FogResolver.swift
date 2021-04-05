@@ -34,13 +34,11 @@ final class FogResolver {
     }
 
     deinit {
-        logger.info("")
         mc_fog_resolver_free(ptr)
     }
 
     func withUnsafeOpaquePointer<R>(_ body: (OpaquePointer) throws -> R) rethrows -> R {
-        logger.info("")
-        return try body(ptr)
+        try body(ptr)
     }
 
     private func addReportResponse(reportUrl: FogUrl, reportResponse: Report_ReportResponse) {

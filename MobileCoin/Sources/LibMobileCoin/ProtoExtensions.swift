@@ -84,6 +84,15 @@ extension FogView_TxOutSearchResult {
 }
 
 extension FogView_TxOutRecord {
+    var serializedDataInfallible: Data {
+        do {
+            return try serializedData()
+        } catch {
+            // Safety: Protobuf binary serialization is no fail when not using proto2 or `Any`.
+            logger.fatalError("Protobuf serialization failed: \(redacting: error)")
+        }
+    }
+
     var timestampDate: Date? {
         get { timestamp != UInt64.max ? Date(timeIntervalSince1970: TimeInterval(timestamp)) : nil }
         set {

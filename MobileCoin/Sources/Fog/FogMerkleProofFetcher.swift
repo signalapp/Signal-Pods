@@ -31,7 +31,6 @@ struct FogMerkleProofFetcher {
     private let fogMerkleProofService: FogMerkleProofService
 
     init(fogMerkleProofService: FogMerkleProofService, targetQueue: DispatchQueue?) {
-        logger.info("")
         self.serialQueue = DispatchQueue(label: "com.mobilecoin.\(Self.self)", target: targetQueue)
         self.fogMerkleProofService = fogMerkleProofService
     }
@@ -44,7 +43,6 @@ struct FogMerkleProofFetcher {
             Result<[[(TxOut, TxOutMembershipProof)]], FogMerkleProofFetcherError>
         ) -> Void
     ) {
-        logger.info("")
         getOutputs(
             globalIndices: globalIndicesArray.flatMap { $0 },
             merkleRootBlock: merkleRootBlock,
@@ -107,8 +105,7 @@ struct FogMerkleProofFetcher {
     private static func parseResponse(response: FogLedger_GetOutputsResponse)
         -> Result<[UInt64: (TxOut, TxOutMembershipProof)], FogMerkleProofFetcherError>
     {
-        logger.info("")
-        return response.results.map { outputResult in
+        response.results.map { outputResult in
             switch outputResult.resultCodeEnum {
             case .exists:
                 guard let txOut = TxOut(outputResult.output),

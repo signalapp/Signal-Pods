@@ -13,8 +13,7 @@ public struct PublicAddress {
         fogReportId: String,
         fogAuthoritySig: Data
     ) -> Result<PublicAddress, InvalidInputError> {
-        logger.info("")
-        return FogInfo.make(
+        FogInfo.make(
             reportUrl: fogReportUrl,
             reportId: fogReportId,
             authoritySig: fogAuthoritySig)
@@ -31,7 +30,6 @@ public struct PublicAddress {
     let fogInfo: FogInfo?
 
     init(viewPublicKey: RistrettoPublic, spendPublicKey: RistrettoPublic, fogInfo: FogInfo? = nil) {
-        logger.info("")
         self.viewPublicKeyTyped = viewPublicKey
         self.spendPublicKeyTyped = spendPublicKey
         self.fogInfo = fogInfo
@@ -39,8 +37,9 @@ public struct PublicAddress {
 
     /// - Returns: `nil` when the input is not deserializable.
     public init?(serializedData: Data) {
-        logger.info("")
         guard let proto = try? External_PublicAddress(serializedData: serializedData) else {
+            logger.warning("External_PublicAddress deserialization failed. serializedData: " +
+                "\(redacting: serializedData.base64EncodedString())")
             return nil
         }
         self.init(proto)
@@ -74,18 +73,7 @@ extension PublicAddress: Hashable {}
 
 extension PublicAddress: CustomRedactingStringConvertible {
     var redactingDescription: String {
-        var params = [
-            "viewPublicKey=\(redacting: viewPublicKey.base64EncodedString())",
-            "spendPublicKey=\(redacting: spendPublicKey.base64EncodedString())",
-        ]
-        if let fogInfo = fogInfo {
-            params += [
-                "fogReportUrl: \(fogInfo.reportUrlString)",
-                "fogReportId: \(fogInfo.reportId)",
-                "fogAuthoritySig: \(redacting: fogInfo.authoritySig)",
-            ]
-        }
-        return "PublicAddress(\(params.joined(separator: ", ")))"
+        "PublicAddress(\(Base58Coder.encode(self)))"
     }
 }
 
@@ -96,7 +84,6 @@ extension PublicAddress {
         accountKeyFogInfo: AccountKey.FogInfo? = nil,
         subaddressIndex: UInt64 = McConstants.DEFAULT_SUBADDRESS_INDEX
     ) {
-        logger.info("")
         let (viewPublicKey, spendPublicKey) = AccountKeyUtils.publicAddressPublicKeys(
             viewPrivateKey: viewPrivateKey,
             spendPrivateKey: spendPrivateKey,
@@ -119,9 +106,8 @@ extension PublicAddress {
 
 extension PublicAddress {
     init?(_ publicAddress: External_PublicAddress) {
-        logger.info("")
-        guard let viewPublicKey = RistrettoPublic(publicAddress.viewPublicKey.data),
-              let spendPublicKey = RistrettoPublic(publicAddress.spendPublicKey.data)
+        guard let viewPublicKey = RistrettoPublic(publicAddress.viewPublicKey),
+              let spendPublicKey = RistrettoPublic(publicAddress.spendPublicKey)
         else {
             return nil
         }
@@ -146,7 +132,6 @@ extension PublicAddress {
 
 extension External_PublicAddress {
     init(_ publicAddress: PublicAddress) {
-        logger.info("")
         self.init()
         self.viewPublicKey = External_CompressedRistretto(publicAddress.viewPublicKey)
         self.spendPublicKey = External_CompressedRistretto(publicAddress.spendPublicKey)
@@ -183,7 +168,6 @@ extension PublicAddress {
             reportId: String,
             authoritySig: Data
         ) {
-            logger.info("")
             self.reportUrlString = reportUrlString
             self.reportUrl = reportUrl
             self.reportId = reportId
@@ -202,7 +186,6 @@ extension PublicAddress.FogInfo {
         accountKeyFogInfo: AccountKey.FogInfo,
         subaddressIndex: UInt64 = McConstants.DEFAULT_SUBADDRESS_INDEX
     ) {
-        logger.info("")
         let authoritySig = AccountKeyUtils.fogAuthoritySig(
             viewPrivateKey: viewPrivateKey,
             spendPrivateKey: spendPrivateKey,

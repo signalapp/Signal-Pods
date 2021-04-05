@@ -6,7 +6,6 @@ import Foundation
 
 struct FeeCalculator {
     func fee(numInputs: Int, numOutputs: Int, feeLevel: FeeLevel) -> UInt64 {
-        logger.info("")
         switch feeLevel {
         case .minimum:
             return McConstants.MINIMUM_FEE

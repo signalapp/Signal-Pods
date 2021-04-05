@@ -32,8 +32,7 @@ enum VersionedCryptoBox {
         rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)?,
         rngContext: Any?
     ) -> Result<Data, InvalidInputError> {
-        logger.info("")
-        return publicKey.asMcBuffer { viewPublicKeyPtr in
+        publicKey.asMcBuffer { viewPublicKeyPtr in
             plaintext.asMcBuffer { plaintextPtr in
                 withMcRngCallback(rng: rng, rngContext: rngContext) { rngCallbackPtr in
                     Data.make(withMcMutableBuffer: { bufferPtr, errorPtr in
@@ -62,8 +61,7 @@ enum VersionedCryptoBox {
         ciphertext: Data,
         privateKey: RistrettoPrivate
     ) -> Result<Data, VersionedCryptoBoxError> {
-        logger.info("")
-        return privateKey.asMcBuffer { privateKeyPtr in
+        privateKey.asMcBuffer { privateKeyPtr in
             ciphertext.asMcBuffer { ciphertextPtr in
                 Data.make(withEstimatedLengthMcMutableBuffer: ciphertext.count)
                 { bufferPtr, errorPtr in
@@ -74,15 +72,12 @@ enum VersionedCryptoBox {
                         &errorPtr)
                 }.mapError {
                     switch $0.errorCode {
-                    case .aead:
-                        return .invalidInput(
-                            "VersionedCryptoBox decryption error: \(redacting: $0.description)")
+                    case .aead, .invalidInput:
+                        return .invalidInput("\(redacting: $0.description)")
                     case .unsupportedCryptoBoxVersion:
                         return .unsupportedVersion("\(redacting: $0.description)")
-                    case .invalidInput:
-                        logger.fatalError("error: \(redacting: $0.description)")
                     default:
-                        // Safety: mc_tx_out_get_key_image should not throw non-documented
+                        // Safety: mc_versioned_crypto_box_decrypt should not throw non-documented
                         // errors.
                         logger.fatalError("Unhandled LibMobileCoin error: \(redacting: $0)")
                     }

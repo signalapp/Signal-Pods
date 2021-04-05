@@ -68,7 +68,6 @@ final class DefaultMixinSelectionStrategy: MixinSelectionStrategy {
         sourceIndex: UInt64,
         selectionRange: PartialRangeUpTo<UInt64>?
     ) -> UInt64 {
-        logger.info("")
         // Midpoint = sourceIndex + [0, 2 * offsetParam + 1).random - offsetParam
 
         // Add up positive components of midpoint.
@@ -88,7 +87,6 @@ final class DefaultMixinSelectionStrategy: MixinSelectionStrategy {
     }
 
     private func selectIndex(lowerBound: UInt64) -> UInt64 {
-        logger.info("")
-        return lowerBound + rng.next(upperBound: selectionWindowWidth)
+        lowerBound + rng.next(upperBound: selectionWindowWidth)
     }
 }

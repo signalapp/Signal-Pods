@@ -9,7 +9,6 @@ struct RistrettoPublic {
     let data32: Data32
 
     init?(_ data: Data32) {
-        logger.info("")
         guard CryptoUtils.ristrettoPublicValidate(data.data) else {
             return nil
         }
@@ -17,7 +16,6 @@ struct RistrettoPublic {
     }
 
     init(skippingValidation data: Data32) {
-        logger.info("")
         self.data32 = data
     }
 }
@@ -26,7 +24,6 @@ extension RistrettoPublic: DataConvertibleImpl {
     typealias Iterator = Data.Iterator
 
     init?(_ data: Data) {
-        logger.info("")
         guard let data32 = Data32(data.data) else {
             return nil
         }
@@ -38,14 +35,12 @@ extension RistrettoPublic: DataConvertibleImpl {
 
 extension RistrettoPublic {
     init?(_ ristrettoPublic: External_CompressedRistretto) {
-        logger.info("")
         self.init(ristrettoPublic.data)
     }
 }
 
 extension External_CompressedRistretto {
     init(_ ristrettoPublic: RistrettoPublic) {
-        logger.info("")
         self.init()
         self.data = ristrettoPublic.data
     }

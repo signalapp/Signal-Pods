@@ -75,7 +75,7 @@ extension UnsignedInteger {
 
         while !remainingLeftHandValues.isEmpty || !remainingRightHandValues.isEmpty {
             // Either accumLeftHandValue must be 0, accumRightHandValue must be 0, or they're both
-            // 0. They can't both contain a positive value because of the subtraction below.
+            // 0. They can't both be positive because of the subtraction below.
             if accumLeftHandValue == 0 {
                 if let leftHandValue = remainingLeftHandValues.popLast() {
                     // Note: accumLeftHandValue is known to be 0 at this point.
@@ -99,9 +99,9 @@ extension UnsignedInteger {
             }
 
             // Ensure that at least 1 of the accumulators is 0.
-            let lesserValue = Swift.min(accumLeftHandValue, accumRightHandValue)
-            accumLeftHandValue -= lesserValue
-            accumRightHandValue -= lesserValue
+            let smallerValue = Swift.min(accumLeftHandValue, accumRightHandValue)
+            accumLeftHandValue -= smallerValue
+            accumRightHandValue -= smallerValue
         }
 
         return accumLeftHandValue == accumRightHandValue
@@ -119,7 +119,7 @@ extension UnsignedInteger {
 
         while !remainingLeftHandValues.isEmpty || !remainingRightHandValues.isEmpty {
             // Either accumLeftHandValue must be 0, accumRightHandValue must be 0, or they're both
-            // 0. They can't both contain a positive value because of the subtraction below.
+            // 0. They can't both be positive because of the subtraction below.
             if accumRightHandValue == 0 {
                 if let rightHandValue = remainingRightHandValues.popLast() {
                     // Note: accumRightHandValue is known to be 0 at this point.
@@ -135,16 +135,16 @@ extension UnsignedInteger {
                     // Note: accumLeftHandValue is known to be 0 at this point.
                     accumLeftHandValue = leftHandValue
                 } else {
-                    // We've exhausted the left-hand side and the right-hand side has value, so we
+                    // We've exhausted the left-hand side and the right-hand side is non-zero, so we
                     // know the left-hand side must be less than the right.
                     return true
                 }
             }
 
             // Ensure that at least 1 of the accumulators is 0.
-            let lesserValue = Swift.min(accumLeftHandValue, accumRightHandValue)
-            accumLeftHandValue -= lesserValue
-            accumRightHandValue -= lesserValue
+            let smallerValue = Swift.min(accumLeftHandValue, accumRightHandValue)
+            accumLeftHandValue -= smallerValue
+            accumRightHandValue -= smallerValue
         }
 
         return accumLeftHandValue < accumRightHandValue
@@ -185,16 +185,16 @@ extension UnsignedInteger {
                     // Note: accumRightHandValue is known to be 0 at this point.
                     accumRightHandValue = rightHandValue
                 } else {
-                    // We've exhausted the right-hand side and the left-hand side has value, so it
+                    // We've exhausted the right-hand side and the left-hand side is non-zero, so it
                     // must be greater than.
                     return true
                 }
             }
 
             // Ensure that at least 1 of the accumulators is 0.
-            let lesserValue = Swift.min(accumLeftHandValue, accumRightHandValue)
-            accumLeftHandValue -= lesserValue
-            accumRightHandValue -= lesserValue
+            let smallerValue = Swift.min(accumLeftHandValue, accumRightHandValue)
+            accumLeftHandValue -= smallerValue
+            accumRightHandValue -= smallerValue
         }
 
         return accumLeftHandValue > accumRightHandValue

@@ -8,7 +8,6 @@ struct ReceiptStatusChecker {
     private let account: ReadWriteDispatchLock<Account>
 
     init(account: ReadWriteDispatchLock<Account>) {
-        logger.info("")
         self.account = account
     }
 

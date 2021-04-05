@@ -26,15 +26,14 @@ extension FogRngError: CustomStringConvertible {
 }
 
 final class FogRng {
-    static func make(accountKey: AccountKey, fogRngKey: FogRngKey) -> Result<FogRng, FogRngError> {
-        make(subaddressViewPrivateKey: accountKey.subaddressViewPrivateKey, fogRngKey: fogRngKey)
+    static func make(fogRngKey: FogRngKey, accountKey: AccountKey) -> Result<FogRng, FogRngError> {
+        make(fogRngKey: fogRngKey, subaddressViewPrivateKey: accountKey.subaddressViewPrivateKey)
     }
 
-    static func make(subaddressViewPrivateKey: RistrettoPrivate, fogRngKey: FogRngKey)
+    static func make(fogRngKey: FogRngKey, subaddressViewPrivateKey: RistrettoPrivate)
         -> Result<FogRng, FogRngError>
     {
-        logger.info("fogRngKey(pubkey): \(fogRngKey.pubkey)")
-        return subaddressViewPrivateKey.asMcBuffer { viewPrivateKeyPtr in
+        subaddressViewPrivateKey.asMcBuffer { viewPrivateKeyPtr in
             fogRngKey.pubkey.asMcBuffer { pubkeyPtr in
                 withMcError { errorPtr in
                     mc_fog_rng_create(viewPrivateKeyPtr, pubkeyPtr, fogRngKey.version, &errorPtr)
@@ -57,17 +56,14 @@ final class FogRng {
 
     /// - Returns: `.failure` when the input is not deserializable.
     static func make(serializedData: Data) -> Result<FogRng, FogRngError> {
-        logger.info("serializedData: \(redacting: serializedData)")
-        return serializedData.asMcBuffer { dataPtr in
+        serializedData.asMcBuffer { dataPtr in
             withMcError { errorPtr in
                 mc_fog_rng_deserialize_proto(dataPtr, &errorPtr)
             }.mapError {
                 switch $0.errorCode {
                 case .invalidInput:
-                    logger.warning("invalid key: \(redacting: $0.description)")
                     return .invalidKey("\(redacting: $0.description)")
                 case .unsupportedCryptoBoxVersion:
-                    logger.warning("unsupported crypto box version: \(redacting: $0.description)")
                     return .unsupportedCryptoBoxVersion("\(redacting: $0.description)")
                 default:
                     // Safety: mc_fog_rng_deserialize_proto should not throw non-documented errors.
@@ -83,7 +79,6 @@ final class FogRng {
     private let outputSize: Int
 
     private init(_ ptr: OpaquePointer) {
-        logger.info("")
         self.ptr = ptr
         self.outputSize = withMcInfallibleReturningOptional {
             let len = mc_fog_rng_get_output_len(ptr)
@@ -92,7 +87,6 @@ final class FogRng {
     }
 
     deinit {
-        logger.info("")
         mc_fog_rng_free(ptr)
     }
 
@@ -121,7 +115,6 @@ final class FogRng {
     }
 
     func outputs(count: Int) -> [Data] {
-        logger.info("\(count)")
         let rngCopy = clone()
         return (0..<count).map { _ in
             rngCopy.advance()
@@ -130,9 +123,18 @@ final class FogRng {
 
     @discardableResult
     func advance() -> Data {
-        logger.info("")
-        return Data(withFixedLengthMcMutableBufferInfallible: outputSize) { bufferPtr in
+        Data(withFixedLengthMcMutableBufferInfallible: outputSize) { bufferPtr in
             mc_fog_rng_advance(ptr, bufferPtr)
         }
+    }
+}
+
+extension FogRng {
+    static func make(fogRngPubkey: KexRng_KexRngPubkey, accountKey: AccountKey)
+        -> Result<FogRng, FogRngError>
+    {
+        make(
+            fogRngKey: FogRngKey(fogRngPubkey),
+            subaddressViewPrivateKey: accountKey.subaddressViewPrivateKey)
     }
 }

@@ -12,11 +12,17 @@ public struct Transaction {
 
     /// - Returns: `nil` when the input is not deserializable.
     public init?(serializedData: Data) {
-        logger.debug("serializedData: \(redacting: serializedData)")
         guard let proto = try? External_Tx(serializedData: serializedData) else {
+            logger.warning("External_Tx deserialization failed. serializedData: " +
+                "\(redacting: serializedData.base64EncodedString())")
             return nil
         }
-        self.init(proto)
+        guard let transaction = Transaction(proto) else {
+            logger.warning("Input data is not a valid Transaction. serializedData: " +
+                "\(redacting: serializedData.base64EncodedString())")
+            return nil
+        }
+        self = transaction
     }
 
     public var serializedData: Data {
@@ -31,7 +37,7 @@ public struct Transaction {
     var anyInputKeyImage: KeyImage {
         guard let inputKeyImage = inputKeyImagesTyped.first else {
             // Safety: Transaction is guaranteed to have at least 1 input.
-            logger.fatalError("Error: Transaction contains 0 inputs.")
+            logger.fatalError("Transaction contains 0 inputs.")
         }
         return inputKeyImage
     }
@@ -44,7 +50,7 @@ public struct Transaction {
     var anyOutput: TxOut {
         guard let output = outputs.first else {
             // Safety: Transaction is guaranteed to have at least 1 output.
-            logger.fatalError("Error: Transaction contains 0 outputs.")
+            logger.fatalError("Transaction contains 0 outputs.")
         }
         return output
     }
@@ -87,30 +93,35 @@ extension Transaction: Hashable {}
 
 extension Transaction {
     init?(_ proto: External_Tx) {
-        logger.info("")
         guard proto.prefix.inputs.count > 0 && proto.prefix.outputs.count > 0 else {
+            logger.warning("External_Tx doesn't contain at least 1 input and 1 output")
+            return nil
+        }
+        guard proto.prefix.inputs.count == proto.signature.ringSignatures.count else {
+            logger.warning("External_Tx input count is not equal to ring signature count")
             return nil
         }
         self.proto = proto
-        self.inputKeyImagesTyped = Set(proto.signature.ringSignatures.map {
-            guard let keyImage = KeyImage($0.keyImage) else {
-                logger.fatalError("serialization failure")
+
+        var keyImages: [KeyImage] = []
+        for ringSignature in proto.signature.ringSignatures {
+            guard let keyImage = KeyImage(ringSignature.keyImage) else {
+                logger.warning("External_Tx contains an invalid KeyImage")
+                return nil
             }
-            return keyImage
-        })
-        self.outputs = Set(proto.prefix.outputs.map {
-            let txOutData: Data
-            do {
-                txOutData = try $0.serializedData()
-            } catch {
-                // Safety: Protobuf binary serialization is no fail when not using proto2 or `Any`.
-                logger.fatalError("Protobuf serialization failed: \(redacting: error)")
+            keyImages.append(keyImage)
+        }
+        self.inputKeyImagesTyped = Set(keyImages)
+
+        var outputs: [TxOut] = []
+        for output in proto.prefix.outputs {
+            guard let txOut = TxOut(output) else {
+                logger.warning("External_Tx contains an invalid output")
+                return nil
             }
-            guard let txOut = TxOut(serializedData: txOutData) else {
-                logger.fatalError("serialization failure")
-            }
-            return txOut
-        })
+            outputs.append(txOut)
+        }
+        self.outputs = Set(outputs)
     }
 }
 

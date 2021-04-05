@@ -13,7 +13,6 @@ extension Account {
             account: ReadWriteDispatchLock<Account>,
             txOutSelectionStrategy: TxOutSelectionStrategy
         ) {
-            logger.info("")
             self.account = account
             self.txOutSelector = TxOutSelector(txOutSelectionStrategy: txOutSelectionStrategy)
         }
@@ -21,9 +20,15 @@ extension Account {
         func amountTransferable(feeLevel: FeeLevel)
             -> Result<UInt64, BalanceTransferEstimationError>
         {
-            logger.info("feeLevel: \(feeLevel)")
             let txOuts = account.readSync { $0.unspentTxOuts }
-            return txOutSelector.amountTransferable(feeLevel: feeLevel, txOuts: txOuts)
+            logger.info(
+                "Calculating amountTransferable. unspentTxOutValues: " +
+                    "\(redacting: txOuts.map { $0.value })",
+                logFunction: false)
+            return txOutSelector.amountTransferable(feeLevel: feeLevel, txOuts: txOuts).map {
+                logger.info("amountTransferable: \(redacting: $0)", logFunction: false)
+                return $0
+            }
         }
 
         func estimateTotalFee(toSendAmount amount: UInt64, feeLevel: FeeLevel)
@@ -31,15 +36,18 @@ extension Account {
         {
             logger.info("toSendAmount: \(redacting: amount), feeLevel: \(feeLevel)")
             guard amount > 0 else {
-                logger.info("failure - Cannot spend 0 MOB")
-                return .failure(.invalidInput("Cannot spend 0 MOB"))
+                let errorMessage = "Cannot spend 0 MOB"
+                logger.error(errorMessage)
+                return .failure(.invalidInput(errorMessage))
             }
 
             let txOuts = account.readSync { $0.unspentTxOuts }
-            return txOutSelector
+            let totalFee = txOutSelector
                 .estimateTotalFee(toSendAmount: amount, feeLevel: feeLevel, txOuts: txOuts)
-                .mapError { _ in .insufficientBalance() }
+                .mapError { _ -> TransactionEstimationError in .insufficientBalance() }
                 .map { $0.totalFee }
+            logger.info("totalFee result: \(redacting: totalFee)")
+            return totalFee
         }
 
         func requiresDefragmentation(toSendAmount amount: UInt64, feeLevel: FeeLevel)
@@ -47,15 +55,18 @@ extension Account {
         {
             logger.info("toSendAmount: \(redacting: amount), feeLevel: \(feeLevel)")
             guard amount > 0 else {
-                logger.info("failure - Cannot spend 0 MOB")
-                return .failure(.invalidInput("Cannot spend 0 MOB"))
+                let errorMessage = "Cannot spend 0 MOB"
+                logger.error(errorMessage)
+                return .failure(.invalidInput(errorMessage))
             }
 
             let txOuts = account.readSync { $0.unspentTxOuts }
-            return txOutSelector
+            let requiresDefragmentation = txOutSelector
                 .estimateTotalFee(toSendAmount: amount, feeLevel: feeLevel, txOuts: txOuts)
-                .mapError { _ in .insufficientBalance() }
+                .mapError { _ -> TransactionEstimationError in .insufficientBalance() }
                 .map { $0.requiresDefrag }
+            logger.info("requiresDefragmentation result: \(redacting: requiresDefragmentation)")
+            return requiresDefragmentation
         }
     }
 }

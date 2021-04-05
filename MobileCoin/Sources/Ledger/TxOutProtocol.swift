@@ -14,8 +14,7 @@ protocol TxOutProtocol {
 
 extension TxOutProtocol {
     func matches(accountKey: AccountKey) -> Bool {
-        logger.info("")
-        return TxOutUtils.matchesSubaddress(
+        TxOutUtils.matchesSubaddress(
             targetKey: targetKey,
             publicKey: publicKey,
             viewPrivateKey: accountKey.viewPrivateKey,
@@ -23,8 +22,7 @@ extension TxOutProtocol {
     }
 
     func matchesAnySubaddress(accountKey: AccountKey) -> Bool {
-        logger.info("")
-        return TxOutUtils.matchesAnySubaddress(
+        TxOutUtils.matchesAnySubaddress(
             commitment: commitment,
             maskedValue: maskedValue,
             publicKey: publicKey,
@@ -32,8 +30,7 @@ extension TxOutProtocol {
     }
 
     func subaddressSpentPublicKey(viewPrivateKey: RistrettoPrivate) -> RistrettoPublic {
-        logger.info("")
-        return TxOutUtils.subaddressSpentPublicKey(
+        TxOutUtils.subaddressSpentPublicKey(
             targetKey: targetKey,
             publicKey: publicKey,
             viewPrivateKey: viewPrivateKey)
@@ -42,8 +39,7 @@ extension TxOutProtocol {
     /// - Returns: `nil` when `accountKey` cannot unmask value, either because `accountKey` does not
     ///     own `TxOut` or because ` TxOut` values are incongruent.
     func value(accountKey: AccountKey) -> UInt64? {
-        logger.info("")
-        return TxOutUtils.value(
+        TxOutUtils.value(
             commitment: commitment,
             maskedValue: maskedValue,
             publicKey: publicKey,
@@ -53,8 +49,7 @@ extension TxOutProtocol {
     /// - Returns: `nil` when a valid `KeyImage` cannot be constructed, either because `accountKey`
     ///     does not own `TxOut` or because `TxOut` values are incongruent.
     func keyImage(accountKey: AccountKey) -> KeyImage? {
-        logger.info("")
-        return TxOutUtils.keyImage(
+        TxOutUtils.keyImage(
             targetKey: targetKey,
             publicKey: publicKey,
             viewPrivateKey: accountKey.viewPrivateKey,
@@ -64,7 +59,6 @@ extension TxOutProtocol {
 
 extension FogView_FogTxOut {
     init(_ txOut: TxOutProtocol) {
-        logger.info("")
         self.init()
         self.amount =
             External_Amount(commitment: txOut.commitment, maskedValue: txOut.maskedValue)
