@@ -63,7 +63,7 @@ public struct Printable_TransferPayload {
   // methods supported on all messages.
 
   //// The root entropy, allowing the recipient to spend the money
-  public var entropy: Data = Data()
+  public var rootEntropy: Data = Data()
 
   //// The public key of the UTXO to spend. This is an optimization, meaning
   //// the recipient does not need to scan the entire ledger.
@@ -205,7 +205,7 @@ extension Printable_PaymentRequest: SwiftProtobuf.Message, SwiftProtobuf._Messag
 extension Printable_TransferPayload: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = _protobuf_package + ".TransferPayload"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "entropy"),
+    1: .standard(proto: "root_entropy"),
     2: .standard(proto: "tx_out_public_key"),
     3: .same(proto: "memo"),
   ]
@@ -216,7 +216,7 @@ extension Printable_TransferPayload: SwiftProtobuf.Message, SwiftProtobuf._Messa
       // allocates stack space for every case branch when no optimizations are
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try { try decoder.decodeSingularBytesField(value: &self.entropy) }()
+      case 1: try { try decoder.decodeSingularBytesField(value: &self.rootEntropy) }()
       case 2: try { try decoder.decodeSingularMessageField(value: &self._txOutPublicKey) }()
       case 3: try { try decoder.decodeSingularStringField(value: &self.memo) }()
       default: break
@@ -225,8 +225,8 @@ extension Printable_TransferPayload: SwiftProtobuf.Message, SwiftProtobuf._Messa
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if !self.entropy.isEmpty {
-      try visitor.visitSingularBytesField(value: self.entropy, fieldNumber: 1)
+    if !self.rootEntropy.isEmpty {
+      try visitor.visitSingularBytesField(value: self.rootEntropy, fieldNumber: 1)
     }
     if let v = self._txOutPublicKey {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
@@ -238,7 +238,7 @@ extension Printable_TransferPayload: SwiftProtobuf.Message, SwiftProtobuf._Messa
   }
 
   public static func ==(lhs: Printable_TransferPayload, rhs: Printable_TransferPayload) -> Bool {
-    if lhs.entropy != rhs.entropy {return false}
+    if lhs.rootEntropy != rhs.rootEntropy {return false}
     if lhs._txOutPublicKey != rhs._txOutPublicKey {return false}
     if lhs.memo != rhs.memo {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}

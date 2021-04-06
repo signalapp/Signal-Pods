@@ -26,7 +26,7 @@ extension TransferPayload: Hashable {}
 
 extension TransferPayload {
     init?(_ transferPayload: Printable_TransferPayload) {
-        guard let rootEntropy = Data32(transferPayload.entropy),
+        guard let rootEntropy = Data32(transferPayload.rootEntropy),
               let txOutPublicKey = RistrettoPublic(transferPayload.txOutPublicKey.data)
         else {
             return nil
@@ -40,7 +40,7 @@ extension TransferPayload {
 extension Printable_TransferPayload {
     init(_ transferPayload: TransferPayload) {
         self.init()
-        self.entropy = transferPayload.rootEntropy
+        self.rootEntropy = transferPayload.rootEntropy
         self.txOutPublicKey = External_CompressedRistretto(transferPayload.txOutPublicKey)
         if let memo = transferPayload.memo {
             self.memo = memo
