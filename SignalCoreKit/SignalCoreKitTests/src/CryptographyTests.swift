@@ -1,6 +1,6 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
-// 
+//  Copyright (c) 2021 Open Whisper Systems. All rights reserved.
+//
 
 import Foundation
 import XCTest
@@ -85,5 +85,151 @@ class CryptographyTestsSwift: XCTestCase {
         XCTAssertEqual(data, decryptedData)
         XCTAssertEqual(iv, Data.data(fromHex: "f27036915a60d704b04d452ef0d55a5d")!)
         XCTAssertEqual(cipherText, Data.data(fromHex: "1668e7d91339daba9c950d985b7556471d13cc609e59eec62fb1ce27f5c5a342")!)
+    }
+
+    func test_attachmentEncryptionAndDecryption() throws {
+        let temporaryDirectory = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
+        let plaintextFile = temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let encryptedFile = temporaryDirectory.appendingPathComponent(UUID().uuidString)
+
+        let plaintextData = Data.data(fromHex: "6E6F7261207761732068657265")!
+        try plaintextData.write(to: plaintextFile)
+        let metadata = try Cryptography.encryptAttachment(at: plaintextFile, output: encryptedFile)
+
+        try FileManager.default.removeItem(at: plaintextFile)
+        try Cryptography.decryptAttachment(
+            at: encryptedFile,
+            metadata: metadata,
+            output: plaintextFile
+        )
+
+        let decryptedData = try Data(contentsOf: plaintextFile)
+        XCTAssertEqual(plaintextData, decryptedData)
+    }
+
+    func test_attachmentEncryptionAndDecryptionWithGarbageInFile() throws {
+        let temporaryDirectory = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
+        let plaintextFile = temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let encryptedFile = temporaryDirectory.appendingPathComponent(UUID().uuidString)
+
+        let plaintextData = Data.data(fromHex: "6E6F7261207761732068657265")!
+        try plaintextData.write(to: plaintextFile)
+        let metadata = try Cryptography.encryptAttachment(at: plaintextFile, output: encryptedFile)
+
+        try FileManager.default.removeItem(at: plaintextFile)
+        try Cryptography.generateRandomBytes(1024).write(to: plaintextFile)
+        try Cryptography.decryptAttachment(
+            at: encryptedFile,
+            metadata: metadata,
+            output: plaintextFile
+        )
+
+        let decryptedData = try Data(contentsOf: plaintextFile)
+        XCTAssertEqual(plaintextData, decryptedData)
+    }
+
+    func test_attachmentDecryptionWithBadUnpaddedSize() throws {
+        let temporaryDirectory = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
+        let plaintextFile = temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let encryptedFile = temporaryDirectory.appendingPathComponent(UUID().uuidString)
+
+        let plaintextData = Data.data(fromHex: "6E6F7261207761732068657265")!
+        try plaintextData.write(to: plaintextFile)
+        let metadata = try Cryptography.encryptAttachment(at: plaintextFile, output: encryptedFile)
+
+        let invalidMetadata = EncryptionMetadata(
+            key: metadata.key,
+            digest: metadata.digest,
+            length: metadata.length,
+            plaintextLength: metadata.length! + 1
+        )
+
+        try FileManager.default.removeItem(at: plaintextFile)
+        XCTAssertThrowsError(try Cryptography.decryptAttachment(
+            at: encryptedFile,
+            metadata: invalidMetadata,
+            output: plaintextFile
+        ))
+
+        XCTAssertFalse(FileManager.default.fileExists(atPath: plaintextFile.path))
+    }
+
+    func test_attachmentDecryptionWithBadKey() throws {
+        let temporaryDirectory = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
+        let plaintextFile = temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let encryptedFile = temporaryDirectory.appendingPathComponent(UUID().uuidString)
+
+        let plaintextData = Data.data(fromHex: "6E6F7261207761732068657265")!
+        try plaintextData.write(to: plaintextFile)
+        let metadata = try Cryptography.encryptAttachment(at: plaintextFile, output: encryptedFile)
+
+        let invalidMetadata = EncryptionMetadata(
+            key: Cryptography.generateRandomBytes(64),
+            digest: metadata.digest,
+            length: metadata.length,
+            plaintextLength: metadata.plaintextLength
+        )
+
+        try FileManager.default.removeItem(at: plaintextFile)
+        XCTAssertThrowsError(try Cryptography.decryptAttachment(
+            at: encryptedFile,
+            metadata: invalidMetadata,
+            output: plaintextFile
+        ))
+
+        XCTAssertFalse(FileManager.default.fileExists(atPath: plaintextFile.path))
+    }
+
+    func test_attachmentDecryptionWithMissingDigest() throws {
+        let temporaryDirectory = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
+        let plaintextFile = temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let encryptedFile = temporaryDirectory.appendingPathComponent(UUID().uuidString)
+
+        let plaintextData = Data.data(fromHex: "6E6F7261207761732068657265")!
+        try plaintextData.write(to: plaintextFile)
+        let metadata = try Cryptography.encryptAttachment(at: plaintextFile, output: encryptedFile)
+
+        let invalidMetadata = EncryptionMetadata(
+            key: metadata.key,
+            digest: nil,
+            length: metadata.length,
+            plaintextLength: metadata.plaintextLength
+        )
+
+        try FileManager.default.removeItem(at: plaintextFile)
+        XCTAssertThrowsError(try Cryptography.decryptAttachment(
+            at: encryptedFile,
+            metadata: invalidMetadata,
+            output: plaintextFile
+        ))
+
+        XCTAssertFalse(FileManager.default.fileExists(atPath: plaintextFile.path))
+    }
+
+    func test_fileEncryptionAndDecryptionMissingDigest() throws {
+        let temporaryDirectory = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
+        let plaintextFile = temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let encryptedFile = temporaryDirectory.appendingPathComponent(UUID().uuidString)
+
+        let plaintextData = Data.data(fromHex: "6E6F7261207761732068657265")!
+        try plaintextData.write(to: plaintextFile)
+        let metadata = try Cryptography.encryptAttachment(at: plaintextFile, output: encryptedFile)
+
+        let metadataWithoutDigest = EncryptionMetadata(
+            key: metadata.key,
+            digest: nil,
+            length: metadata.length,
+            plaintextLength: metadata.plaintextLength
+        )
+
+        try FileManager.default.removeItem(at: plaintextFile)
+        try Cryptography.decryptFile(
+            at: encryptedFile,
+            metadata: metadataWithoutDigest,
+            output: plaintextFile
+        )
+
+        let decryptedData = try Data(contentsOf: plaintextFile)
+        XCTAssertEqual(plaintextData, decryptedData)
     }
 }

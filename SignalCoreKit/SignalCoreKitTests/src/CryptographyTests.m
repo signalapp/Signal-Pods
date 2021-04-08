@@ -1,10 +1,11 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2021 Open Whisper Systems. All rights reserved.
 //
 
 #import "Cryptography.h"
 #import "Randomness.h"
 #import <SignalCoreKit/NSData+OWS.h>
+#import <SignalCoreKit/SignalCoreKit-Swift.h>
 #import <XCTest/XCTest.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -15,129 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark -
 
-@interface Cryptography (Test)
-
-+ (NSData *)truncatedSHA256HMAC:(NSData *)dataToHMAC withHMACKey:(NSData *)HMACKey truncation:(int)bytes;
-+ (NSData *)encryptCBCMode:(NSData *)dataToEncrypt
-                   withKey:(NSData *)key
-                    withIV:(NSData *)iv
-               withVersion:(NSData *)version
-               withHMACKey:(NSData *)hmacKey
-              withHMACType:(TSMACType)hmacType
-              computedHMAC:(NSData **)hmac;
-
-+ (NSData *)decryptCBCMode:(NSData *)dataToDecrypt
-                       key:(NSData *)key
-                        IV:(NSData *)iv
-                   version:(NSData *)version
-                   HMACKey:(NSData *)hmacKey
-                  HMACType:(TSMACType)hmacType
-              matchingHMAC:(NSData *)hmac;
-
-@end
-
-#pragma mark -
-
 @implementation CryptographyTests
-
-- (void)testEncryptAttachmentData
-{
-    NSString *plainText = @"SGF3YWlpIGlzIEF3ZXNvbWUh";
-    NSData *plainTextData = [NSData dataFromBase64String:plainText];
-
-    // Sanity
-    XCTAssertNotNil(plainTextData);
-
-    NSData *generatedKey;
-    NSData *generatedDigest;
-
-    NSData *cipherText =
-        [Cryptography encryptAttachmentData:plainTextData shouldPad:YES outKey:&generatedKey outDigest:&generatedDigest];
-
-    NSError *error;
-    NSData *_Nullable decryptedData = [Cryptography decryptAttachment:cipherText
-                                                              withKey:generatedKey
-                                                               digest:generatedDigest
-                                                         unpaddedSize:(UInt32)plainTextData.length
-                                                                error:&error];
-    XCTAssertNil(error);
-    XCTAssertEqualObjects(plainTextData, decryptedData);
-}
-
-- (void)testEncryptAttachmentDataWithBadUnpaddedSize
-{
-
-    NSString *plainText = @"SGF3YWlpIGlzIEF3ZXNvbWUh";
-    NSData *plainTextData = [NSData dataFromBase64String:plainText];
-
-    // Sanity
-    XCTAssertNotNil(plainTextData);
-
-    NSData *generatedKey;
-    NSData *generatedDigest;
-
-    NSData *cipherText =
-      [Cryptography encryptAttachmentData:plainTextData shouldPad:YES outKey:&generatedKey outDigest:&generatedDigest];
-
-
-    NSError *error;
-    NSData *_Nullable decryptedData = [Cryptography decryptAttachment:cipherText
-                                                              withKey:generatedKey
-                                                               digest:generatedDigest
-                                                         unpaddedSize:(UInt32)cipherText.length + 1
-                                                                error:&error];
-    XCTAssertNotNil(error);
-    XCTAssertNil(decryptedData);
-}
-
-- (void)testDecryptAttachmentWithBadKey
-{
-    NSString *plainText = @"SGF3YWlpIGlzIEF3ZXNvbWUh";
-    NSData *plainTextData = [NSData dataFromBase64String:plainText];
-
-    // Sanity
-    XCTAssertNotNil(plainTextData);
-
-    NSData *generatedKey;
-    NSData *generatedDigest;
-
-    NSData *cipherText =
-        [Cryptography encryptAttachmentData:plainTextData shouldPad:YES outKey:&generatedKey outDigest:&generatedDigest];
-
-    NSData *badKey = [Cryptography generateRandomBytes:64];
-
-    NSError *error;
-    XCTAssertThrows([Cryptography decryptAttachment:cipherText
-                                            withKey:badKey
-                                             digest:generatedDigest
-                                       unpaddedSize:(UInt32)plainTextData.length
-                                              error:&error]);
-}
-
-- (void)testDecryptAttachmentWithBadDigest
-{
-    NSString *plainText = @"SGF3YWlpIGlzIEF3ZXNvbWUh";
-    NSData *plainTextData = [NSData dataFromBase64String:plainText];
-
-    // Sanity
-    XCTAssertNotNil(plainTextData);
-
-    NSData *generatedKey;
-    NSData *generatedDigest;
-
-    NSData *_Nullable cipherText =
-        [Cryptography encryptAttachmentData:plainTextData shouldPad:YES outKey:&generatedKey outDigest:&generatedDigest];
-    XCTAssertNotNil(cipherText);
-
-    NSData *badDigest = [Cryptography generateRandomBytes:32];
-
-    NSError *error;
-    XCTAssertThrows([Cryptography decryptAttachment:cipherText
-                                            withKey:generatedKey
-                                             digest:badDigest
-                                       unpaddedSize:(UInt32)plainTextData.length
-                                              error:&error]);
-}
 
 - (void)testComputeSHA256Digest
 {

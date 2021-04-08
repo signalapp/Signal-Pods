@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2021 Open Whisper Systems. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
@@ -11,5 +11,5 @@ FOUNDATION_EXPORT double SignalCoreKitVersionNumber;
 FOUNDATION_EXPORT const unsigned char SignalCoreKitVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <SignalCoreKit/PublicHeader.h>
-
+#import <SignalCoreKit/Cryptography.h>
 #import <SignalCoreKit/SCKError.h>

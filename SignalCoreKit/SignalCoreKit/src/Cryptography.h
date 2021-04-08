@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2021 Open Whisper Systems. All rights reserved.
 //
 
 NS_ASSUME_NONNULL_BEGIN
@@ -75,39 +75,7 @@ typedef NS_ENUM(NSInteger, TSMACType) {
 
 #pragma mark - SHA and HMAC methods
 
-// Full length SHA256 digest for `data`
-+ (nullable NSData *)computeSHA256Digest:(NSData *)data;
-
-// Truncated SHA256 digest for `data`
-+ (nullable NSData *)computeSHA256Digest:(NSData *)data truncatedToBytes:(NSUInteger)truncatedBytes;
-
 + (nullable NSString *)truncatedSHA1Base64EncodedWithoutPadding:(NSString *)string;
-
-+ (nullable NSData *)decryptAppleMessagePayload:(NSData *)payload withSignalingKey:(NSString *)signalingKeyString;
-
-+ (nullable NSData *)computeSHA256HMAC:(NSData *)data withHMACKey:(NSData *)HMACKey;
-
-+ (nullable NSData *)truncatedSHA256HMAC:(NSData *)dataToHMAC
-                             withHMACKey:(NSData *)HMACKey
-                              truncation:(NSUInteger)truncation;
-
-#pragma mark - Attachments & Stickers
-
-// Though digest can and will be nil for legacy clients, we now reject attachments lacking a digest.
-+ (nullable NSData *)decryptAttachment:(NSData *)dataToDecrypt
-                               withKey:(NSData *)key
-                                digest:(nullable NSData *)digest
-                          unpaddedSize:(UInt32)unpaddedSize
-                                 error:(NSError **)error;
-
-+ (nullable NSData *)decryptStickerData:(NSData *)dataToDecrypt
-                                withKey:(NSData *)key
-                                  error:(NSError **)error;
-
-+ (nullable NSData *)encryptAttachmentData:(NSData *)attachmentData
-                                 shouldPad:(BOOL)shouldPad
-                                    outKey:(NSData *_Nonnull *_Nullable)outKey
-                                 outDigest:(NSData *_Nonnull *_Nullable)outDigest;
 
 #pragma mark - AES-GCM
 
@@ -163,8 +131,6 @@ typedef NS_ENUM(NSInteger, TSMACType) {
 #pragma mark -
 
 + (void)seedRandom;
-
-+ (unsigned long)paddedSize:(unsigned long)unpaddedSize NS_SWIFT_NAME(paddedSize(unpaddedSize:));
 
 @end
 
