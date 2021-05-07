@@ -145,11 +145,14 @@ class CryptographyTestsSwift: XCTestCase {
         )
 
         try FileManager.default.removeItem(at: plaintextFile)
+
+        OWSAssertionError.test_skipAssertions = true
         XCTAssertThrowsError(try Cryptography.decryptAttachment(
             at: encryptedFile,
             metadata: invalidMetadata,
             output: plaintextFile
         ))
+        OWSAssertionError.test_skipAssertions = false
 
         XCTAssertFalse(FileManager.default.fileExists(atPath: plaintextFile.path))
     }
@@ -171,11 +174,14 @@ class CryptographyTestsSwift: XCTestCase {
         )
 
         try FileManager.default.removeItem(at: plaintextFile)
+
+        OWSAssertionError.test_skipAssertions = true
         XCTAssertThrowsError(try Cryptography.decryptAttachment(
             at: encryptedFile,
             metadata: invalidMetadata,
             output: plaintextFile
         ))
+        OWSAssertionError.test_skipAssertions = false
 
         XCTAssertFalse(FileManager.default.fileExists(atPath: plaintextFile.path))
     }
@@ -197,11 +203,14 @@ class CryptographyTestsSwift: XCTestCase {
         )
 
         try FileManager.default.removeItem(at: plaintextFile)
+
+        OWSAssertionError.test_skipAssertions = true
         XCTAssertThrowsError(try Cryptography.decryptAttachment(
             at: encryptedFile,
             metadata: invalidMetadata,
             output: plaintextFile
         ))
+        OWSAssertionError.test_skipAssertions = false
 
         XCTAssertFalse(FileManager.default.fileExists(atPath: plaintextFile.path))
     }
