@@ -1,11 +1,18 @@
 //
-// Copyright 2020 Signal Messenger, LLC
+// Copyright 2020-2021 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 //
+
+import Foundation
 
 /// A dummy StoreContext usable with InMemorySignalProtocolStore.
 public struct NullContext: StoreContext {
     public init() {}
+}
+
+private struct SenderKeyName: Hashable {
+    var sender: ProtocolAddress
+    var distributionId: UUID
 }
 
 public class InMemorySignalProtocolStore: IdentityKeyStore, PreKeyStore, SignedPreKeyStore, SessionStore, SenderKeyStore {
@@ -87,15 +94,24 @@ public class InMemorySignalProtocolStore: IdentityKeyStore, PreKeyStore, SignedP
         return sessionMap[address]
     }
 
+    public func loadExistingSessions(for addresses: [ProtocolAddress], context: StoreContext) throws -> [SessionRecord] {
+        return try addresses.map { address in
+            if let session = sessionMap[address] {
+                return session
+            }
+            throw SignalError.sessionNotFound("\(address)")
+        }
+    }
+
     public func storeSession(_ record: SessionRecord, for address: ProtocolAddress, context: StoreContext) throws {
         sessionMap[address] = record
     }
 
-    public func storeSenderKey(name: SenderKeyName, record: SenderKeyRecord, context: StoreContext) throws {
-        senderKeyMap[name] = record
+    public func storeSenderKey(from sender: ProtocolAddress, distributionId: UUID, record: SenderKeyRecord, context: StoreContext) throws {
+        senderKeyMap[SenderKeyName(sender: sender, distributionId: distributionId)] = record
     }
 
-    public func loadSenderKey(name: SenderKeyName, context: StoreContext) throws -> SenderKeyRecord? {
-        return senderKeyMap[name]
+    public func loadSenderKey(from sender: ProtocolAddress, distributionId: UUID, context: StoreContext) throws -> SenderKeyRecord? {
+        return senderKeyMap[SenderKeyName(sender: sender, distributionId: distributionId)]
     }
 }

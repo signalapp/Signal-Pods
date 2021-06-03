@@ -6,42 +6,6 @@
 import SignalFfi
 import Foundation
 
-/*
- SignalFfiError *signal_process_prekey_bundle(PreKeyBundle *bundle,
-                                             const ProtocolAddress *protocol_address,
-                                             FfiSessionStoreStruct *session_store,
-                                             FfiIdentityKeyStoreStruct *identity_key_store,
-                                             void *ctx)
-
-SignalFfiError *signal_encrypt_message(const unsigned char **result,
-                                       size_t *result_len,
-                                       const unsigned char *ptext,
-                                       size_t ptext_len,
-                                       const ProtocolAddress *protocol_address,
-                                       FfiSessionStoreStruct *session_store,
-                                       FfiIdentityKeyStoreStruct *identity_key_store,
-                                       void *ctx)
-
-SignalFfiError *signal_decrypt_message(const unsigned char **result,
-                                       size_t *result_len,
-                                       const SignalMessage *message,
-                                       const ProtocolAddress *protocol_address,
-                                       FfiSessionStoreStruct *session_store,
-                                       FfiIdentityKeyStoreStruct *identity_key_store,
-                                       void *ctx)
-
-SignalFfiError *signal_decrypt_pre_key_message(const unsigned char **result,
-                                               size_t *result_len,
-                                               const PreKeySignalMessage *message,
-                                               const ProtocolAddress *protocol_address,
-                                               FfiSessionStoreStruct *session_store,
-                                               FfiIdentityKeyStoreStruct *identity_key_store,
-                                               FfiPreKeyStoreStruct *prekey_store,
-                                               FfiSignedPreKeyStoreStruct *signed_prekey_store,
-                                               void *ctx)
-
- */
-
 public func signalEncrypt<Bytes: ContiguousBytes>(message: Bytes,
                                                   for address: ProtocolAddress,
                                                   sessionStore: SessionStore,
@@ -112,38 +76,41 @@ public func processPreKeyBundle(_ bundle: PreKeyBundle,
     }
 }
 
-public func groupEncrypt<Bytes: ContiguousBytes>(groupId: SenderKeyName,
-                                                 message: Bytes,
+public func groupEncrypt<Bytes: ContiguousBytes>(_ message: Bytes,
+                                                 from sender: ProtocolAddress,
+                                                 distributionId: UUID,
                                                  store: SenderKeyStore,
-                                                 context: StoreContext) throws -> [UInt8] {
+                                                 context: StoreContext) throws -> CiphertextMessage {
     return try context.withOpaquePointer { context in
         try message.withUnsafeBytes { messageBytes in
-            try withSenderKeyStore(store) { ffiStore in
-                try invokeFnReturningArray {
-                    signal_group_encrypt_message($0, $1, groupId.nativeHandle, messageBytes.baseAddress?.assumingMemoryBound(to: UInt8.self), messageBytes.count, ffiStore, context)
+            try withUnsafePointer(to: distributionId.uuid) { distributionId in
+                try withSenderKeyStore(store) { ffiStore in
+                    try invokeFnReturningCiphertextMessage {
+                        signal_group_encrypt_message($0, sender.nativeHandle, distributionId, messageBytes.baseAddress?.assumingMemoryBound(to: UInt8.self), messageBytes.count, ffiStore, context)
+                    }
                 }
             }
         }
     }
 }
 
-public func groupDecrypt<Bytes: ContiguousBytes>(groupId: SenderKeyName,
-                                                 message: Bytes,
+public func groupDecrypt<Bytes: ContiguousBytes>(_ message: Bytes,
+                                                 from sender: ProtocolAddress,
                                                  store: SenderKeyStore,
                                                  context: StoreContext) throws -> [UInt8] {
     return try context.withOpaquePointer { context in
         try message.withUnsafeBytes { messageBytes in
             try withSenderKeyStore(store) { ffiStore in
                 try invokeFnReturningArray {
-                    signal_group_decrypt_message($0, $1, groupId.nativeHandle, messageBytes.baseAddress?.assumingMemoryBound(to: UInt8.self), messageBytes.count, ffiStore, context)
+                    signal_group_decrypt_message($0, $1, sender.nativeHandle, messageBytes.baseAddress?.assumingMemoryBound(to: UInt8.self), messageBytes.count, ffiStore, context)
                 }
             }
         }
     }
 }
 
-public func processSenderKeyDistributionMessage(sender: SenderKeyName,
-                                                message: SenderKeyDistributionMessage,
+public func processSenderKeyDistributionMessage(_ message: SenderKeyDistributionMessage,
+                                                from sender: ProtocolAddress,
                                                 store: SenderKeyStore,
                                                 context: StoreContext) throws {
     return try context.withOpaquePointer { context in

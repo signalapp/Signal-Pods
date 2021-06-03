@@ -1,9 +1,10 @@
 //
-// Copyright 2020 Signal Messenger, LLC
+// Copyright 2020-2021 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
 import SignalFfi
+import Foundation
 
 public enum Direction {
     case sending
@@ -36,10 +37,11 @@ public protocol SignedPreKeyStore: AnyObject {
 
 public protocol SessionStore: AnyObject {
     func loadSession(for address: ProtocolAddress, context: StoreContext) throws -> SessionRecord?
+    func loadExistingSessions(for addresses: [ProtocolAddress], context: StoreContext) throws -> [SessionRecord]
     func storeSession(_ record: SessionRecord, for address: ProtocolAddress, context: StoreContext) throws
 }
 
 public protocol SenderKeyStore: AnyObject {
-    func storeSenderKey(name: SenderKeyName, record: SenderKeyRecord, context: StoreContext) throws
-    func loadSenderKey(name: SenderKeyName, context: StoreContext) throws -> SenderKeyRecord?
+    func storeSenderKey(from sender: ProtocolAddress, distributionId: UUID, record: SenderKeyRecord, context: StoreContext) throws
+    func loadSenderKey(from sender: ProtocolAddress, distributionId: UUID, context: StoreContext) throws -> SenderKeyRecord?
 }

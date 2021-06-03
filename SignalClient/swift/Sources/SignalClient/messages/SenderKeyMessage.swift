@@ -13,22 +13,6 @@ public class SenderKeyMessage {
         failOnError(signal_sender_key_message_destroy(handle))
     }
 
-    public init<Bytes: ContiguousBytes>(keyId: UInt32,
-                                        iteration: UInt32,
-                                        ciphertext: Bytes,
-                                        privateKey: PrivateKey) throws {
-        handle = try ciphertext.withUnsafeBytes {
-            var result: OpaquePointer?
-            try checkError(signal_sender_key_message_new(&result,
-                                                         keyId,
-                                                         iteration,
-                                                         $0.baseAddress?.assumingMemoryBound(to: UInt8.self),
-                                                         $0.count,
-                                                         privateKey.nativeHandle))
-            return result
-        }
-    }
-
     public init<Bytes: ContiguousBytes>(bytes: Bytes) throws {
         handle = try bytes.withUnsafeBytes {
             var result: OpaquePointer?
@@ -37,10 +21,18 @@ public class SenderKeyMessage {
         }
     }
 
-    public var keyId: UInt32 {
+    public var distributionId: UUID {
+        return failOnError {
+            try invokeFnReturningUuid {
+                signal_sender_key_message_get_distribution_id($0, handle)
+            }
+        }
+    }
+
+    public var chainId: UInt32 {
         return failOnError {
             try invokeFnReturningInteger {
-                signal_sender_key_message_get_key_id($0, handle)
+                signal_sender_key_message_get_chain_id($0, handle)
             }
         }
     }
