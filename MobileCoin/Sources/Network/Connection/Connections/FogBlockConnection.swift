@@ -5,7 +5,6 @@
 import Foundation
 import GRPC
 import LibMobileCoin
-import NIOSSL
 
 final class FogBlockConnection: Connection, FogBlockService {
     private let client: FogLedger_FogBlockAPIClient

@@ -19,7 +19,6 @@ final class DefaultMixinSelectionStrategy: MixinSelectionStrategy {
         excludedTxOutIndices: [UInt64],
         ringSize: Int
     ) -> [Set<UInt64>] {
-        logger.info("")
         // Ensure selectionRange width is at least as large as the intended selection window width,
         // otherwise disable selectionRange.
         let selectionRange =

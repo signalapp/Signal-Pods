@@ -20,14 +20,14 @@ struct SelectionTxOut {
 
 protocol TxOutSelectionStrategy {
     func amountTransferable(
-        feeLevel: FeeLevel,
+        feeStrategy: FeeStrategy,
         txOuts: [SelectionTxOut],
         maxInputsPerTransaction: Int
-    ) -> Result<UInt64, BalanceTransferEstimationError>
+    ) -> Result<UInt64, AmountTransferableError>
 
     func estimateTotalFee(
         toSendAmount amount: UInt64,
-        feeLevel: FeeLevel,
+        feeStrategy: FeeStrategy,
         txOuts: [SelectionTxOut],
         maxInputsPerTransaction: Int
     ) -> Result<(totalFee: UInt64, requiresDefrag: Bool), TxOutSelectionError>
@@ -41,37 +41,37 @@ protocol TxOutSelectionStrategy {
 
     func selectTransactionInputs(
         amount: UInt64,
-        feeLevel: FeeLevel,
+        feeStrategy: FeeStrategy,
         fromTxOuts txOuts: [SelectionTxOut],
         maxInputs: Int
     ) -> Result<(inputIds: [Int], fee: UInt64), TransactionInputSelectionError>
 
     func selectInputsForDefragTransactions(
         toSendAmount amount: UInt64,
-        feeLevel: FeeLevel,
+        feeStrategy: FeeStrategy,
         fromTxOuts txOuts: [SelectionTxOut],
         maxInputsPerTransaction: Int
     ) -> Result<[(inputIds: [Int], fee: UInt64)], TxOutSelectionError>
 }
 
 extension TxOutSelectionStrategy {
-    func amountTransferable(feeLevel: FeeLevel, txOuts: [SelectionTxOut])
-        -> Result<UInt64, BalanceTransferEstimationError>
+    func amountTransferable(feeStrategy: FeeStrategy, txOuts: [SelectionTxOut])
+        -> Result<UInt64, AmountTransferableError>
     {
         amountTransferable(
-            feeLevel: feeLevel,
+            feeStrategy: feeStrategy,
             txOuts: txOuts,
             maxInputsPerTransaction: McConstants.MAX_INPUTS)
     }
 
     func estimateTotalFee(
         toSendAmount amount: UInt64,
-        feeLevel: FeeLevel,
+        feeStrategy: FeeStrategy,
         txOuts: [SelectionTxOut]
     ) -> Result<(totalFee: UInt64, requiresDefrag: Bool), TxOutSelectionError> {
         estimateTotalFee(
             toSendAmount: amount,
-            feeLevel: feeLevel,
+            feeStrategy: feeStrategy,
             txOuts: txOuts,
             maxInputsPerTransaction: McConstants.MAX_INPUTS)
     }
@@ -90,24 +90,24 @@ extension TxOutSelectionStrategy {
 
     func selectTransactionInputs(
         amount: UInt64,
-        feeLevel: FeeLevel,
+        feeStrategy: FeeStrategy,
         fromTxOuts txOuts: [SelectionTxOut]
     ) -> Result<(inputIds: [Int], fee: UInt64), TransactionInputSelectionError> {
         selectTransactionInputs(
             amount: amount,
-            feeLevel: feeLevel,
+            feeStrategy: feeStrategy,
             fromTxOuts: txOuts,
             maxInputs: McConstants.MAX_INPUTS)
     }
 
     func selectInputsForDefragTransactions(
         toSendAmount amount: UInt64,
-        feeLevel: FeeLevel,
+        feeStrategy: FeeStrategy,
         fromTxOuts txOuts: [SelectionTxOut]
     ) -> Result<[(inputIds: [Int], fee: UInt64)], TxOutSelectionError> {
         selectInputsForDefragTransactions(
             toSendAmount: amount,
-            feeLevel: feeLevel,
+            feeStrategy: feeStrategy,
             fromTxOuts: txOuts,
             maxInputsPerTransaction: McConstants.MAX_INPUTS)
     }

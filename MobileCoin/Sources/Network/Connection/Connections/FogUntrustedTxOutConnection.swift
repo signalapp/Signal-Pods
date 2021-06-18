@@ -5,7 +5,6 @@
 import Foundation
 import GRPC
 import LibMobileCoin
-import NIOSSL
 
 final class FogUntrustedTxOutConnection: Connection, FogUntrustedTxOutService {
     private let client: FogLedger_FogUntrustedTxOutApiClient

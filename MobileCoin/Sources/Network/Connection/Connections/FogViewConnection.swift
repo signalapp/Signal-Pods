@@ -5,7 +5,6 @@
 import Foundation
 import GRPC
 import LibMobileCoin
-import NIOSSL
 
 final class FogViewConnection: AttestedConnection, FogViewService {
     private let client: FogView_FogViewAPIClient

@@ -52,9 +52,9 @@ struct FogMerkleProofFetcher {
                 globalIndicesArray.map { globalIndices in
                     guard let results = allResults[globalIndices] else {
                         return .failure(.connectionError(.invalidServerResponse(
-                            "global txout indices not found in " +
-                            "GetOutputs reponse. globalTxOutIndices: \(globalIndices), returned " +
-                            "outputs: \(allResults)")))
+                            "Global txout indices not found in GetOutputs reponse. " +
+                            "globalTxOutIndices: \(globalIndices), returned outputs: " +
+                            "\(allResults)")))
                     }
                     return .success(results)
                 }.collectResult()
@@ -70,7 +70,6 @@ struct FogMerkleProofFetcher {
             Result<[UInt64: (TxOut, TxOutMembershipProof)], FogMerkleProofFetcherError>
         ) -> Void
     ) {
-        logger.info("")
         let globalIndicesArrays =
             globalIndices.chunked(maxLength: maxNumIndicesPerQuery).map { Array($0) }
         globalIndicesArrays.mapAsync({ chunk, callback in
@@ -91,7 +90,6 @@ struct FogMerkleProofFetcher {
             Result<[UInt64: (TxOut, TxOutMembershipProof)], FogMerkleProofFetcherError>
         ) -> Void
     ) {
-        logger.info("")
         var request = FogLedger_GetOutputsRequest()
         request.indices = globalIndices
         request.merkleRootBlock = merkleRootBlock
@@ -108,29 +106,37 @@ struct FogMerkleProofFetcher {
         response.results.map { outputResult in
             switch outputResult.resultCodeEnum {
             case .exists:
-                guard let txOut = TxOut(outputResult.output),
-                      let membershipProof = TxOutMembershipProof(outputResult.proof)
-                else {
-                    logger.info("FAILURE: returned invalid result")
-                    return .failure(.connectionError(.invalidServerResponse(
-                        "FogMerkleProofService.getOutputs returned " +
-                        "invalid result.")))
-                }
-                logger.info("SUCCESS: txOut: \(redacting: txOut.publicKey.data)")
-                return .success((outputResult.index, (txOut, membershipProof)))
+                break
             case .doesNotExist:
-                logger.info("FAILURE: outOfBounds with " +
-                    "blockCount: \(response.numBlocks), " +
-                    "ledgerTxOutCount: \(response.globalTxoCount)")
                 return .failure(.outOfBounds(
                     blockCount: response.numBlocks,
                     ledgerTxOutCount: response.globalTxoCount))
             case .outputDatabaseError, .intentionallyUnused, .UNRECOGNIZED:
-                logger.info("FAILURE: invalidServerResponse")
                 return .failure(.connectionError(.invalidServerResponse(
-                    "Fog MerkleProof result error: \(outputResult.resultCodeEnum), response: " +
-                    "\(response)")))
+                    "FogMerkleProofService.getOutputs result code error: " +
+                        "\(outputResult.resultCodeEnum), response: \(redacting: response)")))
             }
+
+            let txOut: TxOut
+            switch TxOut.make(outputResult.output) {
+            case .success(let result):
+                txOut = result
+            case .failure(let error):
+                return .failure(.connectionError(.invalidServerResponse(
+                    "FogMerkleProofService.getOutputs returned invalid TxOut. error: \(error)")))
+            }
+
+            let membershipProof: TxOutMembershipProof
+            switch TxOutMembershipProof.make(outputResult.proof) {
+            case .success(let result):
+                membershipProof = result
+            case .failure(let error):
+                return .failure(.connectionError(.invalidServerResponse(
+                    "FogMerkleProofService.getOutputs returned invalid membership proof. error: " +
+                        "\(error)")))
+            }
+
+            return .success((outputResult.index, (txOut, membershipProof)))
         }.collectResult().map {
             Dictionary($0, uniquingKeysWith: { key1, _ in key1 })
         }

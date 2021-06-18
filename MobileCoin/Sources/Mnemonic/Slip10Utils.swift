@@ -12,7 +12,6 @@ enum Slip10Utils {
     static func accountPrivateKeys(fromMnemonic mnemonic: Mnemonic, accountIndex: UInt32)
         -> (viewPrivateKey: RistrettoPrivate, spendPrivateKey: RistrettoPrivate)
     {
-        logger.info("")
         var viewPrivateKeyOut = Data32()
         var spendPrivateKeyOut = Data32()
         viewPrivateKeyOut.asMcMutableBuffer { viewPrivateKeyOutPtr in
@@ -53,7 +52,6 @@ enum Slip10Utils {
         -> Result<(viewPrivateKey: RistrettoPrivate, spendPrivateKey: RistrettoPrivate),
                   InvalidInputError>
     {
-        logger.info("")
         var viewPrivateKeyOut = Data32()
         var spendPrivateKeyOut = Data32()
         return viewPrivateKeyOut.asMcMutableBuffer { viewPrivateKeyOutPtr in

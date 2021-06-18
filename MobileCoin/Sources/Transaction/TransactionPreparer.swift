@@ -89,7 +89,7 @@ struct TransactionPreparer {
         ) -> Void
     ) {
         guard amount > 0, let amount = PositiveUInt64(amount) else {
-            let errorMessage = "Cannot spend 0 MOB"
+            let errorMessage = "PrepareTransactionWithFee error: Cannot spend 0 MOB"
             logger.error(errorMessage, logFunction: false)
             serialQueue.async {
                 completion(.failure(.invalidInput(errorMessage)))
@@ -181,13 +181,15 @@ struct TransactionPreparer {
         case .failure(let error):
             switch error {
             case .connectionError(let connectionError):
-                logger.warning("failure - connection error: \(connectionError)")
+                logger.error("FetchMerkleProofs error: \(connectionError)", logFunction: false)
                 completion(.failure(connectionError))
             case let .outOfBounds(blockCount: blockCount, ledgerTxOutCount: responseTxOutCount):
                 if let ledgerTxOutCount = ledgerTxOutCount {
                     let errorMessage = "Fog GetMerkleProof returned doesNotExist, even though " +
                         "txo indices were limited by globalTxoCount returned by previous call to " +
-                        "GetMerkleProof. Previously returned globalTxoCount: \(ledgerTxOutCount)"
+                        "GetMerkleProof. Previously returned globalTxoCount: " +
+                        "\(ledgerTxOutCount), response globalTxoCount: " +
+                        "\(responseTxOutCount), response blockCount: \(blockCount)"
                     logger.error(errorMessage, logFunction: false)
                     completion(.failure(.invalidServerResponse(errorMessage)))
                 } else {

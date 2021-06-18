@@ -44,8 +44,10 @@ public struct Receipt {
     /// - Returns: `nil` when the input is not deserializable.
     public init?(serializedData: Data) {
         guard let proto = try? External_Receipt(serializedData: serializedData) else {
-            logger.warning("External_Receipt deserialization failed. serializedData: " +
-                "\(redacting: serializedData.base64EncodedString())")
+            logger.warning(
+                "External_Receipt deserialization failed. serializedData: " +
+                    "\(redacting: serializedData.base64EncodedString())",
+                logFunction: false)
             return nil
         }
         self.init(proto)
@@ -53,12 +55,7 @@ public struct Receipt {
 
     public var serializedData: Data {
         let proto = External_Receipt(self)
-        do {
-            return try proto.serializedData()
-        } catch {
-            // Safety: Protobuf binary serialization is no fail when not using proto2 or `Any`.
-            logger.fatalError("Protobuf serialization failed: \(redacting: error)")
-        }
+        return proto.serializedDataInfallible
     }
 
     /// Public key of the `TxOut` that this `Receipt` represents, in bytes.
@@ -67,22 +64,19 @@ public struct Receipt {
     }
 
     func matchesTxOut(_ txOut: TxOutProtocol) -> Bool {
-        logger.info("")
-        return txOutPublicKeyTyped == txOut.publicKey
+        txOutPublicKeyTyped == txOut.publicKey
             && commitment == txOut.commitment
             && maskedValue == txOut.maskedValue
     }
 
     func validateConfirmationNumber(accountKey: AccountKey) -> Bool {
-        logger.info("")
-        return TxOutUtils.validateConfirmationNumber(
+        TxOutUtils.validateConfirmationNumber(
             publicKey: txOutPublicKeyTyped,
             confirmationNumber: confirmationNumber,
             viewPrivateKey: accountKey.viewPrivateKey)
     }
 
     func unmaskValue(accountKey: AccountKey) -> Result<UInt64, InvalidInputError> {
-        logger.info("")
         guard let value = TxOutUtils.value(
             commitment: commitment,
             maskedValue: maskedValue,
@@ -104,7 +98,6 @@ public struct Receipt {
     /// subaddress of the `accountKey`, but not which one.
     @discardableResult
     public func validateAndUnmaskValue(accountKey: AccountKey) -> UInt64? {
-        logger.info("")
         guard validateConfirmationNumber(accountKey: accountKey) else {
             return nil
         }
@@ -146,7 +139,10 @@ extension Receipt {
               let commitment = Data32(proto.amount.commitment.data),
               let confirmationNumber = TxOutConfirmationNumber(proto.confirmation)
         else {
-            logger.warning("Failed to initialize Receipt with External_Receipt")
+            logger.warning(
+                "Failed to initialize Receipt with External_Receipt. serialized proto: " +
+                    "\(redacting: proto.serializedDataInfallible.base64EncodedString())",
+                logFunction: false)
             return nil
         }
 

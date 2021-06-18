@@ -9,6 +9,7 @@ final class DefaultServiceProvider: ServiceProvider {
     private let channelManager = GrpcChannelManager()
 
     private let consensus: ConsensusConnection
+    private let blockchain: BlockchainConnection
     private let view: FogViewConnection
     private let merkleProof: FogMerkleProofConnection
     private let keyImage: FogKeyImageConnection
@@ -21,6 +22,10 @@ final class DefaultServiceProvider: ServiceProvider {
         self.targetQueue = targetQueue
         self.consensus = ConsensusConnection(
             config: networkConfig.consensus,
+            channelManager: channelManager,
+            targetQueue: targetQueue)
+        self.blockchain = BlockchainConnection(
+            config: networkConfig.blockchain,
             channelManager: channelManager,
             targetQueue: targetQueue)
         self.view = FogViewConnection(
@@ -46,6 +51,7 @@ final class DefaultServiceProvider: ServiceProvider {
     }
 
     var consensusService: ConsensusService { consensus }
+    var blockchainService: BlockchainService { blockchain }
     var fogViewService: FogViewService { view }
     var fogMerkleProofService: FogMerkleProofService { merkleProof }
     var fogKeyImageService: FogKeyImageService { keyImage }
@@ -67,9 +73,10 @@ final class DefaultServiceProvider: ServiceProvider {
 
     func setConsensusAuthorization(credentials: BasicCredentials) {
         consensus.setAuthorization(credentials: credentials)
+        blockchain.setAuthorization(credentials: credentials)
     }
 
-    func setFogAuthorization(credentials: BasicCredentials) {
+    func setFogUserAuthorization(credentials: BasicCredentials) {
         view.setAuthorization(credentials: credentials)
         merkleProof.setAuthorization(credentials: credentials)
         keyImage.setAuthorization(credentials: credentials)

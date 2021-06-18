@@ -62,7 +62,8 @@ public struct Printable_TransferPayload {
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  //// The root entropy, allowing the recipient to spend the money
+  //// [Deprecated] The root entropy, allowing the recipient to spend the money.
+  //// This has been replaced by a BIP39 entropy.
   public var rootEntropy: Data = Data()
 
   //// The public key of the UTXO to spend. This is an optimization, meaning
@@ -78,6 +79,10 @@ public struct Printable_TransferPayload {
 
   //// Any additional text explaining the gift
   public var memo: String = String()
+
+  //// BIP39 entropy, allowing the recipient to spend the money.
+  //// When deriving an AccountKey from this entropy, account_index is always 0.
+  public var bip39Entropy: Data = Data()
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -208,6 +213,7 @@ extension Printable_TransferPayload: SwiftProtobuf.Message, SwiftProtobuf._Messa
     1: .standard(proto: "root_entropy"),
     2: .standard(proto: "tx_out_public_key"),
     3: .same(proto: "memo"),
+    4: .standard(proto: "bip39_entropy"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -219,6 +225,7 @@ extension Printable_TransferPayload: SwiftProtobuf.Message, SwiftProtobuf._Messa
       case 1: try { try decoder.decodeSingularBytesField(value: &self.rootEntropy) }()
       case 2: try { try decoder.decodeSingularMessageField(value: &self._txOutPublicKey) }()
       case 3: try { try decoder.decodeSingularStringField(value: &self.memo) }()
+      case 4: try { try decoder.decodeSingularBytesField(value: &self.bip39Entropy) }()
       default: break
       }
     }
@@ -234,6 +241,9 @@ extension Printable_TransferPayload: SwiftProtobuf.Message, SwiftProtobuf._Messa
     if !self.memo.isEmpty {
       try visitor.visitSingularStringField(value: self.memo, fieldNumber: 3)
     }
+    if !self.bip39Entropy.isEmpty {
+      try visitor.visitSingularBytesField(value: self.bip39Entropy, fieldNumber: 4)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -241,6 +251,7 @@ extension Printable_TransferPayload: SwiftProtobuf.Message, SwiftProtobuf._Messa
     if lhs.rootEntropy != rhs.rootEntropy {return false}
     if lhs._txOutPublicKey != rhs._txOutPublicKey {return false}
     if lhs.memo != rhs.memo {return false}
+    if lhs.bip39Entropy != rhs.bip39Entropy {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -262,30 +273,42 @@ extension Printable_PrintableWrapper: SwiftProtobuf.Message, SwiftProtobuf._Mess
       switch fieldNumber {
       case 1: try {
         var v: External_PublicAddress?
+        var hadOneofValue = false
         if let current = self.wrapper {
-          try decoder.handleConflictingOneOf()
+          hadOneofValue = true
           if case .publicAddress(let m) = current {v = m}
         }
         try decoder.decodeSingularMessageField(value: &v)
-        if let v = v {self.wrapper = .publicAddress(v)}
+        if let v = v {
+          if hadOneofValue {try decoder.handleConflictingOneOf()}
+          self.wrapper = .publicAddress(v)
+        }
       }()
       case 2: try {
         var v: Printable_PaymentRequest?
+        var hadOneofValue = false
         if let current = self.wrapper {
-          try decoder.handleConflictingOneOf()
+          hadOneofValue = true
           if case .paymentRequest(let m) = current {v = m}
         }
         try decoder.decodeSingularMessageField(value: &v)
-        if let v = v {self.wrapper = .paymentRequest(v)}
+        if let v = v {
+          if hadOneofValue {try decoder.handleConflictingOneOf()}
+          self.wrapper = .paymentRequest(v)
+        }
       }()
       case 3: try {
         var v: Printable_TransferPayload?
+        var hadOneofValue = false
         if let current = self.wrapper {
-          try decoder.handleConflictingOneOf()
+          hadOneofValue = true
           if case .transferPayload(let m) = current {v = m}
         }
         try decoder.decodeSingularMessageField(value: &v)
-        if let v = v {self.wrapper = .transferPayload(v)}
+        if let v = v {
+          if hadOneofValue {try decoder.handleConflictingOneOf()}
+          self.wrapper = .transferPayload(v)
+        }
       }()
       default: break
       }

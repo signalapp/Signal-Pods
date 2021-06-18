@@ -48,7 +48,6 @@ final class FogReportServer {
         reportService: FogReportService,
         completion: @escaping (Result<Report_ReportResponse, ConnectionError>) -> Void
     ) {
-        logger.info("")
         serialConnectionQueue.append({ callback in
             self.doFetchReports(reportService: reportService, completion: callback)
         }, completion: completion)
@@ -80,7 +79,6 @@ final class FogReportServer {
         reportService: FogReportService,
         completion: @escaping (Result<Report_ReportResponse, ConnectionError>) -> Void
     ) {
-        logger.info("")
         reportService.getReports(request: Report_ReportRequest()) {
             guard let reportResponse = $0.successOr(completion: completion) else { return }
 
@@ -97,7 +95,6 @@ final class FogReportServer {
         _ reportResponse: Report_ReportResponse,
         completion: @escaping () -> Void
     ) {
-        logger.info("")
         inner.accessAsync {
             $0.cacheReportResponse(reportResponse)
 
@@ -114,9 +111,10 @@ extension FogReportServer {
             satisfyingReportParams reportParams: [(reportId: String, minPubkeyExpiry: UInt64)]
         ) -> Report_ReportResponse? {
             logger.info("reportParams: \(reportParams)")
-            guard let reportResponse = cachedReportResponse,
-               reportResponse.isValid(reportParams: reportParams)
-            else {
+            guard let reportResponse = cachedReportResponse else {
+                return nil
+            }
+            guard reportResponse.isValid(reportParams: reportParams) else {
                 logger.info("report response invalid - reportParams: \(reportParams)")
                 return nil
             }

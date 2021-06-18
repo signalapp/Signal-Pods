@@ -8,8 +8,11 @@ import LibMobileCoin
 struct TxOutMembershipProof {
     let serializedData: Data
 
-    /// - Returns: `nil` when the input is not deserializable.
-    init?(serializedData: Data) {
+    static func make(serializedData: Data) -> Result<TxOutMembershipProof, InvalidInputError> {
+        .success(TxOutMembershipProof(serializedData: serializedData))
+    }
+
+    private init(serializedData: Data) {
         self.serializedData = serializedData
     }
 }
@@ -18,14 +21,10 @@ extension TxOutMembershipProof: Equatable {}
 extension TxOutMembershipProof: Hashable {}
 
 extension TxOutMembershipProof {
-    init?(_ txOutMembershipProof: External_TxOutMembershipProof) {
-        let serializedData: Data
-        do {
-            serializedData = try txOutMembershipProof.serializedData()
-        } catch {
-            // Safety: Protobuf binary serialization is no fail when not using proto2 or `Any`.
-            logger.fatalError("Protobuf serialization failed: \(redacting: error)")
-        }
-        self.init(serializedData: serializedData)
+    static func make(_ txOutMembershipProof: External_TxOutMembershipProof)
+        -> Result<TxOutMembershipProof, InvalidInputError>
+    {
+        let serializedData = txOutMembershipProof.serializedDataInfallible
+        return TxOutMembershipProof.make(serializedData: serializedData)
     }
 }

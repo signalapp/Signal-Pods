@@ -86,12 +86,10 @@ extension Attestation {
             allowedHardeningAdvisories: [String] = []
         ) -> Result<MrEnclave, InvalidInputError> {
             guard let mrEnclave32 = Data32(mrEnclave) else {
-                logger.info("""
-                    failure - mrEnclave must be 32 bytes in length. \
-                    \(mrEnclave.count) != 32
-                    """)
-                return .failure(InvalidInputError("mrEnclave must be " +
-                    "32 bytes in length. \(mrEnclave.count) != 32"))
+                let errorMessage = "mrEnclave must be 32 bytes in length. mrEnclave: " +
+                    "\(mrEnclave.hexEncodedString())"
+                logger.error(errorMessage, logFunction: false)
+                return .failure(InvalidInputError(errorMessage))
             }
             return .success(MrEnclave(
                 mrEnclave: mrEnclave32,
@@ -141,12 +139,10 @@ extension Attestation {
             allowedHardeningAdvisories: [String] = []
         ) -> Result<MrSigner, InvalidInputError> {
             guard let mrSigner32 = Data32(mrSigner) else {
-                logger.info("""
-                    failure - mrSigner must be 32 bytes in length. \
-                    \(mrSigner.count) != 32
-                    """)
-                return .failure(InvalidInputError("mrSigner must be " +
-                    "32 bytes in length. \(mrSigner.count) != 32"))
+                let errorMessage =
+                    "mrSigner must be 32 bytes in length. mrSigner: \(mrSigner.hexEncodedString())"
+                logger.error(errorMessage, logFunction: false)
+                return .failure(InvalidInputError(errorMessage))
             }
 
             return .success(MrSigner(

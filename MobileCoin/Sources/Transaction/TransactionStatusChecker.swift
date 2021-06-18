@@ -27,8 +27,10 @@ struct TransactionStatusChecker {
         _ transaction: Transaction,
         completion: @escaping (Result<TransactionStatus, ConnectionError>) -> Void
     ) {
-        logger.info("Checking transaction status...")
-        logger.info("transaction: \(redacting: transaction.serializedData)")
+        logger.info(
+            "Checking transaction status... transaction: " +
+            "\(redacting: transaction.serializedData.base64EncodedString())",
+            logFunction: false)
         checkAcceptedStatus(transaction) {
             completion($0.map {
                 let status = TransactionStatus($0)
@@ -51,7 +53,6 @@ struct TransactionStatusChecker {
         _ transaction: Transaction,
         completion: @escaping (Result<Transaction.AcceptedStatus, ConnectionError>) -> Void
     ) {
-        logger.info("")
         performAsync(body1: { callback in
             fogUntrustedTxOutFetcher.getTxOut(
                 outputPublicKey: transaction.anyOutput.publicKey,

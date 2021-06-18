@@ -43,34 +43,39 @@ extension Account {
             logger.info("Updating balance...", logFunction: false)
             checkForNewTxOuts {
                 guard $0.successOr(completion: completion) != nil else {
-                    logger.warning("Failed to update balance.", logFunction: false)
+                    logger.warning(
+                        "Failed to update balance: checkForNewTxOuts error: \($0)",
+                        logFunction: false)
                     return
                 }
 
-                self.viewKeyScanUnscannedMissedBlocks {
+                self.checkForSpentTxOuts {
                     guard $0.successOr(completion: completion) != nil else {
-                        logger.warning("Failed to update balance.", logFunction: false)
+                        logger.warning(
+                            "Failed to update balance: checkForSpentTxOuts error: \($0)",
+                            logFunction: false)
                         return
                     }
 
-                    self.checkForSpentTxOuts {
-                        guard $0.successOr(completion: completion) != nil else {
-                            logger.warning("Failed to update balance.", logFunction: false)
-                            return
-                        }
+                    let balance = self.account.readSync { $0.cachedBalance }
 
-                        let balance = self.account.readSync { $0.cachedBalance }
-
-                        logger.info(
-                            "Update balance successful. balance: \(redacting: balance)",
-                            logFunction: false)
-                        completion(.success(balance))
-                    }
+                    logger.info(
+                        "Balance update successful. balance: \(redacting: balance)",
+                        logFunction: false)
+                    completion(.success(balance))
                 }
             }
         }
 
         func checkForNewTxOuts(completion: @escaping (Result<(), ConnectionError>) -> Void) {
+            checkForNewFogViewTxOuts {
+                guard $0.successOr(completion: completion) != nil else { return }
+
+                self.viewKeyScanUnscannedMissedBlocks(completion: completion)
+            }
+        }
+
+        func checkForNewFogViewTxOuts(completion: @escaping (Result<(), ConnectionError>) -> Void) {
             txOutFetcher.fetchTxOuts(partialResultsWithWriteLock: { newTxOuts in
                 logger.info(
                     "Found \(redacting: newTxOuts.count) new TxOuts using Fog View",

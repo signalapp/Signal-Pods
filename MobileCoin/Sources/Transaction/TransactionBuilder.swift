@@ -64,8 +64,7 @@ final class TransactionBuilder {
         rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)? = securityRNG,
         rngContext: Any? = nil
     ) -> Result<(transaction: Transaction, receipt: Receipt), TransactionBuilderError> {
-        logger.info("")
-        return positiveRemainingAmount(inputValues: inputs.map { $0.knownTxOut.value }, fee: fee)
+        positiveRemainingAmount(inputValues: inputs.map { $0.knownTxOut.value }, fee: fee)
             .flatMap { outputAmount in
                 build(
                     inputs: inputs,
@@ -121,7 +120,6 @@ final class TransactionBuilder {
         rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)? = securityRNG,
         rngContext: Any? = nil
     ) -> Result<(transaction: Transaction, receipts: [Receipt]), TransactionBuilderError> {
-        logger.info("")
         guard UInt64.safeCompare(
                 sumOfValues: inputs.map { $0.knownTxOut.value },
                 isEqualToSumOfValues: outputs.map { $0.amount.value } + [fee])
@@ -181,7 +179,6 @@ final class TransactionBuilder {
         rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)?,
         rngContext: Any?
     ) -> Result<(txOut: TxOut, receipt: Receipt), TransactionBuilderError> {
-        logger.info("")
         let transactionBuilder = TransactionBuilder(
             fee: 0,
             tombstoneBlockIndex: tombstoneBlockIndex,
@@ -322,7 +319,6 @@ final class TransactionBuilder {
         rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)?,
         rngContext: Any?
     ) -> Result<(txOut: TxOut, receipt: Receipt), TransactionBuilderError> {
-        logger.info("")
         var confirmationNumberData = Data32()
         return publicAddress.withUnsafeCStructPointer { publicAddressPtr in
             withMcRngCallback(rng: rng, rngContext: rngContext) { rngCallbackPtr in
@@ -353,7 +349,8 @@ final class TransactionBuilder {
             guard let txOut = TxOut(serializedData: txOutData) else {
                 // Safety: mc_transaction_builder_add_output should always return valid data on
                 // success.
-                logger.fatalError("mc_transaction_builder_add_output returned invalid data.")
+                logger.fatalError("mc_transaction_builder_add_output returned invalid data: " +
+                    "\(redacting: txOutData.base64EncodedString())")
             }
 
             let confirmationNumber = TxOutConfirmationNumber(confirmationNumberData)
@@ -369,8 +366,7 @@ final class TransactionBuilder {
         rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)?,
         rngContext: Any?
     ) -> Result<Transaction, TransactionBuilderError> {
-        logger.info("")
-        return withMcRngCallback(rng: rng, rngContext: rngContext) { rngCallbackPtr in
+        withMcRngCallback(rng: rng, rngContext: rngContext) { rngCallbackPtr in
             Data.make(withMcDataBytes: { errorPtr in
                 mc_transaction_builder_build(ptr, rngCallbackPtr, &errorPtr)
             }).mapError {
@@ -385,7 +381,8 @@ final class TransactionBuilder {
         }.map { txBytes in
             guard let transaction = Transaction(serializedData: txBytes) else {
                 // Safety: mc_transaction_builder_build should always return valid data on success.
-                logger.fatalError("mc_transaction_builder_build returned invalid data.")
+                logger.fatalError("mc_transaction_builder_build returned invalid data: " +
+                    "\(redacting: txBytes.base64EncodedString())")
             }
             return transaction
         }

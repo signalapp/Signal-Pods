@@ -25,8 +25,8 @@ extension Data {
             }.map { numBytesWritten in
                 guard numBytesWritten <= numBytes else {
                     // This condition indicates a programming error.
-                    logger.fatalError("Error: \(#function): numBytesWritten (\(numBytesWritten)) " +
-                        "must be <= numBytes (\(numBytes))")
+                    logger.fatalError(
+                        "numBytesWritten (\(numBytesWritten)) must be <= numBytes (\(numBytes))")
                 }
 
                 return bytes.prefix(numBytesWritten)
@@ -58,8 +58,9 @@ extension Data {
         }.map { numBytesReturned in
             guard numBytesReturned <= numBytes else {
                 // This condition indicates a programming error.
-                logger.fatalError("Error: \(#function): Number of bytes returned from " +
-                    "LibMobileCoin (\(numBytesReturned)) is greater than estimated (\(numBytes))")
+                logger.fatalError(
+                    "Number of bytes returned from LibMobileCoin (\(numBytesReturned)) is " +
+                        "greater than estimated (\(numBytes))")
             }
 
             return bytes.prefix(numBytesReturned)
@@ -76,7 +77,7 @@ extension Data {
         }
         guard success else {
             // This condition indicates a programming error.
-            logger.fatalError("Error: \(#function): Infallible LibMobileCoin function failed.")
+            logger.fatalError("Infallible LibMobileCoin function failed.")
         }
     }
 
@@ -85,7 +86,7 @@ extension Data {
         let numBytes = body(nil)
         guard numBytes >= 0 else {
             // This condition indicates a programming error.
-            logger.fatalError("Error: \(#function): Infallible LibMobileCoin function failed.")
+            logger.fatalError("Infallible LibMobileCoin function failed.")
         }
 
         var bytes = Data(repeating: 0, count: numBytes)
@@ -94,13 +95,13 @@ extension Data {
         }
         guard numBytesWritten >= 0 else {
             // This condition indicates a programming error.
-            logger.fatalError("Error: \(#function): Infallible LibMobileCoin function failed.")
+            logger.fatalError("Infallible LibMobileCoin function failed.")
         }
 
         guard numBytesWritten <= numBytes else {
             // This condition indicates a programming error.
-            logger.fatalError("\(#function): numBytesWritten (\(numBytesWritten)) must be <= " +
-                "numBytes (\(numBytes))")
+            logger.fatalError(
+                "numBytesWritten (\(numBytesWritten)) must be <= numBytes (\(numBytes))")
         }
 
         self = bytes.prefix(numBytesWritten)
@@ -114,8 +115,9 @@ extension Data {
         let numBytesReturned = bytes.asMcMutableBuffer(body)
         guard numBytesReturned <= numBytes else {
             // This condition indicates a programming error.
-            logger.fatalError("Error: \(#function): Number of bytes returned from LibMobileCoin " +
-                "\(numBytesReturned) is greater than estimated \(numBytes)")
+            logger.fatalError(
+                "Number of bytes returned from LibMobileCoin \(numBytesReturned) is greater than " +
+                    "estimated \(numBytes)")
         }
 
         self = bytes.prefix(numBytesReturned)

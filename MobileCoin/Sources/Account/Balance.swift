@@ -10,7 +10,6 @@ public struct Balance {
     let blockCount: UInt64
 
     init(values: [UInt64], blockCount: UInt64) {
-        logger.info("values: \(redacting: values), blockCount: \(blockCount)")
         var amountLow: UInt64 = 0
         var amountHigh: UInt8 = 0
         for value in values {

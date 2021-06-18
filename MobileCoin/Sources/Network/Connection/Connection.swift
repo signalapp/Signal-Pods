@@ -24,23 +24,50 @@ class Connection {
         request: Call.Request,
         completion: @escaping (Result<Call.Response, ConnectionError>) -> Void
     ) {
-        inner.accessAsync {
-            let callOptions = $0.requestCallOptions()
-
-            call.call(request: request, callOptions: callOptions) { callResult in
-                self.inner.accessAsync {
-                    completion($0.processResponse(callResult: callResult))
+        func performCallCallback(callResult: UnaryCallResult<Call.Response>) {
+            inner.accessAsync {
+                let result = $0.processResponse(callResult: callResult)
+                switch result {
+                case .success:
+                    logger.info("Call complete. url: \($0.url)", logFunction: false)
+                case .failure(let connectionError):
+                    let errorMessage =
+                        "Connection failure. url: \($0.url), error: \(connectionError)"
+                    switch connectionError {
+                    case .connectionFailure, .serverRateLimited:
+                        logger.warning(errorMessage, logFunction: false)
+                    case .authorizationFailure, .invalidServerResponse,
+                         .attestationVerificationFailed, .outdatedClient:
+                        logger.error(errorMessage, logFunction: false)
+                    }
                 }
+                completion(result)
             }
         }
+
+        inner.accessAsync {
+            logger.info("Performing call... url: \($0.url)", logFunction: false)
+
+            let callOptions = $0.requestCallOptions()
+            call.call(request: request, callOptions: callOptions, completion: performCallCallback)
+        }
+    }
+
+    func performCall<Call: GrpcCallable>(
+        _ call: Call,
+        completion: @escaping (Result<Call.Response, ConnectionError>) -> Void
+    ) where Call.Request == () {
+        performCall(call, request: (), completion: completion)
     }
 }
 
 extension Connection {
     private struct Inner {
+        let url: MobileCoinUrlProtocol
         private let session: ConnectionSession
 
         init(config: ConnectionConfigProtocol) {
+            self.url = config.url
             self.session = ConnectionSession(config: config)
         }
 
@@ -58,11 +85,11 @@ extension Connection {
             -> Result<Response, ConnectionError>
         {
             guard callResult.status.code != .unauthenticated else {
-                return .failure(.authorizationFailure(String(describing: callResult.status)))
+                return .failure(.authorizationFailure("url: \(url)"))
             }
 
             guard callResult.status.isOk, let response = callResult.response else {
-                return .failure(.connectionFailure(String(describing: callResult.status)))
+                return .failure(.connectionFailure("url: \(url), status: \(callResult.status)"))
             }
 
             if let initialMetadata = callResult.initialMetadata {

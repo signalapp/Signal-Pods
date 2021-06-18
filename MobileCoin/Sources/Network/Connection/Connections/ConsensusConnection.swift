@@ -5,7 +5,6 @@
 import Foundation
 import GRPC
 import LibMobileCoin
-import NIOSSL
 
 final class ConsensusConnection: AttestedConnection, ConsensusService {
     private let client: ConsensusClient_ConsensusClientAPIClient

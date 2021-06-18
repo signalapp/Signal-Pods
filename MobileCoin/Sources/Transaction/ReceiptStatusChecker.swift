@@ -12,10 +12,14 @@ struct ReceiptStatusChecker {
     }
 
     func status(_ receipt: Receipt) -> Result<ReceiptStatus, InvalidInputError> {
-        receivedStatus(receipt).map { ReceiptStatus($0) }
-    }
-
-    func receivedStatus(_ receipt: Receipt) -> Result<Receipt.ReceivedStatus, InvalidInputError> {
-        account.readSync { $0.cachedReceivedStatus(of: receipt) }
+        let result = account.readSync { $0.cachedReceivedStatus(of: receipt) }
+            .map { ReceiptStatus($0) }
+        logger.info(
+            "Receipt status check complete. receipt.txOutPublicKey: " +
+                "\(redacting: receipt.txOutPublicKey.hexEncodedString()), " +
+                "receipt.txTombstoneBlockIndex: \(redacting: receipt.txTombstoneBlockIndex), " +
+                "result: \(redacting: result)",
+            logFunction: false)
+        return result
     }
 }

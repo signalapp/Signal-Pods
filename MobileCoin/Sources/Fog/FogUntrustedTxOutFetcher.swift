@@ -41,7 +41,8 @@ struct FogUntrustedTxOutFetcher {
                 Result<(results: [FogLedger_TxOutResult], blockCount: UInt64), ConnectionError>
             ) -> Void
     ) {
-        logger.info("outputPublicKeys: \(redacting: outputPublicKeys)")
+        logger.info(
+            "outputPublicKeys: \(redacting: outputPublicKeys.map { $0.hexEncodedString() })")
         var request = FogLedger_TxOutRequest()
         request.txOutPubkeys = outputPublicKeys.map { External_CompressedRistretto($0) }
         fogUntrustedTxOutService.getTxOuts(request: request) {

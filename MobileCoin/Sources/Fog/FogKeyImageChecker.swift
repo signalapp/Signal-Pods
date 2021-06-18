@@ -50,7 +50,6 @@ struct FogKeyImageChecker {
         maxKeyImagesPerQuery: Int,
         completion: @escaping (Result<[KeyImage.SpentStatus], ConnectionError>) -> Void
     ) {
-        logger.info("")
         let queryArrays = keyImageQueries.chunked(maxLength: maxKeyImagesPerQuery).map { Array($0) }
         queryArrays.mapAsync({ chunk, callback in
             checkKeyImages(keyImageQueries: chunk, completion: callback)
@@ -72,7 +71,6 @@ struct FogKeyImageChecker {
         keyImageQueries: [(KeyImage, nextKeyImageQueryBlockIndex: UInt64)],
         completion: @escaping (Result<[KeyImage.SpentStatus], ConnectionError>) -> Void
     ) {
-        logger.info("")
         var request = FogLedger_CheckKeyImagesRequest()
         request.queries = keyImageQueries.map {
             var query = FogLedger_KeyImageQuery()

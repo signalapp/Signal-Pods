@@ -89,12 +89,11 @@ enum TxOutUtils {
                             // Safety: This condition indicates a programming error and can only
                             // happen if arguments to mc_tx_out_get_subaddress_spend_public_key are
                             // supplied incorrectly.
-                            logger.fatalError("error: \(error)")
+                            logger.fatalError("error: \(redacting: error)")
                         default:
                             // Safety: mc_fog_resolver_add_report_response should not throw
                             // non-documented errors.
-                            logger.fatalError("Unhandled " +
-                                "LibMobileCoin error: \(error)")
+                            logger.fatalError("Unhandled LibMobileCoin error: \(redacting: error)")
                         }
                     }
                 }
@@ -136,11 +135,10 @@ enum TxOutUtils {
                         case .invalidInput:
                             // Safety: This condition indicates a programming error and can only
                             // happen if arguments to mc_tx_out_get_value are supplied incorrectly.
-                            logger.fatalError("error: \(error)")
+                            logger.fatalError("error: \(redacting: error)")
                         default:
                             // Safety: mc_tx_out_get_value should not throw non-documented errors.
-                            logger.fatalError("Unhandled " +
-                                "LibMobileCoin error: \(error)")
+                            logger.fatalError("Unhandled LibMobileCoin error: \(redacting: error)")
                         }
                     }
                 }
@@ -185,12 +183,12 @@ enum TxOutUtils {
                                 // Safety: This condition indicates a programming error and can only
                                 // happen if arguments to mc_tx_out_get_key_image are supplied
                                 // incorrectly.
-                                logger.fatalError("error: \(error)")
+                                logger.fatalError("error: \(redacting: error)")
                             default:
                                 // Safety: mc_tx_out_get_key_image should not throw non-documented
                                 // errors.
-                                logger.fatalError("Unhandled " +
-                                    "LibMobileCoin error: \(error)")
+                                logger.fatalError(
+                                    "Unhandled LibMobileCoin error: \(redacting: error)")
                             }
                         }
                     }

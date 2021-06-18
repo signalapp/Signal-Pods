@@ -98,7 +98,7 @@ final class FogRngSet {
         {
             logger.info(
                 "New RngRecord: ingestInvocationID: \(rngRecord.ingestInvocationID), pubkey: " +
-                    "\(rngRecord.pubkey.pubkey.base64EncodedString()), version: " +
+                    "\(rngRecord.pubkey.pubkey.hexEncodedString()), version: " +
                     "\(rngRecord.pubkey.version), startBlockIndex: \(rngRecord.startBlock)",
                 logFunction: false)
 
@@ -124,7 +124,7 @@ final class FogRngSet {
         // more up-to-date information already).
         if highestProcessedBlockCount > rngRecordsKnownBlockCount {
             logger.info(
-                "FogRngSet updated rngRecordsKnownBlockCount from \(rngRecordsKnownBlockCount) " +
+                "FogRngSet updating rngRecordsKnownBlockCount from \(rngRecordsKnownBlockCount) " +
                     "to \(highestProcessedBlockCount)",
                 logFunction: false)
             rngRecordsKnownBlockCount = highestProcessedBlockCount
@@ -194,7 +194,7 @@ final class FogRngSet {
                         guard let txOutResult = searchKeyToTxOutResult[searchKeyBytes] else {
                             logger.error(
                                 "Searched key not in search results. searched key: " +
-                                    "\(searchKeyBytes.base64EncodedString())",
+                                    "\(searchKeyBytes.hexEncodedString())",
                                 logFunction: false)
                             return nil
                         }
@@ -273,7 +273,7 @@ private final class RngTracker {
                 // else we can do with this rng.
                 logger.debug(
                     "Next rng output not found in searched keys. rng output: " +
-                        "\(redacting: output.base64EncodedString())",
+                        "0x\(redacting: output.hexEncodedString())",
                     logFunction: false)
                 break
             }

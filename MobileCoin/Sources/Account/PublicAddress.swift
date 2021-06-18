@@ -47,12 +47,7 @@ public struct PublicAddress {
 
     public var serializedData: Data {
         let proto = External_PublicAddress(self)
-        do {
-            return try proto.serializedData()
-        } catch {
-            // Safety: Protobuf binary serialization is no fail when not using proto2 or `Any`.
-            logger.fatalError("Protobuf serialization failed: \(redacting: error)")
-        }
+        return proto.serializedDataInfallible
     }
 
     /// Subaddress view public key, `C`, in bytes.

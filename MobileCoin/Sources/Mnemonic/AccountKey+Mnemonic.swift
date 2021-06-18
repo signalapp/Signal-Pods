@@ -12,8 +12,7 @@ extension AccountKey {
         fogAuthoritySpki: Data,
         accountIndex: UInt32 = 0
     ) -> Result<AccountKey, InvalidInputError> {
-        logger.info("")
-        return Bip39Utils.mnemonic(fromEntropy: entropy).flatMap { mnemonic in
+        Bip39Utils.mnemonic(fromEntropy: entropy).flatMap { mnemonic in
             make(
                 mnemonic: mnemonic.phrase,
                 fogReportUrl: fogReportUrl,
@@ -30,8 +29,7 @@ extension AccountKey {
         fogAuthoritySpki: Data,
         accountIndex: UInt32 = 0
     ) -> Result<AccountKey, InvalidInputError> {
-        logger.info("")
-        return Slip10Utils.accountPrivateKeys(fromMnemonic: mnemonic, accountIndex: accountIndex)
+        Slip10Utils.accountPrivateKeys(fromMnemonic: mnemonic, accountIndex: accountIndex)
             .flatMap {
                 AccountKey.make(
                     viewPrivateKey: $0.viewPrivateKey,

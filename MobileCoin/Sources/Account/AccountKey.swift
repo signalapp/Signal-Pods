@@ -56,7 +56,7 @@ public struct AccountKey {
     /// - Returns: `nil` when the input is not deserializable.
     public init?(serializedData: Data) {
         guard let proto = try? External_AccountKey(serializedData: serializedData) else {
-            logger.warning("External_AccountKey deserialization failed.")
+            logger.error("External_AccountKey deserialization failed.", logFunction: false)
             return nil
         }
         self.init(proto)
@@ -64,12 +64,7 @@ public struct AccountKey {
 
     public var serializedData: Data {
         let proto = External_AccountKey(self)
-        do {
-            return try proto.serializedData()
-        } catch {
-            // Safety: Protobuf binary serialization is no fail when not using proto2 or `Any`.
-            logger.fatalError("Protobuf serialization failed: \(redacting: error)")
-        }
+        return proto.serializedDataInfallible
     }
 
     var fogReportUrlString: String? { fogInfo?.reportUrlString }
@@ -181,19 +176,14 @@ extension AccountKey.FogInfo: Hashable {}
 
 struct AccountKeyWithFog {
     let accountKey: AccountKey
+    let fogInfo: AccountKey.FogInfo
 
     init?(accountKey: AccountKey) {
-        guard accountKey.fogInfo != nil else {
+        guard let fogInfo = accountKey.fogInfo else {
             return nil
         }
-        self.accountKey = accountKey
-    }
 
-    var fogInfo: AccountKey.FogInfo {
-        guard let fogInfo = accountKey.fogInfo else {
-            // Safety: accountKey is guaranteed to have fogInfo.
-            logger.fatalError("accountKey doesn't have fogInfo")
-        }
-        return fogInfo
+        self.accountKey = accountKey
+        self.fogInfo = fogInfo
     }
 }

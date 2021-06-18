@@ -32,8 +32,9 @@ extension Data32 {
         }.map { numBytesReturned in
             guard numBytesReturned == 32 else {
                 // This condition indicates a programming error.
-                logger.fatalError("Error: LibMobileCoin function " +
-                    "returned unexpected byte count (\(numBytesReturned)). Expected 32.")
+                logger.fatalError(
+                    "LibMobileCoin function returned unexpected byte count " +
+                        "(\(numBytesReturned)). Expected 32.")
             }
             return bytes
         }
@@ -44,8 +45,7 @@ extension Data32 {
         asMcMutableBuffer { bufferPtr in
             guard body(bufferPtr) else {
                 // This condition indicates a programming error.
-                logger.fatalError("Error: Infallible LibMobileCoin " +
-                    "function failed.")
+                logger.fatalError("Infallible LibMobileCoin function failed.")
             }
         }
     }
@@ -57,13 +57,13 @@ extension Data32 {
         }
         guard numBytesReturned > 0 else {
             // This condition indicates a programming error.
-            logger.fatalError("Error: Infallible LibMobileCoin " +
-                "function failed.")
+            logger.fatalError("Infallible LibMobileCoin function failed.")
         }
         guard numBytesReturned == 32 else {
             // This condition indicates a programming error.
-            logger.fatalError("Error: LibMobileCoin function returned " +
-                "unexpected byte count (\(numBytesReturned)). Expected 32.")
+            logger.fatalError(
+                "LibMobileCoin function returned unexpected byte count (\(numBytesReturned)). " +
+                    "Expected 32.")
         }
     }
 }

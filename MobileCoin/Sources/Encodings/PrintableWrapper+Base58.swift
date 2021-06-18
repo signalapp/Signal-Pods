@@ -27,14 +27,7 @@ extension Printable_PrintableWrapper {
     }
 
     func base58EncodedString() -> String {
-        let serialized: Data
-        do {
-            serialized = try serializedData()
-        } catch {
-            // Safety: Protobuf binary serialization is no fail when not using proto2 or `Any`.
-            logger.fatalError("Protobuf serialization failed: \(redacting: error)")
-        }
-
+        let serialized = serializedDataInfallible
         return serialized.asMcBuffer { bufferPtr in
             String(mcString: withMcInfallibleReturningOptional {
                 mc_printable_wrapper_b58_encode(bufferPtr)

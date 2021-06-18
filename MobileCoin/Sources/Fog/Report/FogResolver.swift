@@ -43,14 +43,7 @@ final class FogResolver {
 
     private func addReportResponse(reportUrl: FogUrl, reportResponse: Report_ReportResponse) {
         logger.info("")
-        let serializedReportResponse: Data
-        do {
-            serializedReportResponse = try reportResponse.serializedData()
-        } catch {
-            // Safety: Protobuf binary serialization is no fail when not using proto2 or `Any`.
-            logger.fatalError("Protobuf serialization failed: \(redacting: error)")
-        }
-
+        let serializedReportResponse = reportResponse.serializedDataInfallible
         serializedReportResponse.asMcBuffer { reportResponsePtr in
             switch withMcError({ errorPtr in
                 mc_fog_resolver_add_report_response(

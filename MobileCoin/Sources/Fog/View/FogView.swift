@@ -161,7 +161,7 @@ final class FogView {
             guard let knownTxOut = txOut.decrypt(accountKey: accountKey) else {
                 logger.warning(
                     "TxOut received from Fog View is not owned by this account. txOut: " +
-                    "\(redacting: txOut.targetKey.data.base64EncodedString())",
+                    "\(redacting: txOut.targetKey.data.hexEncodedString())",
                     logFunction: false)
                 return nil
             }

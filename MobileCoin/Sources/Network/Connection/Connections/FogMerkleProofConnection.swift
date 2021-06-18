@@ -5,7 +5,6 @@
 import Foundation
 import GRPC
 import LibMobileCoin
-import NIOSSL
 
 final class FogMerkleProofConnection: AttestedConnection, FogMerkleProofService {
     private let client: FogLedger_FogMerkleProofAPIClient

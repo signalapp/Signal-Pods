@@ -142,11 +142,14 @@ extension Logger {
         _ message: @autoclosure () -> Logger.Message,
         metadata: @autoclosure () -> Logger.Metadata? = nil,
         source: @autoclosure () -> String? = nil,
+        sensitive: Bool = false,
         logFunction: Bool = true,
         file: String = #file,
         function: String = #function,
         line: UInt = #line
     ) {
+        guard !sensitive || logSensitiveDataInternal.get() else { return }
+
         let metadata = logFunction ? { Self.addingLogFunctionKey(metadata()) } : metadata
         trace(
             message(),
@@ -161,11 +164,14 @@ extension Logger {
         _ message: @autoclosure () -> Logger.Message,
         metadata: @autoclosure () -> Logger.Metadata? = nil,
         source: @autoclosure () -> String? = nil,
+        sensitive: Bool = false,
         logFunction: Bool = true,
         file: String = #file,
         function: String = #function,
         line: UInt = #line
     ) {
+        guard !sensitive || logSensitiveDataInternal.get() else { return }
+
         let metadata = logFunction ? { Self.addingLogFunctionKey(metadata()) } : metadata
         debug(
             message(),
@@ -180,11 +186,14 @@ extension Logger {
         _ message: @autoclosure () -> Logger.Message,
         metadata: @autoclosure () -> Logger.Metadata? = nil,
         source: @autoclosure () -> String? = nil,
+        sensitive: Bool = false,
         logFunction: Bool = true,
         file: String = #file,
         function: String = #function,
         line: UInt = #line
     ) {
+        guard !sensitive || logSensitiveDataInternal.get() else { return }
+
         let metadata = logFunction ? { Self.addingLogFunctionKey(metadata()) } : metadata
         info(
             message(),
@@ -199,11 +208,14 @@ extension Logger {
         _ message: @autoclosure () -> Logger.Message,
         metadata: @autoclosure () -> Logger.Metadata? = nil,
         source: @autoclosure () -> String? = nil,
+        sensitive: Bool = false,
         logFunction: Bool = true,
         file: String = #file,
         function: String = #function,
         line: UInt = #line
     ) {
+        guard !sensitive || logSensitiveDataInternal.get() else { return }
+
         let metadata = logFunction ? { Self.addingLogFunctionKey(metadata()) } : metadata
         notice(
             message(),
@@ -218,11 +230,14 @@ extension Logger {
         _ message: @autoclosure () -> Logger.Message,
         metadata: @autoclosure () -> Logger.Metadata? = nil,
         source: @autoclosure () -> String? = nil,
+        sensitive: Bool = false,
         logFunction: Bool = true,
         file: String = #file,
         function: String = #function,
         line: UInt = #line
     ) {
+        guard !sensitive || logSensitiveDataInternal.get() else { return }
+
         let metadata = logFunction ? { Self.addingLogFunctionKey(metadata()) } : metadata
         warning(
             message(),
@@ -237,11 +252,14 @@ extension Logger {
         _ message: @autoclosure () -> Logger.Message,
         metadata: @autoclosure () -> Logger.Metadata? = nil,
         source: @autoclosure () -> String? = nil,
+        sensitive: Bool = false,
         logFunction: Bool = true,
         file: String = #file,
         function: String = #function,
         line: UInt = #line
     ) {
+        guard !sensitive || logSensitiveDataInternal.get() else { return }
+
         let metadata = logFunction ? { Self.addingLogFunctionKey(metadata()) } : metadata
         error(
             message(),
@@ -256,11 +274,14 @@ extension Logger {
         _ message: @autoclosure () -> Logger.Message,
         metadata: @autoclosure () -> Logger.Metadata? = nil,
         source: @autoclosure () -> String? = nil,
+        sensitive: Bool = false,
         logFunction: Bool = true,
         file: String = #file,
         function: String = #function,
         line: UInt = #line
     ) {
+        guard !sensitive || logSensitiveDataInternal.get() else { return }
+
         let metadata = logFunction ? { Self.addingLogFunctionKey(metadata()) } : metadata
         critical(
             message(),
@@ -283,6 +304,7 @@ extension Logger {
         _ message: @autoclosure () -> String,
         metadata: @autoclosure () -> Logging.Logger.Metadata? = nil,
         source: @autoclosure () -> String? = nil,
+        sensitive: Bool = false,
         logFunction: Bool = true,
         file: String = #file,
         function: String = #function,
@@ -292,6 +314,7 @@ extension Logger {
             Message(stringLiteral: message()),
             metadata: metadata(),
             source: source(),
+            sensitive: sensitive,
             logFunction: logFunction,
             file: file,
             function: function,
@@ -302,6 +325,7 @@ extension Logger {
         _ message: @autoclosure () -> String,
         metadata: @autoclosure () -> Logging.Logger.Metadata? = nil,
         source: @autoclosure () -> String? = nil,
+        sensitive: Bool = false,
         logFunction: Bool = true,
         file: String = #file,
         function: String = #function,
@@ -311,6 +335,7 @@ extension Logger {
             Message(stringLiteral: message()),
             metadata: metadata(),
             source: source(),
+            sensitive: sensitive,
             logFunction: logFunction,
             file: file,
             function: function,
@@ -321,6 +346,7 @@ extension Logger {
         _ message: @autoclosure () -> String,
         metadata: @autoclosure () -> Logging.Logger.Metadata? = nil,
         source: @autoclosure () -> String? = nil,
+        sensitive: Bool = false,
         logFunction: Bool = true,
         file: String = #file,
         function: String = #function,
@@ -330,6 +356,7 @@ extension Logger {
             Message(stringLiteral: message()),
             metadata: metadata(),
             source: source(),
+            sensitive: sensitive,
             logFunction: logFunction,
             file: file,
             function: function,
@@ -340,6 +367,7 @@ extension Logger {
         _ message: @autoclosure () -> String,
         metadata: @autoclosure () -> Logging.Logger.Metadata? = nil,
         source: @autoclosure () -> String? = nil,
+        sensitive: Bool = false,
         logFunction: Bool = true,
         file: String = #file,
         function: String = #function,
@@ -349,6 +377,7 @@ extension Logger {
             Message(stringLiteral: message()),
             metadata: metadata(),
             source: source(),
+            sensitive: sensitive,
             logFunction: logFunction,
             file: file,
             function: function,
@@ -359,6 +388,7 @@ extension Logger {
         _ message: @autoclosure () -> String,
         metadata: @autoclosure () -> Logging.Logger.Metadata? = nil,
         source: @autoclosure () -> String? = nil,
+        sensitive: Bool = false,
         logFunction: Bool = true,
         file: String = #file,
         function: String = #function,
@@ -368,6 +398,7 @@ extension Logger {
             Message(stringLiteral: message()),
             metadata: metadata(),
             source: source(),
+            sensitive: sensitive,
             logFunction: logFunction,
             file: file,
             function: function,
@@ -378,6 +409,7 @@ extension Logger {
         _ message: @autoclosure () -> String,
         metadata: @autoclosure () -> Logging.Logger.Metadata? = nil,
         source: @autoclosure () -> String? = nil,
+        sensitive: Bool = false,
         logFunction: Bool = true,
         file: String = #file,
         function: String = #function,
@@ -387,6 +419,7 @@ extension Logger {
             Message(stringLiteral: message()),
             metadata: metadata(),
             source: source(),
+            sensitive: sensitive,
             logFunction: logFunction,
             file: file,
             function: function,
@@ -397,6 +430,7 @@ extension Logger {
         _ message: @autoclosure () -> String,
         metadata: @autoclosure () -> Logging.Logger.Metadata? = nil,
         source: @autoclosure () -> String? = nil,
+        sensitive: Bool = false,
         logFunction: Bool = true,
         file: String = #file,
         function: String = #function,
@@ -406,6 +440,7 @@ extension Logger {
             Message(stringLiteral: message()),
             metadata: metadata(),
             source: source(),
+            sensitive: sensitive,
             logFunction: logFunction,
             file: file,
             function: function,

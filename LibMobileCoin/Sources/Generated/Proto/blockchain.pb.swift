@@ -542,12 +542,16 @@ extension Blockchain_ArchiveBlock: SwiftProtobuf.Message, SwiftProtobuf._Message
       switch fieldNumber {
       case 1: try {
         var v: Blockchain_ArchiveBlockV1?
+        var hadOneofValue = false
         if let current = self.block {
-          try decoder.handleConflictingOneOf()
+          hadOneofValue = true
           if case .v1(let m) = current {v = m}
         }
         try decoder.decodeSingularMessageField(value: &v)
-        if let v = v {self.block = .v1(v)}
+        if let v = v {
+          if hadOneofValue {try decoder.handleConflictingOneOf()}
+          self.block = .v1(v)
+        }
       }()
       default: break
       }

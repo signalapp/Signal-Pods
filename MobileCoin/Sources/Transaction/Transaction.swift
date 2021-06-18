@@ -26,12 +26,7 @@ public struct Transaction {
     }
 
     public var serializedData: Data {
-        do {
-            return try proto.serializedData()
-        } catch {
-            // Safety: Protobuf binary serialization is no fail when not using proto2 or `Any`.
-            logger.fatalError("Protobuf serialization failed: \(redacting: error)")
-        }
+        proto.serializedDataInfallible
     }
 
     var anyInputKeyImage: KeyImage {
@@ -115,11 +110,13 @@ extension Transaction {
 
         var outputs: [TxOut] = []
         for output in proto.prefix.outputs {
-            guard let txOut = TxOut(output) else {
-                logger.warning("External_Tx contains an invalid output")
+            switch TxOut.make(output) {
+            case .success(let txOut):
+                outputs.append(txOut)
+            case .failure(let error):
+                logger.warning("External_Tx contains an invalid output. error: \(error)")
                 return nil
             }
-            outputs.append(txOut)
         }
         self.outputs = Set(outputs)
     }

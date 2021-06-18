@@ -6,6 +6,7 @@ import Foundation
 
 protocol ServiceProvider {
     var consensusService: ConsensusService { get }
+    var blockchainService: BlockchainService { get }
 
     var fogViewService: FogViewService { get }
     var fogMerkleProofService: FogMerkleProofService { get }
@@ -16,5 +17,5 @@ protocol ServiceProvider {
     func fogReportService(for fogReportUrl: FogUrl) -> FogReportService
 
     func setConsensusAuthorization(credentials: BasicCredentials)
-    func setFogAuthorization(credentials: BasicCredentials)
+    func setFogUserAuthorization(credentials: BasicCredentials)
 }

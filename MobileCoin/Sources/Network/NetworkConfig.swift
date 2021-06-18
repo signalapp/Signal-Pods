@@ -25,7 +25,7 @@ struct NetworkConfig {
     var fogTrustRoots: [NIOSSLCertificate]?
 
     var consensusAuthorization: BasicCredentials?
-    var fogAuthorization: BasicCredentials?
+    var fogUserAuthorization: BasicCredentials?
 
     init(consensusUrl: ConsensusUrl, fogUrl: FogUrl, attestation: AttestationConfig) {
         self.consensusUrl = consensusUrl
@@ -41,12 +41,19 @@ struct NetworkConfig {
             authorization: consensusAuthorization)
     }
 
+    var blockchain: ConnectionConfig<ConsensusUrl> {
+        ConnectionConfig(
+            url: consensusUrl,
+            trustRoots: consensusTrustRoots,
+            authorization: consensusAuthorization)
+    }
+
     var fogView: AttestedConnectionConfig<FogUrl> {
         AttestedConnectionConfig(
             url: fogUrl,
             attestation: attestation.fogView,
             trustRoots: fogTrustRoots,
-            authorization: fogAuthorization)
+            authorization: fogUserAuthorization)
     }
 
     var fogMerkleProof: AttestedConnectionConfig<FogUrl> {
@@ -54,7 +61,7 @@ struct NetworkConfig {
             url: fogUrl,
             attestation: attestation.fogMerkleProof,
             trustRoots: fogTrustRoots,
-            authorization: fogAuthorization)
+            authorization: fogUserAuthorization)
     }
 
     var fogKeyImage: AttestedConnectionConfig<FogUrl> {
@@ -62,15 +69,21 @@ struct NetworkConfig {
             url: fogUrl,
             attestation: attestation.fogKeyImage,
             trustRoots: fogTrustRoots,
-            authorization: fogAuthorization)
+            authorization: fogUserAuthorization)
     }
 
     var fogBlock: ConnectionConfig<FogUrl> {
-        ConnectionConfig(url: fogUrl, trustRoots: fogTrustRoots, authorization: fogAuthorization)
+        ConnectionConfig(
+            url: fogUrl,
+            trustRoots: fogTrustRoots,
+            authorization: fogUserAuthorization)
     }
 
     var fogUntrustedTxOut: ConnectionConfig<FogUrl> {
-        ConnectionConfig(url: fogUrl, trustRoots: fogTrustRoots, authorization: fogAuthorization)
+        ConnectionConfig(
+            url: fogUrl,
+            trustRoots: fogTrustRoots,
+            authorization: fogUserAuthorization)
     }
 
     var fogReportAttestation: Attestation { attestation.fogReport }

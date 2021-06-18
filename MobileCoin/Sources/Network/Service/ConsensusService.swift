@@ -12,3 +12,9 @@ protocol ConsensusService {
         _ tx: External_Tx,
         completion: @escaping (Result<ConsensusCommon_ProposeTxResponse, ConnectionError>) -> Void)
 }
+
+protocol BlockchainService {
+    func getLastBlockInfo(
+        completion:
+            @escaping (Result<ConsensusCommon_LastBlockInfoResponse, ConnectionError>) -> Void)
+}

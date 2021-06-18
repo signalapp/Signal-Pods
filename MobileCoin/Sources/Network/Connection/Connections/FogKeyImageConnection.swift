@@ -5,7 +5,6 @@
 import Foundation
 import GRPC
 import LibMobileCoin
-import NIOSSL
 
 final class FogKeyImageConnection: AttestedConnection, FogKeyImageService {
     private let client: FogLedger_FogKeyImageAPIClient

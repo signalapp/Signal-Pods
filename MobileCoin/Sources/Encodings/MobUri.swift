@@ -12,7 +12,6 @@ public enum MobUri {
     }
 
     public static func decode(uri uriString: String) -> Result<Payload, InvalidInputError> {
-        logger.info("")
         guard let uri = URL(string: uriString) else {
             logger.info("Could not parse MobURI as URL: \(redacting: uriString)")
             return .failure(
@@ -21,7 +20,6 @@ public enum MobUri {
         guard let scheme = uri.scheme else {
             logger.info("MobUri scheme cannot be empty.")
             return .failure(InvalidInputError("MobUri scheme cannot be empty."))
-
         }
         guard scheme == McConstants.MOB_URI_SCHEME else {
             logger.info(
@@ -34,23 +32,19 @@ public enum MobUri {
     }
 
     public static func encode(_ publicAddress: PublicAddress) -> String {
-        logger.info("")
-        return encode(.publicAddress(publicAddress))
+        encode(.publicAddress(publicAddress))
     }
 
     public static func encode(_ paymentRequest: PaymentRequest) -> String {
-        logger.info("")
-        return encode(.paymentRequest(paymentRequest))
+        encode(.paymentRequest(paymentRequest))
     }
 
     public static func encode(_ transferPayload: TransferPayload) -> String {
-        logger.info("")
-        return encode(.transferPayload(transferPayload))
+        encode(.transferPayload(transferPayload))
     }
 
     static func encode(_ payload: Payload) -> String {
-        logger.info("")
-        return "\(McConstants.MOB_URI_SCHEME)://\(payload.uriPath)"
+        "\(McConstants.MOB_URI_SCHEME)://\(payload.uriPath)"
     }
 }
 

@@ -2,8 +2,8 @@
 //  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
 
-// swiftlint:disable function_body_length function_parameter_count multiline_function_chains
-// swiftlint:disable operator_usage_whitespace
+// swiftlint:disable closure_body_length cyclomatic_complexity function_body_length
+// swiftlint:disable multiline_function_chains operator_usage_whitespace
 
 import Foundation
 import GRPC
@@ -107,6 +107,7 @@ extension AttestedConnection {
     // This means that calls to `AttestedConnection.Inner` can assume thread-safety until the call
     // invokes the completion handler.
     private struct Inner {
+        private let url: MobileCoinUrlProtocol
         private let session: ConnectionSession
         private let client: AttestableGrpcClient
         private let attestAke: AttestAke
@@ -122,6 +123,7 @@ extension AttestedConnection {
             rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)? = securityRNG,
             rngContext: Any? = nil
         ) {
+            self.url = config.url
             self.session = ConnectionSession(config: config)
             self.client = client
             self.attestAke = AttestAke()
@@ -148,35 +150,23 @@ extension AttestedConnection {
                 call,
                 requestAad: requestAad,
                 request: request,
-                attestAkeCipher: attestAke.cipher,
-                freshCipher: false
-            ) {
-                switch $0 {
-                case .success:
-                    logger.info(
-                        "Attested call successful. responderId: \(self.responderId)",
-                        logFunction: false)
-                case .failure(let error):
-                    logger.error("Failure performing attested call: \(error)", logFunction: false)
-                }
-                completion($0)
-            }
+                attestAkeCipher: attestAke.cipher.map { ($0, freshCipher: false) },
+                completion: completion)
         }
 
         private func doPerformAttestedCallWithAuth<Call: AttestedGrpcCallable>(
             _ call: Call,
             requestAad: Call.InnerRequestAad,
             request: Call.InnerRequest,
-            attestAkeCipher: AttestAke.Cipher?,
-            freshCipher: Bool,
+            attestAkeCipher: (AttestAke.Cipher, freshCipher: Bool)?,
             completion: @escaping (
                 Result<(responseAad: Call.InnerResponseAad, response: Call.InnerResponse),
                        ConnectionError>
             ) -> Void
         ) {
-            if let attestAkeCipher = attestAkeCipher {
+            if let (attestAkeCipher, freshCipher) = attestAkeCipher {
                 logger.info(
-                    "Performing attested call... responderId: \(responderId)",
+                    "Performing attested call... url: \(self.url)",
                     logFunction: false)
 
                 doPerformAttestedCall(
@@ -187,47 +177,78 @@ extension AttestedConnection {
                 ) {
                     switch $0 {
                     case .success(let response):
+                        logger.info(
+                            "Attested call successful. url: \(self.url)",
+                            logFunction: false)
+
                         completion(.success(response))
                     case .failure(.connectionError(let connectionError)):
+                        let errorMessage = "Connection failure while performing attested call. " +
+                            "url: \(self.url), error: \(connectionError)"
+                        switch connectionError {
+                        case .connectionFailure, .serverRateLimited:
+                            logger.warning(errorMessage, logFunction: false)
+                        case .authorizationFailure, .invalidServerResponse,
+                             .attestationVerificationFailed, .outdatedClient:
+                            logger.error(errorMessage, logFunction: false)
+                        }
+
                         completion(.failure(connectionError))
                     case .failure(.attestationFailure):
                         self.attestAke.deattest()
 
                         if freshCipher {
-                            completion(.failure(
-                                .invalidServerResponse("Attestation failure with fresh auth.")))
+                            let errorMessage =
+                                "Attestation failure with fresh auth. url: \(self.url)"
+                            logger.warning(errorMessage, logFunction: false)
+
+                            completion(.failure(.invalidServerResponse(errorMessage)))
                         } else {
-                            logger.info("Attestation failure. Reattesting...", logFunction: false)
+                            logger.info(
+                                "Attestation failure using cached auth, reattesting... url: " +
+                                    "\(self.url)",
+                                logFunction: false)
 
                             self.doPerformAttestedCallWithAuth(
                                 call,
                                 requestAad: requestAad,
                                 request: request,
                                 attestAkeCipher: nil,
-                                freshCipher: false,
                                 completion: completion)
                         }
                     }
                 }
             } else {
                 logger.info(
-                    "Peforming attestation... responderId: \(responderId)",
+                    "Peforming attestation... url: \(url)",
                     logFunction: false)
 
                 doPerformAuthCall {
-                    guard let attestAkeCipher = $0.successOr(completion: completion) else { return }
+                    switch $0 {
+                    case .success(let attestAkeCipher):
+                        logger.info(
+                            "Attestation successful. url: \(self.url)",
+                            logFunction: false)
 
-                    logger.info(
-                        "Attestation successful. responderId: \(self.responderId)",
-                        logFunction: false)
+                        self.doPerformAttestedCallWithAuth(
+                            call,
+                            requestAad: requestAad,
+                            request: request,
+                            attestAkeCipher: (attestAkeCipher, freshCipher: true),
+                            completion: completion)
+                    case .failure(let connectionError):
+                        let errorMessage = "Connection failure while performing attestation. " +
+                            "url: \(self.url), error: \(connectionError)"
+                        switch connectionError {
+                        case .connectionFailure, .serverRateLimited:
+                            logger.warning(errorMessage, logFunction: false)
+                        case .authorizationFailure, .invalidServerResponse,
+                             .attestationVerificationFailed, .outdatedClient:
+                            logger.error(errorMessage, logFunction: false)
+                        }
 
-                    self.doPerformAttestedCallWithAuth(
-                        call,
-                        requestAad: requestAad,
-                        request: request,
-                        attestAkeCipher: attestAkeCipher,
-                        freshCipher: true,
-                        completion: completion)
+                        completion(.failure(connectionError))
+                    }
                 }
             }
         }
@@ -251,7 +272,9 @@ extension AttestedConnection {
                             return connectionError
                         case .attestationFailure:
                             self.attestAke.deattest()
-                            return .invalidServerResponse("Attestation failure during auth.")
+
+                            return .invalidServerResponse(
+                                "Attestation failure during auth. url: \(self.url)")
                         }
                     }.flatMap { response in
                         self.attestAke.authEnd(
@@ -318,8 +341,7 @@ extension AttestedConnection {
         {
             // Basic credential authorization failure
             guard callResult.status.code != .unauthenticated else {
-                return .failure(
-                    .connectionError(.authorizationFailure(String(describing: callResult.status))))
+                return .failure(.connectionError(.authorizationFailure("url: \(url)")))
             }
 
             // Attestation failure, reattest
@@ -328,8 +350,8 @@ extension AttestedConnection {
             }
 
             guard callResult.status.isOk, let response = callResult.response else {
-                return .failure(
-                    .connectionError(.connectionFailure(String(describing: callResult.status))))
+                return .failure(.connectionError(
+                    .connectionFailure("url: \(url), status: \(callResult.status)")))
             }
 
             if let initialMetadata = callResult.initialMetadata {

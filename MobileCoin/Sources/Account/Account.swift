@@ -50,36 +50,8 @@ final class Account {
         return Balance(values: txOutValues, blockCount: blockCount)
     }
 
-    func cachedBalance(atBlockCount blockCount: UInt64) -> Balance? {
-        logger.info("atBlockCount: \(blockCount)")
-        guard blockCount <= knowableBlockCount else {
-            logger.info("""
-                error - blockCount: \(blockCount) > \
-                knowableBlockCount: \(knowableBlockCount)
-                """)
-            return nil
-        }
-        let txOutValues = allTxOutTrackers
-            .filter { $0.receivedAndUnspent(asOfBlockCount: blockCount) }
-            .map { $0.knownTxOut.value }
-        return Balance(values: txOutValues, blockCount: blockCount)
-    }
-
     var cachedAccountActivity: AccountActivity {
         let blockCount = knowableBlockCount
-        let txOuts = allTxOutTrackers.compactMap { OwnedTxOut($0, atBlockCount: blockCount) }
-        return AccountActivity(txOuts: txOuts, blockCount: blockCount)
-    }
-
-    func cachedAccountActivity(asOfBlockCount blockCount: UInt64) -> AccountActivity? {
-        logger.info("asOfBlockCount: \(blockCount)")
-        guard blockCount <= knowableBlockCount else {
-            logger.info("""
-                error - blockCount: \(blockCount) > \
-                knowableBlockCount: \(knowableBlockCount)
-                """)
-            return nil
-        }
         let txOuts = allTxOutTrackers.compactMap { OwnedTxOut($0, atBlockCount: blockCount) }
         return AccountActivity(txOuts: txOuts, blockCount: blockCount)
     }
@@ -108,20 +80,6 @@ final class Account {
         return (txOuts: txOuts, blockCount: knowableBlockCount)
     }
 
-    func receivedAndUnspentTxOuts(atBlockCount blockCount: UInt64) -> [KnownTxOut]? {
-        logger.info("atBlockCount: \(blockCount)")
-        guard blockCount <= knowableBlockCount else {
-            logger.info("""
-                error - blockCount: \(blockCount) > \
-                knowableBlockCount: \(knowableBlockCount)
-                """)
-            return nil
-        }
-        return allTxOutTrackers
-            .filter { $0.receivedAndUnspent(asOfBlockCount: blockCount) }
-            .map { $0.knownTxOut }
-    }
-
     func addTxOuts(_ txOuts: [KnownTxOut]) {
         allTxOutTrackers.append(contentsOf: txOuts.map { TxOutTracker($0) })
     }
@@ -134,25 +92,14 @@ final class Account {
     func cachedReceivedStatus(of receipt: Receipt)
         -> Result<Receipt.ReceivedStatus, InvalidInputError>
     {
-        logger.info("receipt.txOutPublicKey: \(redacting: receipt.txOutPublicKey)")
-        return ownedTxOut(for: receipt).map {
+        ownedTxOut(for: receipt).map {
             if let ownedTxOut = $0 {
-                logger.info("received - txOut.publicKey: \(redacting: ownedTxOut.publicKey)")
                 return .received(block: ownedTxOut.block)
             } else {
                 let knownToBeNotReceivedBlockCount = allTxOutsFoundBlockCount
                 guard receipt.txTombstoneBlockIndex > knownToBeNotReceivedBlockCount else {
-                    logger.info("""
-                        tombstone exceeded - receipt.txTombstoneBlockIndex: \
-                        \(receipt.txTombstoneBlockIndex) > \
-                        knownToBeNotReceivedBlockCount: \(knownToBeNotReceivedBlockCount)
-                        """)
                     return .tombstoneExceeded
                 }
-                logger.info("""
-                    not received - \
-                    knownToBeNotReceivedBlockCount: \(knownToBeNotReceivedBlockCount)
-                    """)
                 return .notReceived(knownToBeNotReceivedBlockCount: knownToBeNotReceivedBlockCount)
             }
         }
@@ -160,19 +107,14 @@ final class Account {
 
     /// Retrieves the `KnownTxOut`'s corresponding to `receipt` and verifies `receipt` is valid.
     private func ownedTxOut(for receipt: Receipt) -> Result<KnownTxOut?, InvalidInputError> {
-        logger.info("""
-            receipt.txOutPublicKey: \(redacting: receipt.txOutPublicKey), \
-            account: \(redacting: accountKey.publicAddress)
-            """)
-        if let lastTxOut = ownedTxOuts.last {
-            logger.info("Last received TxOut: Tx pubkey: \(redacting: lastTxOut.publicKey)")
-        }
+        logger.debug(
+            "Last received TxOut: TxOut pubkey: " +
+                "\(redacting: ownedTxOuts.last?.publicKey.hexEncodedString() ?? "None")",
+            logFunction: false)
 
         // First check if we've received the TxOut (either from Fog View or from view key scanning).
         // This has the benefit of providing a guarantee that the TxOut is owned by this account.
         guard let ownedTxOut = ownedTxOut(for: receipt.txOutPublicKeyTyped) else {
-            logger.info(
-                "Receipt status check failed. Account has not received Receipt TxOut.")
             return .success(nil)
         }
 
@@ -186,7 +128,7 @@ final class Account {
                 "Receipt data doesn't match the corresponding TxOut found in the ledger. " +
                 "Receipt: \(redacting: receipt.serializedData.base64EncodedString()) - " +
                 "Account TxOut: \(redacting: ownedTxOut)"
-            logger.error(errorMessage)
+            logger.error(errorMessage, sensitive: true, logFunction: false)
             return .failure(InvalidInputError(errorMessage))
         }
 
@@ -195,12 +137,10 @@ final class Account {
         guard receipt.validateConfirmationNumber(accountKey: accountKey) else {
             let errorMessage = "Receipt confirmation number is invalid for this account. " +
                 "Receipt: \(redacting: receipt.serializedData.base64EncodedString())"
-            logger.error(errorMessage)
+            logger.error(errorMessage, sensitive: true, logFunction: false)
             return .failure(InvalidInputError(errorMessage))
         }
 
-        logger.info("Receipt status check succeeded. TxOut was received in block index " +
-            "\(ownedTxOut.block.index)")
         return .success(ownedTxOut)
     }
 
@@ -214,7 +154,7 @@ extension Account {
     static func make(accountKey: AccountKey) -> Result<Account, InvalidInputError> {
         guard let accountKey = AccountKeyWithFog(accountKey: accountKey) else {
             let errorMessage = "Accounts without fog URLs are not currently supported."
-            logger.error(errorMessage)
+            logger.error(errorMessage, logFunction: false)
             return .failure(InvalidInputError(errorMessage))
         }
         return .success(Account(accountKey: accountKey))
@@ -263,12 +203,7 @@ final class TxOutTracker {
 
 extension OwnedTxOut {
     fileprivate init?(_ txOutTracker: TxOutTracker, atBlockCount blockCount: UInt64) {
-        logger.info("""
-            txOut.publicKey: \(redacting: txOutTracker.knownTxOut.publicKey), \
-            atBlockCount: \(blockCount)
-            """)
         guard txOutTracker.knownTxOut.block.index < blockCount else {
-            logger.info("knownTxout block index < blockCount")
             return nil
         }
         let receivedBlock = txOutTracker.knownTxOut.block

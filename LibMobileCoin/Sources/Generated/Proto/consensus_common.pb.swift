@@ -190,6 +190,9 @@ public struct ConsensusCommon_LastBlockInfoResponse {
   /// Block index
   public var index: UInt64 = 0
 
+  /// Current minimum fee
+  public var minimumFee: UInt64 = 0
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -286,6 +289,7 @@ extension ConsensusCommon_LastBlockInfoResponse: SwiftProtobuf.Message, SwiftPro
   public static let protoMessageName: String = _protobuf_package + ".LastBlockInfoResponse"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "index"),
+    2: .standard(proto: "minimum_fee"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -295,6 +299,7 @@ extension ConsensusCommon_LastBlockInfoResponse: SwiftProtobuf.Message, SwiftPro
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
       case 1: try { try decoder.decodeSingularUInt64Field(value: &self.index) }()
+      case 2: try { try decoder.decodeSingularUInt64Field(value: &self.minimumFee) }()
       default: break
       }
     }
@@ -304,11 +309,15 @@ extension ConsensusCommon_LastBlockInfoResponse: SwiftProtobuf.Message, SwiftPro
     if self.index != 0 {
       try visitor.visitSingularUInt64Field(value: self.index, fieldNumber: 1)
     }
+    if self.minimumFee != 0 {
+      try visitor.visitSingularUInt64Field(value: self.minimumFee, fieldNumber: 2)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: ConsensusCommon_LastBlockInfoResponse, rhs: ConsensusCommon_LastBlockInfoResponse) -> Bool {
     if lhs.index != rhs.index {return false}
+    if lhs.minimumFee != rhs.minimumFee {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

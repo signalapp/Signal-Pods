@@ -6,19 +6,19 @@
 
 import Foundation
 
-enum TransactionInputSelectionError: Error {
-    case insufficientTxOuts(String = String())
-    case defragmentationRequired(String = String())
+enum AmountTransferableError: Error {
+    case feeExceedsBalance(String = String())
+    case balanceOverflow(String = String())
 }
 
-extension TransactionInputSelectionError: CustomStringConvertible {
+extension AmountTransferableError: CustomStringConvertible {
     var description: String {
-        "Transaction input selection error: " + {
+        "Amount transferable error: " + {
             switch self {
-            case .insufficientTxOuts(let reason):
-                return "Insufficient TxOuts\(!reason.isEmpty ? ": \(reason)" : "")"
-            case .defragmentationRequired(let reason):
-                return "Defragmentation required\(!reason.isEmpty ? ": \(reason)" : "")"
+            case .feeExceedsBalance(let reason):
+                return "Fee exceeds balance\(!reason.isEmpty ? ": \(reason)" : "")"
+            case .balanceOverflow(let reason):
+                return "Balance overflow\(!reason.isEmpty ? ": \(reason)" : "")"
             }
         }()
     }
@@ -39,6 +39,24 @@ extension TxOutSelectionError: CustomStringConvertible {
     }
 }
 
+enum TransactionInputSelectionError: Error {
+    case insufficientTxOuts(String = String())
+    case defragmentationRequired(String = String())
+}
+
+extension TransactionInputSelectionError: CustomStringConvertible {
+    var description: String {
+        "Transaction input selection error: " + {
+            switch self {
+            case .insufficientTxOuts(let reason):
+                return "Insufficient TxOuts\(!reason.isEmpty ? ": \(reason)" : "")"
+            case .defragmentationRequired(let reason):
+                return "Defragmentation required\(!reason.isEmpty ? ": \(reason)" : "")"
+            }
+        }()
+    }
+}
+
 final class TxOutSelector {
     private let txOutSelectionStrategy: TxOutSelectionStrategy
 
@@ -46,22 +64,22 @@ final class TxOutSelector {
         self.txOutSelectionStrategy = txOutSelectionStrategy
     }
 
-    func amountTransferable(feeLevel: FeeLevel, txOuts: [KnownTxOut])
-        -> Result<UInt64, BalanceTransferEstimationError>
+    func amountTransferable(feeStrategy: FeeStrategy, txOuts: [KnownTxOut])
+        -> Result<UInt64, AmountTransferableError>
     {
         txOutSelectionStrategy.amountTransferable(
-            feeLevel: feeLevel,
+            feeStrategy: feeStrategy,
             txOuts: txOuts.map(SelectionTxOut.init))
     }
 
     func estimateTotalFee(
         toSendAmount amount: UInt64,
-        feeLevel: FeeLevel,
+        feeStrategy: FeeStrategy,
         txOuts: [KnownTxOut]
     ) -> Result<(totalFee: UInt64, requiresDefrag: Bool), TxOutSelectionError> {
         txOutSelectionStrategy.estimateTotalFee(
             toSendAmount: amount,
-            feeLevel: feeLevel,
+            feeStrategy: feeStrategy,
             txOuts: txOuts.map(SelectionTxOut.init))
     }
 
@@ -79,24 +97,24 @@ final class TxOutSelector {
 
     func selectTransactionInputs(
         amount: UInt64,
-        feeLevel: FeeLevel,
+        feeStrategy: FeeStrategy,
         fromTxOuts txOuts: [KnownTxOut]
     ) -> Result<(inputs: [KnownTxOut], fee: UInt64), TransactionInputSelectionError> {
         txOutSelectionStrategy.selectTransactionInputs(
             amount: amount,
-            feeLevel: feeLevel,
+            feeStrategy: feeStrategy,
             fromTxOuts: txOuts.map(SelectionTxOut.init)
         ).map { (inputs: $0.inputIds.map { txOuts[$0] }, fee: $0.fee) }
     }
 
     func selectInputsForDefragTransactions(
         toSendAmount amount: UInt64,
-        feeLevel: FeeLevel,
+        feeStrategy: FeeStrategy,
         fromTxOuts txOuts: [KnownTxOut]
     ) -> Result<[(inputs: [KnownTxOut], fee: UInt64)], TxOutSelectionError> {
         txOutSelectionStrategy.selectInputsForDefragTransactions(
             toSendAmount: amount,
-            feeLevel: feeLevel,
+            feeStrategy: feeStrategy,
             fromTxOuts: txOuts.map(SelectionTxOut.init)
         ).map { defragTransactions in
             defragTransactions.map { (inputs: $0.inputIds.map { txOuts[$0] }, fee: $0.fee) }

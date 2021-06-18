@@ -27,7 +27,7 @@ func performAsync<Value1, Value2, Failure: Error>(
                 if OSAtomicIncrement32(&completedTaskCount) == 2 {
                     guard let result1 = results.0, let result2 = results.1 else {
                         // This condition should never be reached and indicates a programming error.
-                        logger.fatalError("Results not ready: \(results)")
+                        logger.fatalError("Results not ready: \(redacting: results)")
                     }
                     completion(.success((result1, result2)))
                 }

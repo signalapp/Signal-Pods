@@ -12,7 +12,7 @@ protocol Scheme {
     static var defaultInsecurePort: Int { get }
 }
 
-protocol MobileCoinUrlProtocol {
+protocol MobileCoinUrlProtocol: CustomStringConvertible {
     var url: URL { get }
     var host: String { get }
     var port: Int { get }
@@ -94,65 +94,11 @@ struct MobileCoinUrl<Scheme: MobileCoin.Scheme>: MobileCoinUrlProtocol {
     }
 }
 
-struct AnyMobileCoinUrl: MobileCoinUrlProtocol {
-    static func make(string: String) -> Result<AnyMobileCoinUrl, InvalidInputError> {
-        make(string: string, useTlsOverride: nil)
-    }
-
-    static func make(string: String, useTls: Bool) -> Result<AnyMobileCoinUrl, InvalidInputError> {
-        make(string: string, useTlsOverride: useTls)
-    }
-
-    // swiftlint:disable discouraged_optional_boolean
-    private static func make(string: String, useTlsOverride: Bool?)
-        -> Result<AnyMobileCoinUrl, InvalidInputError>
-    {
-    // swiftlint:enable discouraged_optional_boolean
-        guard let url = URL(string: string) else {
-            return .failure(InvalidInputError("Could not parse url: \(string)"))
-        }
-
-        guard let host = url.host, !host.isEmpty else {
-            return .failure(InvalidInputError("Invalid host: \(string)"))
-        }
-
-        return .success(AnyMobileCoinUrl(url: url, host: host, useTlsOverride: useTlsOverride))
-    }
-
-    let url: URL
-
-    let useTls: Bool
-    let host: String
-    let port: Int
-
-    // swiftlint:disable discouraged_optional_boolean
-    private init(url: URL, host: String, useTlsOverride: Bool?) {
-    // swiftlint:enable discouraged_optional_boolean
-        self.url = url
-        self.host = host
-
-        if let useTls = useTlsOverride {
-            self.useTls = useTls
-        } else {
-            switch url.scheme {
-            case "http":
-                self.useTls = false
-            case "https":
-                self.useTls = true
-            default:
-                self.useTls = true
-            }
-        }
-
-        if let port = url.port {
-            self.port = port
-        } else if !self.useTls {
-            self.port = 80
-        } else {
-            self.port = 443
-        }
-    }
-}
-
 extension MobileCoinUrl: Equatable {}
 extension MobileCoinUrl: Hashable {}
+
+extension MobileCoinUrl: CustomStringConvertible {
+    var description: String {
+        url.description
+    }
+}
