@@ -600,7 +600,6 @@ struct CipherContext {
     }
 
     private var cryptor: CCCryptorRef?
-    private var isFinal = false
 
     init(operation: Operation, algorithm: Algorithm, options: Options, key: Data, iv: Data) throws {
         let result = key.withUnsafeBytes { keyBytes in
@@ -626,7 +625,7 @@ struct CipherContext {
     }
 
     mutating func update(bytes: UnsafeRawBufferPointer) throws -> Data {
-        guard !isFinal else {
+        guard let cryptor = cryptor else {
             throw OWSAssertionError("Unexpectedly attempted to update a finalized cipher")
         }
 
@@ -643,11 +642,14 @@ struct CipherContext {
     }
 
     mutating func finalize() throws -> Data {
-        guard !isFinal else {
+        guard let cryptor = cryptor else {
             throw OWSAssertionError("Unexpectedly attempted to finalize a finalized cipher")
         }
 
-        isFinal = true
+        defer {
+            CCCryptorRelease(cryptor)
+            self.cryptor = nil
+        }
 
         var outputLength = CCCryptorGetOutputLength(cryptor, 0, true)
         var outputBuffer = Data(repeating: 0, count: outputLength)
