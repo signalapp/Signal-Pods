@@ -1,13 +1,13 @@
 {
   "name": "SignalRingRTC",
-  "version": "2.10.1",
+  "version": "2.10.6",
   "summary": "A Swift & Objective-C library used by the Signal iOS app for WebRTC interactions.",
   "description": "A Swift & Objective-C library used by the Signal iOS app for WebRTC interactions.\"",
   "license": "GPLv3",
   "homepage": "https://github.com/signalapp/ringrtc",
   "source": {
     "git": "https://github.com/signalapp/ringrtc.git",
-    "tag": "v2.10.1"
+    "tag": "v2.10.6"
   },
   "authors": {
     "iOS Team": "ios@signal.org"
@@ -23,8 +23,8 @@
   ],
   "public_header_files": "RingRTC/src/ios/SignalRingRTC/SignalRingRTC/**/*.h",
   "private_header_files": "WebRTC/Build/libringrtc/*.h",
-  "vendored_libraries": "WebRTC/Build/libringrtc/libringrtc.a",
   "module_map": "RingRTC/src/ios/SignalRingRTC/SignalRingRTC/SignalRingRTC.modulemap",
+  "preserve_paths": "WebRTC/Build/libringrtc/*/libringrtc.a",
   "dependencies": {
     "SignalCoreKit": [
 
@@ -32,6 +32,19 @@
     "PromiseKit": [
 
     ]
+  },
+  "pod_target_xcconfig": {
+    "LIBRINGRTC_IF_NEEDED": "$(PODS_TARGET_SRCROOT)/WebRTC/Build/libringrtc/$(CARGO_BUILD_TARGET)/libringrtc.a",
+    "OTHER_LDFLAGS": "$(LIBRINGRTC_IF_NEEDED)",
+    "CARGO_BUILD_TARGET[sdk=iphonesimulator*][arch=arm64]": "aarch64-apple-ios-sim",
+    "CARGO_BUILD_TARGET[sdk=iphonesimulator*][arch=*]": "x86_64-apple-ios",
+    "CARGO_BUILD_TARGET[sdk=iphoneos*]": "aarch64-apple-ios",
+    "CARGO_BUILD_TARGET_MAC_CATALYST_ARM_": "aarch64-apple-darwin",
+    "CARGO_BUILD_TARGET_MAC_CATALYST_ARM_YES": "aarch64-apple-ios-macabi",
+    "CARGO_BUILD_TARGET[sdk=macosx*][arch=arm64]": "$(CARGO_BUILD_TARGET_MAC_CATALYST_ARM_$(IS_MACCATALYST))",
+    "CARGO_BUILD_TARGET_MAC_CATALYST_X86_": "x86_64-apple-darwin",
+    "CARGO_BUILD_TARGET_MAC_CATALYST_X86_YES": "x86_64-apple-ios-macabi",
+    "CARGO_BUILD_TARGET[sdk=macosx*][arch=*]": "$(CARGO_BUILD_TARGET_MAC_CATALYST_X86_$(IS_MACCATALYST))"
   },
   "testspecs": [
     {
@@ -43,7 +56,7 @@
   "subspecs": [
     {
       "name": "WebRTC",
-      "vendored_frameworks": "WebRTC/Build/WebRTC.framework"
+      "vendored_frameworks": "WebRTC/Build/WebRTC.xcframework"
     }
   ]
 }
