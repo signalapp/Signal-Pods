@@ -10,8 +10,6 @@
 #endif
 #endif
 
-#import "zkgroup.h"
-#import "ZKGroup.h"
 
 FOUNDATION_EXPORT double ZKGroupVersionNumber;
 FOUNDATION_EXPORT const unsigned char ZKGroupVersionString[];
