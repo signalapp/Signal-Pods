@@ -75,7 +75,6 @@
 #import "MessageSender.h"
 #import "OWSAddToContactsOfferMessage.h"
 #import "OWSAddToProfileWhitelistOfferMessage.h"
-#import "OWSBlockingManager.h"
 #import "OWSDisappearingMessagesFinder.h"
 #import "OWSDisappearingMessagesJob.h"
 #import "OWSFailedAttachmentDownloadsJob.h"
