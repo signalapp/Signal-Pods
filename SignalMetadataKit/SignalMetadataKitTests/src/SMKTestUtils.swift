@@ -32,6 +32,9 @@ class MockClient: NSObject {
     }
 
     let address: SMKAddress
+    var protocolAddress: ProtocolAddress {
+        try! ProtocolAddress(name: address.uuid!.uuidString, deviceId: UInt32(deviceId))
+    }
 
     let deviceId: Int32
     let registrationId: Int32
@@ -42,6 +45,7 @@ class MockClient: NSObject {
     let preKeyStore: InMemorySignalProtocolStore
     let signedPreKeyStore: InMemorySignalProtocolStore
     let identityStore: InMemorySignalProtocolStore
+    let senderKeyStore: InMemorySignalProtocolStore
 
     init(address: SMKAddress, deviceId: Int32, registrationId: Int32) {
         self.address = address
@@ -56,13 +60,15 @@ class MockClient: NSObject {
         preKeyStore = protocolStore
         signedPreKeyStore = protocolStore
         identityStore = protocolStore
+        senderKeyStore = protocolStore
     }
 
     func createSecretSessionCipher() throws -> SMKSecretSessionCipher {
         return try SMKSecretSessionCipher(sessionStore: sessionStore,
-                                      preKeyStore: preKeyStore,
-                                      signedPreKeyStore: signedPreKeyStore,
-                                      identityStore: identityStore)
+                                          preKeyStore: preKeyStore,
+                                          signedPreKeyStore: signedPreKeyStore,
+                                          identityStore: identityStore,
+                                          senderKeyStore: senderKeyStore)
     }
 
     func generateMockPreKey() -> PreKeyRecord {

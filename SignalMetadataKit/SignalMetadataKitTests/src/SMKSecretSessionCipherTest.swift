@@ -4,7 +4,7 @@
 
 import XCTest
 import SignalMetadataKit
-import SignalClient
+@testable import SignalClient
 import Curve25519Kit
 
 // https://github.com/signalapp/libsignal-metadata-java/blob/master/tests/src/test/java/org/signal/libsignal/metadata/SecretSessionCipherTest.java
@@ -249,6 +249,140 @@ class SMKSecretSessionCipherTest: XCTestCase {
             // Why? Because it uses crypto values calculated during unwrapping to validate the sender certificate.
         } catch {
             XCTFail("unexpected error: \(error)")
+        }
+    }
+
+    func testGroupEncryptDecrypt_Success() {
+        // Setup: Initialize sessions and sender certificate
+        let aliceMockClient = MockClient(address: aliceAddress, deviceId: 1, registrationId: 1234)
+        let bobMockClient = MockClient(address: bobAddress, deviceId: 1, registrationId: 1235)
+        initializeSessions(aliceMockClient: aliceMockClient, bobMockClient: bobMockClient)
+
+        let trustRoot = IdentityKeyPair.generate()
+        let senderCertificate = createCertificateFor(
+            trustRoot: trustRoot,
+            senderAddress: aliceMockClient.address,
+            senderDeviceId: UInt32(aliceMockClient.deviceId),
+            identityKey: aliceMockClient.identityKeyPair.publicKey,
+            expirationTimestamp: 31337)
+
+        // Setup: Distribute alice's sender key to bob's key store
+        let distributionId = UUID()
+        let aliceSenderKeyMessage = try! SenderKeyDistributionMessage(
+            from: aliceMockClient.protocolAddress,
+            distributionId: distributionId,
+            store: aliceMockClient.senderKeyStore,
+            context: NullContext())
+
+        try! processSenderKeyDistributionMessage(
+            aliceSenderKeyMessage,
+            from: aliceMockClient.protocolAddress,
+            store: bobMockClient.senderKeyStore,
+            context: NullContext())
+
+        // Test: Alice encrypt's a message using `groupEncryptMessage`
+        let aliceCipher = try! aliceMockClient.createSecretSessionCipher()
+        let alicePlaintext = "beltalowda".data(using: String.Encoding.utf8)!
+        let aliceCiphertext = try! aliceCipher.groupEncryptMessage(
+            recipients: [bobMockClient.protocolAddress],
+            paddedPlaintext: alicePlaintext,
+            senderCertificate: senderCertificate,
+            groupId: Data(),
+            distributionId: distributionId,
+            contentHint: .implicit,
+            protocolContext: nil).map { $0 }
+
+        // This splits out irrelevant per-recipient data from the shared sender key message
+        // This is only necessary in tests. The server would usually handle this.
+        let singleRecipientCiphertext = try! sealedSenderMultiRecipientMessageForSingleRecipient(aliceCiphertext)
+
+        // Test: Bob decrypts the ciphertext
+        let bobCipher = try! bobMockClient.createSecretSessionCipher()
+        let bobValidator = SMKCertificateDefaultValidator(trustRoot: ECPublicKey(trustRoot.publicKey))
+        let bobPlaintext = try! bobCipher.throwswrapped_decryptMessage(
+            certificateValidator: bobValidator,
+            cipherTextData: Data(singleRecipientCiphertext),
+            timestamp: 31335,
+            localE164: bobMockClient.recipientE164,
+            localUuid: bobMockClient.recipientUuid,
+            localDeviceId: bobMockClient.deviceId,
+            protocolContext: nil)
+
+        // Verify
+        XCTAssertEqual(String(data: bobPlaintext.paddedPayload, encoding: .utf8), "beltalowda")
+        XCTAssertEqual(bobPlaintext.senderAddress, aliceMockClient.address)
+        XCTAssertEqual(bobPlaintext.senderDeviceId, Int(aliceMockClient.deviceId))
+        XCTAssertEqual(bobPlaintext.messageType, .senderKey)
+    }
+
+    func testGroupEncryptDecrypt_Failure() {
+        // Setup: Initialize sessions and sender certificate
+        let aliceMockClient = MockClient(address: aliceAddress, deviceId: 1, registrationId: 1234)
+        let bobMockClient = MockClient(address: bobAddress, deviceId: 1, registrationId: 1235)
+        initializeSessions(aliceMockClient: aliceMockClient, bobMockClient: bobMockClient)
+
+        let trustRoot = IdentityKeyPair.generate()
+        let senderCertificate = createCertificateFor(
+            trustRoot: trustRoot,
+            senderAddress: aliceMockClient.address,
+            senderDeviceId: UInt32(aliceMockClient.deviceId),
+            identityKey: aliceMockClient.identityKeyPair.publicKey,
+            expirationTimestamp: 31337)
+
+        // Setup: Alice creates a sender key
+        // Test: Bob intentionally does not process Alice's SKDM to simulate an unsent key
+        let distributionId = UUID()
+        let _ = try! SenderKeyDistributionMessage(
+            from: aliceMockClient.protocolAddress,
+            distributionId: distributionId,
+            store: aliceMockClient.senderKeyStore,
+            context: NullContext())
+
+        // Test: Alice encrypt's a message using `groupEncryptMessage`
+        let aliceCipher = try! aliceMockClient.createSecretSessionCipher()
+        let alicePlaintext = "beltalowda".data(using: String.Encoding.utf8)!
+        let aliceCiphertext = try! aliceCipher.groupEncryptMessage(
+            recipients: [bobMockClient.protocolAddress],
+            paddedPlaintext: alicePlaintext,
+            senderCertificate: senderCertificate,
+            groupId: "inyalowda".data(using: String.Encoding.utf8)!,
+            distributionId: distributionId,
+            contentHint: .resendable,
+            protocolContext: nil).map { $0 }
+
+        // This splits out irrelevant per-recipient data from the shared sender key message
+        // This is only necessary in tests. The server would usually handle this.
+        let singleRecipientCiphertext = try! sealedSenderMultiRecipientMessageForSingleRecipient(aliceCiphertext)
+
+        // Test: Bob decrypts the ciphertext
+        let bobCipher = try! bobMockClient.createSecretSessionCipher()
+        let bobValidator = SMKCertificateDefaultValidator(trustRoot: ECPublicKey(trustRoot.publicKey))
+        do {
+            _ = try bobCipher.throwswrapped_decryptMessage(
+                certificateValidator: bobValidator,
+                cipherTextData: Data(singleRecipientCiphertext),
+                timestamp: 31335,
+                localE164: bobMockClient.recipientE164,
+                localUuid: bobMockClient.recipientUuid,
+                localDeviceId: bobMockClient.deviceId,
+                protocolContext: nil)
+            XCTFail("Decryption should have failed.")
+        } catch let knownSenderError as SecretSessionKnownSenderError {
+            // Verify: We need to make sure that the sender, group, and contentHint are preserved
+            // through decryption failures because of missing a missing sender key. This will
+            // help with recovery.
+            XCTAssertEqual(knownSenderError.senderAddress, aliceMockClient.address)
+            XCTAssertEqual(knownSenderError.senderDeviceId, UInt32(aliceMockClient.deviceId))
+            XCTAssertEqual(Data(knownSenderError.groupId!), "inyalowda".data(using: String.Encoding.utf8)!)
+            XCTAssertEqual(knownSenderError.contentHint, .resendable)
+
+            if case SignalError.invalidState(_) = knownSenderError.underlyingError {
+                // Expected
+            } else {
+                XCTFail()
+            }
+        } catch {
+            XCTFail("Unexpected error: \(error)")
         }
     }
 

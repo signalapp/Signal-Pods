@@ -42,6 +42,19 @@ public class SMKUDAccessKey: NSObject {
         self.keyData = Randomness.generateRandomBytes(Int32(SMKUDAccessKey.kUDAccessKeyLength))
     }
 
+    private init(keyData: Data) {
+        self.keyData = keyData
+    }
+
+    /// Used to compose multiple Unidentified-Access-Keys for the multiRecipient endpoint
+    public static func ^(lhs: SMKUDAccessKey, rhs: SMKUDAccessKey) -> SMKUDAccessKey {
+        owsAssert(lhs.keyData.count == SMKUDAccessKey.kUDAccessKeyLength)
+        owsAssert(rhs.keyData.count == SMKUDAccessKey.kUDAccessKeyLength)
+
+        let xoredBytes = zip(lhs.keyData, rhs.keyData).map(^)
+        return .init(keyData: Data(xoredBytes))
+    }
+
     // MARK: 
     
     override public func isEqual(_ object: Any?) -> Bool {
