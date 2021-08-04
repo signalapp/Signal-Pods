@@ -61,4 +61,11 @@ public class SMKUDAccessKey: NSObject {
         guard let other = object as? SMKUDAccessKey else { return false }
         return self.keyData == other.keyData
     }
+
+    // Unrestricted UD recipients should have a zeroed access key sent to the multi-recipient endpoint
+    // For a collection of mixed recipients, a zeroed key will have no effect composing keys with xor
+    // For a collection of only unrestricted UD recipients, the server expects a zero access key
+    public static var zeroedKey: SMKUDAccessKey {
+        .init(keyData: Data(repeating: 0, count: kUDAccessKeyLength))
+    }
 }
