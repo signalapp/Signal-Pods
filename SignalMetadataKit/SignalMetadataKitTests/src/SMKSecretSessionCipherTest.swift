@@ -3,9 +3,10 @@
 //
 
 import XCTest
-import SignalMetadataKit
+@testable import SignalMetadataKit
 @testable import SignalClient
 import Curve25519Kit
+import SignalCoreKit
 
 // https://github.com/signalapp/libsignal-metadata-java/blob/master/tests/src/test/java/org/signal/libsignal/metadata/SecretSessionCipherTest.java
 // public class SecretSessionCipherTest extends TestCase {
@@ -39,11 +40,10 @@ class SMKSecretSessionCipherTest: XCTestCase {
         // senderCertificate, "smert za smert".getBytes());
         // NOTE: The java tests don't bother padding the plaintext.
         let alicePlaintext = "smert za smert".data(using: String.Encoding.utf8)!
-        let ciphertext = try! aliceCipher.throwswrapped_encryptMessage(recipient: bobMockClient.address,
-                                                                       deviceId: bobMockClient.deviceId,
-                                                                       paddedPlaintext: alicePlaintext,
-                                                                       senderCertificate: senderCertificate,
-                                                                       protocolContext: nil)
+        let ciphertext = try! aliceCipher.encryptMessage(recipient: bobMockClient.address,
+                                                         deviceId: bobMockClient.deviceId,
+                                                         paddedPlaintext: alicePlaintext,
+                                                         senderCertificate: senderCertificate)
 
         // SealedSessionCipher bobCipher = new SealedSessionCipher(bobStore, new SignalProtocolAddress("+14152222222", 1));
         let bobCipher: SMKSecretSessionCipher = try! bobMockClient.createSecretSessionCipher()
@@ -95,11 +95,14 @@ class SMKSecretSessionCipherTest: XCTestCase {
         // senderCertificate, "и вот я".getBytes());
         // NOTE: The java tests don't bother padding the plaintext.
         let alicePlaintext = "и вот я".data(using: String.Encoding.utf8)!
-        let ciphertext = try! aliceCipher.throwswrapped_encryptMessage(recipient: bobMockClient.address,
-                                                                       deviceId: bobMockClient.deviceId,
-                                                                       paddedPlaintext: alicePlaintext,
-                                                                       senderCertificate: senderCertificate,
-                                                                       protocolContext: nil)
+        let aliceGroupId = Randomness.generateRandomBytes(6)
+        let aliceContentHint = UnidentifiedSenderMessageContent.ContentHint.implicit
+        let ciphertext = try! aliceCipher.encryptMessage(recipient: bobMockClient.address,
+                                                         deviceId: bobMockClient.deviceId,
+                                                         paddedPlaintext: alicePlaintext,
+                                                         contentHint: aliceContentHint,
+                                                         groupId: aliceGroupId,
+                                                         senderCertificate: senderCertificate)
 
         // SecretSessionCipher bobCipher = new SecretSessionCipher(bobStore);
         let bobCipher: SMKSecretSessionCipher = try! bobMockClient.createSecretSessionCipher()
@@ -123,6 +126,8 @@ class SMKSecretSessionCipherTest: XCTestCase {
         } catch let knownSenderError as SecretSessionKnownSenderError {
             // Decryption is expected to fail.
             XCTAssert(knownSenderError.underlyingError is SMKCertificateError )
+            XCTAssertEqual(knownSenderError.contentHint, aliceContentHint)
+            XCTAssertEqual(knownSenderError.groupId, aliceGroupId)
         } catch {
             XCTFail("Unexpected error: \(error)")
         }
@@ -156,11 +161,15 @@ class SMKSecretSessionCipherTest: XCTestCase {
         //     senderCertificate, "и вот я".getBytes());
         // NOTE: The java tests don't bother padding the plaintext.
         let alicePlaintext = "и вот я".data(using: String.Encoding.utf8)!
-        let ciphertext = try! aliceCipher.throwswrapped_encryptMessage(recipient: bobMockClient.address,
-                                                                       deviceId: bobMockClient.deviceId,
-                                                                       paddedPlaintext: alicePlaintext,
-                                                                       senderCertificate: senderCertificate,
-                                                                       protocolContext: nil)
+        let aliceGroupId = Randomness.generateRandomBytes(6)
+        let aliceContentHint = UnidentifiedSenderMessageContent.ContentHint.resendable
+
+        let ciphertext = try! aliceCipher.encryptMessage(recipient: bobMockClient.address,
+                                                         deviceId: bobMockClient.deviceId,
+                                                         paddedPlaintext: alicePlaintext,
+                                                         contentHint: aliceContentHint,
+                                                         groupId: aliceGroupId,
+                                                         senderCertificate: senderCertificate)
 
         // SecretSessionCipher bobCipher = new SecretSessionCipher(bobStore);
         let bobCipher: SMKSecretSessionCipher = try! bobMockClient.createSecretSessionCipher()
@@ -184,6 +193,8 @@ class SMKSecretSessionCipherTest: XCTestCase {
         } catch let knownSenderError as SecretSessionKnownSenderError {
             // Decryption is expected to fail.
             XCTAssert(knownSenderError.underlyingError is SMKCertificateError )
+            XCTAssertEqual(knownSenderError.contentHint, aliceContentHint)
+            XCTAssertEqual(knownSenderError.groupId, aliceGroupId)
         } catch {
             XCTFail("Unexpected error: \(error)")
         }
@@ -218,11 +229,10 @@ class SMKSecretSessionCipherTest: XCTestCase {
         //    senderCertificate, "smert za smert".getBytes());
         // NOTE: The java tests don't bother padding the plaintext.
         let alicePlaintext = "smert za smert".data(using: String.Encoding.utf8)!
-        let ciphertext = try! aliceCipher.throwswrapped_encryptMessage(recipient: bobMockClient.address,
-                                                                       deviceId: bobMockClient.deviceId,
-                                                                       paddedPlaintext: alicePlaintext,
-                                                                       senderCertificate: senderCertificate,
-                                                                       protocolContext: nil)
+        let ciphertext = try! aliceCipher.encryptMessage(recipient: bobMockClient.address,
+                                                         deviceId: bobMockClient.deviceId,
+                                                         paddedPlaintext: alicePlaintext,
+                                                         senderCertificate: senderCertificate)
 
         // SecretSessionCipher bobCipher = new SecretSessionCipher(bobStore);
         let bobCipher: SMKSecretSessionCipher = try! bobMockClient.createSecretSessionCipher()

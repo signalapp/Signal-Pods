@@ -3,7 +3,7 @@
 //
 
 import XCTest
-import SignalMetadataKit
+@testable import SignalMetadataKit
 import SignalCoreKit
 import Curve25519Kit
 import SignalClient
@@ -51,11 +51,10 @@ class SMKTest: XCTestCase {
         let plaintext = Randomness.generateRandomBytes(200)
         let paddedPlaintext = (plaintext as NSData).paddedMessageBody()
         let senderCertificate = try! SenderCertificate(buildSenderCertificateProto(senderClient: aliceMockClient).serializedData())
-        let encryptedMessage = try! aliceToBobCipher.throwswrapped_encryptMessage(recipient: bobMockClient.address,
-                                                                                  deviceId: bobMockClient.deviceId,
-                                                                                  paddedPlaintext: paddedPlaintext,
-                                                                                  senderCertificate: senderCertificate,
-                                                                                  protocolContext: nil)
+        let encryptedMessage = try! aliceToBobCipher.encryptMessage(recipient: bobMockClient.address,
+                                                                    deviceId: bobMockClient.deviceId,
+                                                                    paddedPlaintext: paddedPlaintext,
+                                                                    senderCertificate: senderCertificate)
 
         let messageTimestamp = NSDate.ows_millisecondTimeStamp()
 

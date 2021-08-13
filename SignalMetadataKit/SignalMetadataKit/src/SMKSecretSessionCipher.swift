@@ -171,25 +171,42 @@ fileprivate extension SMKMessageType {
 
     // MARK: - Public
 
-    // public byte[] encrypt(SignalProtocolAddress destinationAddress, SenderCertificate senderCertificate, byte[] paddedPlaintext)
-    public func throwswrapped_encryptMessage(recipient: SMKAddress,
-                                             deviceId: Int32,
-                                             paddedPlaintext: Data,
-                                             senderCertificate: SenderCertificate,
-                                             protocolContext: StoreContext?) throws -> Data {
+    public func encryptMessage(
+        recipient: SMKAddress,
+        deviceId: Int32,
+        paddedPlaintext: Data,
+        contentHint: UnidentifiedSenderMessageContent.ContentHint,
+        groupId: Data?,
+        senderCertificate: SenderCertificate,
+        protocolContext: StoreContext
+    ) throws -> Data {
+
         guard deviceId > 0 else {
             throw SMKError.assertionError(description: "\(logTag) invalid deviceId")
         }
-
-        // CiphertextMessage message = new SessionCipher(signalProtocolStore, destinationAddress).encrypt(paddedPlaintext);
         let recipientAddress = try ProtocolAddress(from: recipient, deviceId: UInt32(bitPattern: deviceId))
-        // Allow nil contexts for testing.
-        return Data(try sealedSenderEncrypt(message: paddedPlaintext,
-                                            for: recipientAddress,
-                                            from: senderCertificate,
-                                            sessionStore: sessionStore,
-                                            identityStore: identityStore,
-                                            context: protocolContext ?? NullContext()))
+
+
+        let ciphertextMessage = try signalEncrypt(
+            message: paddedPlaintext,
+            for: recipientAddress,
+            sessionStore: sessionStore,
+            identityStore: identityStore,
+            context: protocolContext)
+
+        let usmc = try UnidentifiedSenderMessageContent(
+            ciphertextMessage,
+            from: senderCertificate,
+            contentHint: contentHint,
+            groupId: groupId ?? Data())
+
+        let outerBytes = try sealedSenderEncrypt(
+            usmc,
+            for: recipientAddress,
+            identityStore: identityStore,
+            context: protocolContext)
+
+        return Data(outerBytes)
     }
 
     public func groupEncryptMessage(recipients: [ProtocolAddress],
@@ -336,5 +353,30 @@ fileprivate extension SMKMessageType {
                 description: "\(logTag) Not prepared to handle this message type: \(unknownType.rawValue)")
         }
         return Data(plaintextData)
+    }
+}
+
+// MARK: - Internal for testing
+
+extension SMKSecretSessionCipher {
+
+    // Only allow nil contexts for testing
+    func encryptMessage(
+        recipient: SMKAddress,
+        deviceId: Int32,
+        paddedPlaintext: Data,
+        contentHint: UnidentifiedSenderMessageContent.ContentHint = .default,
+        groupId: Data? = nil,
+        senderCertificate: SenderCertificate,
+        protocolContext: StoreContext? = nil
+    ) throws -> Data {
+        try encryptMessage(
+            recipient: recipient,
+            deviceId: deviceId,
+            paddedPlaintext: paddedPlaintext,
+            contentHint: contentHint,
+            groupId: groupId,
+            senderCertificate: senderCertificate,
+            protocolContext: protocolContext ?? NullContext())
     }
 }
