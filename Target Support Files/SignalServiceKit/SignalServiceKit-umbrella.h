@@ -58,6 +58,7 @@
 #import "OWSDisappearingMessagesConfigurationMessage.h"
 #import "OWSDynamicOutgoingMessage.h"
 #import "OWSEndSessionMessage.h"
+#import "OWSStaticOutgoingMessage.h"
 #import "OWSVerificationStateChangeMessage.h"
 #import "TSErrorMessage.h"
 #import "TSIncomingMessage.h"
