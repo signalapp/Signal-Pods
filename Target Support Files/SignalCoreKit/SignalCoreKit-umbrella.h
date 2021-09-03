@@ -12,6 +12,7 @@
 
 #import "Cryptography.h"
 #import "iOSVersions.h"
+#import "UnfairLock.h"
 #import "NSData+OWS.h"
 #import "NSDate+OWS.h"
 #import "NSObject+OWS.h"

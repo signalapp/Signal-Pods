@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2021 Open Whisper Systems. All rights reserved.
 //
 
 #import "Threading.h"
@@ -30,6 +30,14 @@ void DispatchSyncMainThreadSafe(dispatch_block_t block)
             block();
         });
     }
+}
+
+dispatch_queue_t DispatchCurrentQueue(void)
+{
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    return dispatch_get_current_queue();
+#pragma clang diagnostic pop
 }
 
 NS_ASSUME_NONNULL_END

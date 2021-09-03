@@ -206,7 +206,6 @@
 #import "SSKAsserts.h"
 #import "TestModel.h"
 #import "UIImage+OWS.h"
-#import "UnfairLock.h"
 
 FOUNDATION_EXPORT double SignalServiceKitVersionNumber;
 FOUNDATION_EXPORT const unsigned char SignalServiceKitVersionString[];
