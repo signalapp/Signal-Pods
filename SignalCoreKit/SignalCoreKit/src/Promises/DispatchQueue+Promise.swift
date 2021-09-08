@@ -7,11 +7,10 @@ import Foundation
 public enum PromiseNamespace { case promise }
 
 public extension DispatchQueue {
-    class var current: DispatchQueue { DispatchCurrentQueue() }
     func asyncIfNecessary(
         execute work: @escaping @convention(block) () -> Void
     ) {
-        if self == Self.current {
+        if DispatchQueueIsCurrentQueue(self) {
             work()
         } else {
             async { work() }

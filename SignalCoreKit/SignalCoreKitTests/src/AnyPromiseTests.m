@@ -45,19 +45,19 @@ NS_ASSUME_NONNULL_BEGIN
     AnyPromise
         .withFutureOn(globalQueue,
             ^(AnyFuture *future) {
-                XCTAssertEqual(DispatchCurrentQueue(), globalQueue);
+                XCTAssertTrue(DispatchQueueIsCurrentQueue(globalQueue));
                 [expectation fulfill];
                 [future resolveWithValue:@"abc"];
             })
         .mapOn(globalQueue,
             ^(id value) {
-                XCTAssertEqual(DispatchCurrentQueue(), globalQueue);
+                XCTAssertTrue(DispatchQueueIsCurrentQueue(globalQueue));
                 [mapExpectation fulfill];
                 NSString *string = (NSString *)value;
                 return [string stringByAppendingString:@"xyz"];
             })
         .done(^(id value) {
-            XCTAssertEqual(DispatchCurrentQueue(), dispatch_get_main_queue());
+            XCTAssertTrue(DispatchQueueIsCurrentQueue(dispatch_get_main_queue()));
             NSString *string = (NSString *)value;
             XCTAssert([string isEqualToString:@"abcxyz"]);
             [doneExpectation fulfill];
@@ -76,19 +76,19 @@ NS_ASSUME_NONNULL_BEGIN
     AnyPromise
         .withFutureOn(globalQueue,
             ^(AnyFuture *future) {
-                XCTAssertEqual(DispatchCurrentQueue(), globalQueue);
+                XCTAssertTrue(DispatchQueueIsCurrentQueue(globalQueue));
                 [expectation fulfill];
                 [future resolveWithValue:@"abc"];
             })
         .mapOn(dispatch_get_main_queue(),
             ^(id value) {
-                XCTAssertEqual(DispatchCurrentQueue(), dispatch_get_main_queue());
+                XCTAssertTrue(DispatchQueueIsCurrentQueue(dispatch_get_main_queue()));
                 [mapExpectation fulfill];
                 NSString *string = (NSString *)value;
                 return [string stringByAppendingString:@"xyz"];
             })
         .done(^(id value) {
-            XCTAssertEqual(DispatchCurrentQueue(), dispatch_get_main_queue());
+            XCTAssertTrue(DispatchQueueIsCurrentQueue(dispatch_get_main_queue()));
             NSString *string = (NSString *)value;
             XCTAssert([string isEqualToString:@"abcxyz"]);
             [doneExpectation fulfill];

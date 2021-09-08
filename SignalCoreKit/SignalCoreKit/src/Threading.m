@@ -32,12 +32,13 @@ void DispatchSyncMainThreadSafe(dispatch_block_t block)
     }
 }
 
-dispatch_queue_t DispatchCurrentQueue(void)
+BOOL DispatchQueueIsCurrentQueue(dispatch_queue_t testQueue)
 {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    return dispatch_get_current_queue();
+    void *currentQueuePtr = (__bridge void *)dispatch_get_current_queue();
 #pragma clang diagnostic pop
+    return (currentQueuePtr == (__bridge void *)testQueue);
 }
 
 NS_ASSUME_NONNULL_END

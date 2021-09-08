@@ -13,15 +13,15 @@ class PromiseTests: XCTestCase {
         let doneExpectation = expectation(description: "Expect done on main queue")
 
         firstly(on: .global()) { () -> String in
-            XCTAssertEqual(DispatchQueue.global(), .current)
+            XCTAssertTrue(DispatchQueueIsProbablyCurrentQueue(.global()))
             guaranteeExpectation.fulfill()
             return "abc"
         }.map(on: .global()) { string -> String in
-            XCTAssertEqual(DispatchQueue.global(), .current)
+            XCTAssertTrue(DispatchQueueIsProbablyCurrentQueue(.global()))
             mapExpectation.fulfill()
             return string + "xyz"
         }.done { string in
-            XCTAssertEqual(DispatchQueue.main, .current)
+            XCTAssertTrue(DispatchQueueIsProbablyCurrentQueue(.main))
             XCTAssertEqual(string, "abcxyz")
             doneExpectation.fulfill()
         }
@@ -35,15 +35,15 @@ class PromiseTests: XCTestCase {
         let doneExpectation = expectation(description: "Expect done on main queue")
 
         firstly(on: .global()) { () -> String in
-            XCTAssertEqual(DispatchQueue.global(), .current)
+            XCTAssertTrue(DispatchQueueIsProbablyCurrentQueue(.global()))
             guaranteeExpectation.fulfill()
             return "abc"
         }.map(on: .main) { string -> String in
-            XCTAssertEqual(DispatchQueue.main, .current)
+            XCTAssertTrue(DispatchQueueIsProbablyCurrentQueue(.main))
             mapExpectation.fulfill()
             return string + "xyz"
         }.done { string in
-            XCTAssertEqual(DispatchQueue.main, .current)
+            XCTAssertTrue(DispatchQueueIsProbablyCurrentQueue(.main))
             XCTAssertEqual(string, "abcxyz")
             doneExpectation.fulfill()
         }
@@ -61,17 +61,17 @@ class PromiseTests: XCTestCase {
         }
 
         firstly(on: .global()) { () -> String in
-            XCTAssertEqual(DispatchQueue.global(), .current)
+            XCTAssertTrue(DispatchQueueIsProbablyCurrentQueue(.global()))
             guaranteeExpectation.fulfill()
             return "abc"
         }.map { _ -> String in
-            XCTAssertEqual(DispatchQueue.main, .current)
+            XCTAssertTrue(DispatchQueueIsProbablyCurrentQueue(.main))
             mapExpectation.fulfill()
             throw SimpleError.assertion
         }.done(on: .main) { _ in
             XCTAssert(false, "Done should never be called.")
         }.catch { error in
-            XCTAssertEqual(DispatchQueue.main, .current)
+            XCTAssertTrue(DispatchQueueIsProbablyCurrentQueue(.main))
             XCTAssertEqual(error as? SimpleError, SimpleError.assertion)
             catchExpectation.fulfill()
         }
@@ -245,16 +245,16 @@ class PromiseTests: XCTestCase {
         let doneExpectation = expectation(description: "Expect done on main queue")
 
         AnyPromise(firstly(on: .global()) { () -> String in
-            XCTAssertEqual(DispatchQueue.global(), .current)
+            XCTAssertTrue(DispatchQueueIsProbablyCurrentQueue(.global()))
             anyPromiseExpectation.fulfill()
             return "abc"
         }).map(on: .global()) { string -> String in
             XCTAssertTrue(string is String)
-            XCTAssertEqual(DispatchQueue.global(), .current)
+            XCTAssertTrue(DispatchQueueIsProbablyCurrentQueue(.global()))
             mapExpectation.fulfill()
             return (string as! String) + "xyz"
         }.done { string in
-            XCTAssertEqual(DispatchQueue.main, .current)
+            XCTAssertTrue(DispatchQueueIsProbablyCurrentQueue(.main))
             XCTAssertEqual(string, "abcxyz")
             doneExpectation.fulfill()
         }.cauterize()
