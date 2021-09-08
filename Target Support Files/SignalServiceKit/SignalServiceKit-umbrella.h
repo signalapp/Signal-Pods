@@ -122,7 +122,6 @@
 #import "OWSSignalService.h"
 #import "IncomingGroupsV2MessageJob.h"
 #import "SSKMessageDecryptJobRecord.h"
-#import "OWSWebSocket.h"
 #import "TSPaymentModel.h"
 #import "TSPaymentModels.h"
 #import "TSPaymentRequestModel.h"

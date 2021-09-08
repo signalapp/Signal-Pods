@@ -6,6 +6,7 @@ import Foundation
 
 public enum PromiseError: String, Error {
     case cancelled
+    case whenResolvedRejected
 }
 
 public final class Promise<Value>: Thenable, Catchable {

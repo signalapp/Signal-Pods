@@ -21,12 +21,20 @@ public class AnyPromise: NSObject {
             thenable.done { self.anyFuture.resolve($0) }.cauterize()
         }
     }
-
+    
     @objc
     @available(swift, obsoleted: 1.0)
     public class func promiseWithValue(_ value: Any) -> AnyPromise {
         let promise = AnyPromise()
         promise.resolve(value)
+        return promise
+    }
+    
+    @objc
+    @available(swift, obsoleted: 1.0)
+    public class func promiseWithError(_ error: Error) -> AnyPromise {
+        let promise = AnyPromise()
+        promise.reject(error)
         return promise
     }
 
@@ -160,15 +168,25 @@ public class AnyPromise: NSObject {
     @objc
     @available(swift, obsoleted: 1.0)
     public class func when(resolved promises: [AnyPromise]) -> AnyPromise {
-        let when: Guarantee<[Any]> = Promise.when(resolved: promises.map { $0.anyPromise }).map { results in
-            results.map { result in
+        let (promise, future) = Promise<[Any]>.pending()
+        Promise.when(resolved: promises.map { $0.anyPromise }).done { results in
+            var hasFailure = false
+            let values: [Any] = results.compactMap { result in
                 switch result {
-                case .success(let value): return value
-                case .failure(let error): return error
+                case .success(let value):
+                    return value
+                case .failure:
+                    hasFailure = true
+                    return nil
                 }
             }
+            if hasFailure {
+                future.reject(PromiseError.whenResolvedRejected)
+            } else {
+                future.resolve(values)
+            }
         }
-        return AnyPromise(when)
+        return AnyPromise(promise)
     }
 }
 
