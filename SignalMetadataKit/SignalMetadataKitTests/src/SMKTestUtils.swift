@@ -54,7 +54,7 @@ class MockClient: NSObject {
         self.identityKeyPair = IdentityKeyPair.generate()
 
         let protocolStore = InMemorySignalProtocolStore(identity: identityKeyPair,
-                                                        deviceId: UInt32(bitPattern: deviceId))
+                                                        registrationId: UInt32(registrationId))
 
         sessionStore = protocolStore
         preKeyStore = protocolStore
