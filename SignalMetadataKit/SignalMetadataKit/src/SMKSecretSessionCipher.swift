@@ -12,6 +12,7 @@ public struct SecretSessionKnownSenderError: Error {
     public let senderDeviceId: UInt32
     public let cipherType: CiphertextMessage.MessageType
     public let groupId: Data?
+    public let unsealedContent: Data
     public let contentHint: UnidentifiedSenderMessageContent.ContentHint
     public let underlyingError: Error
 
@@ -20,6 +21,7 @@ public struct SecretSessionKnownSenderError: Error {
         self.senderDeviceId = messageContent.senderCertificate.sender.deviceId
         self.cipherType = messageContent.messageType
         self.groupId = messageContent.groupId.map { Data($0) }
+        self.unsealedContent = Data(messageContent.contents)
         self.contentHint = messageContent.contentHint
         self.underlyingError = underlyingError
     }

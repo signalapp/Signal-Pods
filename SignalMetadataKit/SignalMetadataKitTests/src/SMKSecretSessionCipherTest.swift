@@ -128,6 +128,14 @@ class SMKSecretSessionCipherTest: XCTestCase {
             XCTAssert(knownSenderError.underlyingError is SMKCertificateError )
             XCTAssertEqual(knownSenderError.contentHint, aliceContentHint)
             XCTAssertEqual(knownSenderError.groupId, aliceGroupId)
+            XCTAssertNoThrow(
+                try DecryptionErrorMessage(
+                    originalMessageBytes: knownSenderError.unsealedContent,
+                    type: knownSenderError.cipherType,
+                    timestamp: 31335,
+                    originalSenderDeviceId: knownSenderError.senderDeviceId
+                )
+            )
         } catch {
             XCTFail("Unexpected error: \(error)")
         }
@@ -195,6 +203,14 @@ class SMKSecretSessionCipherTest: XCTestCase {
             XCTAssert(knownSenderError.underlyingError is SMKCertificateError )
             XCTAssertEqual(knownSenderError.contentHint, aliceContentHint)
             XCTAssertEqual(knownSenderError.groupId, aliceGroupId)
+            XCTAssertNoThrow(
+                try DecryptionErrorMessage(
+                    originalMessageBytes: knownSenderError.unsealedContent,
+                    type: knownSenderError.cipherType,
+                    timestamp: 31338,
+                    originalSenderDeviceId: knownSenderError.senderDeviceId
+                )
+            )
         } catch {
             XCTFail("Unexpected error: \(error)")
         }
@@ -385,6 +401,14 @@ class SMKSecretSessionCipherTest: XCTestCase {
             XCTAssertEqual(knownSenderError.senderDeviceId, UInt32(aliceMockClient.deviceId))
             XCTAssertEqual(Data(knownSenderError.groupId!), "inyalowda".data(using: String.Encoding.utf8)!)
             XCTAssertEqual(knownSenderError.contentHint, .resendable)
+            XCTAssertNoThrow(
+                try DecryptionErrorMessage(
+                    originalMessageBytes: knownSenderError.unsealedContent,
+                    type: knownSenderError.cipherType,
+                    timestamp: 31335,
+                    originalSenderDeviceId: knownSenderError.senderDeviceId
+                )
+            )
 
             if case SignalError.invalidState(_) = knownSenderError.underlyingError {
                 // Expected
