@@ -261,4 +261,24 @@ class PromiseTests: XCTestCase {
 
         waitForExpectations(timeout: 5)
     }
+
+    func test_deepPromiseChain() {
+        var sharedValue = 0
+        var promise = firstly(on: .global()) {
+            sharedValue += 1
+        }
+
+        let testDepth = 1000
+        for _ in 0..<testDepth {
+            promise = promise.then(on: .global()) {
+                sharedValue += 1
+                return .value(())
+            }
+        }
+        promise.done(on: .global()) {
+            sharedValue += 1
+        }.wait()
+
+        XCTAssertEqual(sharedValue, 1 + testDepth + 1)
+    }
 }

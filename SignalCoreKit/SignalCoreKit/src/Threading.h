@@ -20,4 +20,9 @@ void DispatchSyncMainThreadSafe(dispatch_block_t block);
 /// for perf optimizations. This should never be used to determine if some pattern of block dispatch is deadlock free.
 BOOL DispatchQueueIsCurrentQueue(dispatch_queue_t queue);
 
+/// Returns a value [0.0, 1.0] indicating the proportion of the current thread's stack that's in-use
+/// Returns NaN on any unexpected error
+/// Only for use in SignalCoreKit's promise implementation. Please do not use.
+double _CurrentStackUsage(void);
+
 NS_ASSUME_NONNULL_END

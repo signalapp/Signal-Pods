@@ -10,7 +10,7 @@ public extension DispatchQueue {
     func asyncIfNecessary(
         execute work: @escaping @convention(block) () -> Void
     ) {
-        if DispatchQueueIsCurrentQueue(self) {
+        if DispatchQueueIsCurrentQueue(self), _CurrentStackUsage() < 0.8 {
             work()
         } else {
             async { work() }
