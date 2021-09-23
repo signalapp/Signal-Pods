@@ -97,7 +97,6 @@ EOM
   esac
 }
 if [[ "$CONFIGURATION" == "Debug" ]]; then
-  install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/8395.der"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/authority-mobilecoin-testnet.pem"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/authority-signal-testnet.pem"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/DigiCertGlobalRootG2.crt"
@@ -110,6 +109,7 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/GTSR3.crt"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/GTSR4.crt"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/ias-root.cer"
+  install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/isrgrootx1.der"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/SFSRootCAG2.crt"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/signal-mainnet.der"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/textsecure.cer"
@@ -117,7 +117,6 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_resource "${PODS_ROOT}/SAMKeychain/Support/SAMKeychain.bundle"
 fi
 if [[ "$CONFIGURATION" == "App Store Release" ]]; then
-  install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/8395.der"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/authority-mobilecoin-testnet.pem"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/authority-signal-testnet.pem"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/DigiCertGlobalRootG2.crt"
@@ -130,6 +129,7 @@ if [[ "$CONFIGURATION" == "App Store Release" ]]; then
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/GTSR3.crt"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/GTSR4.crt"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/ias-root.cer"
+  install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/isrgrootx1.der"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/SFSRootCAG2.crt"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/signal-mainnet.der"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/textsecure.cer"
@@ -137,7 +137,6 @@ if [[ "$CONFIGURATION" == "App Store Release" ]]; then
   install_resource "${PODS_ROOT}/SAMKeychain/Support/SAMKeychain.bundle"
 fi
 if [[ "$CONFIGURATION" == "Profiling" ]]; then
-  install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/8395.der"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/authority-mobilecoin-testnet.pem"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/authority-signal-testnet.pem"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/DigiCertGlobalRootG2.crt"
@@ -150,6 +149,7 @@ if [[ "$CONFIGURATION" == "Profiling" ]]; then
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/GTSR3.crt"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/GTSR4.crt"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/ias-root.cer"
+  install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/isrgrootx1.der"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/SFSRootCAG2.crt"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/signal-mainnet.der"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/textsecure.cer"
@@ -157,7 +157,6 @@ if [[ "$CONFIGURATION" == "Profiling" ]]; then
   install_resource "${PODS_ROOT}/SAMKeychain/Support/SAMKeychain.bundle"
 fi
 if [[ "$CONFIGURATION" == "Testable Release" ]]; then
-  install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/8395.der"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/authority-mobilecoin-testnet.pem"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/authority-signal-testnet.pem"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/DigiCertGlobalRootG2.crt"
@@ -170,6 +169,7 @@ if [[ "$CONFIGURATION" == "Testable Release" ]]; then
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/GTSR3.crt"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/GTSR4.crt"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/ias-root.cer"
+  install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/isrgrootx1.der"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/SFSRootCAG2.crt"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/signal-mainnet.der"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/textsecure.cer"
@@ -177,7 +177,6 @@ if [[ "$CONFIGURATION" == "Testable Release" ]]; then
   install_resource "${PODS_ROOT}/SAMKeychain/Support/SAMKeychain.bundle"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
-  install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/8395.der"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/authority-mobilecoin-testnet.pem"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/authority-signal-testnet.pem"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/DigiCertGlobalRootG2.crt"
@@ -190,6 +189,7 @@ if [[ "$CONFIGURATION" == "Release" ]]; then
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/GTSR3.crt"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/GTSR4.crt"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/ias-root.cer"
+  install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/isrgrootx1.der"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/SFSRootCAG2.crt"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/signal-mainnet.der"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/textsecure.cer"
