@@ -1,6 +1,6 @@
 // Software License Agreement (BSD License)
 //
-// Copyright (c) 2010-2021, Deusty, LLC
+// Copyright (c) 2010-2020, Deusty, LLC
 // All rights reserved.
 //
 // Redistribution and use of this software in source and binary forms,
@@ -36,38 +36,40 @@
 #pragma mark -
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-@interface DDContextAllowlistFilterLogFormatter () {
+@interface DDContextWhitelistFilterLogFormatter () {
     DDLoggingContextSet *_contextSet;
 }
 @end
 
-@implementation DDContextAllowlistFilterLogFormatter
+
+@implementation DDContextWhitelistFilterLogFormatter
 
 - (instancetype)init {
     if ((self = [super init])) {
         _contextSet = [[DDLoggingContextSet alloc] init];
     }
+
     return self;
 }
 
-- (void)addToAllowlist:(NSInteger)loggingContext {
+- (void)addToWhitelist:(NSInteger)loggingContext {
     [_contextSet addToSet:loggingContext];
 }
 
-- (void)removeFromAllowlist:(NSInteger)loggingContext {
+- (void)removeFromWhitelist:(NSInteger)loggingContext {
     [_contextSet removeFromSet:loggingContext];
 }
 
-- (NSArray *)allowlist {
+- (NSArray *)whitelist {
     return [_contextSet currentSet];
 }
 
-- (BOOL)isOnAllowlist:(NSInteger)loggingContext {
+- (BOOL)isOnWhitelist:(NSInteger)loggingContext {
     return [_contextSet isInSet:loggingContext];
 }
 
 - (NSString *)formatLogMessage:(DDLogMessage *)logMessage {
-    if ([self isOnAllowlist:logMessage->_context]) {
+    if ([self isOnWhitelist:logMessage->_context]) {
         return logMessage->_message;
     } else {
         return nil;
@@ -76,39 +78,45 @@
 
 @end
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-@interface DDContextDenylistFilterLogFormatter () {
+@interface DDContextBlacklistFilterLogFormatter () {
     DDLoggingContextSet *_contextSet;
 }
+
 @end
 
-@implementation DDContextDenylistFilterLogFormatter
+
+@implementation DDContextBlacklistFilterLogFormatter
 
 - (instancetype)init {
     if ((self = [super init])) {
         _contextSet = [[DDLoggingContextSet alloc] init];
     }
+
     return self;
 }
 
-- (void)addToDenylist:(NSInteger)loggingContext {
+- (void)addToBlacklist:(NSInteger)loggingContext {
     [_contextSet addToSet:loggingContext];
 }
 
-- (void)removeFromDenylist:(NSInteger)loggingContext {
+- (void)removeFromBlacklist:(NSInteger)loggingContext {
     [_contextSet removeFromSet:loggingContext];
 }
 
-- (NSArray *)denylist {
+- (NSArray *)blacklist {
     return [_contextSet currentSet];
 }
 
-- (BOOL)isOnDenylist:(NSInteger)loggingContext {
+- (BOOL)isOnBlacklist:(NSInteger)loggingContext {
     return [_contextSet isInSet:loggingContext];
 }
 
 - (NSString *)formatLogMessage:(DDLogMessage *)logMessage {
-    if ([self isOnDenylist:logMessage->_context]) {
+    if ([self isOnBlacklist:logMessage->_context]) {
         return nil;
     } else {
         return logMessage->_message;
@@ -121,11 +129,14 @@
 #pragma mark -
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
 @interface DDLoggingContextSet () {
     pthread_mutex_t _mutex;
     NSMutableSet *_set;
 }
+
 @end
+
 
 @implementation DDLoggingContextSet
 
