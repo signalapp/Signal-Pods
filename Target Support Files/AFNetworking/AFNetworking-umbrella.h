@@ -11,6 +11,7 @@
 #endif
 
 #import "AFSecurityPolicy.h"
+#import "AFURLRequestSerialization.h"
 
 FOUNDATION_EXPORT double AFNetworkingVersionNumber;
 FOUNDATION_EXPORT const unsigned char AFNetworkingVersionString[];
