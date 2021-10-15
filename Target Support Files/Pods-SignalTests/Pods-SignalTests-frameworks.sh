@@ -191,7 +191,6 @@ code_sign_if_enabled() {
 
 if [[ "$CONFIGURATION" == "App Store Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/AFNetworking/AFNetworking.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/BonMot/BonMot.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/CGRPCZlib/CGRPCZlib.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/CNIOAtomics/CNIOAtomics.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/CNIOBoringSSL/CNIOBoringSSL.framework"
@@ -239,7 +238,6 @@ if [[ "$CONFIGURATION" == "App Store Release" ]]; then
 fi
 if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/AFNetworking/AFNetworking.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/BonMot/BonMot.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/CGRPCZlib/CGRPCZlib.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/CNIOAtomics/CNIOAtomics.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/CNIOBoringSSL/CNIOBoringSSL.framework"
@@ -287,7 +285,6 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
 fi
 if [[ "$CONFIGURATION" == "Profiling" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/AFNetworking/AFNetworking.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/BonMot/BonMot.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/CGRPCZlib/CGRPCZlib.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/CNIOAtomics/CNIOAtomics.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/CNIOBoringSSL/CNIOBoringSSL.framework"
@@ -335,7 +332,6 @@ if [[ "$CONFIGURATION" == "Profiling" ]]; then
 fi
 if [[ "$CONFIGURATION" == "Testable Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/AFNetworking/AFNetworking.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/BonMot/BonMot.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/CGRPCZlib/CGRPCZlib.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/CNIOAtomics/CNIOAtomics.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/CNIOBoringSSL/CNIOBoringSSL.framework"
