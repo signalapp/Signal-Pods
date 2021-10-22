@@ -9,7 +9,7 @@ public final class Guarantee<Value>: Thenable {
     public var result: Result<Value, Error>? { future.result }
     public var isSealed: Bool { future.isSealed }
 
-    class func pending() -> (Guarantee<Value>, GuaranteeFuture<Value>) {
+    public static func pending() -> (Guarantee<Value>, GuaranteeFuture<Value>) {
         let guarantee = Guarantee<Value>()
         return (guarantee, GuaranteeFuture(future: guarantee.future))
     }

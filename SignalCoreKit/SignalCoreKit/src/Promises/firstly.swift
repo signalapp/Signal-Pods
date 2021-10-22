@@ -16,6 +16,12 @@ public func firstly<T: Thenable>(
     return promise
 }
 
+public func firstly<T>(_ block: () -> Guarantee<T>) -> Guarantee<T> {
+    let (promise, future) = Guarantee<T>.pending()
+    future.resolve(with: block())
+    return promise
+}
+
 public func firstly<T: Thenable>(
     on queue: DispatchQueue,
     _ block: @escaping () throws -> T
@@ -27,6 +33,14 @@ public func firstly<T: Thenable>(
         } catch {
             future.reject(error)
         }
+    }
+    return promise
+}
+
+public func firstly<T>(on queue: DispatchQueue, _ block: @escaping () -> Guarantee<T>) -> Guarantee<T> {
+    let (promise, future) = Guarantee<T>.pending()
+    queue.asyncIfNecessary {
+        future.resolve(on: queue, with: block())
     }
     return promise
 }

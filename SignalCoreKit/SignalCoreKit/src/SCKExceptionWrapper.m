@@ -25,7 +25,9 @@ NSError *SCKExceptionWrapperErrorMake(NSException *exception)
         block();
         return YES;
     } @catch (NSException *exception) {
-        *outError = SCKExceptionWrapperErrorMake(exception);
+        if (outError) {
+            *outError = SCKExceptionWrapperErrorMake(exception);
+        }
         return NO;
     }
 }
