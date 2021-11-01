@@ -242,6 +242,7 @@ if [[ "$CONFIGURATION" == "App Store Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/SwiftNIOTransportServices/NIOTransportServices.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/gRPC-Swift/GRPC.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/lottie-ios/Lottie.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/MobileCoinMinimal/MobileCoinMinimal.framework"
   install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/OpenSSL/OpenSSL.framework"
   install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/WebRTC/WebRTC.framework"
 fi
@@ -293,6 +294,7 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/SwiftNIOTransportServices/NIOTransportServices.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/gRPC-Swift/GRPC.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/lottie-ios/Lottie.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/MobileCoinMinimal/MobileCoinMinimal.framework"
   install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/OpenSSL/OpenSSL.framework"
   install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/WebRTC/WebRTC.framework"
 fi
@@ -344,6 +346,7 @@ if [[ "$CONFIGURATION" == "Profiling" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/SwiftNIOTransportServices/NIOTransportServices.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/gRPC-Swift/GRPC.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/lottie-ios/Lottie.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/MobileCoinMinimal/MobileCoinMinimal.framework"
   install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/OpenSSL/OpenSSL.framework"
   install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/WebRTC/WebRTC.framework"
 fi
@@ -446,6 +449,7 @@ if [[ "$CONFIGURATION" == "Testable Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/SwiftNIOTransportServices/NIOTransportServices.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/gRPC-Swift/GRPC.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/lottie-ios/Lottie.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/MobileCoinMinimal/MobileCoinMinimal.framework"
   install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/OpenSSL/OpenSSL.framework"
   install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/WebRTC/WebRTC.framework"
 fi

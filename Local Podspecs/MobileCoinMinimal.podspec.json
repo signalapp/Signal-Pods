@@ -1,0 +1,55 @@
+{
+  "name": "MobileCoinMinimal",
+  "version": "1.2.0-pre2",
+  "summary": "A library for communicating with MobileCoin network",
+  "authors": "MobileCoin",
+  "homepage": "https://www.mobilecoin.com/",
+  "license": {
+    "type": "GPLv3"
+  },
+  "source": {
+    "git": "https://github.com/mobilecoinofficial/MobileCoin-Swift.git",
+    "tag": "v1.2.0-pre2",
+    "submodules": true
+  },
+  "platforms": {
+    "ios": "10.0"
+  },
+  "source_files": [
+    "Sources/**/*.{h,m,swift}",
+    "LibMobileCoin/**/*.{h,m,swift}",
+    "Glue/**/*.{h,m,swift}"
+  ],
+  "dependencies": {
+    "Logging": [
+      "~> 1.4"
+    ],
+    "SwiftProtobuf": [
+
+    ],
+    "CocoaLumberjack": [
+
+    ]
+  },
+  "swift_versions": "5.2",
+  "pod_target_xcconfig": {
+    "GCC_OPTIMIZATION_LEVEL": "z",
+    "LLVM_LTO": "YES",
+    "ENABLE_BITCODE": "YES",
+    "SUPPORTS_MACCATALYST": "YES",
+    "VALID_ARCHS[sdk=iphoneos*]": "arm64",
+    "VALID_ARCHS[sdk=iphonesimulator*]": "x86_64 arm64"
+  },
+  "testspecs": [
+    {
+      "name": "Tests",
+      "test_type": "unit",
+      "source_files": [
+        "Tests/**/*.{h,m,swift}",
+        "TestGlue/**/*.{h,m,swift}"
+      ],
+      "resources": "Tests/**/*.*"
+    }
+  ],
+  "swift_version": "5.2"
+}

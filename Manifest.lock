@@ -82,6 +82,14 @@ PODS:
     - SwiftNIOHPACK (~> 1.16)
     - SwiftNIOHTTP1 (~> 2.18)
     - SwiftProtobuf (~> 1.5)
+  - MobileCoinMinimal (1.2.0-pre2):
+    - CocoaLumberjack
+    - Logging (~> 1.4)
+    - SwiftProtobuf
+  - MobileCoinMinimal/Tests (1.2.0-pre2):
+    - CocoaLumberjack
+    - Logging (~> 1.4)
+    - SwiftProtobuf
   - OpenSSL-Universal (1.1.1100)
   - PureLayout (3.1.4)
   - Reachability (3.2)
@@ -222,6 +230,8 @@ DEPENDENCIES:
   - lottie-ios
   - Mantle (from `https://github.com/signalapp/Mantle`, branch `signal-master`)
   - MobileCoin (from `https://github.com/mobilecoinofficial/MobileCoin-Swift.git`, tag `v1.1.0`)
+  - MobileCoinMinimal (from `https://github.com/signalapp/MobileCoin-Swift.git`, branch `charlesmchen/mobileCoinMinimal`)
+  - MobileCoinMinimal/Tests (from `https://github.com/signalapp/MobileCoin-Swift.git`, branch `charlesmchen/mobileCoinMinimal`)
   - OpenSSL-Universal (from `https://github.com/signalapp/GRKOpenSSLFramework`)
   - PureLayout
   - Reachability
@@ -301,6 +311,9 @@ EXTERNAL SOURCES:
   MobileCoin:
     :git: https://github.com/mobilecoinofficial/MobileCoin-Swift.git
     :tag: v1.1.0
+  MobileCoinMinimal:
+    :branch: charlesmchen/mobileCoinMinimal
+    :git: https://github.com/signalapp/MobileCoin-Swift.git
   OpenSSL-Universal:
     :git: https://github.com/signalapp/GRKOpenSSLFramework
   SignalArgon2:
@@ -346,6 +359,9 @@ CHECKOUT OPTIONS:
   MobileCoin:
     :git: https://github.com/mobilecoinofficial/MobileCoin-Swift.git
     :tag: v1.1.0
+  MobileCoinMinimal:
+    :commit: 03ea44a99bb619f9e88513b037089bdc32c15bed
+    :git: https://github.com/signalapp/MobileCoin-Swift.git
   OpenSSL-Universal:
     :commit: c277886d6fc025f828dafba03eacfef2ecc7936a
     :git: https://github.com/signalapp/GRKOpenSSLFramework
@@ -395,6 +411,7 @@ SPEC CHECKSUMS:
   lottie-ios: 496ac5cea1bbf1a7bd1f1f472f3232eb1b8d744b
   Mantle: 2fa750afa478cd625a94230fbf1c13462f29395b
   MobileCoin: 59f940b9f71e6fdcfd206150ebda839a132b58be
+  MobileCoinMinimal: 627ed590d8a0d5d57c39ec25727bde3d976d2f7a
   OpenSSL-Universal: d8fb58afffcf2dafe4ad99e17efe236bcd216c2e
   PureLayout: f08c01b8dec00bb14a1fefa3de4c7d9c265df85e
   Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
@@ -422,6 +439,6 @@ SPEC CHECKSUMS:
   YYImage: f1ddd15ac032a58b78bbed1e012b50302d318331
   ZKGroup: 81ba58bf87b5614b03d49364db221390bf257dd7
 
-PODFILE CHECKSUM: aaba99834df7eb9f753a09579156322883499d5f
+PODFILE CHECKSUM: d425d233c586b7dba70ed9cc78f3f6e15ff41048
 
 COCOAPODS: 1.10.1
