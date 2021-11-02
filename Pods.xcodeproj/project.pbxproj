@@ -438,7 +438,6 @@
 		214CAB0567B310D25C3837ABEC31C4F2 /* x509_vpm.c in Sources */ = {isa = PBXBuildFile; fileRef = 5AF62A15A183EA49023A9E4D12CC9E12 /* x509_vpm.c */; };
 		215E970C8CFCB023271EC0EF9634CB86 /* OWSDeviceProvisioner.m in Sources */ = {isa = PBXBuildFile; fileRef = A9FE6A878EC8D0286C14565987C848F6 /* OWSDeviceProvisioner.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		2170244648ECE4BCF09C94907D3C028F /* ChannelPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = B203103D8FDE7AC98C08750A5E5C5340 /* ChannelPipeline.swift */; };
-		21A4DF1634B03CDBA4AEA9EDC88B9BE6 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FB2CD975DDC376177BE9A5E43CFF3A0 /* CoreTelephony.framework */; };
 		21ACD7A29B0407FA8191A2C710D15526 /* DatagramVectorReadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1C9D5BD95A1B6881451BDA95D88C497 /* DatagramVectorReadManager.swift */; };
 		21C30513E216D3B86C466489A8B9706E /* TSPaymentRequestModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 591B434CE72A1909ED349274A4761D37 /* TSPaymentRequestModel.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		21D4D41FFC94ED6F1C135F67CCAE216A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA7C31120BB2869E033B9357D24CB4C2 /* Foundation.framework */; };
@@ -704,6 +703,7 @@
 		37C4C87264B75889E88F9E4E23474291 /* libPhoneNumber-iOS-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 4C11C53492CF1ED68F90BE3292CAB9DE /* libPhoneNumber-iOS-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		37E598EFB52F7C18558960C481D501A0 /* OWSThumbnailService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B0F2C51501E7FD2E8A05F1ACBD93502 /* OWSThumbnailService.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		3805B15A42740BA15B6FC1AF826BD255 /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03068CAFDAE535D54EF7F77C9182BFF7 /* Version.swift */; };
+		380634C076F2DAF3A5DA002C6FB07D7C /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59E2B31FED4D6BDC30DA55415454543D /* CocoaLumberjack.framework */; };
 		387C3C551D1904E3693A52A8339E854E /* upsampling_msa.c in Sources */ = {isa = PBXBuildFile; fileRef = 870DE7A50A7754B8FC254B62E6E65490 /* upsampling_msa.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
 		38AFFD9BD98538A9EF545F198538F5D2 /* vp8li_enc.h in Headers */ = {isa = PBXBuildFile; fileRef = 46482122A2392F39FCF9A9A65149BFBC /* vp8li_enc.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		38B73CDED57BAA674C16BA959C5E541F /* SMKMiscTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA07EE4864C69887B6F6782D45E11010 /* SMKMiscTest.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
@@ -1210,6 +1210,7 @@
 		64E47AC20B6EA0255EFF1B7351C18FC7 /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FC76FBD690DCCB7CB33054C384EC4F /* StringExtensions.swift */; };
 		64F551BBACBD4524A7E79B558DECC1BD /* FunctionalUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = FBAF4452719DEF858654A9B6EF8C553E /* FunctionalUtil.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6525C42816BA92FE3237F21D6134E93F /* Rectangle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B08FB4B19B8497F840D5B2DFA977EAE /* Rectangle.swift */; };
+		652755FCE0A794BEC3E9EBCE1DE4FE92 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FB2CD975DDC376177BE9A5E43CFF3A0 /* CoreTelephony.framework */; };
 		6527C30DA8A2B8817EBFDCCA74D0CE19 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA7C31120BB2869E033B9357D24CB4C2 /* Foundation.framework */; };
 		65293E991394EBA7DCAA1117C8900B47 /* JSONScanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9A978EDC67017313F2B671A9E6C4EE4 /* JSONScanner.swift */; };
 		652F2BD54EF62E49C4A0878E76D230AC /* sha256-586.linux.x86.S in Sources */ = {isa = PBXBuildFile; fileRef = 5792B7D38EA099A6A7D9806FADE39E62 /* sha256-586.linux.x86.S */; };
@@ -1930,7 +1931,6 @@
 		9FE48D46DEC7B0BF64B4130AE8F0EA96 /* TSInfoMessage+ProfileChanges.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEA1A384F7A795B0A767A92C2A297D36 /* TSInfoMessage+ProfileChanges.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		9FFD3DE8647C08FF3BB7E37D428B96C4 /* pem_xaux.c in Sources */ = {isa = PBXBuildFile; fileRef = E398510FF8CAEAF92977EAAD05230305 /* pem_xaux.c */; };
 		A03F0355AD30CC824EB7BC12EB799CD4 /* internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 9FBAF854F0954B8939C82E62564B2ED4 /* internal.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		A0480824EB3917DD41B92F95FD7EB95C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA7C31120BB2869E033B9357D24CB4C2 /* Foundation.framework */; };
 		A049A1D8A3DE111FDD97BEC72B703C79 /* ALView+PureLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = B82432CD278DA879BF73FDF4A4A3D2FD /* ALView+PureLayout.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A0545381DE1431D1F34CCEEF5D614C01 /* RemoteAttestationQuote.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BEDAA218DF9B1B2C19D77860A693D1F /* RemoteAttestationQuote.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		A05B9AB40FC3A46C8CB726253F76AA07 /* alpha_processing_neon.c in Sources */ = {isa = PBXBuildFile; fileRef = D34C25EEA560F2234C5636310BA2D1AF /* alpha_processing_neon.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
@@ -2319,6 +2319,7 @@
 		BEDD064440721C53605332D62288712C /* jacobi.c in Sources */ = {isa = PBXBuildFile; fileRef = F75E1B3475B5608C6F87586C4DD6760F /* jacobi.c */; };
 		BEE3A365CB707F1ECFF89CDE74E1136E /* p256-x86_64.h in Headers */ = {isa = PBXBuildFile; fileRef = 502F9B639B7D445FEDDE872552198951 /* p256-x86_64.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		BEF4F1FAFF5059FDA919CC823F7D9656 /* TSIncomingMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = AD33E9D38CF8052AF58D389FDC812673 /* TSIncomingMessage.m */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
+		BEFA1D01FA4637C8A32FD39E2924EFA3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA7C31120BB2869E033B9357D24CB4C2 /* Foundation.framework */; };
 		BEFD32061E5E42AFD086658790C27A5F /* NBPhoneNumber.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A42359E97EE9FF58469522D174450F4 /* NBPhoneNumber.m */; };
 		BF06ABBB71A204C735FBD9C34D69AEBB /* asn1_gen.c in Sources */ = {isa = PBXBuildFile; fileRef = 1F27DE1274781F2C7BE9E519DB5356ED /* asn1_gen.c */; };
 		BF26EEDA8E71DE8075D4481288A138F7 /* TSErrorMessage+SDS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08561802407556196BB215DE401747E6 /* TSErrorMessage+SDS.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
@@ -5067,6 +5068,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 22A8674975BD28B12B4EE99358F3D68F;
 			remoteInfo = Curve25519Kit;
+		};
+		D9FA8DA970C0011FE7FBF16146BD86A1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E95654B155D25890BE8E26081FCA8265;
+			remoteInfo = CocoaLumberjack;
 		};
 		DAF11683E0CDDFA4F8B42851581C6727 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -9212,12 +9220,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		AC7FF34BCDACB8BF8C87D5C31A7479F5 /* Frameworks */ = {
+		B90FF4A00BF93183A99B5DFB6B4E7AD1 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				21A4DF1634B03CDBA4AEA9EDC88B9BE6 /* CoreTelephony.framework in Frameworks */,
-				A0480824EB3917DD41B92F95FD7EB95C /* Foundation.framework in Frameworks */,
+				380634C076F2DAF3A5DA002C6FB07D7C /* CocoaLumberjack.framework in Frameworks */,
+				652755FCE0A794BEC3E9EBCE1DE4FE92 /* CoreTelephony.framework in Frameworks */,
+				BEFA1D01FA4637C8A32FD39E2924EFA3 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -16744,12 +16753,13 @@
 			buildPhases = (
 				67554ACAC40C826DE654EB7AF24703DE /* Headers */,
 				EBFDF44455B04DAF17FCDDCCA2B9CB49 /* Sources */,
-				AC7FF34BCDACB8BF8C87D5C31A7479F5 /* Frameworks */,
+				B90FF4A00BF93183A99B5DFB6B4E7AD1 /* Frameworks */,
 				8F44081BB522DF15CE7111ADD33909CA /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				61342AE91E5D095F59E5C9D283BEC5CF /* PBXTargetDependency */,
 			);
 			name = "libPhoneNumber-iOS";
 			productName = "libPhoneNumber-iOS";
@@ -21390,6 +21400,12 @@
 			target = B41FBEF318DD90395EF001FC08DA5570 /* SignalClient */;
 			targetProxy = 0955683126F85508B702391AD27AB902 /* PBXContainerItemProxy */;
 		};
+		61342AE91E5D095F59E5C9D283BEC5CF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = CocoaLumberjack;
+			target = E95654B155D25890BE8E26081FCA8265 /* CocoaLumberjack */;
+			targetProxy = D9FA8DA970C0011FE7FBF16146BD86A1 /* PBXContainerItemProxy */;
+		};
 		61DAE92E8D3C605EF31D9E827A74ADC3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = CocoaLumberjack;
@@ -22801,6 +22817,64 @@
 				);
 			};
 			name = "App Store Release";
+		};
+		06FB0CAFE36DD0634D4F6562CBB2033A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B939973E6EB3DAC17A035EE279586A6C /* libPhoneNumber-iOS.debug.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				ENABLE_TESTABILITY = YES;
+				EXCLUDED_ARCHS = armv7;
+				GCC_PREFIX_HEADER = "Target Support Files/libPhoneNumber-iOS/libPhoneNumber-iOS-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"TESTABLE_BUILD=1",
+				);
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				INFOPLIST_FILE = "Target Support Files/libPhoneNumber-iOS/libPhoneNumber-iOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/libPhoneNumber-iOS/libPhoneNumber-iOS.modulemap";
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-DTESTABLE_BUILD",
+				);
+				OTHER_SWIFT_FLAGS = "$(inherited) -DTESTABLE_BUILD -suppress-warnings";
+				PRODUCT_MODULE_NAME = libPhoneNumber_iOS;
+				PRODUCT_NAME = libPhoneNumber_iOS;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+				WARNING_CFLAGS = (
+					"$(inherited)",
+					"-Werror=incompatible-pointer-types",
+					"-Werror=protocol",
+					"-Werror=incomplete-implementation",
+					"-Werror=objc-literal-conversion",
+					"-Werror=objc-property-synthesis",
+					"-Werror=objc-protocol-property-synthesis",
+				);
+			};
+			name = Debug;
 		};
 		07CB38F4D9643A9D51542920E2C13888 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -24326,6 +24400,53 @@
 			};
 			name = Debug;
 		};
+		14CB428678662B72ACC61CA27413C9FB /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4725C8BFBA9BBD59CD718A1E77D23FCE /* libPhoneNumber-iOS.release.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				EXCLUDED_ARCHS = armv7;
+				GCC_PREFIX_HEADER = "Target Support Files/libPhoneNumber-iOS/libPhoneNumber-iOS-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/libPhoneNumber-iOS/libPhoneNumber-iOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/libPhoneNumber-iOS/libPhoneNumber-iOS.modulemap";
+				PRODUCT_MODULE_NAME = libPhoneNumber_iOS;
+				PRODUCT_NAME = libPhoneNumber_iOS;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+				WARNING_CFLAGS = (
+					"$(inherited)",
+					"-Werror=incompatible-pointer-types",
+					"-Werror=protocol",
+					"-Werror=incomplete-implementation",
+					"-Werror=objc-literal-conversion",
+					"-Werror=objc-property-synthesis",
+					"-Werror=objc-protocol-property-synthesis",
+				);
+			};
+			name = Release;
+		};
 		1521AB59CA62136FE66531EEAC505FC1 /* Profiling */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9864736B3D079A8FA54D1504B9D16FD6 /* CNIOAtomics.release.xcconfig */;
@@ -25746,63 +25867,6 @@
 			};
 			name = Profiling;
 		};
-		2D6478D635F2E781FE0F28146A85D83F /* Profiling */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 4725C8BFBA9BBD59CD718A1E77D23FCE /* libPhoneNumber-iOS.release.xcconfig */;
-			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_BITCODE = NO;
-				ENABLE_TESTABILITY = YES;
-				EXCLUDED_ARCHS = armv7;
-				GCC_PREFIX_HEADER = "Target Support Files/libPhoneNumber-iOS/libPhoneNumber-iOS-prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"TESTABLE_BUILD=1",
-				);
-				INFOPLIST_FILE = "Target Support Files/libPhoneNumber-iOS/libPhoneNumber-iOS-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MODULEMAP_FILE = "Target Support Files/libPhoneNumber-iOS/libPhoneNumber-iOS.modulemap";
-				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = (
-					"$(inherited)",
-					"-DTESTABLE_BUILD",
-				);
-				OTHER_SWIFT_FLAGS = "$(inherited) -DTESTABLE_BUILD";
-				PRODUCT_MODULE_NAME = libPhoneNumber_iOS;
-				PRODUCT_NAME = libPhoneNumber_iOS;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-				WARNING_CFLAGS = (
-					"$(inherited)",
-					"-Werror=incompatible-pointer-types",
-					"-Werror=protocol",
-					"-Werror=incomplete-implementation",
-					"-Werror=objc-literal-conversion",
-					"-Werror=objc-property-synthesis",
-					"-Werror=objc-protocol-property-synthesis",
-				);
-			};
-			name = Profiling;
-		};
 		2F1BF6C4F930674E6CDD9F9C64EAD7E4 /* Profiling */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BD227663C0C35E3DD2006DB2A73F1D3C /* SignalCoreKit.release.xcconfig */;
@@ -26125,52 +26189,6 @@
 				);
 			};
 			name = "Testable Release";
-		};
-		3303465C6DE386D8C7A065535FCA6524 /* App Store Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 4725C8BFBA9BBD59CD718A1E77D23FCE /* libPhoneNumber-iOS.release.xcconfig */;
-			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_BITCODE = NO;
-				EXCLUDED_ARCHS = armv7;
-				GCC_PREFIX_HEADER = "Target Support Files/libPhoneNumber-iOS/libPhoneNumber-iOS-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/libPhoneNumber-iOS/libPhoneNumber-iOS-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MODULEMAP_FILE = "Target Support Files/libPhoneNumber-iOS/libPhoneNumber-iOS.modulemap";
-				PRODUCT_MODULE_NAME = libPhoneNumber_iOS;
-				PRODUCT_NAME = libPhoneNumber_iOS;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-				WARNING_CFLAGS = (
-					"$(inherited)",
-					"-Werror=incompatible-pointer-types",
-					"-Werror=protocol",
-					"-Werror=incomplete-implementation",
-					"-Werror=objc-literal-conversion",
-					"-Werror=objc-property-synthesis",
-					"-Werror=objc-protocol-property-synthesis",
-				);
-			};
-			name = "App Store Release";
 		};
 		332A35AF2730FD69E206E09F1C8F8D10 /* App Store Release */ = {
 			isa = XCBuildConfiguration;
@@ -26845,6 +26863,64 @@
 				);
 			};
 			name = Release;
+		};
+		3D33F47EDFEC0DD87B524A84C38233E4 /* Testable Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4725C8BFBA9BBD59CD718A1E77D23FCE /* libPhoneNumber-iOS.release.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				ENABLE_TESTABILITY = YES;
+				EXCLUDED_ARCHS = armv7;
+				GCC_PREFIX_HEADER = "Target Support Files/libPhoneNumber-iOS/libPhoneNumber-iOS-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"TESTABLE_BUILD=1",
+				);
+				INFOPLIST_FILE = "Target Support Files/libPhoneNumber-iOS/libPhoneNumber-iOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/libPhoneNumber-iOS/libPhoneNumber-iOS.modulemap";
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-DTESTABLE_BUILD",
+				);
+				OTHER_SWIFT_FLAGS = "$(inherited) -DTESTABLE_BUILD";
+				PRODUCT_MODULE_NAME = libPhoneNumber_iOS;
+				PRODUCT_NAME = libPhoneNumber_iOS;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+				WARNING_CFLAGS = (
+					"$(inherited)",
+					"-Werror=incompatible-pointer-types",
+					"-Werror=protocol",
+					"-Werror=incomplete-implementation",
+					"-Werror=objc-literal-conversion",
+					"-Werror=objc-property-synthesis",
+					"-Werror=objc-protocol-property-synthesis",
+				);
+			};
+			name = "Testable Release";
 		};
 		3E921702CBB6D8D53AF0F918B0C55005 /* Testable Release */ = {
 			isa = XCBuildConfiguration;
@@ -28807,6 +28883,64 @@
 			};
 			name = "App Store Release";
 		};
+		679F799B329F85192265C74216143C5E /* Profiling */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4725C8BFBA9BBD59CD718A1E77D23FCE /* libPhoneNumber-iOS.release.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				ENABLE_TESTABILITY = YES;
+				EXCLUDED_ARCHS = armv7;
+				GCC_PREFIX_HEADER = "Target Support Files/libPhoneNumber-iOS/libPhoneNumber-iOS-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"TESTABLE_BUILD=1",
+				);
+				INFOPLIST_FILE = "Target Support Files/libPhoneNumber-iOS/libPhoneNumber-iOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/libPhoneNumber-iOS/libPhoneNumber-iOS.modulemap";
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-DTESTABLE_BUILD",
+				);
+				OTHER_SWIFT_FLAGS = "$(inherited) -DTESTABLE_BUILD";
+				PRODUCT_MODULE_NAME = libPhoneNumber_iOS;
+				PRODUCT_NAME = libPhoneNumber_iOS;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+				WARNING_CFLAGS = (
+					"$(inherited)",
+					"-Werror=incompatible-pointer-types",
+					"-Werror=protocol",
+					"-Werror=incomplete-implementation",
+					"-Werror=objc-literal-conversion",
+					"-Werror=objc-property-synthesis",
+					"-Werror=objc-protocol-property-synthesis",
+				);
+			};
+			name = Profiling;
+		};
 		6846CE4A102B29E1298209F3CB372FBC /* Profiling */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9083513F5339462182B30F5A308E80FE /* MobileCoinMinimal.unit-tests.release.xcconfig */;
@@ -29376,6 +29510,53 @@
 				MODULEMAP_FILE = "Target Support Files/CNIOLinux/CNIOLinux.modulemap";
 				PRODUCT_MODULE_NAME = CNIOLinux;
 				PRODUCT_NAME = CNIOLinux;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+				WARNING_CFLAGS = (
+					"$(inherited)",
+					"-Werror=incompatible-pointer-types",
+					"-Werror=protocol",
+					"-Werror=incomplete-implementation",
+					"-Werror=objc-literal-conversion",
+					"-Werror=objc-property-synthesis",
+					"-Werror=objc-protocol-property-synthesis",
+				);
+			};
+			name = "App Store Release";
+		};
+		6DAF3D422E057EF65E731CAEAC47671C /* App Store Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4725C8BFBA9BBD59CD718A1E77D23FCE /* libPhoneNumber-iOS.release.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				EXCLUDED_ARCHS = armv7;
+				GCC_PREFIX_HEADER = "Target Support Files/libPhoneNumber-iOS/libPhoneNumber-iOS-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/libPhoneNumber-iOS/libPhoneNumber-iOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/libPhoneNumber-iOS/libPhoneNumber-iOS.modulemap";
+				PRODUCT_MODULE_NAME = libPhoneNumber_iOS;
+				PRODUCT_NAME = libPhoneNumber_iOS;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
@@ -35901,52 +36082,6 @@
 			};
 			name = Profiling;
 		};
-		C203BCA5A7D065D5FDE5706004CBF508 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 4725C8BFBA9BBD59CD718A1E77D23FCE /* libPhoneNumber-iOS.release.xcconfig */;
-			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_BITCODE = NO;
-				EXCLUDED_ARCHS = armv7;
-				GCC_PREFIX_HEADER = "Target Support Files/libPhoneNumber-iOS/libPhoneNumber-iOS-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/libPhoneNumber-iOS/libPhoneNumber-iOS-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MODULEMAP_FILE = "Target Support Files/libPhoneNumber-iOS/libPhoneNumber-iOS.modulemap";
-				PRODUCT_MODULE_NAME = libPhoneNumber_iOS;
-				PRODUCT_NAME = libPhoneNumber_iOS;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-				WARNING_CFLAGS = (
-					"$(inherited)",
-					"-Werror=incompatible-pointer-types",
-					"-Werror=protocol",
-					"-Werror=incomplete-implementation",
-					"-Werror=objc-literal-conversion",
-					"-Werror=objc-property-synthesis",
-					"-Werror=objc-protocol-property-synthesis",
-				);
-			};
-			name = Release;
-		};
 		C521897CF6450A2BCF7AE5F59B4855A2 /* Profiling */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 93A6D1231211A3507BEC01AC06344015 /* SignalCoreKit.unit-tests.release.xcconfig */;
@@ -36793,63 +36928,6 @@
 			};
 			name = Debug;
 		};
-		D14FD46034F80FFA7EB1E7EB2952F283 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = B939973E6EB3DAC17A035EE279586A6C /* libPhoneNumber-iOS.debug.xcconfig */;
-			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_BITCODE = NO;
-				ENABLE_TESTABILITY = YES;
-				EXCLUDED_ARCHS = armv7;
-				GCC_PREFIX_HEADER = "Target Support Files/libPhoneNumber-iOS/libPhoneNumber-iOS-prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"TESTABLE_BUILD=1",
-				);
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				INFOPLIST_FILE = "Target Support Files/libPhoneNumber-iOS/libPhoneNumber-iOS-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MODULEMAP_FILE = "Target Support Files/libPhoneNumber-iOS/libPhoneNumber-iOS.modulemap";
-				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = (
-					"$(inherited)",
-					"-DTESTABLE_BUILD",
-				);
-				OTHER_SWIFT_FLAGS = "$(inherited) -DTESTABLE_BUILD -suppress-warnings";
-				PRODUCT_MODULE_NAME = libPhoneNumber_iOS;
-				PRODUCT_NAME = libPhoneNumber_iOS;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-				WARNING_CFLAGS = (
-					"$(inherited)",
-					"-Werror=incompatible-pointer-types",
-					"-Werror=protocol",
-					"-Werror=incomplete-implementation",
-					"-Werror=objc-literal-conversion",
-					"-Werror=objc-property-synthesis",
-					"-Werror=objc-protocol-property-synthesis",
-				);
-			};
-			name = Debug;
-		};
 		D209AEE9D1B174C6DAA02F36FFC6CC8B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1FF25F66E761F1C74BFFF5F6FD092D30 /* SignalArgon2.debug.xcconfig */;
@@ -37001,63 +37079,6 @@
 				);
 			};
 			name = Release;
-		};
-		D4466813ADA184D38D68AE86FB91CEF7 /* Testable Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 4725C8BFBA9BBD59CD718A1E77D23FCE /* libPhoneNumber-iOS.release.xcconfig */;
-			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_BITCODE = NO;
-				ENABLE_TESTABILITY = YES;
-				EXCLUDED_ARCHS = armv7;
-				GCC_PREFIX_HEADER = "Target Support Files/libPhoneNumber-iOS/libPhoneNumber-iOS-prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"TESTABLE_BUILD=1",
-				);
-				INFOPLIST_FILE = "Target Support Files/libPhoneNumber-iOS/libPhoneNumber-iOS-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MODULEMAP_FILE = "Target Support Files/libPhoneNumber-iOS/libPhoneNumber-iOS.modulemap";
-				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = (
-					"$(inherited)",
-					"-DTESTABLE_BUILD",
-				);
-				OTHER_SWIFT_FLAGS = "$(inherited) -DTESTABLE_BUILD";
-				PRODUCT_MODULE_NAME = libPhoneNumber_iOS;
-				PRODUCT_NAME = libPhoneNumber_iOS;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-				WARNING_CFLAGS = (
-					"$(inherited)",
-					"-Werror=incompatible-pointer-types",
-					"-Werror=protocol",
-					"-Werror=incomplete-implementation",
-					"-Werror=objc-literal-conversion",
-					"-Werror=objc-property-synthesis",
-					"-Werror=objc-protocol-property-synthesis",
-				);
-			};
-			name = "Testable Release";
 		};
 		D5915E63840C67B792956378604CFD5E /* Profiling */ = {
 			isa = XCBuildConfiguration;
@@ -40324,11 +40345,11 @@
 		E5E7643C994EBCDCC699269FE8756201 /* Build configuration list for PBXNativeTarget "libPhoneNumber-iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				3303465C6DE386D8C7A065535FCA6524 /* App Store Release */,
-				D14FD46034F80FFA7EB1E7EB2952F283 /* Debug */,
-				2D6478D635F2E781FE0F28146A85D83F /* Profiling */,
-				C203BCA5A7D065D5FDE5706004CBF508 /* Release */,
-				D4466813ADA184D38D68AE86FB91CEF7 /* Testable Release */,
+				6DAF3D422E057EF65E731CAEAC47671C /* App Store Release */,
+				06FB0CAFE36DD0634D4F6562CBB2033A /* Debug */,
+				679F799B329F85192265C74216143C5E /* Profiling */,
+				14CB428678662B72ACC61CA27413C9FB /* Release */,
+				3D33F47EDFEC0DD87B524A84C38233E4 /* Testable Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
