@@ -10,11 +10,6 @@
 #endif
 #endif
 
-#import "attest.h"
-#import "common.h"
-#import "fog.h"
-#import "keys.h"
-#import "transaction.h"
 
 FOUNDATION_EXPORT double MobileCoinMinimalVersionNumber;
 FOUNDATION_EXPORT const unsigned char MobileCoinMinimalVersionString[];
