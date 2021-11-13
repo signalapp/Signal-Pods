@@ -7,6 +7,8 @@
 
 #define NUM_PROFILE_KEY_CRED_ATTRIBUTES 4
 
+#define NUM_RECEIPT_CRED_ATTRIBUTES 2
+
 #define AES_KEY_LEN 32
 
 #define AESGCM_NONCE_LEN 12
@@ -21,7 +23,7 @@
 
 #define GROUP_IDENTIFIER_LEN 32
 
-#define AUTH_CREDENTIAL_LEN 342
+#define AUTH_CREDENTIAL_LEN 181
 
 #define AUTH_CREDENTIAL_PRESENTATION_LEN 493
 
@@ -47,11 +49,23 @@
 
 #define PROFILE_KEY_VERSION_ENCODED_LEN 64
 
+#define RECEIPT_CREDENTIAL_LEN 129
+
+#define RECEIPT_CREDENTIAL_PRESENTATION_LEN 329
+
+#define RECEIPT_CREDENTIAL_REQUEST_LEN 97
+
+#define RECEIPT_CREDENTIAL_REQUEST_CONTEXT_LEN 177
+
+#define RECEIPT_CREDENTIAL_RESPONSE_LEN 409
+
+#define RECEIPT_SERIAL_LEN 16
+
 #define RESERVED_LEN 1
 
-#define SERVER_SECRET_PARAMS_LEN 769
+#define SERVER_SECRET_PARAMS_LEN 1121
 
-#define SERVER_PUBLIC_PARAMS_LEN 161
+#define SERVER_PUBLIC_PARAMS_LEN 225
 
 #define UUID_CIPHERTEXT_LEN 65
 
@@ -229,6 +243,33 @@ int32_t FFI_ServerPublicParams_createProfileKeyCredentialPresentationDeterminist
                                                                                    uint8_t *profileKeyCredentialPresentationOut,
                                                                                    uint32_t profileKeyCredentialPresentationLen);
 
+int32_t FFI_ServerPublicParams_createReceiptCredentialRequestContextDeterministic(const uint8_t *serverPublicParams,
+                                                                                  uint32_t serverPublicParamsLen,
+                                                                                  const uint8_t *randomness,
+                                                                                  uint32_t randomnessLen,
+                                                                                  const uint8_t *receiptSerial,
+                                                                                  uint32_t receiptSerialLen,
+                                                                                  uint8_t *receiptCredentialRequestContextOut,
+                                                                                  uint32_t receiptCredentialRequestContextLen);
+
+int32_t FFI_ServerPublicParams_receiveReceiptCredential(const uint8_t *serverPublicParams,
+                                                        uint32_t serverPublicParamsLen,
+                                                        const uint8_t *receiptCredentialRequestContext,
+                                                        uint32_t receiptCredentialRequestContextLen,
+                                                        const uint8_t *receiptCredentialResponse,
+                                                        uint32_t receiptCredentialResponseLen,
+                                                        uint8_t *receiptCredentialOut,
+                                                        uint32_t receiptCredentialLen);
+
+int32_t FFI_ServerPublicParams_createReceiptCredentialPresentationDeterministic(const uint8_t *serverPublicParams,
+                                                                                uint32_t serverPublicParamsLen,
+                                                                                const uint8_t *randomness,
+                                                                                uint32_t randomnessLen,
+                                                                                const uint8_t *receiptCredential,
+                                                                                uint32_t receiptCredentialLen,
+                                                                                uint8_t *receiptCredentialPresentationOut,
+                                                                                uint32_t receiptCredentialPresentationLen);
+
 int32_t FFI_ServerSecretParams_issueAuthCredentialDeterministic(const uint8_t *serverSecretParams,
                                                                 uint32_t serverSecretParamsLen,
                                                                 const uint8_t *randomness,
@@ -265,6 +306,22 @@ int32_t FFI_ServerSecretParams_verifyProfileKeyCredentialPresentation(const uint
                                                                       uint32_t groupPublicParamsLen,
                                                                       const uint8_t *profileKeyCredentialPresentation,
                                                                       uint32_t profileKeyCredentialPresentationLen);
+
+int32_t FFI_ServerSecretParams_issueReceiptCredentialDeterministic(const uint8_t *serverSecretParams,
+                                                                   uint32_t serverSecretParamsLen,
+                                                                   const uint8_t *randomness,
+                                                                   uint32_t randomnessLen,
+                                                                   const uint8_t *receiptCredentialRequest,
+                                                                   uint32_t receiptCredentialRequestLen,
+                                                                   uint64_t receiptExpirationTime,
+                                                                   uint64_t receiptLevel,
+                                                                   uint8_t *receiptCredentialResponseOut,
+                                                                   uint32_t receiptCredentialResponseLen);
+
+int32_t FFI_ServerSecretParams_verifyReceiptCredentialPresentation(const uint8_t *serverSecretParams,
+                                                                   uint32_t serverSecretParamsLen,
+                                                                   const uint8_t *receiptCredentialPresentation,
+                                                                   uint32_t receiptCredentialPresentationLen);
 
 int32_t FFI_GroupPublicParams_checkValidContents(const uint8_t *groupPublicParams,
                                                  uint32_t groupPublicParamsLen);
@@ -332,6 +389,51 @@ int32_t FFI_ProfileKeyCredentialPresentation_getProfileKeyCiphertext(const uint8
                                                                      uint32_t profileKeyCredentialPresentationLen,
                                                                      uint8_t *profileKeyCiphertextOut,
                                                                      uint32_t profileKeyCiphertextLen);
+
+int32_t FFI_ReceiptCredentialRequestContext_checkValidContents(const uint8_t *receiptCredentialRequestContext,
+                                                               uint32_t receiptCredentialRequestContextLen);
+
+int32_t FFI_ReceiptCredentialRequestContext_getRequest(const uint8_t *receiptCredentialRequestContext,
+                                                       uint32_t receiptCredentialRequestContextLen,
+                                                       uint8_t *receiptCredentialRequestOut,
+                                                       uint32_t receiptCredentialRequestLen);
+
+int32_t FFI_ReceiptCredentialRequest_checkValidContents(const uint8_t *receiptCredentialRequest,
+                                                        uint32_t receiptCredentialRequestLen);
+
+int32_t FFI_ReceiptCredentialResponse_checkValidContents(const uint8_t *receiptCredentialResponse,
+                                                         uint32_t receiptCredentialResponseLen);
+
+int32_t FFI_ReceiptCredential_checkValidContents(const uint8_t *receiptCredential,
+                                                 uint32_t receiptCredentialLen);
+
+int32_t FFI_ReceiptCredential_getReceiptExpirationTime(const uint8_t *receiptCredential,
+                                                       uint32_t receiptCredentialLen,
+                                                       uint8_t *receiptExpirationTimeOut,
+                                                       uint32_t receiptExpirationTimeLen);
+
+int32_t FFI_ReceiptCredential_getReceiptLevel(const uint8_t *receiptCredential,
+                                              uint32_t receiptCredentialLen,
+                                              uint8_t *receiptLevelOut,
+                                              uint32_t receiptLevelLen);
+
+int32_t FFI_ReceiptCredentialPresentation_checkValidContents(const uint8_t *receiptCredentialPresentation,
+                                                             uint32_t receiptCredentialPresentationLen);
+
+int32_t FFI_ReceiptCredentialPresentation_getReceiptExpirationTime(const uint8_t *receiptCredentialPresentation,
+                                                                   uint32_t receiptCredentialPresentationLen,
+                                                                   uint8_t *receiptExpirationTimeOut,
+                                                                   uint32_t receiptExpirationTimeLen);
+
+int32_t FFI_ReceiptCredentialPresentation_getReceiptLevel(const uint8_t *receiptCredentialPresentation,
+                                                          uint32_t receiptCredentialPresentationLen,
+                                                          uint8_t *receiptLevelOut,
+                                                          uint32_t receiptLevelLen);
+
+int32_t FFI_ReceiptCredentialPresentation_getReceiptSerial(const uint8_t *receiptCredentialPresentation,
+                                                           uint32_t receiptCredentialPresentationLen,
+                                                           uint8_t *receiptSerialOut,
+                                                           uint32_t receiptSerialLen);
 
 int32_t FFI_UuidCiphertext_checkValidContents(const uint8_t *uuidCiphertext,
                                               uint32_t uuidCiphertextLen);

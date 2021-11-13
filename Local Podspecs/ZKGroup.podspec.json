@@ -1,6 +1,6 @@
 {
   "name": "ZKGroup",
-  "version": "0.7.3",
+  "version": "0.8.2",
   "summary": "Swift API for the Rust zkgroup crate.",
   "homepage": "https://signal.org/",
   "license": {
@@ -12,7 +12,7 @@
   },
   "source": {
     "git": "https://github.com/signalapp/zkgroup.git",
-    "tag": "0.7.3"
+    "tag": "v0.8.2"
   },
   "swift_versions": "5",
   "platforms": {
@@ -40,6 +40,9 @@
     "ARCHS[sdk=iphonesimulator*]": "x86_64 arm64",
     "ARCHS[sdk=iphoneos*]": "arm64"
   },
+  "user_target_xcconfig": {
+    "EXCLUDED_ARCHS[sdk=iphonesimulator*]": "i386"
+  },
   "script_phases": [
     {
       "name": "Check libzkgroup",
@@ -47,7 +50,7 @@
       "script": "\n        test -e \"${LIBZKGROUP_FFI_LIB_IF_NEEDED}\" && exit 0\n        if test -e \"${PODS_TARGET_SRCROOT}/ffi/swift/build_ffi.sh\"; then\n          echo 'error: libzkgroup.a not built; run the following to build it:' >&2\n          echo \"CARGO_BUILD_TARGET=${CARGO_BUILD_TARGET} \\\"${PODS_TARGET_SRCROOT}/ffi/swift/build_ffi.sh\\\" --release\" >&2\n        else\n          echo 'error: libzkgroup.a not built; try re-running `pod install`' >&2\n        fi\n        false\n      "
     }
   ],
-  "prepare_command": "set -euo pipefail\nCARGO_BUILD_TARGET=aarch64-apple-ios ffi/swift/build_ffi.sh --release\nCARGO_BUILD_TARGET=x86_64-apple-ios ffi/swift/build_ffi.sh --release\nCARGO_BUILD_TARGET=aarch64-apple-ios-sim ffi/swift/build_ffi.sh --release --build-std\nCARGO_BUILD_TARGET=x86_64-apple-ios-macabi ffi/swift/build_ffi.sh --release --build-std\nCARGO_BUILD_TARGET=aarch64-apple-ios-macabi ffi/swift/build_ffi.sh --release --build-std",
+  "prepare_command": "set -euo pipefail\nCARGO_BUILD_TARGET=aarch64-apple-ios ffi/swift/build_ffi.sh --release\nCARGO_BUILD_TARGET=x86_64-apple-ios ffi/swift/build_ffi.sh --release\nCARGO_BUILD_TARGET=aarch64-apple-ios-sim ffi/swift/build_ffi.sh --release\nCARGO_BUILD_TARGET=x86_64-apple-ios-macabi ffi/swift/build_ffi.sh --release --build-std\nCARGO_BUILD_TARGET=aarch64-apple-ios-macabi ffi/swift/build_ffi.sh --release --build-std",
   "testspecs": [
     {
       "name": "Tests",
