@@ -175,7 +175,6 @@
 #import "OWSFakeMessageSender.h"
 #import "OWSFakeProfileManager.h"
 #import "TestAppContext.h"
-#import "TSConstants.h"
 #import "TSPrefix.h"
 #import "AppContext.h"
 #import "AppReadiness.h"
