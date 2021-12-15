@@ -119,6 +119,7 @@
 #import "RESTNetworkManager.h"
 #import "OWSCensorshipConfiguration.h"
 #import "OWSCountryMetadata.h"
+#import "OWSMultipart.h"
 #import "OWSSignalService.h"
 #import "IncomingGroupsV2MessageJob.h"
 #import "SSKMessageDecryptJobRecord.h"
