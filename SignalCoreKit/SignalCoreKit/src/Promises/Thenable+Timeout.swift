@@ -41,20 +41,31 @@ public extension Thenable {
 }
 
 public extension Promise {
-    func timeout(seconds: TimeInterval, description: String? = nil, timeoutErrorBlock: @escaping () -> Error) -> Promise<Value> {
-        let timeout: Promise<Value> = Guarantee.after(seconds: seconds).asPromise().map {
-            throw TimeoutError(underlyingError: timeoutErrorBlock())
+    func timeout(
+        seconds: TimeInterval,
+        ticksWhileSuspended: Bool = false,
+        description: String? = nil,
+        timeoutErrorBlock: @escaping () -> Error
+    ) -> Promise<Value> {
+        let timeout: Promise<Value>
+        if ticksWhileSuspended {
+            timeout = Guarantee.after(wallInterval: seconds).asPromise().map { throw TimeoutError.wallTimeout }
+        } else {
+            timeout = Guarantee.after(seconds: seconds).asPromise().map { throw TimeoutError.relativeTimeout }
         }
 
         return Promise.race([self, timeout]).recover { error -> Promise<Value> in
             switch error {
-            case let timeoutError as TimeoutError:
+            case is TimeoutError:
+                let underlyingError = timeoutErrorBlock()
+                let prefix: String
                 if let description = description {
-                    Logger.info("Timed out, throwing error: \(description).")
+                    prefix = "\(description) timed out:"
                 } else {
-                    Logger.info("Timed out, throwing error.")
+                    prefix = "Timed out:"
                 }
-                return Promise(error: timeoutError.underlyingError)
+                Logger.info("\(prefix): \(error). Resolving promise with underlying error: \(underlyingError)")
+                return Promise(error: underlyingError)
             default:
                 return Promise(error: error)
             }
@@ -62,8 +73,9 @@ public extension Promise {
     }
 }
 
-struct TimeoutError: Error {
-    let underlyingError: Error
+enum TimeoutError: Error {
+    case wallTimeout
+    case relativeTimeout
 }
 
 public extension Thenable where Value == Void {
