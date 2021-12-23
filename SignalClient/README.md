@@ -5,10 +5,12 @@ Swift, or TypeScript library. The underlying implementations are written in Rust
 
 - libsignal-protocol: Implements the Signal protocol, including the [Double Ratchet algorithm][]. A
   replacement for [libsignal-protocol-java][] and [libsignal-metadata-java][].
-- signal-crypto: Cryptographic primitives such as AES-GCM-SIV. We use [RustCrypto][]'s where we can
+- signal-crypto: Cryptographic primitives such as AES-GCM. We use [RustCrypto][]'s where we can
   but sometimes have differing needs.
 - device-transfer: Support logic for Signal's device-to-device transfer feature.
-- poksho: Utilities for implementing zero-knowledge proofs; stands for "proof-of-knowledge, stateful-hash-object". See [zkgroup][].
+- hsm-enclave: A wrapper around the [Noise protocol][] used to securely communicate with server-side [HSMs][].
+- zkgroup: Functionality for [zero-knowledge groups][] and related features available in Signal.
+- poksho: Utilities for implementing zero-knowledge proofs (such as those used by zkgroup); stands for "proof-of-knowledge, stateful-hash-object".
 
 This repository is used by the Signal client apps ([Android][], [iOS][], and [Desktop][]). Use
 outside of Signal is unsupported. In particular, the products of this repository are the Java,
@@ -20,7 +22,9 @@ layers.
 [libsignal-protocol-java]: https://github.com/signalapp/libsignal-protocol-java
 [libsignal-metadata-java]: https://github.com/signalapp/libsignal-metadata-java
 [RustCrypto]: https://github.com/RustCrypto
-[zkgroup]: https://github.com/signalapp/zkgroup
+[Noise protocol]: http://noiseprotocol.org/
+[HSMs]: https://en.wikipedia.org/wiki/Hardware_security_module
+[zero-knowledge groups]: https://signal.org/blog/signal-private-group-system/
 [Android]: https://github.com/signalapp/Signal-Android
 [iOS]: https://github.com/signalapp/Signal-iOS
 [Desktop]: https://github.com/signalapp/Signal-Desktop
@@ -56,6 +60,7 @@ To build the Java/Android ``jar`` and ``aar``, and run the tests:
 ```shell
 $ cd java
 $ ./gradlew test
+$ ./gradlew build # if you need AAR outputs
 ```
 
 Alternately, a build system using Docker is available:
@@ -64,9 +69,6 @@ Alternately, a build system using Docker is available:
 $ cd java
 $ make java_test
 ```
-
-Local Java testing is also supported with `gradlew test` if none of the `ANDROID_*` environment
-variables are set.
 
 When exposing new APIs to Java, you will need to run `rust/bridge/jni/bin/gen_java_decl.py` in
 addition to rebuilding.
@@ -85,6 +87,7 @@ appropriate version automatically.
 We use [`yarn`](https://classic.yarnpkg.com/) as our package manager. The Rust library will automatically be built when you run `yarn install`.
 
 ```shell
+$ cd node
 $ nvm use
 $ yarn install
 $ yarn tsc
@@ -128,6 +131,6 @@ Administration Regulations, Section 740.13) for both object code and source code
 
 ## License
 
-Copyright 2020-2021 Signal Messenger, LLC
+Copyright 2020-2021 Signal Messenger, LLC.
 
 Licensed under the AGPLv3: https://www.gnu.org/licenses/agpl-3.0.html

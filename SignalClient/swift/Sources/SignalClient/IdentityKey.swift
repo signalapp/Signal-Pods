@@ -1,5 +1,5 @@
 //
-// Copyright 2020 Signal Messenger, LLC
+// Copyright 2020-2021 Signal Messenger, LLC.
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
@@ -19,6 +19,17 @@ public struct IdentityKey: Equatable {
 
     public func serialize() -> [UInt8] {
         return publicKey.serialize()
+    }
+
+    public func verifyAlternateIdentity<Bytes: ContiguousBytes>(_ other: IdentityKey, signature: Bytes) throws -> Bool {
+        var result: Bool = false
+        try withNativeHandles(publicKey, other.publicKey) { selfHandle, otherHandle in
+            try signature.withUnsafeBytes { signatureBytes in
+                try checkError(signal_identitykey_verify_alternate_identity(&result, selfHandle, otherHandle, signatureBytes.baseAddress?.assumingMemoryBound(to: UInt8.self), signatureBytes.count))
+            }
+        }
+        return result
+
     }
 }
 
@@ -49,14 +60,26 @@ public struct IdentityKeyPair {
     }
 
     public func serialize() -> [UInt8] {
-        return failOnError {
-            try invokeFnReturningArray {
-                signal_identitykeypair_serialize($0, $1, publicKey.nativeHandle, privateKey.nativeHandle)
+        return withNativeHandles(publicKey, privateKey) { publicKey, privateKey in
+            failOnError {
+                try invokeFnReturningArray {
+                    signal_identitykeypair_serialize($0, $1, publicKey, privateKey)
+                }
             }
         }
     }
 
     public var identityKey: IdentityKey {
         return IdentityKey(publicKey: publicKey)
+    }
+
+    public func signAlternateIdentity(_ other: IdentityKey) -> [UInt8] {
+        return withNativeHandles(publicKey, privateKey, other.publicKey) { publicKey, privateKey, other in
+            failOnError {
+                try invokeFnReturningArray {
+                    signal_identitykeypair_sign_alternate_identity($0, $1, publicKey, privateKey, other)
+                }
+            }
+        }
     }
 }

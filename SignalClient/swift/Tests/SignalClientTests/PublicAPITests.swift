@@ -1,5 +1,5 @@
 //
-// Copyright 2020 Signal Messenger, LLC
+// Copyright 2020 Signal Messenger, LLC.
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
@@ -16,19 +16,11 @@ class PublicAPITests: TestCaseBase {
         let salt: [UInt8] = []
         let okm: [UInt8] = [0x8d, 0xa4, 0xe7, 0x75]
 
-        let version = UInt32(3)
         let derived = try! hkdf(outputLength: okm.count,
-                                version: version,
                                 inputKeyMaterial: ikm,
                                 salt: salt,
                                 info: info)
         XCTAssertEqual(derived, okm)
-
-        XCTAssertThrowsError(try hkdf(outputLength: okm.count,
-                                      version: 19,
-                                      inputKeyMaterial: ikm,
-                                      salt: salt,
-                                      info: info))
     }
 
     func testHkdfUsingRFCExample() {
@@ -43,9 +35,7 @@ class PublicAPITests: TestCaseBase {
                             0xcc, 0x30, 0xc5, 0x81, 0x79, 0xec, 0x3e, 0x87, 0xc1, 0x4c, 0x01, 0xd5, 0xc1, 0xf3, 0x43, 0x4f,
                             0x1d, 0x87]
 
-        let version = UInt32(3)
         let derived = try! hkdf(outputLength: okm.count,
-                                version: version,
                                 inputKeyMaterial: ikm,
                                 salt: salt,
                                 info: info)
@@ -331,6 +321,13 @@ class PublicAPITests: TestCaseBase {
         XCTAssertEqual(cert[0], 0x30)
     }
 
+    func testSignAlternateIdentity() {
+        let primary = IdentityKeyPair.generate()
+        let secondary = IdentityKeyPair.generate()
+        let signature = secondary.signAlternateIdentity(primary.identityKey)
+        XCTAssert(try! secondary.identityKey.verifyAlternateIdentity(primary.identityKey, signature: signature))
+    }
+
     static var allTests: [(String, (PublicAPITests) -> () throws -> Void)] {
         return [
             ("testAddreses", testAddress),
@@ -342,6 +339,7 @@ class PublicAPITests: TestCaseBase {
             ("testGroupCipher", testGroupCipher),
             ("testSenderCertifications", testSenderCertificates),
             ("testSerializationRoundTrip", testSerializationRoundTrip),
+            ("testSignAlternateIdentity", testSignAlternateIdentity),
         ]
     }
 }
