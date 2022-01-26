@@ -188,6 +188,7 @@
 #import "MIMETypeUtil.h"
 #import "NSArray+OWS.h"
 #import "NSData+Image.h"
+#import "NSData+messagePadding.h"
 #import "NSString+SSK.h"
 #import "NSTimer+OWS.h"
 #import "NSUserDefaults+OWS.h"
