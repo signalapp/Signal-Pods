@@ -11,6 +11,7 @@
 #endif
 
 #import "Cryptography.h"
+#import "DebuggerUtils.h"
 #import "iOSVersions.h"
 #import "UnfairLock.h"
 #import "NSData+OWS.h"

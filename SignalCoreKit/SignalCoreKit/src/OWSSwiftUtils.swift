@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2022 Open Whisper Systems. All rights reserved.
 //
 
 import Foundation
@@ -32,7 +32,11 @@ public func owsFailDebug(_ logMessage: String,
     Logger.error(logMessage, file: file, function: function, line: line)
     Logger.flush()
     let formattedMessage = owsFormatLogMessage(logMessage, file: file, function: function, line: line)
-    assertionFailure(formattedMessage)
+    if IsDebuggerAttached() {
+        TrapDebugger()
+    } else {
+        assertionFailure(formattedMessage)
+    }
 }
 
 @inlinable

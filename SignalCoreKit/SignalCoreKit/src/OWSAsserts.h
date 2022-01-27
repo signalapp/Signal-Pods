@@ -1,7 +1,8 @@
 //
-//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2022 Open Whisper Systems. All rights reserved.
 //
 
+#import "DebuggerUtils.h"
 #import "OWSLogs.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -46,7 +47,11 @@ NS_ASSUME_NONNULL_BEGIN
 #define OWSFailWithoutLogging(message, ...)                                                                            \
     do {                                                                                                               \
         NSString *formattedMessage = [NSString stringWithFormat:message, ##__VA_ARGS__];                               \
-        NSAssert(0, formattedMessage);                                                                                 \
+        if (IsDebuggerAttached()) {                                                                                    \
+            TrapDebugger();                                                                                            \
+        } else {                                                                                                       \
+            NSAssert(0, formattedMessage);                                                                             \
+        }                                                                                                              \
     } while (NO)
 
 #define OWSCFailWithoutLogging(message, ...)                                                                           \
