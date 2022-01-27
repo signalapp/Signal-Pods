@@ -131,7 +131,6 @@
 #import "OWSCallMessageHandler.h"
 #import "ProfileManagerProtocol.h"
 #import "ProtoUtils.h"
-#import "RemoteAttestation.h"
 #import "RemoteAttestationQuote.h"
 #import "RemoteAttestationSigningCertificate.h"
 #import "OWSFingerprint.h"
