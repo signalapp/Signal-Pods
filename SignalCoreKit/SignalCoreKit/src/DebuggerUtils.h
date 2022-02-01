@@ -18,12 +18,12 @@ NS_ASSUME_NONNULL_END
 
 #else // DEBUG
 
-static NS_INLINE BOOL IsDebuggerAttached(void)
+NS_INLINE BOOL IsDebuggerAttached(void)
 {
     return NO;
 }
 
-static NS_INLINE void TrapDebugger(void) {
+NS_INLINE void TrapDebugger(void) {
 }
 
 #endif // DEBUG
