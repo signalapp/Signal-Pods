@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2020 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2022 Open Whisper Systems. All rights reserved.
 //
 
 #import "NSString+OWS.h"
@@ -266,6 +266,11 @@ static unichar bidiPopDirectionalIsolate = 0x2069;
         } else if (c == bidiPopDirectionalFormatting) {
             formattingPopCount++;
         }
+    }
+
+    if (isolateStartsCount == 0 && isolatePopCount == 0
+        && formattingStartsCount == 0 && formattingPopCount == 0) {
+        return self;
     }
     
     NSMutableString *balancedString = [NSMutableString new];

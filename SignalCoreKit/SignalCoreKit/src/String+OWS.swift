@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2022 Open Whisper Systems. All rights reserved.
 //
 
 import Foundation
@@ -92,13 +92,28 @@ public extension String {
     }
 
     func replaceCharacters(characterSet: CharacterSet, replacement: String) -> String {
-        let components = self.components(separatedBy: characterSet)
-        return components.joined(separator: replacement)
+        guard var range = self.rangeOfCharacter(from: characterSet) else {
+            return self
+        }
+
+        var result = ""
+        var remaining = self[...]
+        while true {
+            result += remaining[..<range.lowerBound]
+            result += replacement
+            remaining = remaining[range.upperBound...]
+            guard let nextRange = remaining.rangeOfCharacter(from: characterSet) else {
+                result += remaining
+                break
+            }
+            range = nextRange
+        }
+
+        return result
     }
 
     func removeCharacters(characterSet: CharacterSet) -> String {
-        let components = self.components(separatedBy: characterSet)
-        return components.joined()
+        return self.replaceCharacters(characterSet: characterSet, replacement: "")
     }
 }
 
