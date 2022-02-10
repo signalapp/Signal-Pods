@@ -729,7 +729,6 @@
 		3DC02C117B9B061A26B64FA9E65242FB /* OWSOutgoingSyncMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 05AEAA3E6AFB474A77E9A0C121D06B80 /* OWSOutgoingSyncMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3DC58BB6079220872B2A241F55D82074 /* AnyUnpackError.swift in Sources */ = {isa = PBXBuildFile; fileRef = D49F6CA8A97C1E250DB6FCB6294D217C /* AnyUnpackError.swift */; };
 		3DE5F41A555CF57AA896380E9804948A /* ECPrivateKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93322922A5C20E4527BB981F67BFEF70 /* ECPrivateKey.swift */; };
-		3DF08929B10CC2DEE492AABBC9193F0A /* BidirectionalDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = E85CEA557F2FB2E3148A954EFD15F473 /* BidirectionalDictionary.swift */; settings = {COMPILER_FLAGS = "-fcxx-modules"; }; };
 		3DF5B6E7B95F4C0D4F8DAF29B49C1C0A /* params.c in Sources */ = {isa = PBXBuildFile; fileRef = 6634245896286A51C3F4CD33138D80CD /* params.c */; };
 		3E0C814F22A07E475BC69217C9140F3F /* _FakeResponseStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 088B55D16124ABD6011934566BCE8CE9 /* _FakeResponseStream.swift */; };
 		3E1A8134B75CF1E4E068BC13223D5554 /* SCKError.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B9F743617BB23373C40036575AC6712 /* SCKError.m */; };
@@ -8163,7 +8162,6 @@
 		E811CDE2BDDCB42C67A92F852A6E8B6E /* MaySendFrames.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MaySendFrames.swift; path = Sources/NIOHTTP2/ConnectionStateMachine/FrameSendingStates/MaySendFrames.swift; sourceTree = "<group>"; };
 		E843B19111C476DCF177ADC3A3BCFCC0 /* SwiftNIO-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "SwiftNIO-Info.plist"; sourceTree = "<group>"; };
 		E8457AC368411E1953DDF7BE182DA599 /* CNIOHTTPParser.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CNIOHTTPParser.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		E85CEA557F2FB2E3148A954EFD15F473 /* BidirectionalDictionary.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BidirectionalDictionary.swift; sourceTree = "<group>"; };
 		E877A0E0140FC9F1D50C76344950DFC5 /* OWSFormat.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = OWSFormat.swift; sourceTree = "<group>"; };
 		E88DDA44463C51BB5580F4BA00367304 /* FontInspector.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FontInspector.swift; path = Sources/FontInspector.swift; sourceTree = "<group>"; };
 		E8900CE322578A11B5AD7E88A71E5032 /* MobileCoinMinimal-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "MobileCoinMinimal-umbrella.h"; sourceTree = "<group>"; };
@@ -9277,7 +9275,6 @@
 				EF723013B910FFB93028393FD78BD1A0 /* AudioWaveform.swift */,
 				CE0833A0DC5497D6AF707313F89F8167 /* Batching.swift */,
 				B3D0A3000C1ADED3A16B9973AA9AB21C /* Bench.swift */,
-				E85CEA557F2FB2E3148A954EFD15F473 /* BidirectionalDictionary.swift */,
 				91C9CD6AC5221794A0DD8F93E09F8EA7 /* ByteParser.h */,
 				9299FEB046D7FE68E1C601B0EC58384B /* ByteParser.m */,
 				C2FAEA8C3E221B21101693837A6F7F77 /* ChangePhoneNumber.swift */,
@@ -17472,7 +17469,6 @@
 				72DB5CE4882517EBA6093FFA85A736F1 /* BaseModel.m in Sources */,
 				02FAFD34E4D3F9C06C43C5ABADFF34F8 /* Batching.swift in Sources */,
 				5B8271778D19FF372C62B4C931E34540 /* Bench.swift in Sources */,
-				3DF08929B10CC2DEE492AABBC9193F0A /* BidirectionalDictionary.swift in Sources */,
 				5B149A14F3EC34467559DDCEFB6390FC /* BlockingManager.swift in Sources */,
 				7348611207173C515C3EA386E340BF56 /* BlurHash.swift in Sources */,
 				D00C2C2BD1DDE8867415A78EAB0E6F27 /* BulkProfileFetch.swift in Sources */,
