@@ -40,11 +40,8 @@ static BOOL isNan(NSString *sourceString) {
 
 @interface NBPhoneNumberUtil ()
 
-@property(nonatomic, strong) NSLock *entireStringCacheLock;
-@property(nonatomic, strong) NSMutableDictionary *entireStringRegexCache;
-
-@property(nonatomic, strong) NSLock *lockPatternCache;
-@property(nonatomic, strong) NSMutableDictionary *regexPatternCache;
+@property(nonatomic, strong) NSCache<NSString *, NSRegularExpression *> *entireStringRegexCache;
+@property(nonatomic, strong) NSCache<NSString *, NSRegularExpression *> *regexPatternCache;
 
 @property(nonatomic, strong) NSRegularExpression *CAPTURING_DIGIT_PATTERN;
 @property(nonatomic, strong) NSRegularExpression *VALID_ALPHA_PHONE_PATTERN;
@@ -135,50 +132,30 @@ static NSArray *GEO_MOBILE_COUNTRIES;
 - (NSRegularExpression *)entireRegularExpressionWithPattern:(NSString *)regexPattern
                                                     options:(NSRegularExpressionOptions)options
                                                       error:(NSError **)error {
-  [_entireStringCacheLock lock];
-
-  @try {
-    if (!_entireStringRegexCache) {
-      _entireStringRegexCache = [[NSMutableDictionary alloc] init];
+  NSRegularExpression *regex = [_entireStringRegexCache objectForKey:regexPattern];
+  if (!regex) {
+    NSString *finalRegexString = regexPattern;
+    if ([regexPattern rangeOfString:@"^"].location == NSNotFound) {
+      finalRegexString = [NSString stringWithFormat:@"^(?:%@)$", regexPattern];
     }
 
-    NSRegularExpression *regex = [_entireStringRegexCache objectForKey:regexPattern];
-    if (!regex) {
-      NSString *finalRegexString = regexPattern;
-      if ([regexPattern rangeOfString:@"^"].location == NSNotFound) {
-        finalRegexString = [NSString stringWithFormat:@"^(?:%@)$", regexPattern];
-      }
-
-      regex = [self regularExpressionWithPattern:finalRegexString options:0 error:error];
-      [_entireStringRegexCache setObject:regex forKey:regexPattern];
-    }
-
-    return regex;
-  } @finally {
-    [_entireStringCacheLock unlock];
+    regex = [self regularExpressionWithPattern:finalRegexString options:0 error:error];
+    [_entireStringRegexCache setObject:regex forKey:regexPattern];
   }
+
+  return regex;
 }
 
 - (NSRegularExpression *)regularExpressionWithPattern:(NSString *)pattern
                                               options:(NSRegularExpressionOptions)options
                                                 error:(NSError **)error {
-  [_lockPatternCache lock];
-
-  @try {
-    if (!_regexPatternCache) {
-      _regexPatternCache = [[NSMutableDictionary alloc] init];
-    }
-
-    NSRegularExpression *regex = [_regexPatternCache objectForKey:pattern];
-    if (!regex) {
-      regex =
-          [NSRegularExpression regularExpressionWithPattern:pattern options:options error:error];
-      [_regexPatternCache setObject:regex forKey:pattern];
-    }
-    return regex;
-  } @finally {
-    [_lockPatternCache unlock];
+  NSRegularExpression *regex = [_regexPatternCache objectForKey:pattern];
+  if (!regex) {
+    regex =
+        [NSRegularExpression regularExpressionWithPattern:pattern options:options error:error];
+    [_regexPatternCache setObject:regex forKey:pattern];
   }
+  return regex;
 }
 
 - (NSMutableArray *)componentsSeparatedByRegex:(NSString *)sourceString regex:(NSString *)pattern {
@@ -404,8 +381,8 @@ static NSArray *GEO_MOBILE_COUNTRIES;
 - (instancetype)init {
   self = [super init];
   if (self) {
-    _lockPatternCache = [[NSLock alloc] init];
-    _entireStringCacheLock = [[NSLock alloc] init];
+    _regexPatternCache = [[NSCache alloc] init];
+    _entireStringRegexCache = [[NSCache alloc] init];
     _helper = [[NBMetadataHelper alloc] init];
     _matcher = [[NBRegExMatcher alloc] init];
     [self initRegularExpressionSet];

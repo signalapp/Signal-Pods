@@ -13,12 +13,6 @@
     "git": "https://github.com/iziz/libPhoneNumber-iOS.git",
     "tag": "0.9.15"
   },
-  "libraries": "z",
-  "dependencies": {
-    "CocoaLumberjack": [
-
-    ]
-  },
   "ios": {
     "frameworks": "CoreTelephony"
   },
@@ -29,7 +23,7 @@
     "tvos": "9.0"
   },
   "requires_arc": true,
-  "private_header_files": "libPhoneNumber/NBGeneratedPhoneNumberMetaData.h",
+  "resources": "libPhoneNumber/NBPhoneNumberMetaData.plist",
   "source_files": [
     "libPhoneNumber/NBPhoneNumberDefines.{h,m}",
     "libPhoneNumber/NBPhoneNumber.{h,m}",
@@ -40,7 +34,6 @@
     "libPhoneNumber/NBMetadataHelper.{h,m}",
     "libPhoneNumber/NBAsYouTypeFormatter.{h,m}",
     "libPhoneNumber/NSArray+NBAdditions.{h,m}",
-    "libPhoneNumber/NBGeneratedPhoneNumberMetaData.h",
     "libPhoneNumber/Internal/NBRegExMatcher.{h,m}",
     "libPhoneNumber/Internal/NBRegularExpressionCache.{h,m}"
   ]

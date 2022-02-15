@@ -115,6 +115,7 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/signal-messenger.cer"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/textsecure.cer"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/schema.sql"
+  install_resource "${PODS_ROOT}/libPhoneNumber-iOS/libPhoneNumber/NBPhoneNumberMetaData.plist"
   install_resource "${PODS_ROOT}/SAMKeychain/Support/SAMKeychain.bundle"
 fi
 if [[ "$CONFIGURATION" == "App Store Release" ]]; then
@@ -136,6 +137,7 @@ if [[ "$CONFIGURATION" == "App Store Release" ]]; then
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/signal-messenger.cer"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/textsecure.cer"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/schema.sql"
+  install_resource "${PODS_ROOT}/libPhoneNumber-iOS/libPhoneNumber/NBPhoneNumberMetaData.plist"
   install_resource "${PODS_ROOT}/SAMKeychain/Support/SAMKeychain.bundle"
 fi
 if [[ "$CONFIGURATION" == "Profiling" ]]; then
@@ -157,6 +159,7 @@ if [[ "$CONFIGURATION" == "Profiling" ]]; then
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/signal-messenger.cer"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/textsecure.cer"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/schema.sql"
+  install_resource "${PODS_ROOT}/libPhoneNumber-iOS/libPhoneNumber/NBPhoneNumberMetaData.plist"
   install_resource "${PODS_ROOT}/SAMKeychain/Support/SAMKeychain.bundle"
 fi
 if [[ "$CONFIGURATION" == "Testable Release" ]]; then
@@ -178,6 +181,7 @@ if [[ "$CONFIGURATION" == "Testable Release" ]]; then
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/signal-messenger.cer"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/textsecure.cer"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/schema.sql"
+  install_resource "${PODS_ROOT}/libPhoneNumber-iOS/libPhoneNumber/NBPhoneNumberMetaData.plist"
   install_resource "${PODS_ROOT}/SAMKeychain/Support/SAMKeychain.bundle"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
@@ -199,6 +203,7 @@ if [[ "$CONFIGURATION" == "Release" ]]; then
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/signal-messenger.cer"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/Certificates/textsecure.cer"
   install_resource "${PODS_ROOT}/../SignalServiceKit/Resources/schema.sql"
+  install_resource "${PODS_ROOT}/libPhoneNumber-iOS/libPhoneNumber/NBPhoneNumberMetaData.plist"
   install_resource "${PODS_ROOT}/SAMKeychain/Support/SAMKeychain.bundle"
 fi
 
