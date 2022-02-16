@@ -138,13 +138,18 @@ public protocol WSStream {
 }
 
 open class FoundationStream : NSObject, WSStream, StreamDelegate  {
-    private static let sharedWorkQueue = DispatchQueue(label: "com.vluxe.starscream.websocket", attributes: [])
+    private let workQueue = DispatchQueue(label: "com.vluxe.starscream.websocket", attributes: [])
     private var inputStream: InputStream?
     private var outputStream: OutputStream?
     public weak var delegate: WSStreamDelegate?
     let BUFFER_MAX = 4096
 	
 	public var enableSOCKSProxy = false
+    
+    deinit {
+        inputStream?.delegate = nil
+        outputStream?.delegate = nil
+    }
     
     public func connect(url: URL, port: Int, timeout: TimeInterval, ssl: SSLSettings, completion: @escaping ((Error?) -> Void)) {
         var readStream: Unmanaged<CFReadStream>?
@@ -213,13 +218,13 @@ open class FoundationStream : NSObject, WSStream, StreamDelegate  {
             #endif
         }
         
-        CFReadStreamSetDispatchQueue(inStream, FoundationStream.sharedWorkQueue)
-        CFWriteStreamSetDispatchQueue(outStream, FoundationStream.sharedWorkQueue)
+        CFReadStreamSetDispatchQueue(inStream, workQueue)
+        CFWriteStreamSetDispatchQueue(outStream, workQueue)
         inStream.open()
         outStream.open()
         
         var out = timeout// wait X seconds before giving up
-        FoundationStream.sharedWorkQueue.async { [weak self] in
+        workQueue.async { [weak self] in
             while !outStream.hasSpaceAvailable {
                 usleep(100) // wait until the socket is ready
                 out -= 100
