@@ -159,6 +159,13 @@ public struct Printable_PrintableWrapper {
   public init() {}
 }
 
+#if swift(>=5.5) && canImport(_Concurrency)
+extension Printable_PaymentRequest: @unchecked Sendable {}
+extension Printable_TransferPayload: @unchecked Sendable {}
+extension Printable_PrintableWrapper: @unchecked Sendable {}
+extension Printable_PrintableWrapper.OneOf_Wrapper: @unchecked Sendable {}
+#endif  // swift(>=5.5) && canImport(_Concurrency)
+
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
 fileprivate let _protobuf_package = "printable"
@@ -186,9 +193,13 @@ extension Printable_PaymentRequest: SwiftProtobuf.Message, SwiftProtobuf._Messag
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if let v = self._publicAddress {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    try { if let v = self._publicAddress {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
-    }
+    } }()
     if self.value != 0 {
       try visitor.visitSingularUInt64Field(value: self.value, fieldNumber: 2)
     }
@@ -232,12 +243,16 @@ extension Printable_TransferPayload: SwiftProtobuf.Message, SwiftProtobuf._Messa
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
     if !self.rootEntropy.isEmpty {
       try visitor.visitSingularBytesField(value: self.rootEntropy, fieldNumber: 1)
     }
-    if let v = self._txOutPublicKey {
+    try { if let v = self._txOutPublicKey {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
-    }
+    } }()
     if !self.memo.isEmpty {
       try visitor.visitSingularStringField(value: self.memo, fieldNumber: 3)
     }
@@ -317,8 +332,9 @@ extension Printable_PrintableWrapper: SwiftProtobuf.Message, SwiftProtobuf._Mess
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     // The use of inline closures is to circumvent an issue where the compiler
-    // allocates stack space for every case branch when no optimizations are
-    // enabled. https://github.com/apple/swift-protobuf/issues/1034
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
     switch self.wrapper {
     case .publicAddress?: try {
       guard case .publicAddress(let v)? = self.wrapper else { preconditionFailure() }

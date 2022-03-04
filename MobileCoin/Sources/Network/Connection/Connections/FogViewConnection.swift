@@ -3,27 +3,55 @@
 //
 
 import Foundation
-import GRPC
 import LibMobileCoin
 
-final class FogViewConnection: AttestedConnection, FogViewService {
-    private let client: FogView_FogViewAPIClient
+final class FogViewConnection:
+    Connection<GrpcProtocolConnectionFactory.FogViewServiceProvider, HttpProtocolConnectionFactory.FogViewServiceProvider>, FogViewService
+{
+    private let httpFactory: HttpProtocolConnectionFactory
+    private let grpcFactory: GrpcProtocolConnectionFactory
+    private let config: AttestedConnectionConfig<FogUrl>
+    private let targetQueue: DispatchQueue?
+    private let rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)?
+    private let rngContext: Any?
 
     init(
+        httpFactory: HttpProtocolConnectionFactory,
+        grpcFactory: GrpcProtocolConnectionFactory,
         config: AttestedConnectionConfig<FogUrl>,
-        channelManager: GrpcChannelManager,
         targetQueue: DispatchQueue?,
         rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)? = securityRNG,
         rngContext: Any? = nil
     ) {
-        let channel = channelManager.channel(for: config)
-        self.client = FogView_FogViewAPIClient(channel: channel)
+        self.httpFactory = httpFactory
+        self.grpcFactory = grpcFactory
+        self.config = config
+        self.targetQueue = targetQueue
+        self.rng = rng
+        self.rngContext = rngContext
         super.init(
-            client: self.client,
-            config: config,
-            targetQueue: targetQueue,
-            rng: rng,
-            rngContext: rngContext)
+            connectionOptionWrapperFactory: { transportProtocolOption in
+                switch transportProtocolOption {
+                case .grpc:
+                    return .grpc(
+                        grpcService:
+                            grpcFactory.makeFogViewService(
+                                config: config,
+                                targetQueue: targetQueue,
+                                rng: rng,
+                                rngContext: rngContext))
+                case .http:
+                    return .http(
+                        httpService:
+                            httpFactory.makeFogViewService(
+                                config: config,
+                                targetQueue: targetQueue,
+                                rng: rng,
+                                rngContext: rngContext))
+                }
+            },
+            transportProtocolOption: config.transportProtocolOption,
+            targetQueue: targetQueue)
     }
 
     func query(
@@ -31,31 +59,11 @@ final class FogViewConnection: AttestedConnection, FogViewService {
         request: FogView_QueryRequest,
         completion: @escaping (Result<FogView_QueryResponse, ConnectionError>) -> Void
     ) {
-        performAttestedCall(
-            EnclaveRequestCall(client: client),
-            requestAad: requestAad,
-            request: request,
-            completion: completion)
-    }
-}
-
-extension FogViewConnection {
-    private struct EnclaveRequestCall: AttestedGrpcCallable {
-        typealias InnerRequestAad = FogView_QueryRequestAAD
-        typealias InnerRequest = FogView_QueryRequest
-        typealias InnerResponse = FogView_QueryResponse
-
-        let client: FogView_FogViewAPIClient
-
-        func call(
-            request: Attest_Message,
-            callOptions: CallOptions?,
-            completion: @escaping (UnaryCallResult<Attest_Message>) -> Void
-        ) {
-            let unaryCall = client.query(request, callOptions: callOptions)
-            unaryCall.callResult.whenSuccess(completion)
+        switch connectionOptionWrapper {
+        case .grpc(let grpcConnection):
+            grpcConnection.query(requestAad: requestAad, request: request, completion: completion)
+        case .http(let httpConnection):
+            httpConnection.query(requestAad: requestAad, request: request, completion: completion)
         }
     }
 }
-
-extension FogView_FogViewAPIClient: AuthGrpcCallableClient {}

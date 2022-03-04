@@ -266,6 +266,18 @@ public struct Blockchain_ArchiveBlocks {
   public init() {}
 }
 
+#if swift(>=5.5) && canImport(_Concurrency)
+extension Blockchain_BlockID: @unchecked Sendable {}
+extension Blockchain_BlockContentsHash: @unchecked Sendable {}
+extension Blockchain_Block: @unchecked Sendable {}
+extension Blockchain_BlockContents: @unchecked Sendable {}
+extension Blockchain_BlockSignature: @unchecked Sendable {}
+extension Blockchain_ArchiveBlockV1: @unchecked Sendable {}
+extension Blockchain_ArchiveBlock: @unchecked Sendable {}
+extension Blockchain_ArchiveBlock.OneOf_Block: @unchecked Sendable {}
+extension Blockchain_ArchiveBlocks: @unchecked Sendable {}
+#endif  // swift(>=5.5) && canImport(_Concurrency)
+
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
 fileprivate let _protobuf_package = "blockchain"
@@ -365,27 +377,31 @@ extension Blockchain_Block: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if let v = self._id {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    try { if let v = self._id {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
-    }
+    } }()
     if self.version != 0 {
       try visitor.visitSingularUInt32Field(value: self.version, fieldNumber: 2)
     }
-    if let v = self._parentID {
+    try { if let v = self._parentID {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
-    }
+    } }()
     if self.index != 0 {
       try visitor.visitSingularUInt64Field(value: self.index, fieldNumber: 4)
     }
     if self.cumulativeTxoCount != 0 {
       try visitor.visitSingularUInt64Field(value: self.cumulativeTxoCount, fieldNumber: 5)
     }
-    if let v = self._rootElement {
+    try { if let v = self._rootElement {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 6)
-    }
-    if let v = self._contentsHash {
+    } }()
+    try { if let v = self._contentsHash {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 7)
-    }
+    } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -463,12 +479,16 @@ extension Blockchain_BlockSignature: SwiftProtobuf.Message, SwiftProtobuf._Messa
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if let v = self._signature {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    try { if let v = self._signature {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
-    }
-    if let v = self._signer {
+    } }()
+    try { if let v = self._signer {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
-    }
+    } }()
     if self.signedAt != 0 {
       try visitor.visitSingularUInt64Field(value: self.signedAt, fieldNumber: 3)
     }
@@ -507,15 +527,19 @@ extension Blockchain_ArchiveBlockV1: SwiftProtobuf.Message, SwiftProtobuf._Messa
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if let v = self._block {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    try { if let v = self._block {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
-    }
-    if let v = self._blockContents {
+    } }()
+    try { if let v = self._blockContents {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
-    }
-    if let v = self._signature {
+    } }()
+    try { if let v = self._signature {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
-    }
+    } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -559,9 +583,13 @@ extension Blockchain_ArchiveBlock: SwiftProtobuf.Message, SwiftProtobuf._Message
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if case .v1(let v)? = self.block {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    try { if case .v1(let v)? = self.block {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
-    }
+    } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 

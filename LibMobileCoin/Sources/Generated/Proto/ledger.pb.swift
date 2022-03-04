@@ -214,6 +214,28 @@ public struct FogLedger_GetOutputsResponse {
   //// The total number of Txos in the ledger at the time the request is evaluated
   public var globalTxoCount: UInt64 = 0
 
+  //// The latest block_version of a block in the block chain
+  ////
+  //// This may be needed when building transactions, so that use of new transaction
+  //// features can be gated on the block version being increased.
+  ////
+  //// Clients may also choose to prompt users to update their software if
+  //// the block version increases beyond what was "known" when the software
+  //// was built.
+  public var latestBlockVersion: UInt32 = 0
+
+  //// The max of latest_block_version and the MAX_BLOCK_VERSION value
+  //// in mc-transaction-core (in this deploy of fog ledger).
+  ////
+  //// Usually when we redeploy consensus, we also redeploy fog. So this should
+  //// usually be equal to the MAX_BLOCK_VERSION value in the consensus enclave.
+  //// (In case it isn't, it won't be less than latest_block_version.)
+  ////
+  //// This is possibly an additional signal that clients can use to discover
+  //// that there is a new version of transaction-core that may be available
+  //// for an update (by comparing to their local value of max_block_version).
+  public var maxBlockVersion: UInt32 = 0
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -333,6 +355,28 @@ public struct FogLedger_CheckKeyImagesResponse {
   //// The results for each key image query
   public var results: [FogLedger_KeyImageResult] = []
 
+  //// The latest block_version of a block in the block chain
+  ////
+  //// This may be needed when building transactions, so that use of new transaction
+  //// features can be gated on the block version being increased.
+  ////
+  //// Clients may also choose to prompt users to update their software if
+  //// the block version increases beyond what was "known" when the software
+  //// was built.
+  public var latestBlockVersion: UInt32 = 0
+
+  //// The max of latest_block_version and the MAX_BLOCK_VERSION value
+  //// in mc-transaction-core (in this deploy of fog ledger).
+  ////
+  //// Usually when we redeploy consensus, we also redeploy fog. So this should
+  //// usually be equal to the MAX_BLOCK_VERSION value in the consensus enclave.
+  //// (In case it isn't, it won't be less than latest_block_version.)
+  ////
+  //// This is possibly an additional signal that clients can use to discover
+  //// that there is a new version of transaction-core that may be available
+  //// for an update (by comparing to their local value of max_block_version).
+  public var maxBlockVersion: UInt32 = 0
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -359,8 +403,10 @@ public struct FogLedger_KeyImageResult {
   public var spentAt: UInt64 = 0
 
   //// The timestamp of the block containing this key image.
-  //// The value is u64::MAX if the timestamp cannot be found. Callers must check the
-  //// timestamp_result_code to determine why the timestamp could not be found.
+  //// The value is u64::MAX if the timestamp cannot be found.
+  //// If the timestamp cannot be found, even when key_image_result_code == Spent,
+  //// that represents an internal error of the server
+  //// which should be reported to the developers.
   //// Note: The timestamps are based on untrusted reporting of time from the consensus validators.
   //// Represented as seconds of UTC time since Unix epoch 1970-01-01T00:00:00Z.
   public var timestamp: UInt64 = 0
@@ -370,6 +416,9 @@ public struct FogLedger_KeyImageResult {
   //// This is fixed32 to avoid leaking information about found / not found in the size of the encrypted
   //// payload.
   //// The possible values are described in enum TimestampResultCode.
+  //// This is a legacy result code which was forwarded by ledger server from the Watcher db API if a timestamp is not available.
+  //// The ledger server now handles all of these errors and the result will always be `TimestampFound`.
+  //// Clients should ignore this value, and in a future revision we may make it always zero.
   public var timestampResultCode: UInt32 = 0
 
   //// The result code indicating whether the key image was spent.
@@ -402,7 +451,7 @@ public struct FogLedger_BlockResponse {
   // methods supported on all messages.
 
   //// The block data returned by the server
-  public var blocks: [FogLedger_Block] = []
+  public var blocks: [FogLedger_BlockData] = []
 
   //// The total number of blocks in the ledger at the time the request is evaluated
   public var numBlocks: UInt64 = 0
@@ -415,7 +464,7 @@ public struct FogLedger_BlockResponse {
   public init() {}
 }
 
-public struct FogLedger_Block {
+public struct FogLedger_BlockData {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -515,6 +564,25 @@ public struct FogLedger_TxOutResult {
   fileprivate var _txOutPubkey: External_CompressedRistretto? = nil
 }
 
+#if swift(>=5.5) && canImport(_Concurrency)
+extension FogLedger_OutputResultCode: @unchecked Sendable {}
+extension FogLedger_KeyImageResultCode: @unchecked Sendable {}
+extension FogLedger_TxOutResultCode: @unchecked Sendable {}
+extension FogLedger_GetOutputsRequest: @unchecked Sendable {}
+extension FogLedger_GetOutputsResponse: @unchecked Sendable {}
+extension FogLedger_OutputResult: @unchecked Sendable {}
+extension FogLedger_CheckKeyImagesRequest: @unchecked Sendable {}
+extension FogLedger_KeyImageQuery: @unchecked Sendable {}
+extension FogLedger_CheckKeyImagesResponse: @unchecked Sendable {}
+extension FogLedger_KeyImageResult: @unchecked Sendable {}
+extension FogLedger_BlockRequest: @unchecked Sendable {}
+extension FogLedger_BlockResponse: @unchecked Sendable {}
+extension FogLedger_BlockData: @unchecked Sendable {}
+extension FogLedger_TxOutRequest: @unchecked Sendable {}
+extension FogLedger_TxOutResponse: @unchecked Sendable {}
+extension FogLedger_TxOutResult: @unchecked Sendable {}
+#endif  // swift(>=5.5) && canImport(_Concurrency)
+
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
 fileprivate let _protobuf_package = "fog_ledger"
@@ -590,6 +658,8 @@ extension FogLedger_GetOutputsResponse: SwiftProtobuf.Message, SwiftProtobuf._Me
     1: .same(proto: "results"),
     2: .standard(proto: "num_blocks"),
     3: .standard(proto: "global_txo_count"),
+    4: .standard(proto: "latest_block_version"),
+    5: .standard(proto: "max_block_version"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -601,6 +671,8 @@ extension FogLedger_GetOutputsResponse: SwiftProtobuf.Message, SwiftProtobuf._Me
       case 1: try { try decoder.decodeRepeatedMessageField(value: &self.results) }()
       case 2: try { try decoder.decodeSingularUInt64Field(value: &self.numBlocks) }()
       case 3: try { try decoder.decodeSingularUInt64Field(value: &self.globalTxoCount) }()
+      case 4: try { try decoder.decodeSingularUInt32Field(value: &self.latestBlockVersion) }()
+      case 5: try { try decoder.decodeSingularUInt32Field(value: &self.maxBlockVersion) }()
       default: break
       }
     }
@@ -616,6 +688,12 @@ extension FogLedger_GetOutputsResponse: SwiftProtobuf.Message, SwiftProtobuf._Me
     if self.globalTxoCount != 0 {
       try visitor.visitSingularUInt64Field(value: self.globalTxoCount, fieldNumber: 3)
     }
+    if self.latestBlockVersion != 0 {
+      try visitor.visitSingularUInt32Field(value: self.latestBlockVersion, fieldNumber: 4)
+    }
+    if self.maxBlockVersion != 0 {
+      try visitor.visitSingularUInt32Field(value: self.maxBlockVersion, fieldNumber: 5)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -623,6 +701,8 @@ extension FogLedger_GetOutputsResponse: SwiftProtobuf.Message, SwiftProtobuf._Me
     if lhs.results != rhs.results {return false}
     if lhs.numBlocks != rhs.numBlocks {return false}
     if lhs.globalTxoCount != rhs.globalTxoCount {return false}
+    if lhs.latestBlockVersion != rhs.latestBlockVersion {return false}
+    if lhs.maxBlockVersion != rhs.maxBlockVersion {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -653,18 +733,22 @@ extension FogLedger_OutputResult: SwiftProtobuf.Message, SwiftProtobuf._MessageI
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
     if self.index != 0 {
       try visitor.visitSingularFixed64Field(value: self.index, fieldNumber: 1)
     }
     if self.resultCode != 0 {
       try visitor.visitSingularFixed32Field(value: self.resultCode, fieldNumber: 2)
     }
-    if let v = self._output {
+    try { if let v = self._output {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
-    }
-    if let v = self._proof {
+    } }()
+    try { if let v = self._proof {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 4)
-    }
+    } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -731,9 +815,13 @@ extension FogLedger_KeyImageQuery: SwiftProtobuf.Message, SwiftProtobuf._Message
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if let v = self._keyImage {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    try { if let v = self._keyImage {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
-    }
+    } }()
     if self.startBlock != 0 {
       try visitor.visitSingularFixed64Field(value: self.startBlock, fieldNumber: 2)
     }
@@ -754,6 +842,8 @@ extension FogLedger_CheckKeyImagesResponse: SwiftProtobuf.Message, SwiftProtobuf
     1: .standard(proto: "num_blocks"),
     2: .standard(proto: "global_txo_count"),
     3: .same(proto: "results"),
+    4: .standard(proto: "latest_block_version"),
+    5: .standard(proto: "max_block_version"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -765,6 +855,8 @@ extension FogLedger_CheckKeyImagesResponse: SwiftProtobuf.Message, SwiftProtobuf
       case 1: try { try decoder.decodeSingularUInt64Field(value: &self.numBlocks) }()
       case 2: try { try decoder.decodeSingularUInt64Field(value: &self.globalTxoCount) }()
       case 3: try { try decoder.decodeRepeatedMessageField(value: &self.results) }()
+      case 4: try { try decoder.decodeSingularUInt32Field(value: &self.latestBlockVersion) }()
+      case 5: try { try decoder.decodeSingularUInt32Field(value: &self.maxBlockVersion) }()
       default: break
       }
     }
@@ -780,6 +872,12 @@ extension FogLedger_CheckKeyImagesResponse: SwiftProtobuf.Message, SwiftProtobuf
     if !self.results.isEmpty {
       try visitor.visitRepeatedMessageField(value: self.results, fieldNumber: 3)
     }
+    if self.latestBlockVersion != 0 {
+      try visitor.visitSingularUInt32Field(value: self.latestBlockVersion, fieldNumber: 4)
+    }
+    if self.maxBlockVersion != 0 {
+      try visitor.visitSingularUInt32Field(value: self.maxBlockVersion, fieldNumber: 5)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -787,6 +885,8 @@ extension FogLedger_CheckKeyImagesResponse: SwiftProtobuf.Message, SwiftProtobuf
     if lhs.numBlocks != rhs.numBlocks {return false}
     if lhs.globalTxoCount != rhs.globalTxoCount {return false}
     if lhs.results != rhs.results {return false}
+    if lhs.latestBlockVersion != rhs.latestBlockVersion {return false}
+    if lhs.maxBlockVersion != rhs.maxBlockVersion {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -819,9 +919,13 @@ extension FogLedger_KeyImageResult: SwiftProtobuf.Message, SwiftProtobuf._Messag
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if let v = self._keyImage {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    try { if let v = self._keyImage {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
-    }
+    } }()
     if self.spentAt != 0 {
       try visitor.visitSingularFixed64Field(value: self.spentAt, fieldNumber: 2)
     }
@@ -924,8 +1028,8 @@ extension FogLedger_BlockResponse: SwiftProtobuf.Message, SwiftProtobuf._Message
   }
 }
 
-extension FogLedger_Block: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".Block"
+extension FogLedger_BlockData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".BlockData"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "index"),
     2: .standard(proto: "global_txo_count"),
@@ -969,7 +1073,7 @@ extension FogLedger_Block: SwiftProtobuf.Message, SwiftProtobuf._MessageImplemen
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: FogLedger_Block, rhs: FogLedger_Block) -> Bool {
+  public static func ==(lhs: FogLedger_BlockData, rhs: FogLedger_BlockData) -> Bool {
     if lhs.index != rhs.index {return false}
     if lhs.globalTxoCount != rhs.globalTxoCount {return false}
     if lhs.outputs != rhs.outputs {return false}
@@ -1085,9 +1189,13 @@ extension FogLedger_TxOutResult: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if let v = self._txOutPubkey {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    try { if let v = self._txOutPubkey {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
-    }
+    } }()
     if self.resultCode != .notFound {
       try visitor.visitSingularEnumField(value: self.resultCode, fieldNumber: 2)
     }

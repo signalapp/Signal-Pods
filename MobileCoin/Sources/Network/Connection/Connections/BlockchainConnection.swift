@@ -3,43 +3,57 @@
 //
 
 import Foundation
-import GRPC
 import LibMobileCoin
 import SwiftProtobuf
 
-final class BlockchainConnection: Connection, BlockchainService {
-    private let client: ConsensusCommon_BlockchainAPIClient
+final class BlockchainConnection:
+    Connection<GrpcProtocolConnectionFactory.BlockchainServiceProvider, HttpProtocolConnectionFactory.BlockchainServiceProvider>, BlockchainService
+{
+    private let httpFactory: HttpProtocolConnectionFactory
+    private let grpcFactory: GrpcProtocolConnectionFactory
+    private let config: ConnectionConfig<ConsensusUrl>
+    private let targetQueue: DispatchQueue?
 
     init(
+        httpFactory: HttpProtocolConnectionFactory,
+        grpcFactory: GrpcProtocolConnectionFactory,
         config: ConnectionConfig<ConsensusUrl>,
-        channelManager: GrpcChannelManager,
         targetQueue: DispatchQueue?
     ) {
-        let channel = channelManager.channel(for: config)
-        self.client = ConsensusCommon_BlockchainAPIClient(channel: channel)
-        super.init(config: config, targetQueue: targetQueue)
+        self.httpFactory = httpFactory
+        self.grpcFactory = grpcFactory
+        self.config = config
+        self.targetQueue = targetQueue
+
+        super.init(
+            connectionOptionWrapperFactory: { transportProtocolOption in
+                switch transportProtocolOption {
+                case .grpc:
+                    return .grpc(
+                        grpcService:
+                            grpcFactory.makeBlockchainService(
+                                config: config,
+                                targetQueue: targetQueue))
+                case .http:
+                    return .http(httpService:
+                            httpFactory.makeBlockchainService(
+                                config: config,
+                                targetQueue: targetQueue))
+                }
+            },
+            transportProtocolOption: config.transportProtocolOption,
+            targetQueue: targetQueue)
     }
 
     func getLastBlockInfo(
         completion:
             @escaping (Result<ConsensusCommon_LastBlockInfoResponse, ConnectionError>) -> Void
     ) {
-        performCall(GetLastBlockInfoCall(client: client), completion: completion)
-    }
-}
-
-extension BlockchainConnection {
-    private struct GetLastBlockInfoCall: GrpcCallable {
-        let client: ConsensusCommon_BlockchainAPIClient
-
-        func call(
-            request: (),
-            callOptions: CallOptions?,
-            completion: @escaping (UnaryCallResult<ConsensusCommon_LastBlockInfoResponse>) -> Void
-        ) {
-            let unaryCall =
-                client.getLastBlockInfo(Google_Protobuf_Empty(), callOptions: callOptions)
-            unaryCall.callResult.whenSuccess(completion)
+        switch connectionOptionWrapper {
+        case .grpc(let grpcConnection):
+            grpcConnection.getLastBlockInfo(completion: completion)
+        case .http(let httpConnection):
+            httpConnection.getLastBlockInfo(completion: completion)
         }
     }
 }

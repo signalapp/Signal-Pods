@@ -13,8 +13,12 @@ protocol ConsensusService {
         completion: @escaping (Result<ConsensusCommon_ProposeTxResponse, ConnectionError>) -> Void)
 }
 
+protocol ConsensusServiceConnection : ConsensusService, ConnectionProtocol { }
+
 protocol BlockchainService {
     func getLastBlockInfo(
         completion:
             @escaping (Result<ConsensusCommon_LastBlockInfoResponse, ConnectionError>) -> Void)
 }
+
+protocol BlockchainServiceConnection : BlockchainService, ConnectionProtocol {}

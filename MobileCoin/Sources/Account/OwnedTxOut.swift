@@ -19,6 +19,8 @@ public struct OwnedTxOut {
 
     public let spentBlock: BlockMetadata?
 
+    public let subaddressIndex: UInt64
+
     init(
         _ knownTxOut: KnownTxOut,
         receivedBlock: BlockMetadata,
@@ -29,6 +31,7 @@ public struct OwnedTxOut {
         self.keyImageTyped = knownTxOut.keyImage
         self.receivedBlock = receivedBlock
         self.spentBlock = spentBlock
+        self.subaddressIndex = knownTxOut.subaddressIndex
     }
 }
 

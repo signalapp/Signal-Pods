@@ -320,52 +320,6 @@ public struct FogView_TxOutSearchResult {
   public init() {}
 }
 
-//// A Redacted Fog Transaction Output.
-//// This is the same as a normal TxOut, except that the fog hint is removed after processing, to save storage.
-public struct FogView_FogTxOut {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
-
-  //// Amount.
-  public var amount: External_Amount {
-    get {return _amount ?? External_Amount()}
-    set {_amount = newValue}
-  }
-  /// Returns true if `amount` has been explicitly set.
-  public var hasAmount: Bool {return self._amount != nil}
-  /// Clears the value of `amount`. Subsequent reads from it will return its default value.
-  public mutating func clearAmount() {self._amount = nil}
-
-  //// Public key.
-  public var targetKey: External_CompressedRistretto {
-    get {return _targetKey ?? External_CompressedRistretto()}
-    set {_targetKey = newValue}
-  }
-  /// Returns true if `targetKey` has been explicitly set.
-  public var hasTargetKey: Bool {return self._targetKey != nil}
-  /// Clears the value of `targetKey`. Subsequent reads from it will return its default value.
-  public mutating func clearTargetKey() {self._targetKey = nil}
-
-  //// Public key.
-  public var publicKey: External_CompressedRistretto {
-    get {return _publicKey ?? External_CompressedRistretto()}
-    set {_publicKey = newValue}
-  }
-  /// Returns true if `publicKey` has been explicitly set.
-  public var hasPublicKey: Bool {return self._publicKey != nil}
-  /// Clears the value of `publicKey`. Subsequent reads from it will return its default value.
-  public mutating func clearPublicKey() {self._publicKey = nil}
-
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
-
-  public init() {}
-
-  fileprivate var _amount: External_Amount? = nil
-  fileprivate var _targetKey: External_CompressedRistretto? = nil
-  fileprivate var _publicKey: External_CompressedRistretto? = nil
-}
-
 //// The schema for the decrypted TxOutSearchResult ciphertext
 //// This is the information that the Ingest enclave produces for the user about their TxOut
 ////
@@ -383,6 +337,8 @@ public struct FogView_TxOutRecord {
   // methods supported on all messages.
 
   //// The (compressed ristretto) bytes of commitment associated to amount field in the TxOut that was recovered
+  ////
+  //// Note: This field is omitted in recent versions, because it can be reconstructed by the recipient instead.
   public var txOutAmountCommitmentData: Data = Data()
 
   //// The masked value associated to amount field in the TxOut that was recovered
@@ -426,10 +382,33 @@ public struct FogView_TxOutRecord {
   //// Represented as seconds of UTC time since Unix epoch 1970-01-01T00:00:00Z.
   public var timestamp: UInt64 = 0
 
+  //// The crc32 of the commitment data bytes.
+  //// This is a 4-byte IEEE crc32 of the bytes of the tx_out_amount_commitment_data bytes, which is present if
+  //// the full tx_out_amount_commitment_data is omitted.
+  //// The client can recompute the tx_out_amount_commitment from the other data that we include.
+  //// They can confirm correct recomputation by checking this crc value.
+  public var txOutAmountCommitmentDataCrc32: UInt32 = 0
+
+  //// The bytes of the encrypted memo.
+  //// This exactly 66 bytes when present.
+  //// This is omitted for TxOut's from before the upgrade that introduced memos.
+  public var txOutEMemoData: Data = Data()
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
 }
+
+#if swift(>=5.5) && canImport(_Concurrency)
+extension FogView_TxOutSearchResultCode: @unchecked Sendable {}
+extension FogView_QueryRequestAAD: @unchecked Sendable {}
+extension FogView_QueryRequest: @unchecked Sendable {}
+extension FogView_QueryResponse: @unchecked Sendable {}
+extension FogView_RngRecord: @unchecked Sendable {}
+extension FogView_DecommissionedIngestInvocation: @unchecked Sendable {}
+extension FogView_TxOutSearchResult: @unchecked Sendable {}
+extension FogView_TxOutRecord: @unchecked Sendable {}
+#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
@@ -619,12 +598,16 @@ extension FogView_RngRecord: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
     if self.ingestInvocationID != 0 {
       try visitor.visitSingularInt64Field(value: self.ingestInvocationID, fieldNumber: 1)
     }
-    if let v = self._pubkey {
+    try { if let v = self._pubkey {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
-    }
+    } }()
     if self.startBlock != 0 {
       try visitor.visitSingularUInt64Field(value: self.startBlock, fieldNumber: 3)
     }
@@ -722,50 +705,6 @@ extension FogView_TxOutSearchResult: SwiftProtobuf.Message, SwiftProtobuf._Messa
   }
 }
 
-extension FogView_FogTxOut: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".FogTxOut"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "amount"),
-    2: .standard(proto: "target_key"),
-    3: .standard(proto: "public_key"),
-  ]
-
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      // The use of inline closures is to circumvent an issue where the compiler
-      // allocates stack space for every case branch when no optimizations are
-      // enabled. https://github.com/apple/swift-protobuf/issues/1034
-      switch fieldNumber {
-      case 1: try { try decoder.decodeSingularMessageField(value: &self._amount) }()
-      case 2: try { try decoder.decodeSingularMessageField(value: &self._targetKey) }()
-      case 3: try { try decoder.decodeSingularMessageField(value: &self._publicKey) }()
-      default: break
-      }
-    }
-  }
-
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if let v = self._amount {
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
-    }
-    if let v = self._targetKey {
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
-    }
-    if let v = self._publicKey {
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
-    }
-    try unknownFields.traverse(visitor: &visitor)
-  }
-
-  public static func ==(lhs: FogView_FogTxOut, rhs: FogView_FogTxOut) -> Bool {
-    if lhs._amount != rhs._amount {return false}
-    if lhs._targetKey != rhs._targetKey {return false}
-    if lhs._publicKey != rhs._publicKey {return false}
-    if lhs.unknownFields != rhs.unknownFields {return false}
-    return true
-  }
-}
-
 extension FogView_TxOutRecord: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = _protobuf_package + ".TxOutRecord"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
@@ -776,6 +715,8 @@ extension FogView_TxOutRecord: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
     5: .standard(proto: "tx_out_global_index"),
     6: .standard(proto: "block_index"),
     7: .same(proto: "timestamp"),
+    8: .standard(proto: "tx_out_amount_commitment_data_crc32"),
+    9: .standard(proto: "tx_out_e_memo_data"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -791,6 +732,8 @@ extension FogView_TxOutRecord: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
       case 5: try { try decoder.decodeSingularFixed64Field(value: &self.txOutGlobalIndex) }()
       case 6: try { try decoder.decodeSingularFixed64Field(value: &self.blockIndex) }()
       case 7: try { try decoder.decodeSingularFixed64Field(value: &self.timestamp) }()
+      case 8: try { try decoder.decodeSingularFixed32Field(value: &self.txOutAmountCommitmentDataCrc32) }()
+      case 9: try { try decoder.decodeSingularBytesField(value: &self.txOutEMemoData) }()
       default: break
       }
     }
@@ -818,6 +761,12 @@ extension FogView_TxOutRecord: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
     if self.timestamp != 0 {
       try visitor.visitSingularFixed64Field(value: self.timestamp, fieldNumber: 7)
     }
+    if self.txOutAmountCommitmentDataCrc32 != 0 {
+      try visitor.visitSingularFixed32Field(value: self.txOutAmountCommitmentDataCrc32, fieldNumber: 8)
+    }
+    if !self.txOutEMemoData.isEmpty {
+      try visitor.visitSingularBytesField(value: self.txOutEMemoData, fieldNumber: 9)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -829,6 +778,8 @@ extension FogView_TxOutRecord: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
     if lhs.txOutGlobalIndex != rhs.txOutGlobalIndex {return false}
     if lhs.blockIndex != rhs.blockIndex {return false}
     if lhs.timestamp != rhs.timestamp {return false}
+    if lhs.txOutAmountCommitmentDataCrc32 != rhs.txOutAmountCommitmentDataCrc32 {return false}
+    if lhs.txOutEMemoData != rhs.txOutEMemoData {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

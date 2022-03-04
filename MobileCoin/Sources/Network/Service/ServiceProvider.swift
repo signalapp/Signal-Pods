@@ -12,9 +12,13 @@ protocol ServiceProvider {
     var fogMerkleProofService: FogMerkleProofService { get }
     var fogKeyImageService: FogKeyImageService { get }
     var fogBlockService: FogBlockService { get }
-    var fogUntrustedTxOutService: FogUntrustedTxOutConnection { get }
+    var fogUntrustedTxOutService: FogUntrustedTxOutService { get }
 
-    func fogReportService(for fogReportUrl: FogUrl) -> FogReportService
+    func fogReportService(
+        for fogReportUrl: FogUrl,
+        completion: @escaping (FogReportService) -> Void)
+
+    func setTransportProtocolOption(_ transportProtocolOption: TransportProtocol.Option)
 
     func setConsensusAuthorization(credentials: BasicCredentials)
     func setFogUserAuthorization(credentials: BasicCredentials)

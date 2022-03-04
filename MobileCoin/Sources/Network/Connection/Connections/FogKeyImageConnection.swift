@@ -3,56 +3,66 @@
 //
 
 import Foundation
-import GRPC
 import LibMobileCoin
 
-final class FogKeyImageConnection: AttestedConnection, FogKeyImageService {
-    private let client: FogLedger_FogKeyImageAPIClient
+final class FogKeyImageConnection:
+    Connection<GrpcProtocolConnectionFactory.FogKeyImageServiceProvider, HttpProtocolConnectionFactory.FogKeyImageServiceProvider>, FogKeyImageService
+{
+    private let httpFactory: HttpProtocolConnectionFactory
+    private let grpcFactory: GrpcProtocolConnectionFactory
+    private let config: AttestedConnectionConfig<FogUrl>
+    private let targetQueue: DispatchQueue?
+    private let rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)?
+    private let rngContext: Any?
 
     init(
+        httpFactory: HttpProtocolConnectionFactory,
+        grpcFactory: GrpcProtocolConnectionFactory,
         config: AttestedConnectionConfig<FogUrl>,
-        channelManager: GrpcChannelManager,
         targetQueue: DispatchQueue?,
         rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)? = securityRNG,
         rngContext: Any? = nil
     ) {
-        let channel = channelManager.channel(for: config)
-        self.client = FogLedger_FogKeyImageAPIClient(channel: channel)
+        self.httpFactory = httpFactory
+        self.grpcFactory = grpcFactory
+        self.config = config
+        self.targetQueue = targetQueue
+        self.rng = rng
+        self.rngContext = rngContext
+
         super.init(
-            client: self.client,
-            config: config,
-            targetQueue: targetQueue,
-            rng: rng,
-            rngContext: rngContext)
+            connectionOptionWrapperFactory: { transportProtocolOption in
+                switch transportProtocolOption {
+                case .grpc:
+                    return .grpc(
+                        grpcService:
+                            grpcFactory.makeFogKeyImageService(
+                                config: config,
+                                targetQueue: targetQueue,
+                                rng: rng,
+                                rngContext: rngContext))
+                case .http:
+                    return .http(httpService:
+                            httpFactory.makeFogKeyImageService(
+                                config: config,
+                                targetQueue: targetQueue,
+                                rng: rng,
+                                rngContext: rngContext))
+                }
+            },
+            transportProtocolOption: config.transportProtocolOption,
+            targetQueue: targetQueue)
     }
 
     func checkKeyImages(
         request: FogLedger_CheckKeyImagesRequest,
         completion: @escaping (Result<FogLedger_CheckKeyImagesResponse, ConnectionError>) -> Void
     ) {
-        performAttestedCall(
-            CheckKeyImagesCall(client: client),
-            request: request,
-            completion: completion)
-    }
-}
-
-extension FogKeyImageConnection {
-    private struct CheckKeyImagesCall: AttestedGrpcCallable {
-        typealias InnerRequest = FogLedger_CheckKeyImagesRequest
-        typealias InnerResponse = FogLedger_CheckKeyImagesResponse
-
-        let client: FogLedger_FogKeyImageAPIClient
-
-        func call(
-            request: Attest_Message,
-            callOptions: CallOptions?,
-            completion: @escaping (UnaryCallResult<Attest_Message>) -> Void
-        ) {
-            let unaryCall = client.checkKeyImages(request, callOptions: callOptions)
-            unaryCall.callResult.whenSuccess(completion)
+        switch connectionOptionWrapper {
+        case .grpc(let grpcConnection):
+            grpcConnection.checkKeyImages(request: request, completion: completion)
+        case .http(let httpConnection):
+            httpConnection.checkKeyImages(request: request, completion: completion)
         }
     }
 }
-
-extension FogLedger_FogKeyImageAPIClient: AuthGrpcCallableClient {}

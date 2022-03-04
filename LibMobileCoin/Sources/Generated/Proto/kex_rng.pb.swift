@@ -63,6 +63,11 @@ public struct KexRng_StoredRng {
   public init() {}
 }
 
+#if swift(>=5.5) && canImport(_Concurrency)
+extension KexRng_KexRngPubkey: @unchecked Sendable {}
+extension KexRng_StoredRng: @unchecked Sendable {}
+#endif  // swift(>=5.5) && canImport(_Concurrency)
+
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
 fileprivate let _protobuf_package = "kex_rng"

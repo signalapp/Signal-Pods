@@ -142,6 +142,7 @@ public enum TransactionSubmissionError: Error {
     case invalidTransaction(String = String())
     case feeError(String = String())
     case tombstoneBlockTooFar(String = String())
+    case missingMemo(String = String())
     case inputsAlreadySpent(String = String())
 }
 
@@ -151,6 +152,8 @@ extension TransactionSubmissionError: CustomStringConvertible {
             switch self {
             case .connectionError(let connectionError):
                 return "\(connectionError)"
+            case .missingMemo(let reason):
+                return "Missing memo error\(!reason.isEmpty ? ": \(reason)" : "")"
             case .feeError(let reason):
                 return "Fee error\(!reason.isEmpty ? ": \(reason)" : "")"
             case .invalidTransaction(let reason):
@@ -203,3 +206,29 @@ extension TransactionEstimationError: CustomStringConvertible {
         }()
     }
 }
+
+public struct SecurityError: Error {
+    let status: OSStatus?
+    let message: String?
+
+    init(_ status: OSStatus? = nil, message: String? = nil) {
+        self.status = status
+        self.message = message
+    }
+}
+
+extension SecurityError: CustomStringConvertible {
+    static var nilPublicKey = """
+        the public key could not be extracted (this can happen if the public key algorithm is not supported).
+    """
+    
+    public var description: String {
+        guard let osstatus = status else { return "Security Error Code - \(message ?? "Unknown")" }
+        if #available(iOS 11.3, *) {
+            return "Security Error Code - \(osstatus): \(SecCopyErrorMessageString(osstatus, nil) ?? "Unknown" as CFString)"
+        } else {
+            return "Security Error Code - \(osstatus) ... see Apple Security Framework SecBase.h"
+        }
+    }
+}
+

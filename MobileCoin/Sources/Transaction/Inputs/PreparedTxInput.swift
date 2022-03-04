@@ -26,6 +26,10 @@ struct PreparedTxInput {
     let knownTxOut: KnownTxOut
     let ring: [(TxOut, TxOutMembershipProof)]
     let realInputIndex: Int
+    
+    var subaddressIndex : UInt64 {
+        knownTxOut.subaddressIndex
+    }
 
     private init(knownTxOut: KnownTxOut, ring: [(TxOut, TxOutMembershipProof)], realInputIndex: Int)
     {

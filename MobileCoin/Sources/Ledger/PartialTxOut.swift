@@ -40,31 +40,40 @@ extension PartialTxOut {
             publicKey: publicKey)
     }
 
-    init?(_ txOut: FogView_FogTxOut) {
-        guard let commitment = Data32(txOut.amount.commitment.data),
-              let targetKey = RistrettoPublic(txOut.targetKey.data),
-              let publicKey = RistrettoPublic(txOut.publicKey.data)
+    init?(_ txOutRecord: FogView_TxOutRecord, viewKey: RistrettoPrivate) {
+        guard let targetKey = RistrettoPublic(txOutRecord.txOutTargetKeyData),
+              let publicKey = RistrettoPublic(txOutRecord.txOutPublicKeyData),
+              let commitment = TxOutUtils.reconstructCommitment(
+                                                    maskedValue: txOutRecord.txOutAmountMaskedValue,
+                                                    publicKey: publicKey,
+                                                    viewPrivateKey: viewKey),
+              Self.isCrc32Matching(commitment, txOutRecord: txOutRecord)
         else {
             return nil
         }
-        self.init(
-            commitment: commitment,
-            maskedValue: txOut.amount.maskedValue,
-            targetKey: targetKey,
-            publicKey: publicKey)
-    }
 
-    init?(_ txOutRecord: FogView_TxOutRecord) {
-        guard let commitment = Data32(txOutRecord.txOutAmountCommitmentData),
-              let targetKey = RistrettoPublic(txOutRecord.txOutTargetKeyData),
-              let publicKey = RistrettoPublic(txOutRecord.txOutPublicKeyData)
-        else {
-            return nil
-        }
         self.init(
             commitment: commitment,
             maskedValue: txOutRecord.txOutAmountMaskedValue,
             targetKey: targetKey,
             publicKey: publicKey)
     }
+
+    static func isCrc32Matching(_ reconstructed: Data32, txOutRecord: FogView_TxOutRecord) -> Bool {
+        let reconstructedCrc32 = reconstructed.commitmentCrc32
+        let txIsSentWithCrc32 = (txOutRecord.txOutAmountCommitmentDataCrc32 != .emptyCrc32)
+
+        // Older code may not set the crc32 value for the tx record,
+        // so it must be calculated off the data of the record itself
+        // until that code is deprecated.
+        //
+        // once it is required that crc32 be set, remove the 'else' below
+        // and add a guard check for the
+        if txIsSentWithCrc32 {
+            return reconstructedCrc32 == txOutRecord.txOutAmountCommitmentDataCrc32
+        } else {
+            return reconstructedCrc32 == txOutRecord.txOutAmountCommitmentData.commitmentCrc32
+        }
+    }
 }
+

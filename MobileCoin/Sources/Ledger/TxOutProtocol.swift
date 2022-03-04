@@ -6,7 +6,7 @@ import Foundation
 import LibMobileCoin
 
 protocol TxOutProtocol {
-    var commitment: Data32 { get }
+    var commitment: Data32 { get } 
     var maskedValue: UInt64 { get }
     var targetKey: RistrettoPublic { get }
     var publicKey: RistrettoPublic { get }
@@ -23,7 +23,6 @@ extension TxOutProtocol {
 
     func matchesAnySubaddress(accountKey: AccountKey) -> Bool {
         TxOutUtils.matchesAnySubaddress(
-            commitment: commitment,
             maskedValue: maskedValue,
             publicKey: publicKey,
             viewPrivateKey: accountKey.viewPrivateKey)
@@ -40,30 +39,34 @@ extension TxOutProtocol {
     ///     own `TxOut` or because ` TxOut` values are incongruent.
     func value(accountKey: AccountKey) -> UInt64? {
         TxOutUtils.value(
-            commitment: commitment,
             maskedValue: maskedValue,
             publicKey: publicKey,
             viewPrivateKey: accountKey.viewPrivateKey)
     }
 
+    typealias IndexedKeyImage = (index: UInt64, keyImage: KeyImage)
+    
     /// - Returns: `nil` when a valid `KeyImage` cannot be constructed, either because `accountKey`
     ///     does not own `TxOut` or because `TxOut` values are incongruent.
-    func keyImage(accountKey: AccountKey) -> KeyImage? {
-        TxOutUtils.keyImage(
-            targetKey: targetKey,
-            publicKey: publicKey,
-            viewPrivateKey: accountKey.viewPrivateKey,
-            subaddressSpendPrivateKey: accountKey.subaddressSpendPrivateKey)
+    func keyImage(accountKey: AccountKey) -> IndexedKeyImage? {
+        [indexedKeyImage(index: accountKey.subaddressIndex, accountKey: accountKey),
+         indexedKeyImage(index: accountKey.changeSubaddressIndex, accountKey: accountKey)]
+        .compactMap({$0})
+        .first
     }
-}
-
-extension FogView_FogTxOut {
-    init(_ txOut: TxOutProtocol) {
-        self.init()
-        self.amount =
-            External_Amount(commitment: txOut.commitment, maskedValue: txOut.maskedValue)
-        self.targetKey = External_CompressedRistretto(txOut.targetKey)
-        self.publicKey = External_CompressedRistretto(txOut.publicKey)
+    
+    private func indexedKeyImage(index: UInt64, accountKey: AccountKey) -> IndexedKeyImage? {
+        guard
+            let sspk = accountKey.subaddressSpendPrivateKey(index: index),
+            let keyImage = TxOutUtils.keyImage(
+                                        targetKey: targetKey,
+                                        publicKey: publicKey,
+                                        viewPrivateKey: accountKey.viewPrivateKey,
+                                        subaddressSpendPrivateKey: sspk)
+        else {
+            return nil
+        }
+        return (index: index, keyImage: keyImage)
     }
 }
 

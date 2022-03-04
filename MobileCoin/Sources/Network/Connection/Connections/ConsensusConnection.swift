@@ -3,56 +3,64 @@
 //
 
 import Foundation
-import GRPC
 import LibMobileCoin
 
-final class ConsensusConnection: AttestedConnection, ConsensusService {
-    private let client: ConsensusClient_ConsensusClientAPIClient
+final class ConsensusConnection:
+    Connection<GrpcProtocolConnectionFactory.ConsensusServiceProvider, HttpProtocolConnectionFactory.ConsensusServiceProvider>, ConsensusService
+{
+    private let httpFactory: HttpProtocolConnectionFactory
+    private let grpcFactory: GrpcProtocolConnectionFactory
+    private let config: AttestedConnectionConfig<ConsensusUrl>
+    private let targetQueue: DispatchQueue?
+    private let rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)?
+    private let rngContext: Any?
 
     init(
+        httpFactory: HttpProtocolConnectionFactory,
+        grpcFactory: GrpcProtocolConnectionFactory,
         config: AttestedConnectionConfig<ConsensusUrl>,
-        channelManager: GrpcChannelManager,
         targetQueue: DispatchQueue?,
         rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)? = securityRNG,
         rngContext: Any? = nil
     ) {
-        let channel = channelManager.channel(for: config)
-        self.client = ConsensusClient_ConsensusClientAPIClient(channel: channel)
+        self.httpFactory = httpFactory
+        self.grpcFactory = grpcFactory
+        self.config = config
+        self.targetQueue = targetQueue
+        self.rng = rng
+        self.rngContext = rngContext
+
         super.init(
-            client: Attest_AttestedApiClient(channel: channel),
-            config: config,
-            targetQueue: targetQueue,
-            rng: rng,
-            rngContext: rngContext)
+            connectionOptionWrapperFactory: { transportProtocolOption in
+                switch transportProtocolOption {
+                case .grpc:
+                    return .grpc(
+                        grpcService: grpcFactory.makeConsensusService(
+                            config: config,
+                            targetQueue: targetQueue,
+                            rng: rng,
+                            rngContext: rngContext))
+                case .http:
+                    return .http(httpService: httpFactory.makeConsensusService(
+                            config: config,
+                            targetQueue: targetQueue,
+                            rng: rng,
+                            rngContext: rngContext))
+                }
+            },
+            transportProtocolOption: config.transportProtocolOption,
+            targetQueue: targetQueue)
     }
 
     func proposeTx(
         _ tx: External_Tx,
         completion: @escaping (Result<ConsensusCommon_ProposeTxResponse, ConnectionError>) -> Void
     ) {
-        performAttestedCall(
-            ProposeTxCall(client: client),
-            request: tx,
-            completion: completion)
-    }
-}
-
-extension ConsensusConnection {
-    private struct ProposeTxCall: AttestedGrpcCallable {
-        typealias InnerRequest = External_Tx
-        typealias InnerResponse = ConsensusCommon_ProposeTxResponse
-
-        let client: ConsensusClient_ConsensusClientAPIClient
-
-        func call(
-            request: Attest_Message,
-            callOptions: CallOptions?,
-            completion: @escaping (UnaryCallResult<ConsensusCommon_ProposeTxResponse>) -> Void
-        ) {
-            let unaryCall = client.clientTxPropose(request, callOptions: callOptions)
-            unaryCall.callResult.whenSuccess(completion)
+        switch connectionOptionWrapper {
+        case .grpc(let grpcConnection):
+            grpcConnection.proposeTx(tx, completion: completion)
+        case .http(let httpConnection):
+            httpConnection.proposeTx(tx, completion: completion)
         }
     }
 }
-
-extension Attest_AttestedApiClient: AuthGrpcCallableClient {}

@@ -3,37 +3,59 @@
 //
 
 import Foundation
-import GRPC
 import LibMobileCoin
 
-final class FogReportConnection: ArbitraryConnection, FogReportService {
-    private let client: Report_ReportAPIClient
+final class FogReportConnection:
+    ArbitraryConnection<GrpcProtocolConnectionFactory.FogReportServiceProvider, HttpProtocolConnectionFactory.FogReportServiceProvider>, FogReportService
+{
+    private let httpFactory: HttpProtocolConnectionFactory
+    private let grpcFactory: GrpcProtocolConnectionFactory
+    private let url: FogUrl
+    private let targetQueue: DispatchQueue?
 
-    init(url: FogUrl, channelManager: GrpcChannelManager, targetQueue: DispatchQueue?) {
-        let channel = channelManager.channel(for: url)
-        self.client = Report_ReportAPIClient(channel: channel)
-        super.init(url: url, targetQueue: targetQueue)
+    init(
+        httpFactory: HttpProtocolConnectionFactory,
+        grpcFactory: GrpcProtocolConnectionFactory,
+        url: FogUrl,
+        transportProtocolOption: TransportProtocol.Option,
+        targetQueue: DispatchQueue?
+    ) {
+        self.httpFactory = httpFactory
+        self.grpcFactory = grpcFactory
+        self.url = url
+        self.targetQueue = targetQueue
+
+        super.init(
+            connectionOptionWrapperFactory: { transportProtocolOption in
+                switch transportProtocolOption {
+                case .grpc:
+                    return .grpc(
+                        grpcService:
+                            grpcFactory.makeFogReportService(
+                                url: url,
+                                transportProtocolOption: transportProtocolOption,
+                                targetQueue: targetQueue))
+                case .http:
+                    return .http(httpService:
+                            httpFactory.makeFogReportService(
+                                url: url,
+                                transportProtocolOption: transportProtocolOption,
+                                targetQueue: targetQueue))
+                }
+            },
+            transportProtocolOption: transportProtocolOption,
+            targetQueue: targetQueue)
     }
 
     func getReports(
         request: Report_ReportRequest,
         completion: @escaping (Result<Report_ReportResponse, ConnectionError>) -> Void
     ) {
-        performCall(GetReportsCall(client: client), request: request, completion: completion)
-    }
-}
-
-extension FogReportConnection {
-    private struct GetReportsCall: GrpcCallable {
-        let client: Report_ReportAPIClient
-
-        func call(
-            request: Report_ReportRequest,
-            callOptions: CallOptions?,
-            completion: @escaping (UnaryCallResult<Report_ReportResponse>) -> Void
-        ) {
-            let unaryCall = client.getReports(request, callOptions: callOptions)
-            unaryCall.callResult.whenSuccess(completion)
+        switch connectionOptionWrapper {
+        case .grpc(let grpcConnection):
+            grpcConnection.getReports(request: request, completion: completion)
+        case .http(let httpConnection):
+            httpConnection.getReports(request: request, completion: completion)
         }
     }
 }

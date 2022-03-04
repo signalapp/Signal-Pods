@@ -409,7 +409,21 @@ public struct External_Amount {
   fileprivate var _commitment: External_CompressedRistretto? = nil
 }
 
+/// The bytes of encrypted fog hint
 public struct External_EncryptedFogHint {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var data: Data = Data()
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
+/// The bytes of encrypted memo
+public struct External_EncryptedMemo {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -469,6 +483,16 @@ public struct External_TxOut {
   /// Clears the value of `eFogHint`. Subsequent reads from it will return its default value.
   public mutating func clearEFogHint() {self._eFogHint = nil}
 
+  /// Encrypted memo
+  public var eMemo: External_EncryptedMemo {
+    get {return _eMemo ?? External_EncryptedMemo()}
+    set {_eMemo = newValue}
+  }
+  /// Returns true if `eMemo` has been explicitly set.
+  public var hasEMemo: Bool {return self._eMemo != nil}
+  /// Clears the value of `eMemo`. Subsequent reads from it will return its default value.
+  public mutating func clearEMemo() {self._eMemo = nil}
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -477,6 +501,7 @@ public struct External_TxOut {
   fileprivate var _targetKey: External_CompressedRistretto? = nil
   fileprivate var _publicKey: External_CompressedRistretto? = nil
   fileprivate var _eFogHint: External_EncryptedFogHint? = nil
+  fileprivate var _eMemo: External_EncryptedMemo? = nil
 }
 
 public struct External_TxIn {
@@ -712,6 +737,38 @@ public struct External_VerificationReport {
   fileprivate var _sig: External_VerificationSignature? = nil
 }
 
+#if swift(>=5.5) && canImport(_Concurrency)
+extension External_RistrettoPrivate: @unchecked Sendable {}
+extension External_CompressedRistretto: @unchecked Sendable {}
+extension External_Ed25519Public: @unchecked Sendable {}
+extension External_Ed25519Signature: @unchecked Sendable {}
+extension External_AccountKey: @unchecked Sendable {}
+extension External_PublicAddress: @unchecked Sendable {}
+extension External_RootIdentity: @unchecked Sendable {}
+extension External_RootEntropy: @unchecked Sendable {}
+extension External_ViewKey: @unchecked Sendable {}
+extension External_CurveScalar: @unchecked Sendable {}
+extension External_KeyImage: @unchecked Sendable {}
+extension External_Range: @unchecked Sendable {}
+extension External_TxOutMembershipHash: @unchecked Sendable {}
+extension External_TxOutMembershipElement: @unchecked Sendable {}
+extension External_TxOutMembershipProof: @unchecked Sendable {}
+extension External_TxOutConfirmationNumber: @unchecked Sendable {}
+extension External_Amount: @unchecked Sendable {}
+extension External_EncryptedFogHint: @unchecked Sendable {}
+extension External_EncryptedMemo: @unchecked Sendable {}
+extension External_TxOut: @unchecked Sendable {}
+extension External_TxIn: @unchecked Sendable {}
+extension External_TxPrefix: @unchecked Sendable {}
+extension External_RingMLSAG: @unchecked Sendable {}
+extension External_SignatureRctBulletproofs: @unchecked Sendable {}
+extension External_Tx: @unchecked Sendable {}
+extension External_TxHash: @unchecked Sendable {}
+extension External_Receipt: @unchecked Sendable {}
+extension External_VerificationSignature: @unchecked Sendable {}
+extension External_VerificationReport: @unchecked Sendable {}
+#endif  // swift(>=5.5) && canImport(_Concurrency)
+
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
 fileprivate let _protobuf_package = "external"
@@ -871,12 +928,16 @@ extension External_AccountKey: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if let v = self._viewPrivateKey {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    try { if let v = self._viewPrivateKey {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
-    }
-    if let v = self._spendPrivateKey {
+    } }()
+    try { if let v = self._spendPrivateKey {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
-    }
+    } }()
     if !self.fogReportURL.isEmpty {
       try visitor.visitSingularStringField(value: self.fogReportURL, fieldNumber: 3)
     }
@@ -927,12 +988,16 @@ extension External_PublicAddress: SwiftProtobuf.Message, SwiftProtobuf._MessageI
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if let v = self._viewPublicKey {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    try { if let v = self._viewPublicKey {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
-    }
-    if let v = self._spendPublicKey {
+    } }()
+    try { if let v = self._spendPublicKey {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
-    }
+    } }()
     if !self.fogReportURL.isEmpty {
       try visitor.visitSingularStringField(value: self.fogReportURL, fieldNumber: 3)
     }
@@ -981,9 +1046,13 @@ extension External_RootIdentity: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if let v = self._rootEntropy {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    try { if let v = self._rootEntropy {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
-    }
+    } }()
     if !self.fogReportURL.isEmpty {
       try visitor.visitSingularStringField(value: self.fogReportURL, fieldNumber: 2)
     }
@@ -1059,12 +1128,16 @@ extension External_ViewKey: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if let v = self._viewPrivateKey {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    try { if let v = self._viewPrivateKey {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
-    }
-    if let v = self._spendPublicKey {
+    } }()
+    try { if let v = self._spendPublicKey {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
-    }
+    } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -1231,12 +1304,16 @@ extension External_TxOutMembershipElement: SwiftProtobuf.Message, SwiftProtobuf.
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if let v = self._range {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    try { if let v = self._range {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
-    }
-    if let v = self._hash {
+    } }()
+    try { if let v = self._hash {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
-    }
+    } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -1345,9 +1422,13 @@ extension External_Amount: SwiftProtobuf.Message, SwiftProtobuf._MessageImplemen
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if let v = self._commitment {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    try { if let v = self._commitment {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
-    }
+    } }()
     if self.maskedValue != 0 {
       try visitor.visitSingularFixed64Field(value: self.maskedValue, fieldNumber: 2)
     }
@@ -1394,6 +1475,38 @@ extension External_EncryptedFogHint: SwiftProtobuf.Message, SwiftProtobuf._Messa
   }
 }
 
+extension External_EncryptedMemo: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".EncryptedMemo"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "data"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularBytesField(value: &self.data) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.data.isEmpty {
+      try visitor.visitSingularBytesField(value: self.data, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: External_EncryptedMemo, rhs: External_EncryptedMemo) -> Bool {
+    if lhs.data != rhs.data {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
 extension External_TxOut: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = _protobuf_package + ".TxOut"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
@@ -1401,6 +1514,7 @@ extension External_TxOut: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
     2: .standard(proto: "target_key"),
     3: .standard(proto: "public_key"),
     4: .standard(proto: "e_fog_hint"),
+    5: .standard(proto: "e_memo"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -1413,24 +1527,32 @@ extension External_TxOut: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
       case 2: try { try decoder.decodeSingularMessageField(value: &self._targetKey) }()
       case 3: try { try decoder.decodeSingularMessageField(value: &self._publicKey) }()
       case 4: try { try decoder.decodeSingularMessageField(value: &self._eFogHint) }()
+      case 5: try { try decoder.decodeSingularMessageField(value: &self._eMemo) }()
       default: break
       }
     }
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if let v = self._amount {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    try { if let v = self._amount {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
-    }
-    if let v = self._targetKey {
+    } }()
+    try { if let v = self._targetKey {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
-    }
-    if let v = self._publicKey {
+    } }()
+    try { if let v = self._publicKey {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
-    }
-    if let v = self._eFogHint {
+    } }()
+    try { if let v = self._eFogHint {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 4)
-    }
+    } }()
+    try { if let v = self._eMemo {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 5)
+    } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -1439,6 +1561,7 @@ extension External_TxOut: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
     if lhs._targetKey != rhs._targetKey {return false}
     if lhs._publicKey != rhs._publicKey {return false}
     if lhs._eFogHint != rhs._eFogHint {return false}
+    if lhs._eMemo != rhs._eMemo {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -1555,15 +1678,19 @@ extension External_RingMLSAG: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if let v = self._cZero {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    try { if let v = self._cZero {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
-    }
+    } }()
     if !self.responses.isEmpty {
       try visitor.visitRepeatedMessageField(value: self.responses, fieldNumber: 2)
     }
-    if let v = self._keyImage {
+    try { if let v = self._keyImage {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
-    }
+    } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -1641,12 +1768,16 @@ extension External_Tx: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if let v = self._prefix {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    try { if let v = self._prefix {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
-    }
-    if let v = self._signature {
+    } }()
+    try { if let v = self._signature {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
-    }
+    } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -1715,18 +1846,22 @@ extension External_Receipt: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if let v = self._publicKey {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    try { if let v = self._publicKey {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
-    }
-    if let v = self._confirmation {
+    } }()
+    try { if let v = self._confirmation {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
-    }
+    } }()
     if self.tombstoneBlock != 0 {
       try visitor.visitSingularUInt64Field(value: self.tombstoneBlock, fieldNumber: 3)
     }
-    if let v = self._amount {
+    try { if let v = self._amount {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 4)
-    }
+    } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -1795,9 +1930,13 @@ extension External_VerificationReport: SwiftProtobuf.Message, SwiftProtobuf._Mes
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if let v = self._sig {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    try { if let v = self._sig {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
-    }
+    } }()
     if !self.chain.isEmpty {
       try visitor.visitRepeatedBytesField(value: self.chain, fieldNumber: 2)
     }

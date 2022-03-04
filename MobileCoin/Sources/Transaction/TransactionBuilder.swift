@@ -275,10 +275,13 @@ final class TransactionBuilder {
     private func addInput(preparedTxInput: PreparedTxInput, accountKey: AccountKey)
         -> Result<(), TransactionBuilderError>
     {
-        addInput(
-            preparedTxInput: preparedTxInput,
-            viewPrivateKey: accountKey.viewPrivateKey,
-            subaddressSpendPrivateKey: accountKey.subaddressSpendPrivateKey)
+        guard let subaddressSpendPrivateKey = accountKey.subaddressSpendPrivateKey(index: preparedTxInput.subaddressIndex) else {
+            return .failure(TransactionBuilderError.invalidInput("Tx subaddress index out of bounds"))
+        }
+        return addInput(
+                preparedTxInput: preparedTxInput,
+                viewPrivateKey: accountKey.viewPrivateKey,
+                subaddressSpendPrivateKey: subaddressSpendPrivateKey)
     }
 
     private func addInput(

@@ -65,6 +65,11 @@ public struct Attest_Message {
   public init() {}
 }
 
+#if swift(>=5.5) && canImport(_Concurrency)
+extension Attest_AuthMessage: @unchecked Sendable {}
+extension Attest_Message: @unchecked Sendable {}
+#endif  // swift(>=5.5) && canImport(_Concurrency)
+
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
 fileprivate let _protobuf_package = "attest"

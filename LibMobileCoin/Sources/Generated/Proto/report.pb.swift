@@ -92,6 +92,12 @@ public struct Report_Report {
   fileprivate var _report: External_VerificationReport? = nil
 }
 
+#if swift(>=5.5) && canImport(_Concurrency)
+extension Report_ReportRequest: @unchecked Sendable {}
+extension Report_ReportResponse: @unchecked Sendable {}
+extension Report_Report: @unchecked Sendable {}
+#endif  // swift(>=5.5) && canImport(_Concurrency)
+
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
 fileprivate let _protobuf_package = "report"
@@ -182,12 +188,16 @@ extension Report_Report: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
     if !self.fogReportID.isEmpty {
       try visitor.visitSingularStringField(value: self.fogReportID, fieldNumber: 1)
     }
-    if let v = self._report {
+    try { if let v = self._report {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
-    }
+    } }()
     if self.pubkeyExpiry != 0 {
       try visitor.visitSingularFixed64Field(value: self.pubkeyExpiry, fieldNumber: 3)
     }

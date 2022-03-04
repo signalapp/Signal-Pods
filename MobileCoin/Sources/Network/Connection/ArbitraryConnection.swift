@@ -3,78 +3,41 @@
 //
 
 import Foundation
-import GRPC
 
-class ArbitraryConnection {
+class ArbitraryConnection<GrpcService, HttpService> {
     private let inner: SerialDispatchLock<Inner>
 
-    init(url: MobileCoinUrlProtocol, targetQueue: DispatchQueue?) {
-        let inner = Inner(url: url)
+    private let connectionOptionWrapperFactory: (TransportProtocol.Option)
+        -> ConnectionOptionWrapper<GrpcService, HttpService>
+
+    init(
+        connectionOptionWrapperFactory: @escaping (TransportProtocol.Option)
+            -> ConnectionOptionWrapper<GrpcService, HttpService>,
+        transportProtocolOption: TransportProtocol.Option,
+        targetQueue: DispatchQueue?
+    ) {
+        self.connectionOptionWrapperFactory = connectionOptionWrapperFactory
+        let connectionOptionWrapper = connectionOptionWrapperFactory(transportProtocolOption)
+        let inner = Inner(connectionOptionWrapper: connectionOptionWrapper)
         self.inner = .init(inner, targetQueue: targetQueue)
     }
 
-    func performCall<Call: GrpcCallable>(
-        _ call: Call,
-        request: Call.Request,
-        completion: @escaping (Result<Call.Response, ConnectionError>) -> Void
-    ) {
-        func performCallCallback(callResult: UnaryCallResult<Call.Response>) {
-            inner.accessAsync {
-                let result = $0.processResponse(callResult: callResult)
-                switch result {
-                case .success:
-                    logger.info("Call complete. url: \($0.url)", logFunction: false)
-                case .failure(let connectionError):
-                    let errorMessage =
-                        "Connection failure. url: \($0.url), error: \(connectionError)"
-                    switch connectionError {
-                    case .connectionFailure, .serverRateLimited:
-                        logger.warning(errorMessage, logFunction: false)
-                    case .authorizationFailure, .invalidServerResponse,
-                         .attestationVerificationFailed, .outdatedClient:
-                        logger.error(errorMessage, logFunction: false)
-                    }
-                }
-                completion(result)
-            }
-        }
-        inner.accessAsync {
-            logger.info("Performing call... url: \($0.url)", logFunction: false)
+    func setTransportProtocolOption(_ transportProtocolOption: TransportProtocol.Option) {
+        let connectionOptionWrapper = connectionOptionWrapperFactory(transportProtocolOption)
+        inner.accessAsync { $0.connectionOptionWrapper = connectionOptionWrapper }
+    }
 
-            let callOptions = $0.requestCallOptions()
-            call.call(request: request, callOptions: callOptions, completion: performCallCallback)
-        }
+    var connectionOptionWrapper: ConnectionOptionWrapper<GrpcService, HttpService> {
+        inner.accessWithoutLocking.connectionOptionWrapper
     }
 }
 
 extension ArbitraryConnection {
     private struct Inner {
-        let url: MobileCoinUrlProtocol
-        private let session: ConnectionSession
+        var connectionOptionWrapper: ConnectionOptionWrapper<GrpcService, HttpService>
 
-        init(url: MobileCoinUrlProtocol) {
-            self.url = url
-            self.session = ConnectionSession(url: url)
-        }
-
-        func requestCallOptions() -> CallOptions {
-            var callOptions = CallOptions()
-            session.addRequestHeaders(to: &callOptions.customMetadata)
-            return callOptions
-        }
-
-        func processResponse<Response>(callResult: UnaryCallResult<Response>)
-            -> Result<Response, ConnectionError>
-        {
-            guard callResult.status.isOk, let response = callResult.response else {
-                return .failure(.connectionFailure(String(describing: callResult.status)))
-            }
-
-            if let initialMetadata = callResult.initialMetadata {
-                session.processResponse(headers: initialMetadata)
-            }
-
-            return .success(response)
+        init(connectionOptionWrapper: ConnectionOptionWrapper<GrpcService, HttpService>) {
+            self.connectionOptionWrapper = connectionOptionWrapper
         }
     }
 }

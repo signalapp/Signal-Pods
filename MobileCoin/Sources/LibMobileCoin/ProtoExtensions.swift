@@ -150,7 +150,7 @@ extension FogLedger_BlockRequest {
     }
 }
 
-extension FogLedger_Block {
+extension FogLedger_BlockData {
     var timestampDate: Date {
         get { Date(timeIntervalSince1970: TimeInterval(timestamp)) }
         set { timestamp = UInt64(newValue.timeIntervalSince1970) }

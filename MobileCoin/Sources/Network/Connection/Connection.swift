@@ -3,100 +3,68 @@
 //
 
 import Foundation
-import GRPC
 
-class Connection {
+class Connection<GrpcService: ConnectionProtocol, HttpService: ConnectionProtocol> {
     private let inner: SerialDispatchLock<Inner>
 
-    init(config: ConnectionConfigProtocol, targetQueue: DispatchQueue?) {
-        let inner = Inner(config: config)
+    private let connectionOptionWrapperFactory: (TransportProtocol.Option)
+        -> ConnectionOptionWrapper<GrpcService, HttpService>
+
+    init(
+        connectionOptionWrapperFactory: @escaping (TransportProtocol.Option)
+            -> ConnectionOptionWrapper<GrpcService, HttpService>,
+        transportProtocolOption: TransportProtocol.Option,
+        targetQueue: DispatchQueue?
+    ) {
+        self.connectionOptionWrapperFactory = connectionOptionWrapperFactory
+        let connectionOptionWrapper = connectionOptionWrapperFactory(transportProtocolOption)
+        let inner = Inner(connectionOptionWrapper: connectionOptionWrapper)
         self.inner = .init(inner, targetQueue: targetQueue)
     }
 
+    func setTransportProtocolOption(_ transportProtocolOption: TransportProtocol.Option) {
+        let connectionOptionWrapper = connectionOptionWrapperFactory(transportProtocolOption)
+        inner.accessAsync { $0.connectionOptionWrapper = connectionOptionWrapper }
+    }
+
     func setAuthorization(credentials: BasicCredentials) {
-        inner.accessAsync {
-            $0.setAuthorization(credentials: credentials)
-        }
+        inner.accessAsync { $0.setAuthorization(credentials: credentials) }
     }
 
-    func performCall<Call: GrpcCallable>(
-        _ call: Call,
-        request: Call.Request,
-        completion: @escaping (Result<Call.Response, ConnectionError>) -> Void
-    ) {
-        func performCallCallback(callResult: UnaryCallResult<Call.Response>) {
-            inner.accessAsync {
-                let result = $0.processResponse(callResult: callResult)
-                switch result {
-                case .success:
-                    logger.info("Call complete. url: \($0.url)", logFunction: false)
-                case .failure(let connectionError):
-                    let errorMessage =
-                        "Connection failure. url: \($0.url), error: \(connectionError)"
-                    switch connectionError {
-                    case .connectionFailure, .serverRateLimited:
-                        logger.warning(errorMessage, logFunction: false)
-                    case .authorizationFailure, .invalidServerResponse,
-                         .attestationVerificationFailed, .outdatedClient:
-                        logger.error(errorMessage, logFunction: false)
-                    }
-                }
-                completion(result)
-            }
-        }
-
-        inner.accessAsync {
-            logger.info("Performing call... url: \($0.url)", logFunction: false)
-
-            let callOptions = $0.requestCallOptions()
-            call.call(request: request, callOptions: callOptions, completion: performCallCallback)
-        }
-    }
-
-    func performCall<Call: GrpcCallable>(
-        _ call: Call,
-        completion: @escaping (Result<Call.Response, ConnectionError>) -> Void
-    ) where Call.Request == () {
-        performCall(call, request: (), completion: completion)
+    var connectionOptionWrapper: ConnectionOptionWrapper<GrpcService, HttpService> {
+        inner.accessWithoutLocking.connectionOptionWrapper
     }
 }
 
 extension Connection {
     private struct Inner {
-        let url: MobileCoinUrlProtocol
-        private let session: ConnectionSession
-
-        init(config: ConnectionConfigProtocol) {
-            self.url = config.url
-            self.session = ConnectionSession(config: config)
+        var connectionOptionWrapper: ConnectionOptionWrapper<GrpcService, HttpService> {
+            didSet {
+                if let credentials = authorizationCredentials {
+                    switch connectionOptionWrapper {
+                    case .grpc(grpcService: let grpcService):
+                        grpcService.setAuthorization(credentials: credentials)
+                    case .http(httpService: let httpService):
+                        httpService.setAuthorization(credentials: credentials)
+                    }
+                }
+            }
         }
 
-        func setAuthorization(credentials: BasicCredentials) {
-            session.authorizationCredentials = credentials
+        private var authorizationCredentials: BasicCredentials?
+
+        init(connectionOptionWrapper: ConnectionOptionWrapper<GrpcService, HttpService>) {
+            self.connectionOptionWrapper = connectionOptionWrapper
         }
 
-        func requestCallOptions() -> CallOptions {
-            var callOptions = CallOptions()
-            session.addRequestHeaders(to: &callOptions.customMetadata)
-            return callOptions
-        }
-
-        func processResponse<Response>(callResult: UnaryCallResult<Response>)
-            -> Result<Response, ConnectionError>
-        {
-            guard callResult.status.code != .unauthenticated else {
-                return .failure(.authorizationFailure("url: \(url)"))
+        mutating func setAuthorization(credentials: BasicCredentials) {
+            self.authorizationCredentials = credentials
+            switch connectionOptionWrapper {
+            case .grpc(grpcService: let grpcService):
+                grpcService.setAuthorization(credentials: credentials)
+            case .http(httpService: let httpService):
+                httpService.setAuthorization(credentials: credentials)
             }
-
-            guard callResult.status.isOk, let response = callResult.response else {
-                return .failure(.connectionFailure("url: \(url), status: \(callResult.status)"))
-            }
-
-            if let initialMetadata = callResult.initialMetadata {
-                session.processResponse(headers: initialMetadata)
-            }
-
-            return .success(response)
         }
     }
 }

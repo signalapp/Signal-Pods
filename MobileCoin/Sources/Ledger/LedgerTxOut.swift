@@ -30,8 +30,8 @@ extension LedgerTxOut: Equatable {}
 extension LedgerTxOut: Hashable {}
 
 extension LedgerTxOut {
-    init?(_ txOutRecord: FogView_TxOutRecord) {
-        guard let partialTxOut = PartialTxOut(txOutRecord) else {
+    init?(_ txOutRecord: FogView_TxOutRecord, viewKey: RistrettoPrivate) {
+        guard let partialTxOut = PartialTxOut(txOutRecord, viewKey: viewKey) else {
             return nil
         }
         let globalIndex = txOutRecord.txOutGlobalIndex

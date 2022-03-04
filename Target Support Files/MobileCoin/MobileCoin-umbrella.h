@@ -10,6 +10,8 @@
 #endif
 #endif
 
+#import "MobileCoin-Bridging-Header.h"
+#import "TestBridgingHeader.h"
 
 FOUNDATION_EXPORT double MobileCoinVersionNumber;
 FOUNDATION_EXPORT const unsigned char MobileCoinVersionString[];

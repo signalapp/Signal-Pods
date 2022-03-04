@@ -19,9 +19,8 @@ final class FogResolverManager {
     ) {
         self.serialQueue = DispatchQueue(label: "com.mobilecoin.\(Self.self)", target: targetQueue)
         self.reportAttestation = fogReportAttestation
-        self.reportManager = FogReportManager(
-            serviceProvider: serviceProvider,
-            targetQueue: targetQueue)
+        self.reportManager =
+            FogReportManager(serviceProvider: serviceProvider, targetQueue: targetQueue)
     }
 
     func fogResolver(

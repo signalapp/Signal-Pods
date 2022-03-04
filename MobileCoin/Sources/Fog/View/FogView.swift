@@ -74,7 +74,7 @@ final class FogView {
             }.collectResult()
         }.flatMap { txOutRecords in
             txOutRecords.map { txOutRecord in
-                LedgerTxOut.make(txOutRecord: txOutRecord)
+                LedgerTxOut.make(txOutRecord: txOutRecord, viewKey: accountKey.viewPrivateKey)
             }.collectResult()
         }.map { txOuts in
             let foundTxOuts = Self.ownedTxOuts(validating: txOuts, accountKey: accountKey)
@@ -179,10 +179,10 @@ struct FogSearchAttempt {
 }
 
 extension LedgerTxOut {
-    fileprivate static func make(txOutRecord: FogView_TxOutRecord)
+    fileprivate static func make(txOutRecord: FogView_TxOutRecord, viewKey: RistrettoPrivate)
         -> Result<LedgerTxOut, ConnectionError>
     {
-        guard let ledgerTxOut = LedgerTxOut(txOutRecord) else {
+        guard let ledgerTxOut = LedgerTxOut(txOutRecord, viewKey: viewKey) else {
             let errorMessage = "Invalid TxOut returned from Fog View. TxOutRecord: " +
                 "\(redacting: txOutRecord.serializedDataInfallible.base64EncodedString())"
             logger.error(errorMessage)
