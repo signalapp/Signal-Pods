@@ -25,6 +25,15 @@ public func AssertIsOnMainThread(file: String = #file,
 }
 
 @inlinable
+public func AssertNotOnMainThread(file: String = #file,
+                                 function: String = #function,
+                                 line: Int = #line) {
+    if Thread.isMainThread {
+        owsFailDebug("Must be off main thread.", file: file, function: function, line: line)
+    }
+}
+
+@inlinable
 public func owsFailDebug(_ logMessage: String,
                          file: String = #file,
                          function: String = #function,

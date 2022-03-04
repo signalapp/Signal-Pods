@@ -281,4 +281,25 @@ class PromiseTests: XCTestCase {
 
         XCTAssertEqual(sharedValue, 1 + testDepth + 1)
     }
+
+    func test_promiseUsingResultPropertyInObserverCallback() throws {
+        let (promise, future) = Promise<Int>.pending()
+
+        var doneCalled = false
+        _ = promise.done(on: .main) { argValue in
+            switch promise.result {
+            case .success(let resultValue):
+                XCTAssertEqual(resultValue, argValue)
+            case .failure(_):
+                XCTFail("unexpected failure")
+            case nil:
+                XCTFail("how did done() get called without the promise being sealed?")
+            }
+            doneCalled = true
+        }
+
+        future.resolve(10)
+        XCTAssert(doneCalled)
+        XCTAssertEqual(try future.result?.get(), 10)
+    }
 }

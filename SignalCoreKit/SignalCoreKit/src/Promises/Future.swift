@@ -1,30 +1,30 @@
 //
-//  Copyright (c) 2021 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2022 Open Whisper Systems. All rights reserved.
 //
 
 import Foundation
 
 public final class Future<Value> {
     public typealias ResultType = Swift.Result<Value, Error>
-    public private(set) var isSealed = false
-    public private(set) var result: ResultType?
+
+    private let lock = UnfairLock()
+    private var resultUnsynchronized: ResultType?
+    private var observersUnsynchronized = [(ResultType) -> Void]()
 
     public init() {}
 
     public convenience init(value: Value) {
         self.init()
-        sealResult(.success(value))
+        self.resultUnsynchronized = .success(value)
     }
 
     public convenience init(error: Error) {
         self.init()
-        sealResult(.failure(error))
+        self.resultUnsynchronized = .failure(error)
     }
 
-    private var observers = [(ResultType) -> Void]()
-    private let observerLock = UnfairLock()
     public func observe(on queue: DispatchQueue? = nil, block: @escaping (ResultType) -> Void) {
-        observerLock.withLock {
+        lock.withLock {
             func execute(_ result: ResultType) {
                 // If a queue is not specified, try and run on the main
                 // queue. Eventually we'll want to switch this default,
@@ -35,21 +35,24 @@ public final class Future<Value> {
                 }
             }
 
-            if let result = result {
+            if let result = resultUnsynchronized {
                 execute(result)
                 return
             }
-            observers.append(execute)
+            observersUnsynchronized.append(execute)
         }
     }
     private func sealResult(_ result: ResultType) {
-        observerLock.withLock {
-            guard !isSealed else { return }
-            self.result = result
-            self.isSealed = true
-            observers.forEach { $0(result) }
-            observers.removeAll()
+        let observers: [(ResultType) -> Void] = lock.withLock {
+            guard self.resultUnsynchronized == nil else { return [] }
+            self.resultUnsynchronized = result
+
+            let observers = observersUnsynchronized
+            observersUnsynchronized.removeAll()
+            return observers
         }
+
+        observers.forEach { $0(result) }
     }
 
     public func resolve(_ value: Value) {
@@ -69,6 +72,14 @@ public final class Future<Value> {
 
     public func reject(_ error: Error) {
         sealResult(.failure(error))
+    }
+
+    public var result: ResultType? {
+        return lock.withLock { self.resultUnsynchronized }
+    }
+
+    public var isSealed: Bool {
+        return lock.withLock { self.resultUnsynchronized != nil }
     }
 }
 
