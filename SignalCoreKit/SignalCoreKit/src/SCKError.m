@@ -3,6 +3,7 @@
 //
 
 #import "SCKError.h"
+#import <SignalCoreKit/SignalCoreKit-Swift.h>
 
 NSErrorDomain const SCKErrorDomain = @"SignalCoreKitErrorDomain";
 
@@ -16,5 +17,5 @@ NSError *SCKErrorWithCodeDescription(NSUInteger code, NSString *description)
 NSError *SCKErrorMakeAssertionError(NSString *description, ...) {
     OWSCFailDebug(@"Assertion failed: %@", description);
     return SCKErrorWithCodeDescription(SCKErrorCode_AssertionError,
-                                       NSLocalizedString(@"ERROR_DESCRIPTION_UNKNOWN_ERROR", @"Worst case generic error message"));
+                                       OWSLocalizedString(@"ERROR_DESCRIPTION_UNKNOWN_ERROR", @"Worst case generic error message"));
 }
