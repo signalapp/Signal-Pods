@@ -1,10 +1,10 @@
 //
-//  Copyright (c) 2020 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2022 Open Whisper Systems. All rights reserved.
 //
 
 import Foundation
 import SignalCoreKit
-import SignalClient
+import LibSignalClient
 
 // Work around Swift's lack of factory initializers.
 // See https://bugs.swift.org/browse/SR-5255.
