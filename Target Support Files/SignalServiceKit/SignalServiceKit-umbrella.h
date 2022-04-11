@@ -78,7 +78,6 @@
 #import "OWSGroupInfoRequestMessage.h"
 #import "OWSIdentityManager.h"
 #import "OWSMessageContentJob.h"
-#import "OWSMessageDecryptJob.h"
 #import "OWSMessageHandler.h"
 #import "OWSMessageManager.h"
 #import "OWSMessageUtils.h"
