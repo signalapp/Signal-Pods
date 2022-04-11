@@ -80,7 +80,6 @@
 #import "OWSMessageContentJob.h"
 #import "OWSMessageHandler.h"
 #import "OWSMessageManager.h"
-#import "OWSMessageUtils.h"
 #import "OWSOutgoingCallMessage.h"
 #import "OWSOutgoingGroupCallMessage.h"
 #import "OWSOutgoingNullMessage.h"
