@@ -85,13 +85,6 @@ public func owsAssert(_ condition: Bool,
     }
 }
 
-@inlinable
-public func notImplemented(file: String = #file,
-                           function: String = #function,
-                           line: Int = #line) -> Never {
-    owsFail("Method not implemented.", file: file, function: function, line: line)
-}
-
 @objc
 public class OWSSwiftUtils: NSObject {
     // This method can be invoked from Obj-C to exit the app.
