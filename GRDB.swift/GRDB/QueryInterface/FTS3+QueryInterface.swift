@@ -16,7 +16,7 @@ extension TableRequest where Self: FilteredRequest {
             return none()
         }
         let alias = TableAlias()
-        let matchExpression = TableMatchExpression(alias: alias, pattern: pattern.databaseValue)
+        let matchExpression = SQLExpression.tableMatch(alias, pattern.sqlExpression)
         return self.aliased(alias).filter(matchExpression)
     }
 }
@@ -37,7 +37,7 @@ extension TableRecord {
     /// all requests by the `TableRecord.databaseSelection` property, or
     /// for individual requests with the `TableRecord.select` method.
     public static func matching(_ pattern: FTS3Pattern?) -> QueryInterfaceRequest<Self> {
-        return all().matching(pattern)
+        all().matching(pattern)
     }
 }
 
@@ -50,6 +50,6 @@ extension ColumnExpression {
     /// If the search pattern is nil, SQLite will evaluate the expression
     /// to false.
     public func match(_ pattern: FTS3Pattern?) -> SQLExpression {
-        return SQLExpressionBinary(.match, self, pattern ?? DatabaseValue.null)
+        .binary(.match, sqlExpression, pattern?.sqlExpression ?? .null)
     }
 }

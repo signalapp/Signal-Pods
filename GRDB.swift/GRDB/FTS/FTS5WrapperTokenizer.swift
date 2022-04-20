@@ -1,16 +1,9 @@
 #if SQLITE_ENABLE_FTS5
 import Foundation
-#if SWIFT_PACKAGE
-import CSQLite
-#elseif GRDBCIPHER
-import SQLCipher
-#elseif !GRDBCUSTOMSQLITE && !GRDBCIPHER
-import SQLite3
-#endif
 
 /// Flags that tell SQLite how to register a token.
 ///
-/// See https://www.sqlite.org/fts5.html#custom_tokenizers
+/// See the `FTS5_TOKEN_*` flags in <https://www.sqlite.org/fts5.html#custom_tokenizers>.
 public struct FTS5TokenFlags: OptionSet {
     public let rawValue: Int32
     
@@ -83,7 +76,7 @@ public protocol FTS5WrapperTokenizer: FTS5CustomTokenizer {
     /// 2. The input `flags` should be given unmodified to the tokenCallback
     /// function, unless you union it with the .colocated flag when the
     /// tokenizer produces synonyms (see
-    /// https://www.sqlite.org/fts5.html#synonym_support).
+    /// <https://www.sqlite.org/fts5.html#synonym_support>).
     ///
     /// - parameters:
     ///     - token: A token produced by the wrapped tokenizer
@@ -113,7 +106,7 @@ extension FTS5WrapperTokenizer {
         pText: UnsafePointer<Int8>?,
         nText: Int32,
         tokenCallback: @escaping FTS5TokenCallback)
-        -> Int32
+    -> Int32
     {
         // `tokenCallback` is @convention(c). This requires a little setup
         // in order to transfer context.
@@ -129,57 +122,55 @@ extension FTS5WrapperTokenizer {
                 tokenization: tokenization,
                 pText: pText,
                 nText: nText) { (customContextPointer, tokenFlags, pToken, nToken, iStart, iEnd) in
-                    
-                    // Extract token produced by wrapped tokenizer
-                    guard
-                        let token = pToken.flatMap({
-                            String(
-                                data: Data(
-                                    bytesNoCopy: UnsafeMutableRawPointer(mutating: $0),
-                                    count: Int(nToken),
-                                    deallocator: .none),
-                                encoding: .utf8) })
-                        else {
-                            return SQLITE_OK // 0 // SQLITE_OK
-                    }
-                    
-                    // Extract context
-                    let customContext = customContextPointer!.assumingMemoryBound(to: FTS5WrapperContext.self).pointee
-                    let tokenizer = customContext.tokenizer
-                    let context = customContext.context
-                    let tokenization = customContext.tokenization
-                    let tokenCallback = customContext.tokenCallback
-                    
-                    // Process token produced by wrapped tokenizer
-                    do {
-                        try tokenizer.accept(
-                            token: token,
-                            flags: FTS5TokenFlags(rawValue: tokenFlags),
-                            for: tokenization,
-                            tokenCallback: { (token, flags) in
-                                // Turn token into bytes
-                                return try ContiguousArray(token.utf8).withUnsafeBufferPointer { buffer in
-                                    guard let addr = buffer.baseAddress else {
-                                        return
-                                    }
-                                    let pToken = UnsafeMutableRawPointer(mutating: addr)
-                                        .assumingMemoryBound(to: Int8.self)
-                                    let nToken = Int32(buffer.count)
-                                    
-                                    // Inject token bytes into SQLite
-                                    let code = tokenCallback(context, flags.rawValue, pToken, nToken, iStart, iEnd)
-                                    guard code == SQLITE_OK else {
-                                        throw DatabaseError(resultCode: code, message: "token callback failed")
-                                    }
+                
+                // Extract token produced by wrapped tokenizer
+                guard let token = pToken.flatMap({ String(
+                                                    data: Data(
+                                                        bytesNoCopy: UnsafeMutableRawPointer(mutating: $0),
+                                                        count: Int(nToken),
+                                                        deallocator: .none),
+                                                    encoding: .utf8) })
+                else {
+                    return SQLITE_OK // 0 // SQLITE_OK
+                }
+                
+                // Extract context
+                let customContext = customContextPointer!.assumingMemoryBound(to: FTS5WrapperContext.self).pointee
+                let tokenizer = customContext.tokenizer
+                let context = customContext.context
+                let tokenization = customContext.tokenization
+                let tokenCallback = customContext.tokenCallback
+                
+                // Process token produced by wrapped tokenizer
+                do {
+                    try tokenizer.accept(
+                        token: token,
+                        flags: FTS5TokenFlags(rawValue: tokenFlags),
+                        for: tokenization,
+                        tokenCallback: { (token, flags) in
+                            // Turn token into bytes
+                            return try ContiguousArray(token.utf8).withUnsafeBufferPointer { buffer in
+                                guard let addr = buffer.baseAddress else {
+                                    return
                                 }
+                                let pToken = UnsafeMutableRawPointer(mutating: addr)
+                                    .assumingMemoryBound(to: Int8.self)
+                                let nToken = Int32(buffer.count)
+                                
+                                // Inject token bytes into SQLite
+                                let code = tokenCallback(context, flags.rawValue, pToken, nToken, iStart, iEnd)
+                                guard code == SQLITE_OK else {
+                                    throw DatabaseError(resultCode: code, message: "token callback failed")
+                                }
+                            }
                         })
-                        
-                        return SQLITE_OK
-                    } catch let error as DatabaseError {
-                        return error.extendedResultCode.rawValue
-                    } catch {
-                        return SQLITE_ERROR
-                    }
+                    
+                    return SQLITE_OK
+                } catch let error as DatabaseError {
+                    return error.extendedResultCode.rawValue
+                } catch {
+                    return SQLITE_ERROR
+                }
             }
         }
     }

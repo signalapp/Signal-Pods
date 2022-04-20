@@ -8,13 +8,16 @@
 ///     dict["bar"] // 2
 ///     dict["qux"] // nil
 ///     dict.map { $0.key } // ["foo", "bar"], in this order.
-@usableFromInline
 struct OrderedDictionary<Key: Hashable, Value> {
-    @usableFromInline /* private(set) */ var keys: [Key]
-    @usableFromInline /* private(set) */ var dictionary: [Key: Value]
+    private(set) var keys: [Key]
+    private(set) var dictionary: [Key: Value]
     
-    var values: [Value] {
-        return keys.map { dictionary[$0]! }
+    var values: [Value] { keys.map { dictionary[$0]! } }
+    
+    private init(keys: [Key], dictionary: [Key: Value]) {
+        assert(Set(keys) == Set(dictionary.keys))
+        self.keys = keys
+        self.dictionary = dictionary
     }
     
     /// Creates an empty ordered dictionary.
@@ -31,9 +34,8 @@ struct OrderedDictionary<Key: Hashable, Value> {
     }
     
     /// Returns the value associated with key, or nil.
-    @usableFromInline
     subscript(_ key: Key) -> Value? {
-        get { return dictionary[key] }
+        get { dictionary[key] }
         set {
             if let value = newValue {
                 updateValue(value, forKey: key)
@@ -44,9 +46,8 @@ struct OrderedDictionary<Key: Hashable, Value> {
     }
     
     /// Returns the value associated with key, or the default value.
-    @inlinable
     subscript(_ key: Key, default defaultValue: Value) -> Value {
-        get { return dictionary[key] ?? defaultValue }
+        get { dictionary[key] ?? defaultValue }
         set { self[key] = newValue }
     }
     
@@ -68,7 +69,6 @@ struct OrderedDictionary<Key: Hashable, Value> {
     /// original value. If the given key is not present in the dictionary, this
     /// method appends the key-value pair and returns nil.
     @discardableResult
-    @usableFromInline
     mutating func updateValue(_ value: Value, forKey key: Key) -> Value? {
         if let oldValue = dictionary.updateValue(value, forKey: key) {
             return oldValue
@@ -79,7 +79,6 @@ struct OrderedDictionary<Key: Hashable, Value> {
     
     /// Removes the value associated with key.
     @discardableResult
-    @inlinable
     mutating func removeValue(forKey key: Key) -> Value? {
         guard let value = dictionary.removeValue(forKey: key) else {
             return nil
@@ -92,7 +91,7 @@ struct OrderedDictionary<Key: Hashable, Value> {
     /// Returns a new ordered dictionary containing the keys of this dictionary
     /// with the values transformed by the given closure.
     func mapValues<T>(_ transform: (Value) throws -> T) rethrows -> OrderedDictionary<Key, T> {
-        return try reduce(into: .init()) { dict, pair in
+        try reduce(into: .init()) { dict, pair in
             let value = try transform(pair.value)
             dict.appendValue(value, forKey: pair.key)
         }
@@ -102,32 +101,80 @@ struct OrderedDictionary<Key: Hashable, Value> {
     /// that have non-nil values as the result of transformation by the
     /// given closure.
     func compactMapValues<T>(_ transform: (Value) throws -> T?) rethrows -> OrderedDictionary<Key, T> {
-        return try reduce(into: .init()) { dict, pair in
+        try reduce(into: .init()) { dict, pair in
             if let value = try transform(pair.value) {
                 dict.appendValue(value, forKey: pair.key)
             }
         }
     }
+    
+    func filter(_ isIncluded: ((key: Key, value: Value)) throws -> Bool) rethrows -> OrderedDictionary<Key, Value> {
+        let dictionary = try self.dictionary.filter(isIncluded)
+        let keys = self.keys.filter(dictionary.keys.contains)
+        return OrderedDictionary(keys: keys, dictionary: dictionary)
+    }
+    
+    mutating func merge<S>(
+        _ other: S,
+        uniquingKeysWith combine: (Value, Value) throws -> Value)
+    rethrows
+    where S: Sequence, S.Element == (Key, Value)
+    {
+        for (key, value) in other {
+            if let current = self[key] {
+                self[key] = try combine(current, value)
+            } else {
+                self[key] = value
+            }
+        }
+    }
+    
+    mutating func merge<S>(
+        _ other: S,
+        uniquingKeysWith combine: (Value, Value) throws -> Value)
+    rethrows
+    where S: Sequence, S.Element == (key: Key, value: Value)
+    {
+        for (key, value) in other {
+            if let current = self[key] {
+                self[key] = try combine(current, value)
+            } else {
+                self[key] = value
+            }
+        }
+    }
+    
+    func merging<S>(
+        _ other: S,
+        uniquingKeysWith combine: (Value, Value) throws -> Value)
+    rethrows -> OrderedDictionary<Key, Value>
+    where S: Sequence, S.Element == (Key, Value)
+    {
+        var result = self
+        try result.merge(other, uniquingKeysWith: combine)
+        return result
+    }
+    
+    func merging<S>(
+        _ other: S,
+        uniquingKeysWith combine: (Value, Value) throws -> Value)
+    rethrows -> OrderedDictionary<Key, Value>
+    where S: Sequence, S.Element == (key: Key, value: Value)
+    {
+        var result = self
+        try result.merge(other, uniquingKeysWith: combine)
+        return result
+    }
 }
 
 extension OrderedDictionary: Collection {
-    @usableFromInline
     typealias Index = Int
     
-    @usableFromInline var startIndex: Int {
-        return 0
-    }
+    var startIndex: Int { 0 }
+    var endIndex: Int { keys.count }
     
-    @usableFromInline var endIndex: Int {
-        return keys.count
-    }
+    func index(after i: Int) -> Int { i + 1 }
     
-    @usableFromInline
-    func index(after i: Int) -> Int {
-        return i + 1
-    }
-    
-    @usableFromInline
     subscript(position: Int) -> (key: Key, value: Value) {
         let key = keys[position]
         return (key: key, value: dictionary[key]!)
@@ -135,7 +182,6 @@ extension OrderedDictionary: Collection {
 }
 
 extension OrderedDictionary: ExpressibleByDictionaryLiteral {
-    @usableFromInline
     init(dictionaryLiteral elements: (Key, Value)...) {
         self.keys = elements.map { $0.0 }
         self.dictionary = Dictionary(uniqueKeysWithValues: elements)
@@ -143,9 +189,8 @@ extension OrderedDictionary: ExpressibleByDictionaryLiteral {
 }
 
 extension OrderedDictionary: Equatable where Value: Equatable {
-    @usableFromInline
     static func == (lhs: OrderedDictionary, rhs: OrderedDictionary) -> Bool {
-        return (lhs.keys == rhs.keys) && (lhs.dictionary == rhs.dictionary)
+        (lhs.keys == rhs.keys) && (lhs.dictionary == rhs.dictionary)
     }
 }
 

@@ -21,7 +21,7 @@ extension TableRequest where Self: FilteredRequest {
             return none()
         }
         let alias = TableAlias()
-        let matchExpression = TableMatchExpression(alias: alias, pattern: pattern.databaseValue)
+        let matchExpression = SQLExpression.tableMatch(alias, pattern.sqlExpression)
         return self.aliased(alias).filter(matchExpression)
     }
 }
@@ -38,7 +38,18 @@ extension TableRecord {
     /// If the search pattern is nil, the request does not match any
     /// database row.
     public static func matching(_ pattern: FTS5Pattern?) -> QueryInterfaceRequest<Self> {
-        return all().matching(pattern)
+        all().matching(pattern)
+    }
+}
+
+extension ColumnExpression {
+    
+    /// A matching SQL expression with the `MATCH` SQL operator.
+    ///
+    ///     // content MATCH '...'
+    ///     Column("content").match(pattern)
+    public func match(_ pattern: FTS5Pattern) -> SQLExpression {
+        .binary(.match, sqlExpression, pattern.sqlExpression)
     }
 }
 #endif

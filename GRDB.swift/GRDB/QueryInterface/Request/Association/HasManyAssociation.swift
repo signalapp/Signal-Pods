@@ -44,7 +44,7 @@
 ///    SQLite guarantees that no book refers to a missing author. The
 ///    `onDelete: .cascade` option has SQLite automatically delete all of an
 ///    author's books when that author is deleted.
-///    See https://sqlite.org/foreignkeys.html#fk_actions for more information.
+///    See <https://sqlite.org/foreignkeys.html#fk_actions> for more information.
 ///
 /// The example above uses auto-incremented primary keys. But generally
 /// speaking, all primary keys are supported.
@@ -58,7 +58,7 @@
 ///     }
 ///
 /// See ForeignKey for more information.
-public struct HasManyAssociation<Origin: TableRecord, Destination: TableRecord>: AssociationToMany {
+public struct HasManyAssociation<Origin, Destination>: AssociationToMany {
     /// :nodoc:
     public typealias OriginRowDecoder = Origin
     
@@ -66,10 +66,31 @@ public struct HasManyAssociation<Origin: TableRecord, Destination: TableRecord>:
     public typealias RowDecoder = Destination
     
     /// :nodoc:
-    public var sqlAssociation: SQLAssociation
+    public var _sqlAssociation: _SQLAssociation
     
-    /// :nodoc:
-    public init(sqlAssociation: SQLAssociation) {
-        self.sqlAssociation = sqlAssociation
+    init(
+        to destinationRelation: SQLRelation,
+        key: String?,
+        using foreignKey: ForeignKey?)
+    {
+        let destinationTable = destinationRelation.source.tableName
+        
+        let foreignKeyCondition = SQLForeignKeyCondition(
+            destinationTable: destinationTable,
+            foreignKey: foreignKey,
+            originIsLeft: false)
+        
+        let associationKey: SQLAssociationKey
+        if let key = key {
+            associationKey = .fixedPlural(key)
+        } else {
+            associationKey = .inflected(destinationTable)
+        }
+        
+        _sqlAssociation = _SQLAssociation(
+            key: associationKey,
+            condition: .foreignKey(foreignKeyCondition),
+            relation: destinationRelation,
+            cardinality: .toMany)
     }
 }

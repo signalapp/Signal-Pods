@@ -1,11 +1,12 @@
 /// SQLForeignKeyRequest looks for the foreign keys associations need to
 /// join tables.
 ///
-/// Mappings come from foreign keys, when they exist in the database schema.
+/// Columns mapping come from foreign keys, when they exist in the
+/// database schema.
 ///
 /// When the schema does not define any foreign key, we can still infer complete
-/// mappings from partial information and primary keys.
-struct SQLForeignKeyRequest: Equatable {
+/// mapping from partial information and primary keys.
+struct SQLForeignKeyRequest {
     let originTable: String
     let destinationTable: String
     let originColumns: [String]?
@@ -20,7 +21,7 @@ struct SQLForeignKeyRequest: Equatable {
     }
     
     /// The (origin, destination) column pairs that join a left table to a right table.
-    func fetchMapping(_ db: Database) throws -> [(origin: String, destination: String)] {
+    func fetchForeignKeyMapping(_ db: Database) throws -> ForeignKeyMapping {
         if let originColumns = originColumns, let destinationColumns = destinationColumns {
             // Total information: no need to query the database schema.
             GRDBPrecondition(originColumns.count == destinationColumns.count, "Number of columns don't match")
@@ -76,5 +77,45 @@ struct SQLForeignKeyRequest: Equatable {
         }
         
         fatalError("Could not infer foreign key from \(originTable) to \(destinationTable)")
+    }
+}
+
+// Foreign key columns mapping
+typealias ForeignKeyMapping = [(origin: String, destination: String)]
+
+// Join columns mapping
+typealias JoinMapping = [(left: String, right: String)]
+
+extension ForeignKeyMapping {
+    /// Orient the foreign key mapping for a SQL join.
+    ///
+    /// - parameter originIsLeft: Whether the table at the origin of a
+    ///   foreign key is on the left of a JOIN clause.
+    ///
+    ///     For example, the two requests below use the same
+    ///     `ForeignKeyMapping` from `book.authorID` (origin of the foreign key)
+    ///     to `author.id` (destination).
+    ///
+    ///     In the first request, the book origin is on the left of the
+    ///     join clause:
+    ///
+    ///         // SELECT book.*, author.*
+    ///         // FROM book
+    ///         // JOIN author ON author.id = book.authorID
+    ///         Book.including(required: Book.author)
+    ///
+    ///     In the second request, the book origin is on the right of the
+    ///     join clause:
+    ///
+    ///         // SELECT author.*, book.*
+    ///         // FROM author
+    ///         // JOIN book ON book.authorID = author.id
+    ///         Author.including(required: Author.books)
+    func joinMapping(originIsLeft: Bool) -> JoinMapping {
+        if originIsLeft {
+            return map { (left: $0.origin, right: $0.destination) }
+        } else {
+            return map { (left: $0.destination, right: $0.origin) }
+        }
     }
 }

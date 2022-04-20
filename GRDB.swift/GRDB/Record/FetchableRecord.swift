@@ -1,13 +1,6 @@
 import Foundation
-#if SWIFT_PACKAGE
-import CSQLite
-#elseif GRDBCIPHER
-import SQLCipher
-#elseif !GRDBCUSTOMSQLITE && !GRDBCIPHER
-import SQLite3
-#endif
 
-/// Types that adopt FetchableRecord can be initialized from a database Row.
+/// Types that adopt `FetchableRecord` can be initialized from a database Row.
 ///
 ///     let row = try Row.fetchOne(db, sql: "SELECT ...")!
 ///     let player = Player(row)
@@ -19,12 +12,10 @@ import SQLite3
 ///     try Player.fetchAll(db, sql: "SELECT ...", arguments:...)    // [Player]
 ///     try Player.fetchOne(db, sql: "SELECT ...", arguments:...)    // Player?
 ///
-///     let statement = try db.makeSelectStatement(sql: "SELECT ...")
+///     let statement = try db.makeStatement(sql: "SELECT ...")
 ///     try Player.fetchCursor(statement, arguments:...) // Cursor of Player
 ///     try Player.fetchAll(statement, arguments:...)    // [Player]
 ///     try Player.fetchOne(statement, arguments:...)    // Player?
-///
-/// FetchableRecord is adopted by Record.
 public protocol FetchableRecord {
     
     // MARK: - Row Decoding
@@ -112,11 +103,25 @@ public protocol FetchableRecord {
     ///         var registrationDate: Date // decoded from epoch timestamp
     ///     }
     static var databaseDateDecodingStrategy: DatabaseDateDecodingStrategy { get }
+    
+    /// When the FetchableRecord type also adopts the standard Decodable
+    /// protocol, this property controls the key decoding strategy.
+    ///
+    /// Default value is .useDefaultKeys
+    ///
+    /// For example:
+    ///
+    ///     struct Player: FetchableRecord, Decodable {
+    ///         static let databaseDateDecodingStrategy: DatabaseColumnDecodingStrategy = .convertFromSnakeCase
+    ///
+    ///         var playerID: String // decoded from player_id
+    ///     }
+    static var databaseColumnDecodingStrategy: DatabaseColumnDecodingStrategy { get }
 }
 
 extension FetchableRecord {
     public static var databaseDecodingUserInfo: [CodingUserInfoKey: Any] {
-        return [:]
+        [:]
     }
     
     /// Returns a JSONDecoder with the following properties:
@@ -129,21 +134,26 @@ extension FetchableRecord {
         decoder.dataDecodingStrategy = .base64
         decoder.dateDecodingStrategy = .millisecondsSince1970
         decoder.nonConformingFloatDecodingStrategy = .throw
+        decoder.userInfo = databaseDecodingUserInfo
         return decoder
     }
     
     public static var databaseDateDecodingStrategy: DatabaseDateDecodingStrategy {
-        return .deferredToDate
+        .deferredToDate
+    }
+    
+    public static var databaseColumnDecodingStrategy: DatabaseColumnDecodingStrategy {
+        .useDefaultKeys
     }
 }
 
 extension FetchableRecord {
     
-    // MARK: Fetching From SelectStatement
+    // MARK: Fetching From Prepared Statement
     
     /// A cursor over records fetched from a prepared statement.
     ///
-    ///     let statement = try db.makeSelectStatement(sql: "SELECT * FROM player")
+    ///     let statement = try db.makeStatement(sql: "SELECT * FROM player")
     ///     let players = try Player.fetchCursor(statement) // Cursor of Player
     ///     while let player = try players.next() { // Player
     ///         ...
@@ -152,7 +162,7 @@ extension FetchableRecord {
     /// If the database is modified during the cursor iteration, the remaining
     /// elements are undefined.
     ///
-    /// The cursor must be iterated in a protected dispath queue.
+    /// The cursor must be iterated in a protected dispatch queue.
     ///
     /// - parameters:
     ///     - statement: The statement to run.
@@ -161,17 +171,17 @@ extension FetchableRecord {
     /// - returns: A cursor over fetched records.
     /// - throws: A DatabaseError is thrown whenever an SQLite error occurs.
     public static func fetchCursor(
-        _ statement: SelectStatement,
+        _ statement: Statement,
         arguments: StatementArguments? = nil,
         adapter: RowAdapter? = nil)
-        throws -> RecordCursor<Self>
+    throws -> RecordCursor<Self>
     {
-        return try RecordCursor(statement: statement, arguments: arguments, adapter: adapter)
+        try RecordCursor(statement: statement, arguments: arguments, adapter: adapter)
     }
     
     /// Returns an array of records fetched from a prepared statement.
     ///
-    ///     let statement = try db.makeSelectStatement(sql: "SELECT * FROM player")
+    ///     let statement = try db.makeStatement(sql: "SELECT * FROM player")
     ///     let players = try Player.fetchAll(statement) // [Player]
     ///
     /// - parameters:
@@ -181,17 +191,19 @@ extension FetchableRecord {
     /// - returns: An array of records.
     /// - throws: A DatabaseError is thrown whenever an SQLite error occurs.
     public static func fetchAll(
-        _ statement: SelectStatement,
+        _ statement: Statement,
         arguments: StatementArguments? = nil,
         adapter: RowAdapter? = nil)
-        throws -> [Self]
+    throws -> [Self]
     {
-        return try Array(fetchCursor(statement, arguments: arguments, adapter: adapter))
+        // Use Array initializer in order to deal with <https://github.com/groue/GRDB.swift/issues/1124>.
+        // See `Statement.forEachStep(_:)` for more information.
+        try Array(fetchCursor(statement, arguments: arguments, adapter: adapter))
     }
     
     /// Returns a single record fetched from a prepared statement.
     ///
-    ///     let statement = try db.makeSelectStatement(sql: "SELECT * FROM player")
+    ///     let statement = try db.makeStatement(sql: "SELECT * FROM player")
     ///     let player = try Player.fetchOne(statement) // Player?
     ///
     /// - parameters:
@@ -201,12 +213,34 @@ extension FetchableRecord {
     /// - returns: An optional record.
     /// - throws: A DatabaseError is thrown whenever an SQLite error occurs.
     public static func fetchOne(
-        _ statement: SelectStatement,
+        _ statement: Statement,
         arguments: StatementArguments? = nil,
         adapter: RowAdapter? = nil)
-        throws -> Self?
+    throws -> Self?
     {
-        return try fetchCursor(statement, arguments: arguments, adapter: adapter).next()
+        try fetchCursor(statement, arguments: arguments, adapter: adapter).next()
+    }
+}
+
+extension FetchableRecord where Self: Hashable {
+    /// Returns a set of records fetched from a prepared statement.
+    ///
+    ///     let statement = try db.makeStatement(sql: "SELECT * FROM player")
+    ///     let players = try Player.fetchSet(statement) // Set<Player>
+    ///
+    /// - parameters:
+    ///     - statement: The statement to run.
+    ///     - arguments: Optional statement arguments.
+    ///     - adapter: Optional RowAdapter
+    /// - returns: A set of records.
+    /// - throws: A DatabaseError is thrown whenever an SQLite error occurs.
+    public static func fetchSet(
+        _ statement: Statement,
+        arguments: StatementArguments? = nil,
+        adapter: RowAdapter? = nil)
+    throws -> Set<Self>
+    {
+        try Set(fetchCursor(statement, arguments: arguments, adapter: adapter))
     }
 }
 
@@ -224,7 +258,7 @@ extension FetchableRecord {
     /// If the database is modified during the cursor iteration, the remaining
     /// elements are undefined.
     ///
-    /// The cursor must be iterated in a protected dispath queue.
+    /// The cursor must be iterated in a protected dispatch queue.
     ///
     /// - parameters:
     ///     - db: A database connection.
@@ -238,9 +272,9 @@ extension FetchableRecord {
         sql: String,
         arguments: StatementArguments = StatementArguments(),
         adapter: RowAdapter? = nil)
-        throws -> RecordCursor<Self>
+    throws -> RecordCursor<Self>
     {
-        return try fetchCursor(db, SQLRequest<Void>(sql: sql, arguments: arguments, adapter: adapter))
+        try fetchCursor(db, SQLRequest(sql: sql, arguments: arguments, adapter: adapter))
     }
     
     /// Returns an array of records fetched from an SQL query.
@@ -259,9 +293,9 @@ extension FetchableRecord {
         sql: String,
         arguments: StatementArguments = StatementArguments(),
         adapter: RowAdapter? = nil)
-        throws -> [Self]
+    throws -> [Self]
     {
-        return try fetchAll(db, SQLRequest<Void>(sql: sql, arguments: arguments, adapter: adapter))
+        try fetchAll(db, SQLRequest(sql: sql, arguments: arguments, adapter: adapter))
     }
     
     /// Returns a single record fetched from an SQL query.
@@ -280,9 +314,32 @@ extension FetchableRecord {
         sql: String,
         arguments: StatementArguments = StatementArguments(),
         adapter: RowAdapter? = nil)
-        throws -> Self?
+    throws -> Self?
     {
-        return try fetchOne(db, SQLRequest<Void>(sql: sql, arguments: arguments, adapter: adapter))
+        try fetchOne(db, SQLRequest(sql: sql, arguments: arguments, adapter: adapter))
+    }
+}
+
+extension FetchableRecord where Self: Hashable {
+    /// Returns a set of records fetched from an SQL query.
+    ///
+    ///     let players = try Player.fetchSet(db, sql: "SELECT * FROM player") // Set<Player>
+    ///
+    /// - parameters:
+    ///     - db: A database connection.
+    ///     - sql: An SQL query.
+    ///     - arguments: Statement arguments.
+    ///     - adapter: Optional RowAdapter
+    /// - returns: A set of records.
+    /// - throws: A DatabaseError is thrown whenever an SQLite error occurs.
+    public static func fetchSet(
+        _ db: Database,
+        sql: String,
+        arguments: StatementArguments = StatementArguments(),
+        adapter: RowAdapter? = nil)
+    throws -> Set<Self>
+    {
+        try fetchSet(db, SQLRequest(sql: sql, arguments: arguments, adapter: adapter))
     }
 }
 
@@ -301,7 +358,7 @@ extension FetchableRecord {
     /// If the database is modified during the cursor iteration, the remaining
     /// elements are undefined.
     ///
-    /// The cursor must be iterated in a protected dispath queue.
+    /// The cursor must be iterated in a protected dispatch queue.
     ///
     /// - parameters:
     ///     - db: A database connection.
@@ -328,7 +385,7 @@ extension FetchableRecord {
         let request = try request.makePreparedRequest(db, forSingleResult: false)
         if let supplementaryFetch = request.supplementaryFetch {
             let rows = try Row.fetchAll(request.statement, adapter: request.adapter)
-            try supplementaryFetch(rows)
+            try supplementaryFetch(db, rows)
             return rows.map(Self.init(row:))
         } else {
             return try fetchAll(request.statement, adapter: request.adapter)
@@ -351,13 +408,37 @@ extension FetchableRecord {
             guard let row = try Row.fetchOne(request.statement, adapter: request.adapter) else {
                 return nil
             }
-            try supplementaryFetch([row])
+            try supplementaryFetch(db, [row])
             return .init(row: row)
         } else {
             return try fetchOne(request.statement, adapter: request.adapter)
         }
     }
 }
+
+extension FetchableRecord where Self: Hashable {
+    /// Returns a set of records fetched from a fetch request.
+    ///
+    ///     let request = try Player.all()
+    ///     let players = try Player.fetchSet(db, request) // Set<Player>
+    ///
+    /// - parameters:
+    ///     - db: A database connection.
+    ///     - sql: a FetchRequest.
+    /// - returns: A set of records.
+    /// - throws: A DatabaseError is thrown whenever an SQLite error occurs.
+    public static func fetchSet<R: FetchRequest>(_ db: Database, _ request: R) throws -> Set<Self> {
+        let request = try request.makePreparedRequest(db, forSingleResult: false)
+        if let supplementaryFetch = request.supplementaryFetch {
+            let rows = try Row.fetchAll(request.statement, adapter: request.adapter)
+            try supplementaryFetch(db, rows)
+            return Set(rows.lazy.map(Self.init(row:)))
+        } else {
+            return try fetchSet(request.statement, adapter: request.adapter)
+        }
+    }
+}
+
 
 // MARK: - FetchRequest
 
@@ -376,13 +457,13 @@ extension FetchRequest where RowDecoder: FetchableRecord {
     /// If the database is modified during the cursor iteration, the remaining
     /// elements are undefined.
     ///
-    /// The cursor must be iterated in a protected dispath queue.
+    /// The cursor must be iterated in a protected dispatch queue.
     ///
     /// - parameter db: A database connection.
     /// - returns: A cursor over fetched records.
     /// - throws: A DatabaseError is thrown whenever an SQLite error occurs.
     public func fetchCursor(_ db: Database) throws -> RecordCursor<RowDecoder> {
-        return try RowDecoder.fetchCursor(db, self)
+        try RowDecoder.fetchCursor(db, self)
     }
     
     /// An array of fetched records.
@@ -394,7 +475,7 @@ extension FetchRequest where RowDecoder: FetchableRecord {
     /// - returns: An array of records.
     /// - throws: A DatabaseError is thrown whenever an SQLite error occurs.
     public func fetchAll(_ db: Database) throws -> [RowDecoder] {
-        return try RowDecoder.fetchAll(db, self)
+        try RowDecoder.fetchAll(db, self)
     }
     
     /// The first fetched record.
@@ -406,7 +487,21 @@ extension FetchRequest where RowDecoder: FetchableRecord {
     /// - returns: An optional record.
     /// - throws: A DatabaseError is thrown whenever an SQLite error occurs.
     public func fetchOne(_ db: Database) throws -> RowDecoder? {
-        return try RowDecoder.fetchOne(db, self)
+        try RowDecoder.fetchOne(db, self)
+    }
+}
+
+extension FetchRequest where RowDecoder: FetchableRecord & Hashable {
+    /// A set of fetched records.
+    ///
+    ///     let request: ... // Some FetchRequest that fetches Player
+    ///     let players = try request.fetchSet(db) // Set<Player>
+    ///
+    /// - parameter db: A database connection.
+    /// - returns: A set of records.
+    /// - throws: A DatabaseError is thrown whenever an SQLite error occurs.
+    public func fetchSet(_ db: Database) throws -> Set<RowDecoder> {
+        try RowDecoder.fetchSet(db, self)
     }
 }
 
@@ -418,57 +513,41 @@ extension FetchRequest where RowDecoder: FetchableRecord {
 ///     try dbQueue.read { db in
 ///         let players: RecordCursor<Player> = try Player.fetchCursor(db, sql: "SELECT * FROM player")
 ///     }
-public final class RecordCursor<Record: FetchableRecord>: Cursor {
-    @usableFromInline let _statement: SelectStatement
-    @usableFromInline let _row: Row // Reused for performance
-    @usableFromInline let _sqliteStatement: SQLiteStatement
-    @usableFromInline var _done = false
+public final class RecordCursor<Record: FetchableRecord>: DatabaseCursor {
+    public typealias Element = Record
+    public let statement: Statement
+    /// :nodoc:
+    public var _isDone = false
+    private let row: Row // Instanciated once, reused for performance
     
-    init(statement: SelectStatement, arguments: StatementArguments? = nil, adapter: RowAdapter? = nil) throws {
-        _statement = statement
-        _row = try Row(statement: statement).adapted(with: adapter, layout: statement)
-        _sqliteStatement = statement.sqliteStatement
-        _statement.reset(withArguments: arguments)
-        
-        // Assume cursor is created for iteration
-        statement.database.selectStatementWillExecute(statement)
+    init(statement: Statement, arguments: StatementArguments? = nil, adapter: RowAdapter? = nil) throws {
+        self.statement = statement
+        row = try Row(statement: statement).adapted(with: adapter, layout: statement)
+        try statement.reset(withArguments: arguments)
     }
     
     deinit {
         // Statement reset fails when sqlite3_step has previously failed.
         // Just ignore reset error.
-        try? _statement.reset()
+        try? statement.reset()
     }
     
     /// :nodoc:
-    @inlinable
-    public func next() throws -> Record? {
-        if _done {
-            // make sure this instance never yields a value again, even if the
-            // statement is reset by another cursor.
-            return nil
-        }
-        switch sqlite3_step(_sqliteStatement) {
-        case SQLITE_DONE:
-            _done = true
-            return nil
-        case SQLITE_ROW:
-            return Record(row: _row)
-        case let code:
-            try _statement.didFail(withResultCode: code)
-        }
+    public func _element(sqliteStatement: SQLiteStatement) -> Record {
+        Record(row: row)
     }
 }
 
 // MARK: - DatabaseDateDecodingStrategy
 
-/// DatabaseDateDecodingStrategy specifies how FetchableRecord types that also
-/// adopt the standard Decodable protocol decode their date properties.
+/// `DatabaseDateDecodingStrategy` specifies how `FetchableRecord` types that
+/// also  adopt the standard `Decodable` protocol decode their
+/// `Date` properties.
 ///
 /// For example:
 ///
 ///     struct Player: FetchableRecord, Decodable {
-///         static let databaseDateDecodingStrategy: DatabaseDateDecodingStrategy = .timeIntervalSince1970
+///         static let databaseDateDecodingStrategy = DatabaseDateDecodingStrategy.timeIntervalSince1970
 ///
 ///         var name: String
 ///         var registrationDate: Date // decoded from epoch timestamp
@@ -504,7 +583,7 @@ public enum DatabaseDateDecodingStrategy {
     case millisecondsSince1970
     
     /// Decodes dates according to the ISO 8601 standards
-    @available(macOS 10.12, iOS 10.0, watchOS 3.0, tvOS 10.0, *)
+    @available(macOS 10.12, watchOS 3.0, tvOS 10.0, *)
     case iso8601
     
     /// Decodes a String, according to the provided formatter
@@ -516,4 +595,100 @@ public enum DatabaseDateDecodingStrategy {
     /// must return nil (GRDB will interpret this nil result as a conversion
     /// error, and react accordingly).
     case custom((DatabaseValue) -> Date?)
+}
+
+// MARK: - DatabaseColumnDecodingStrategy
+
+/// `DatabaseColumnDecodingStrategy` specifies how `FetchableRecord` types that
+/// also adopt the standard `Decodable` protocol look for the database columns
+/// that match their coding keys.
+///
+/// For example:
+///
+///     struct Player: FetchableRecord, Decodable {
+///         static let databaseColumnDecodingStrategy = DatabaseColumnDecodingStrategy.convertFromSnakeCase
+///
+///         // Decoded from the player_id column
+///         var playerID: Int
+///     }
+public enum DatabaseColumnDecodingStrategy {
+    /// A key decoding strategy that doesn’t change key names during decoding.
+    case useDefaultKeys
+    
+    /// A key decoding strategy that converts snake-case keys to camel-case keys.
+    case convertFromSnakeCase
+    
+    /// A key decoding strategy defined by the closure you supply.
+    case custom((String) -> CodingKey)
+    
+    func key<K: CodingKey>(forColumn column: String) -> K? {
+        switch self {
+        case .useDefaultKeys:
+            return K(stringValue: column)
+        case .convertFromSnakeCase:
+            return K(stringValue: Self._convertFromSnakeCase(column))
+        case let .custom(key):
+            return K(stringValue: key(column).stringValue)
+        }
+    }
+    
+    // Copied straight from
+    // https://github.com/apple/swift-corelibs-foundation/blob/8d6398d76eaf886a214e0bb2bd7549d968f7b40e/Sources/Foundation/JSONDecoder.swift#L103
+    static func _convertFromSnakeCase(_ stringKey: String) -> String {
+        //===----------------------------------------------------------------------===//
+        //
+        // This function is part of the Swift.org open source project
+        //
+        // Copyright (c) 2014 - 2020 Apple Inc. and the Swift project authors
+        // Licensed under Apache License v2.0 with Runtime Library Exception
+        //
+        // See https://swift.org/LICENSE.txt for license information
+        // See https://swift.org/CONTRIBUTORS.txt for the list of Swift project authors
+        //
+        //===----------------------------------------------------------------------===//
+        guard !stringKey.isEmpty else { return stringKey }
+
+        // Find the first non-underscore character
+        guard let firstNonUnderscore = stringKey.firstIndex(where: { $0 != "_" }) else {
+            // Reached the end without finding an _
+            return stringKey
+        }
+
+        // Find the last non-underscore character
+        var lastNonUnderscore = stringKey.index(before: stringKey.endIndex)
+        while lastNonUnderscore > firstNonUnderscore && stringKey[lastNonUnderscore] == "_" {
+            stringKey.formIndex(before: &lastNonUnderscore)
+        }
+
+        let keyRange = firstNonUnderscore...lastNonUnderscore
+        let leadingUnderscoreRange = stringKey.startIndex..<firstNonUnderscore
+        let trailingUnderscoreRange = stringKey.index(after: lastNonUnderscore)..<stringKey.endIndex
+
+        let components = stringKey[keyRange].split(separator: "_")
+        let joinedString: String
+        if components.count == 1 {
+            // No underscores in key, leave the word as is - maybe already camel cased
+            joinedString = String(stringKey[keyRange])
+        } else {
+            joinedString = ([components[0].lowercased()] + components[1...].map { $0.capitalized }).joined()
+        }
+
+        // Do a cheap isEmpty check before creating and appending potentially empty strings
+        let result: String
+        if leadingUnderscoreRange.isEmpty && trailingUnderscoreRange.isEmpty {
+            result = joinedString
+        } else if !leadingUnderscoreRange.isEmpty && !trailingUnderscoreRange.isEmpty {
+            // Both leading and trailing underscores
+            result = String(stringKey[leadingUnderscoreRange])
+                + joinedString
+                + String(stringKey[trailingUnderscoreRange])
+        } else if !leadingUnderscoreRange.isEmpty {
+            // Just leading
+            result = String(stringKey[leadingUnderscoreRange]) + joinedString
+        } else {
+            // Just trailing
+            result = joinedString + String(stringKey[trailingUnderscoreRange])
+        }
+        return result
+    }
 }

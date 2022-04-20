@@ -6,12 +6,10 @@ final class SerializedDatabase {
     private let db: Database
     
     /// The database configuration
-    var configuration: Configuration {
-        return db.configuration
-    }
+    var configuration: Configuration { db.configuration }
     
     /// The path to the database file
-    var path: String
+    let path: String
     
     /// The dispatch queue
     private let queue: DispatchQueue
@@ -19,10 +17,9 @@ final class SerializedDatabase {
     init(
         path: String,
         configuration: Configuration = Configuration(),
-        schemaCache: DatabaseSchemaCache,
         defaultLabel: String,
         purpose: String? = nil)
-        throws
+    throws
     {
         // According to https://www.sqlite.org/threadsafe.html
         //
@@ -45,14 +42,28 @@ final class SerializedDatabase {
         config.threadingMode = .multiThread
         
         self.path = path
-        self.db = try Database(path: path, configuration: config, schemaCache: schemaCache)
-        self.queue = configuration.makeDispatchQueue(defaultLabel: defaultLabel, purpose: purpose)
+        let identifier = configuration.identifier(defaultLabel: defaultLabel, purpose: purpose)
+        self.db = try Database(
+            path: path,
+            description: identifier,
+            configuration: config)
+        if config.readonly {
+            self.queue = configuration.makeReaderDispatchQueue(label: identifier)
+        } else {
+            self.queue = configuration.makeWriterDispatchQueue(label: identifier)
+        }
         SchedulingWatchdog.allowDatabase(db, onQueue: queue)
         try queue.sync {
             do {
-                try db.setup()
+                try db.setUp()
             } catch {
-                db.close()
+                // Recent versions of the Swift compiler will call the
+                // deinitializer. Older ones won't.
+                // See https://bugs.swift.org/browse/SR-13746 for details.
+                //
+                // So let's close the database now. The deinitializer
+                // will only close the database if needed.
+                db.close_v2()
                 throw error
             }
         }
@@ -61,7 +72,7 @@ final class SerializedDatabase {
     deinit {
         // Database may be deallocated in its own queue: allow reentrancy
         reentrantSync { db in
-            db.close()
+            db.close_v2()
         }
     }
     
@@ -188,7 +199,7 @@ final class SerializedDatabase {
     
     /// Returns true if any only if the current dispatch queue is valid.
     var onValidQueue: Bool {
-        return SchedulingWatchdog.current?.allows(db) ?? false
+        SchedulingWatchdog.current?.allows(db) ?? false
     }
     
     /// Executes the block in the current queue.
@@ -197,6 +208,21 @@ final class SerializedDatabase {
     func execute<T>(_ block: (Database) throws -> T) rethrows -> T {
         preconditionValidQueue()
         return try block(db)
+    }
+    
+    func interrupt() {
+        // Intentionally not scheduled in our serial queue
+        db.interrupt()
+    }
+    
+    func suspend() {
+        // Intentionally not scheduled in our serial queue
+        db.suspend()
+    }
+    
+    func resume() {
+        // Intentionally not scheduled in our serial queue
+        db.resume()
     }
     
     /// Fatal error if current dispatch queue is not valid.
@@ -222,3 +248,10 @@ final class SerializedDatabase {
             line: line)
     }
 }
+
+#if swift(>=5.6) && canImport(_Concurrency)
+// @unchecked because the wrapped `Database` itself is not Sendable.
+// It happens the job of SerializedDatabase is precisely to provide thread-safe
+// access to `Database`.
+extension SerializedDatabase: @unchecked Sendable { }
+#endif

@@ -1,4 +1,4 @@
-// Copyright (C) 2019 Gwendal Roué
+// Copyright (C) 2015-2020 Gwendal Roué
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the
@@ -51,7 +51,6 @@ extension Inflections {
         // become more complete. This is a safety measure to keep existing
         // applications from breaking.
         //
-        // swiftlint:disable:next line_length
         // https://github.com/rails/rails/blob/b2eb1d1c55a59fee1e6c4cba7030d8ceb524267c/activesupport/lib/active_support/inflections.rb
         var inflections = Inflections()
         
@@ -122,7 +121,7 @@ extension Inflections {
             "rice",
             "sheep",
             "species",
-            ])
+        ])
         
         inflections.irregularSuffix("child", "children")
         inflections.irregularSuffix("foot", "feet")

@@ -1,14 +1,7 @@
 import Foundation
-#if SWIFT_PACKAGE
-import CSQLite
-#elseif GRDBCIPHER
-import SQLCipher
-#elseif !GRDBCUSTOMSQLITE && !GRDBCIPHER
-import SQLite3
-#endif
 
 /// DatabaseDateComponents reads and stores DateComponents in the database.
-public struct DatabaseDateComponents: DatabaseValueConvertible, StatementColumnConvertible {
+public struct DatabaseDateComponents: DatabaseValueConvertible, StatementColumnConvertible, Codable {
     
     /// The available formats for reading and storing date components.
     public enum Format: String {
@@ -76,21 +69,22 @@ public struct DatabaseDateComponents: DatabaseValueConvertible, StatementColumnC
     /// - parameters:
     ///     - sqliteStatement: A pointer to an SQLite statement.
     ///     - index: The column index.
-    public init(sqliteStatement: SQLiteStatement, index: Int32) {
+    @inline(__always)
+    @inlinable
+    public init?(sqliteStatement: SQLiteStatement, index: Int32) {
         guard let cString = sqlite3_column_text(sqliteStatement, index) else {
-            fatalConversionError(to: DatabaseDateComponents.self, sqliteStatement: sqliteStatement, index: index)
+            return nil
         }
         let length = Int(sqlite3_column_bytes(sqliteStatement, index)) // avoid an strlen
         let optionalComponents = cString.withMemoryRebound(
             to: Int8.self,
             capacity: length + 1 /* trailing \0 */) { cString in
-                SQLiteDateParser().components(cString: cString, length: length)
+            SQLiteDateParser().components(cString: cString, length: length)
         }
         guard let components = optionalComponents else {
-            fatalConversionError(to: DatabaseDateComponents.self, sqliteStatement: sqliteStatement, index: index)
+            return nil
         }
-        self.dateComponents = components.dateComponents
-        self.format = components.format
+        self.init(components.dateComponents, format: components.format)
     }
     
     // MARK: - DatabaseValueConvertible adoption
@@ -158,5 +152,31 @@ public struct DatabaseDateComponents: DatabaseValueConvertible, StatementColumnC
         }
         
         return SQLiteDateParser().components(from: string)
+    }
+    
+    // MARK: - Codable adoption
+    
+    
+    /// Creates a new instance by decoding from the given decoder.
+    ///
+    /// - parameters:
+    ///     - decoder: The decoder to read data from.
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let stringValue = try container.decode(String.self)
+        guard let decodedValue = DatabaseDateComponents.fromDatabaseValue(stringValue.databaseValue) else {
+            throw DecodingError.dataCorruptedError(in: container,
+                                                   debugDescription: "Unable to initialise databaseDateComponent")
+        }
+        self = decodedValue
+    }
+    
+    /// Encodes this value into the given encoder.
+    ///
+    /// - parameters:
+    ///     - encoder: The encoder to write data to.
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(String.fromDatabaseValue(databaseValue)!)
     }
 }

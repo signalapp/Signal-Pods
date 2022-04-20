@@ -1,4 +1,4 @@
-// MARK: - SQLAssociation
+// MARK: - _SQLAssociation
 
 /// An SQL association is a non-empty chain of steps which starts at the
 /// "pivot" and ends on the "destination":
@@ -51,20 +51,18 @@
 ///     Origin.including(required: association)
 ///
 /// :nodoc:
-public /* TODO: internal */ struct SQLAssociation {
+public struct _SQLAssociation {
     // All steps, from pivot to destination. Never empty.
     private(set) var steps: [SQLAssociationStep]
-    var keyPath: [String] {
-        return steps.map { $0.key.name(for: $0.cardinality) }
-    }
+    var keyPath: [String] { steps.map(\.keyName) }
     
     var destination: SQLAssociationStep {
-        get { return steps[steps.count - 1] }
+        get { steps[steps.count - 1] }
         set { steps[steps.count - 1] = newValue }
     }
     
     var pivot: SQLAssociationStep {
-        get { return steps[0] }
+        get { steps[0] }
         set { steps[0] = newValue }
     }
     
@@ -88,93 +86,25 @@ public /* TODO: internal */ struct SQLAssociation {
     }
     
     /// Changes the destination key
-    func forDestinationKey(_ key: SQLAssociationKey) -> SQLAssociation {
-        var result = self
-        result.destination.key = key
-        return result
-    }
-    
-    /// Transforms the destination relation
-    func mapDestinationRelation(_ transform: (SQLRelation) -> SQLRelation) -> SQLAssociation {
-        var result = self
-        result.destination = result.destination.mapRelation(transform)
-        return result
-    }
-    
-    /// Transforms the pivot relation
-    func mapPivotRelation(_ transform: (SQLRelation) -> SQLRelation) -> SQLAssociation {
-        var result = self
-        result.pivot = result.pivot.mapRelation(transform)
-        return result
+    func forDestinationKey(_ key: SQLAssociationKey) -> Self {
+        with {
+            $0.destination.key = key
+        }
     }
     
     /// Returns a new association
-    func through(_ other: SQLAssociation) -> SQLAssociation {
-        return SQLAssociation(steps: other.steps + steps)
+    func through(_ other: _SQLAssociation) -> Self {
+        _SQLAssociation(steps: other.steps + steps)
     }
     
-    /// Given an origin alias and rows, returns the destination of the
-    /// association as a relation.
+    /// Returns the destination of the association, reversing the association
+    /// up to the pivot.
     ///
-    /// This method provides support for association methods such
-    /// as `request(for:)`:
-    ///
-    ///     struct Destination: TableRecord { }
-    ///     struct Origin: TableRecord, EncodableRecord {
-    ///         static let destinations = hasMany(Destination.self)
-    ///         var destinations: QueryInterface<Destination> {
-    ///             return request(for: Origin.destinations)
-    ///         }
-    ///     }
-    ///
-    ///     // SELECT destination.*
-    ///     // FROM destination
-    ///     // WHERE destination.originId = 1
-    ///     let origin = Origin(id: 1)
-    ///     let destinations = origin.destinations.fetchAll(db)
-    ///
-    /// At low-level, this gives:
-    ///
-    ///     let origin = Origin(id: 1)
-    ///     let originAlias = TableAlias(tableName: Origin.databaseTableName)
-    ///     let sqlAssociation = Origin.destination.sqlAssociation
-    ///     let destinationRelation = sqlAssociation.destinationRelation(
-    ///         from: originAlias,
-    ///         rows: { db in try [Row(PersistenceContainer(db, origin))] })
-    ///     let query = SQLQuery(relation: destinationRelation)
-    ///     let generator = SQLQueryGenerator(query)
-    ///     let statement, _ = try generator.prepare(db)
-    ///     print(statement.sql)
-    ///     // SELECT destination.*
-    ///     // FROM destination
-    ///     // WHERE destination.originId = 1
-    ///
-    /// This method works for simple direct associations such as BelongsTo or
-    /// HasMany in the above examples, but also for indirect associations such
-    /// as HasManyThrough, which have any number of pivot relations between the
-    /// origin and the destination.
-    func destinationRelation(fromOriginRows originRows: @escaping (Database) throws -> [Row]) -> SQLRelation {
-        // Filter the pivot
-        let pivot = self.pivot
-        let pivotAlias = TableAlias()
-        let filteredPivotRelation = pivot.relation
-            .qualified(with: pivotAlias)
-            .filter({ db in
-                // `pivot.originId = 123` or `pivot.originId IN (1, 2, 3)`
-                try pivot.condition.filteringExpression(db, leftRows: originRows(db), rightAlias: pivotAlias)
-            })
-        
+    /// This method feeds `TableRecord.request(for:)`, and allows
+    /// `including(all:)` to prefetch associated records.
+    func destinationRelation() -> SQLRelation {
         if steps.count == 1 {
-            // This is a direct join from origin to destination, without
-            // intermediate step.
-            //
-            // SELECT destination.*
-            // FROM destination
-            // WHERE destination.originId = 1
-            //
-            // let association = Origin.hasMany(Destination.self)
-            // Origin(id: 1).request(for: association)
-            return filteredPivotRelation
+            return destination.relation
         }
         
         // This is an indirect join from origin to destination, through
@@ -191,45 +121,52 @@ public /* TODO: internal */ struct SQLAssociation {
         // Origin(id: 1).request(for: association)
         let reversedSteps = zip(steps, steps.dropFirst())
             .map { (step, nextStep) -> SQLAssociationStep in
-                // Intermediate steps are not included in the selection, and
-                // don't have any child.
-                let relation = step.relation.select([]).deletingChildren()
+                // Intermediate steps are not selected, and including(all:)
+                // children are useless:
+                let relation = step.relation
+                    .selectOnly([])
+                    .removingChildrenForPrefetchedAssociations()
+                
+                // Don't interfere with user-defined keys that could be added later
+                let key = step.key.with {
+                    $0.baseName = "grdb_\($0.baseName)"
+                }
+                
                 return SQLAssociationStep(
-                    key: step.key,
-                    condition: nextStep.condition.reversed,
+                    key: key,
+                    condition: nextStep.condition.reversed(to: step.relation.source.tableName),
                     relation: relation,
-                    cardinality: step.cardinality)
+                    cardinality: .toOne)
             }
             .reversed()
-        
-        var reversedAssociation = SQLAssociation(steps: Array(reversedSteps))
-        // Replace pivot with the filtered one (not included in the selection,
-        // without children).
-        reversedAssociation = reversedAssociation.mapDestinationRelation { _ in
-            filteredPivotRelation.select([]).deletingChildren()
-        }
+        let reversedAssociation = _SQLAssociation(steps: Array(reversedSteps))
         return destination.relation.appendingChild(for: reversedAssociation, kind: .oneRequired)
     }
 }
 
-struct SQLAssociationStep {
+extension _SQLAssociation: Refinable { }
+
+struct SQLAssociationStep: Refinable {
     var key: SQLAssociationKey
     var condition: SQLAssociationCondition
     var relation: SQLRelation
     var cardinality: SQLAssociationCardinality
     
-    func mapRelation(_ transform: (SQLRelation) -> SQLRelation) -> SQLAssociationStep {
-        return SQLAssociationStep(
-            key: key,
-            condition: condition,
-            relation: transform(relation),
-            cardinality: cardinality)
-    }
+    var keyName: String { key.name(singular: cardinality.isSingular) }
 }
 
 enum SQLAssociationCardinality {
     case toOne
     case toMany
+    
+    var isSingular: Bool {
+        switch self {
+        case .toOne:
+            return true
+        case .toMany:
+            return false
+        }
+    }
 }
 
 // MARK: - SQLAssociationKey
@@ -277,7 +214,7 @@ enum SQLAssociationCardinality {
 ///
 /// The SQLAssociationKey type aims at providing the necessary support for
 /// those various inflections.
-enum SQLAssociationKey {
+enum SQLAssociationKey: Refinable {
     /// A key that is inflected in singular and plural contexts.
     ///
     /// For example:
@@ -316,11 +253,34 @@ enum SQLAssociationKey {
     /// A key that is never inflected.
     case fixed(String)
     
-    func name(for cardinality: SQLAssociationCardinality) -> String {
-        switch cardinality {
-        case .toOne:
+    var baseName: String {
+        get {
+            switch self {
+            case let .inflected(name),
+                 let .fixedSingular(name),
+                 let .fixedPlural(name),
+                 let .fixed(name):
+                return name
+            }
+        }
+        set {
+            switch self {
+            case .inflected:
+                self = .inflected(newValue)
+            case .fixedSingular:
+                self = .fixedSingular(newValue)
+            case .fixedPlural:
+                self = .fixedPlural(newValue)
+            case .fixed:
+                self = .fixed(newValue)
+            }
+        }
+    }
+    
+    func name(singular: Bool) -> String {
+        if singular {
             return singularizedName
-        case .toMany:
+        } else {
             return pluralizedName
         }
     }

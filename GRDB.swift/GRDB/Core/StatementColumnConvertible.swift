@@ -1,18 +1,10 @@
-#if SWIFT_PACKAGE
-import CSQLite
-#elseif GRDBCIPHER
-import SQLCipher
-#elseif !GRDBCUSTOMSQLITE && !GRDBCIPHER
-import SQLite3
-#endif
-
-/// The StatementColumnConvertible protocol grants access to the low-level C
+/// The `StatementColumnConvertible` protocol grants access to the low-level C
 /// interface that extracts values from query results:
-/// https://www.sqlite.org/c3ref/column_blob.html. It can bring performance
+/// <https://www.sqlite.org/c3ref/column_blob.html>. It can bring performance
 /// improvements.
 ///
-/// To use it, have a value type adopt both StatementColumnConvertible and
-/// DatabaseValueConvertible. GRDB will then automatically apply the
+/// To use it, have a value type adopt both `StatementColumnConvertible` and
+/// `DatabaseValueConvertible`. GRDB will then automatically apply the
 /// optimization whenever direct access to SQLite is possible:
 ///
 ///     let rows = Row.fetchCursor(db, sql: "SELECT ...")
@@ -26,31 +18,116 @@ import SQLite3
 ///             score = row["score"]              // there
 ///         }
 ///     }
-///
-/// StatementColumnConvertible is already adopted by all Swift integer types,
-/// Float, Double, String, and Bool.
 public protocol StatementColumnConvertible {
     
-    /// Initializes a value from a raw SQLite statement pointer.
+    /// Initializes a value from a raw SQLite statement pointer, if possible.
     ///
     /// For example, here is the how Int64 adopts StatementColumnConvertible:
     ///
     ///     extension Int64: StatementColumnConvertible {
-    ///         init(sqliteStatement: SQLiteStatement, index: Int32) {
+    ///         init?(sqliteStatement: SQLiteStatement, index: Int32) {
     ///             self = sqlite3_column_int64(sqliteStatement, index)
     ///         }
     ///     }
     ///
-    /// This initializer is never called for NULL database values: don't perform
-    /// any extra check.
+    /// This initializer is never called for NULL database values. Just return
+    /// `nil` for failed conversions: GRDB will interpret a nil result as a
+    /// decoding failure.
     ///
-    /// See https://www.sqlite.org/c3ref/column_blob.html for more information.
+    /// See <https://www.sqlite.org/c3ref/column_blob.html> for more information.
     ///
     /// - parameters:
     ///     - sqliteStatement: A pointer to an SQLite statement.
     ///     - index: The column index.
-    init(sqliteStatement: SQLiteStatement, index: Int32)
+    init?(sqliteStatement: SQLiteStatement, index: Int32)
 }
+
+// MARK: - Conversions
+
+extension DatabaseValueConvertible where Self: StatementColumnConvertible {
+    @usableFromInline
+    /* private */ static func _valueMismatch(
+        fromStatement sqliteStatement: SQLiteStatement,
+        atUncheckedIndex index: Int32,
+        context: @autoclosure () -> RowDecodingContext)
+    throws -> Never
+    {
+        throw RowDecodingError.valueMismatch(
+            Self.self,
+            sqliteStatement: sqliteStatement,
+            index: index,
+            context: context())
+    }
+    
+    @inline(__always)
+    @inlinable
+    static func fastDecode(
+        fromStatement sqliteStatement: SQLiteStatement,
+        atUncheckedIndex index: Int32,
+        context: @autoclosure () -> RowDecodingContext)
+    throws -> Self
+    {
+        guard sqlite3_column_type(sqliteStatement, index) != SQLITE_NULL,
+              let value = self.init(sqliteStatement: sqliteStatement, index: index)
+        else {
+            try _valueMismatch(fromStatement: sqliteStatement, atUncheckedIndex: index, context: context())
+        }
+        return value
+    }
+    
+    @inline(__always)
+    @inlinable
+    static func fastDecode(
+        fromRow row: Row,
+        atUncheckedIndex index: Int)
+    throws -> Self
+    {
+        if let sqliteStatement = row.sqliteStatement {
+            return try fastDecode(
+                fromStatement: sqliteStatement,
+                atUncheckedIndex: Int32(index),
+                context: RowDecodingContext(row: row, key: .columnIndex(index)))
+        }
+        // Support for fast decoding from adapted rows
+        return try row.fastDecode(Self.self, atUncheckedIndex: index)
+    }
+    
+    @inline(__always)
+    @inlinable
+    static func fastDecodeIfPresent(
+        fromStatement sqliteStatement: SQLiteStatement,
+        atUncheckedIndex index: Int32,
+        context: @autoclosure () -> RowDecodingContext)
+    throws -> Self?
+    {
+        if sqlite3_column_type(sqliteStatement, index) == SQLITE_NULL {
+            return nil
+        }
+        guard let value = self.init(sqliteStatement: sqliteStatement, index: index) else {
+            try _valueMismatch(fromStatement: sqliteStatement, atUncheckedIndex: index, context: context())
+        }
+        return value
+    }
+    
+    @inline(__always)
+    @inlinable
+    static func fastDecodeIfPresent(
+        fromRow row: Row,
+        atUncheckedIndex index: Int)
+    throws -> Self?
+    {
+        if let sqliteStatement = row.sqliteStatement {
+            return try fastDecodeIfPresent(
+                fromStatement: sqliteStatement,
+                atUncheckedIndex: Int32(index),
+                context: RowDecodingContext(row: row, key: .columnIndex(index)))
+        }
+        // Support for fast decoding from adapted rows
+        return try row.fastDecodeIfPresent(Self.self, atUncheckedIndex: index)
+    }
+}
+
+// MARK: - Cursors
 
 /// A cursor of database values extracted from a single column.
 /// For example:
@@ -61,50 +138,42 @@ public protocol StatementColumnConvertible {
 ///             print(name)
 ///         }
 ///     }
-public final class FastDatabaseValueCursor<Value: DatabaseValueConvertible & StatementColumnConvertible> : Cursor {
-    @usableFromInline let _statement: SelectStatement
-    @usableFromInline let _columnIndex: Int32
-    @usableFromInline let _sqliteStatement: SQLiteStatement
-    @usableFromInline var _done = false
+public final class FastDatabaseValueCursor<Value>: DatabaseCursor
+where Value: DatabaseValueConvertible & StatementColumnConvertible
+{
+    public typealias Element = Value
+    public let statement: Statement
+    /// :nodoc:
+    public var _isDone = false
+    @usableFromInline let columnIndex: Int32
     
-    init(statement: SelectStatement, arguments: StatementArguments? = nil, adapter: RowAdapter? = nil) throws {
-        _statement = statement
-        _sqliteStatement = statement.sqliteStatement
+    init(statement: Statement, arguments: StatementArguments? = nil, adapter: RowAdapter? = nil) throws {
+        self.statement = statement
         if let adapter = adapter {
             // adapter may redefine the index of the leftmost column
-            _columnIndex = try Int32(adapter.baseColumnIndex(atIndex: 0, layout: statement))
+            columnIndex = try Int32(adapter.baseColumnIndex(atIndex: 0, layout: statement))
         } else {
-            _columnIndex = 0
+            columnIndex = 0
         }
-        _statement.reset(withArguments: arguments)
         
-        // Assume cursor is created for iteration
-        statement.database.selectStatementWillExecute(statement)
+        // Assume cursor is created for immediate iteration: reset and set arguments
+        try statement.reset(withArguments: arguments)
     }
     
     deinit {
         // Statement reset fails when sqlite3_step has previously failed.
         // Just ignore reset error.
-        try? _statement.reset()
+        try? statement.reset()
     }
     
     /// :nodoc:
     @inlinable
-    public func next() throws -> Value? {
-        if _done {
-            // make sure this instance never yields a value again, even if the
-            // statement is reset by another cursor.
-            return nil
-        }
-        switch sqlite3_step(_sqliteStatement) {
-        case SQLITE_DONE:
-            _done = true
-            return nil
-        case SQLITE_ROW:
-            return Value.fastDecode(from: _sqliteStatement, atUncheckedIndex: _columnIndex)
-        case let code:
-            try _statement.didFail(withResultCode: code)
-        }
+    public func _element(sqliteStatement: SQLiteStatement) -> Value {
+        // TODO GRDB6: don't crash on decoding errors
+        try! Value.fastDecode(
+            fromStatement: sqliteStatement,
+            atUncheckedIndex: columnIndex,
+            context: RowDecodingContext(statement: statement, index: Int(columnIndex)))
     }
 }
 
@@ -118,52 +187,42 @@ public final class FastDatabaseValueCursor<Value: DatabaseValueConvertible & Sta
 ///             print(email ?? "<NULL>")
 ///         }
 ///     }
-public final class FastNullableDatabaseValueCursor<Value>: Cursor
-    where Value: DatabaseValueConvertible & StatementColumnConvertible
+public final class FastNullableDatabaseValueCursor<Value>: DatabaseCursor
+where Value: DatabaseValueConvertible & StatementColumnConvertible
 {
-    @usableFromInline let _statement: SelectStatement
-    @usableFromInline let _columnIndex: Int32
-    @usableFromInline let _sqliteStatement: SQLiteStatement
-    @usableFromInline var _done = false
+    public typealias Element = Value?
+    public let statement: Statement
+    /// :nodoc:
+    public var _isDone = false
+    @usableFromInline let columnIndex: Int32
     
-    init(statement: SelectStatement, arguments: StatementArguments? = nil, adapter: RowAdapter? = nil) throws {
-        _statement = statement
-        _sqliteStatement = statement.sqliteStatement
+    init(statement: Statement, arguments: StatementArguments? = nil, adapter: RowAdapter? = nil) throws {
+        self.statement = statement
         if let adapter = adapter {
             // adapter may redefine the index of the leftmost column
-            _columnIndex = try Int32(adapter.baseColumnIndex(atIndex: 0, layout: statement))
+            columnIndex = try Int32(adapter.baseColumnIndex(atIndex: 0, layout: statement))
         } else {
-            _columnIndex = 0
+            columnIndex = 0
         }
-        _statement.reset(withArguments: arguments)
         
-        // Assume cursor is created for iteration
-        statement.database.selectStatementWillExecute(statement)
+        // Assume cursor is created for immediate iteration: reset and set arguments
+        try statement.reset(withArguments: arguments)
     }
     
     deinit {
         // Statement reset fails when sqlite3_step has previously failed.
         // Just ignore reset error.
-        try? _statement.reset()
+        try? statement.reset()
     }
     
     /// :nodoc:
     @inlinable
-    public func next() throws -> Value?? {
-        if _done {
-            // make sure this instance never yields a value again, even if the
-            // statement is reset by another cursor.
-            return nil
-        }
-        switch sqlite3_step(_sqliteStatement) {
-        case SQLITE_DONE:
-            _done = true
-            return nil
-        case SQLITE_ROW:
-            return Value.fastDecodeIfPresent(from: _sqliteStatement, atUncheckedIndex: _columnIndex)
-        case let code:
-            try _statement.didFail(withResultCode: code)
-        }
+    public func _element(sqliteStatement: SQLiteStatement) -> Value? {
+        // TODO GRDB6: don't crash on decoding errors
+        try! Value.fastDecodeIfPresent(
+            fromStatement: sqliteStatement,
+            atUncheckedIndex: columnIndex,
+            context: RowDecodingContext(statement: statement, index: Int(columnIndex)))
     }
 }
 
@@ -174,12 +233,11 @@ public final class FastNullableDatabaseValueCursor<Value>: Cursor
 /// See DatabaseValueConvertible for more information.
 extension DatabaseValueConvertible where Self: StatementColumnConvertible {
     
-    
-    // MARK: Fetching From SelectStatement
+    // MARK: Fetching From Prepared Statement
     
     /// Returns a cursor over values fetched from a prepared statement.
     ///
-    ///     let statement = try db.makeSelectStatement(sql: "SELECT name FROM ...")
+    ///     let statement = try db.makeStatement(sql: "SELECT name FROM ...")
     ///     let names = try String.fetchCursor(statement) // Cursor of String
     ///     while let name = try names.next() { // String
     ///         ...
@@ -188,7 +246,7 @@ extension DatabaseValueConvertible where Self: StatementColumnConvertible {
     /// If the database is modified during the cursor iteration, the remaining
     /// elements are undefined.
     ///
-    /// The cursor must be iterated in a protected dispath queue.
+    /// The cursor must be iterated in a protected dispatch queue.
     ///
     /// - parameters:
     ///     - statement: The statement to run.
@@ -197,17 +255,17 @@ extension DatabaseValueConvertible where Self: StatementColumnConvertible {
     /// - returns: A cursor over fetched values.
     /// - throws: A DatabaseError is thrown whenever an SQLite error occurs.
     public static func fetchCursor(
-        _ statement: SelectStatement,
+        _ statement: Statement,
         arguments: StatementArguments? = nil,
         adapter: RowAdapter? = nil)
-        throws -> FastDatabaseValueCursor<Self>
+    throws -> FastDatabaseValueCursor<Self>
     {
-        return try FastDatabaseValueCursor(statement: statement, arguments: arguments, adapter: adapter)
+        try FastDatabaseValueCursor(statement: statement, arguments: arguments, adapter: adapter)
     }
     
     /// Returns an array of values fetched from a prepared statement.
     ///
-    ///     let statement = try db.makeSelectStatement(sql: "SELECT name FROM ...")
+    ///     let statement = try db.makeStatement(sql: "SELECT name FROM ...")
     ///     let names = try String.fetchAll(statement)  // [String]
     ///
     /// - parameters:
@@ -217,17 +275,17 @@ extension DatabaseValueConvertible where Self: StatementColumnConvertible {
     /// - returns: An array of values.
     /// - throws: A DatabaseError is thrown whenever an SQLite error occurs.
     public static func fetchAll(
-        _ statement: SelectStatement,
+        _ statement: Statement,
         arguments: StatementArguments? = nil,
         adapter: RowAdapter? = nil)
-        throws -> [Self]
+    throws -> [Self]
     {
-        return try Array(fetchCursor(statement, arguments: arguments, adapter: adapter))
+        try Array(fetchCursor(statement, arguments: arguments, adapter: adapter))
     }
     
     /// Returns a single value fetched from a prepared statement.
     ///
-    ///     let statement = try db.makeSelectStatement(sql: "SELECT name FROM ...")
+    ///     let statement = try db.makeStatement(sql: "SELECT name FROM ...")
     ///     let name = try String.fetchOne(statement)   // String?
     ///
     /// - parameters:
@@ -237,10 +295,10 @@ extension DatabaseValueConvertible where Self: StatementColumnConvertible {
     /// - returns: An optional value.
     /// - throws: A DatabaseError is thrown whenever an SQLite error occurs.
     public static func fetchOne(
-        _ statement: SelectStatement,
+        _ statement: Statement,
         arguments: StatementArguments? = nil,
         adapter: RowAdapter? = nil)
-        throws -> Self?
+    throws -> Self?
     {
         // fetchOne returns nil if there is no row, or if there is a row with a null value
         let cursor = try FastNullableDatabaseValueCursor<Self>(
@@ -248,6 +306,28 @@ extension DatabaseValueConvertible where Self: StatementColumnConvertible {
             arguments: arguments,
             adapter: adapter)
         return try cursor.next() ?? nil
+    }
+}
+
+extension DatabaseValueConvertible where Self: StatementColumnConvertible & Hashable {
+    /// Returns a set of values fetched from a prepared statement.
+    ///
+    ///     let statement = try db.makeStatement(sql: "SELECT name FROM ...")
+    ///     let names = try String.fetchSet(statement)  // Set<String>
+    ///
+    /// - parameters:
+    ///     - statement: The statement to run.
+    ///     - arguments: Optional statement arguments.
+    ///     - adapter: Optional RowAdapter
+    /// - returns: A set of values.
+    /// - throws: A DatabaseError is thrown whenever an SQLite error occurs.
+    public static func fetchSet(
+        _ statement: Statement,
+        arguments: StatementArguments? = nil,
+        adapter: RowAdapter? = nil)
+    throws -> Set<Self>
+    {
+        try Set(fetchCursor(statement, arguments: arguments, adapter: adapter))
     }
 }
 
@@ -265,7 +345,7 @@ extension DatabaseValueConvertible where Self: StatementColumnConvertible {
     /// If the database is modified during the cursor iteration, the remaining
     /// elements are undefined.
     ///
-    /// The cursor must be iterated in a protected dispath queue.
+    /// The cursor must be iterated in a protected dispatch queue.
     ///
     /// - parameters:
     ///     - db: A database connection.
@@ -279,9 +359,9 @@ extension DatabaseValueConvertible where Self: StatementColumnConvertible {
         sql: String,
         arguments: StatementArguments = StatementArguments(),
         adapter: RowAdapter? = nil)
-        throws -> FastDatabaseValueCursor<Self>
+    throws -> FastDatabaseValueCursor<Self>
     {
-        return try fetchCursor(db, SQLRequest<Void>(sql: sql, arguments: arguments, adapter: adapter))
+        try fetchCursor(db, SQLRequest(sql: sql, arguments: arguments, adapter: adapter))
     }
     
     /// Returns an array of values fetched from an SQL query.
@@ -300,9 +380,9 @@ extension DatabaseValueConvertible where Self: StatementColumnConvertible {
         sql: String,
         arguments: StatementArguments = StatementArguments(),
         adapter: RowAdapter? = nil)
-        throws -> [Self]
+    throws -> [Self]
     {
-        return try fetchAll(db, SQLRequest<Void>(sql: sql, arguments: arguments, adapter: adapter))
+        try fetchAll(db, SQLRequest(sql: sql, arguments: arguments, adapter: adapter))
     }
     
     /// Returns a single value fetched from an SQL query.
@@ -321,9 +401,32 @@ extension DatabaseValueConvertible where Self: StatementColumnConvertible {
         sql: String,
         arguments: StatementArguments = StatementArguments(),
         adapter: RowAdapter? = nil)
-        throws -> Self?
+    throws -> Self?
     {
-        return try fetchOne(db, SQLRequest<Void>(sql: sql, arguments: arguments, adapter: adapter))
+        try fetchOne(db, SQLRequest(sql: sql, arguments: arguments, adapter: adapter))
+    }
+}
+
+extension DatabaseValueConvertible where Self: StatementColumnConvertible & Hashable {
+    /// Returns a set of values fetched from an SQL query.
+    ///
+    ///     let names = try String.fetchSet(db, sql: "SELECT name FROM ...") // Set<String>
+    ///
+    /// - parameters:
+    ///     - db: A database connection.
+    ///     - sql: An SQL query.
+    ///     - arguments: Statement arguments.
+    ///     - adapter: Optional RowAdapter
+    /// - returns: A set of values.
+    /// - throws: A DatabaseError is thrown whenever an SQLite error occurs.
+    public static func fetchSet(
+        _ db: Database,
+        sql: String,
+        arguments: StatementArguments = StatementArguments(),
+        adapter: RowAdapter? = nil)
+    throws -> Set<Self>
+    {
+        try fetchSet(db, SQLRequest(sql: sql, arguments: arguments, adapter: adapter))
     }
 }
 
@@ -342,7 +445,7 @@ extension DatabaseValueConvertible where Self: StatementColumnConvertible {
     /// If the database is modified during the cursor iteration, the remaining
     /// elements are undefined.
     ///
-    /// The cursor must be iterated in a protected dispath queue.
+    /// The cursor must be iterated in a protected dispatch queue.
     ///
     /// - parameters:
     ///     - db: A database connection.
@@ -350,7 +453,7 @@ extension DatabaseValueConvertible where Self: StatementColumnConvertible {
     /// - returns: A cursor over fetched values.
     /// - throws: A DatabaseError is thrown whenever an SQLite error occurs.
     public static func fetchCursor<R: FetchRequest>(_ db: Database, _ request: R)
-        throws -> FastDatabaseValueCursor<Self>
+    throws -> FastDatabaseValueCursor<Self>
     {
         let request = try request.makePreparedRequest(db, forSingleResult: false)
         return try fetchCursor(request.statement, adapter: request.adapter)
@@ -387,6 +490,23 @@ extension DatabaseValueConvertible where Self: StatementColumnConvertible {
     }
 }
 
+extension DatabaseValueConvertible where Self: StatementColumnConvertible & Hashable {
+    /// Returns a set of values fetched from a fetch request.
+    ///
+    ///     let request = Player.select(Column("name"))
+    ///     let names = try String.fetchSet(db, request) // Set<String>
+    ///
+    /// - parameters:
+    ///     - db: A database connection.
+    ///     - request: A FetchRequest.
+    /// - returns: A set of values.
+    /// - throws: A DatabaseError is thrown whenever an SQLite error occurs.
+    public static func fetchSet<R: FetchRequest>(_ db: Database, _ request: R) throws -> Set<Self> {
+        let request = try request.makePreparedRequest(db, forSingleResult: false)
+        return try fetchSet(request.statement, adapter: request.adapter)
+    }
+}
+
 extension FetchRequest where RowDecoder: DatabaseValueConvertible & StatementColumnConvertible {
     
     // MARK: Fetching Values
@@ -402,13 +522,13 @@ extension FetchRequest where RowDecoder: DatabaseValueConvertible & StatementCol
     /// If the database is modified during the cursor iteration, the remaining
     /// elements are undefined.
     ///
-    /// The cursor must be iterated in a protected dispath queue.
+    /// The cursor must be iterated in a protected dispatch queue.
     ///
     /// - parameter db: A database connection.
     /// - returns: A cursor over fetched values.
     /// - throws: A DatabaseError is thrown whenever an SQLite error occurs.
     public func fetchCursor(_ db: Database) throws -> FastDatabaseValueCursor<RowDecoder> {
-        return try RowDecoder.fetchCursor(db, self)
+        try RowDecoder.fetchCursor(db, self)
     }
     
     /// An array of fetched values.
@@ -420,7 +540,7 @@ extension FetchRequest where RowDecoder: DatabaseValueConvertible & StatementCol
     /// - returns: An array of values.
     /// - throws: A DatabaseError is thrown whenever an SQLite error occurs.
     public func fetchAll(_ db: Database) throws -> [RowDecoder] {
-        return try RowDecoder.fetchAll(db, self)
+        try RowDecoder.fetchAll(db, self)
     }
     
     /// The first fetched value.
@@ -435,7 +555,21 @@ extension FetchRequest where RowDecoder: DatabaseValueConvertible & StatementCol
     /// - returns: An optional value.
     /// - throws: A DatabaseError is thrown whenever an SQLite error occurs.
     public func fetchOne(_ db: Database) throws -> RowDecoder? {
-        return try RowDecoder.fetchOne(db, self)
+        try RowDecoder.fetchOne(db, self)
+    }
+}
+
+extension FetchRequest where RowDecoder: DatabaseValueConvertible & StatementColumnConvertible & Hashable {
+    /// A set of fetched values.
+    ///
+    ///     let request: ... // Some FetchRequest that fetches String
+    ///     let strings = try request.fetchSet(db) // Set<String>
+    ///
+    /// - parameter db: A database connection.
+    /// - returns: An array of values.
+    /// - throws: A DatabaseError is thrown whenever an SQLite error occurs.
+    public func fetchSet(_ db: Database) throws -> Set<RowDecoder> {
+        try RowDecoder.fetchSet(db, self)
     }
 }
 
@@ -445,18 +579,18 @@ extension FetchRequest where RowDecoder: DatabaseValueConvertible & StatementCol
 ///     try Optional<String>.fetchCursor(db, sql: "SELECT name FROM ...", arguments:...) // Cursor of String?
 ///     try Optional<String>.fetchAll(db, sql: "SELECT name FROM ...", arguments:...)    // [String?]
 ///
-///     let statement = try db.makeSelectStatement(sql: "SELECT name FROM ...")
+///     let statement = try db.makeStatement(sql: "SELECT name FROM ...")
 ///     try Optional<String>.fetchCursor(statement, arguments:...) // Cursor of String?
 ///     try Optional<String>.fetchAll(statement, arguments:...)    // [String?]
 ///
 /// DatabaseValueConvertible is adopted by Bool, Int, String, etc.
 extension Optional where Wrapped: DatabaseValueConvertible & StatementColumnConvertible {
     
-    // MARK: Fetching From SelectStatement
+    // MARK: Fetching From Prepared Statement
     
     /// Returns a cursor over optional values fetched from a prepared statement.
     ///
-    ///     let statement = try db.makeSelectStatement(sql: "SELECT name FROM ...")
+    ///     let statement = try db.makeStatement(sql: "SELECT name FROM ...")
     ///     let names = try Optional<String>.fetchCursor(statement) // Cursor of String?
     ///     while let name = try names.next() { // String?
     ///         ...
@@ -465,7 +599,7 @@ extension Optional where Wrapped: DatabaseValueConvertible & StatementColumnConv
     /// If the database is modified during the cursor iteration, the remaining
     /// elements are undefined.
     ///
-    /// The cursor must be iterated in a protected dispath queue.
+    /// The cursor must be iterated in a protected dispatch queue.
     ///
     /// - parameters:
     ///     - statement: The statement to run.
@@ -474,17 +608,17 @@ extension Optional where Wrapped: DatabaseValueConvertible & StatementColumnConv
     /// - returns: A cursor over fetched optional values.
     /// - throws: A DatabaseError is thrown whenever an SQLite error occurs.
     public static func fetchCursor(
-        _ statement: SelectStatement,
+        _ statement: Statement,
         arguments: StatementArguments? = nil,
         adapter: RowAdapter? = nil)
-        throws -> FastNullableDatabaseValueCursor<Wrapped>
+    throws -> FastNullableDatabaseValueCursor<Wrapped>
     {
-        return try FastNullableDatabaseValueCursor(statement: statement, arguments: arguments, adapter: adapter)
+        try FastNullableDatabaseValueCursor(statement: statement, arguments: arguments, adapter: adapter)
     }
     
     /// Returns an array of optional values fetched from a prepared statement.
     ///
-    ///     let statement = try db.makeSelectStatement(sql: "SELECT name FROM ...")
+    ///     let statement = try db.makeStatement(sql: "SELECT name FROM ...")
     ///     let names = try Optional<String>.fetchAll(statement)  // [String?]
     ///
     /// - parameters:
@@ -494,12 +628,34 @@ extension Optional where Wrapped: DatabaseValueConvertible & StatementColumnConv
     /// - returns: An array of optional values.
     /// - throws: A DatabaseError is thrown whenever an SQLite error occurs.
     public static func fetchAll(
-        _ statement: SelectStatement,
+        _ statement: Statement,
         arguments: StatementArguments? = nil,
         adapter: RowAdapter? = nil)
-        throws -> [Wrapped?]
+    throws -> [Wrapped?]
     {
-        return try Array(fetchCursor(statement, arguments: arguments, adapter: adapter))
+        try Array(fetchCursor(statement, arguments: arguments, adapter: adapter))
+    }
+}
+
+extension Optional where Wrapped: DatabaseValueConvertible & StatementColumnConvertible & Hashable {
+    /// Returns a set of optional values fetched from a prepared statement.
+    ///
+    ///     let statement = try db.makeStatement(sql: "SELECT name FROM ...")
+    ///     let names = try Optional<String>.fetchSet(statement)  // Set<String?>
+    ///
+    /// - parameters:
+    ///     - statement: The statement to run.
+    ///     - arguments: Optional statement arguments.
+    ///     - adapter: Optional RowAdapter
+    /// - returns: A set of optional values.
+    /// - throws: A DatabaseError is thrown whenever an SQLite error occurs.
+    public static func fetchSet(
+        _ statement: Statement,
+        arguments: StatementArguments? = nil,
+        adapter: RowAdapter? = nil)
+    throws -> Set<Wrapped?>
+    {
+        try Set(fetchCursor(statement, arguments: arguments, adapter: adapter))
     }
 }
 
@@ -517,7 +673,7 @@ extension Optional where Wrapped: DatabaseValueConvertible & StatementColumnConv
     /// If the database is modified during the cursor iteration, the remaining
     /// elements are undefined.
     ///
-    /// The cursor must be iterated in a protected dispath queue.
+    /// The cursor must be iterated in a protected dispatch queue.
     ///
     /// - parameters:
     ///     - db: A database connection.
@@ -531,14 +687,14 @@ extension Optional where Wrapped: DatabaseValueConvertible & StatementColumnConv
         sql: String,
         arguments: StatementArguments = StatementArguments(),
         adapter: RowAdapter? = nil)
-        throws -> FastNullableDatabaseValueCursor<Wrapped>
+    throws -> FastNullableDatabaseValueCursor<Wrapped>
     {
-        return try fetchCursor(db, SQLRequest<Void>(sql: sql, arguments: arguments, adapter: adapter))
+        try fetchCursor(db, SQLRequest(sql: sql, arguments: arguments, adapter: adapter))
     }
     
     /// Returns an array of optional values fetched from an SQL query.
     ///
-    ///     let names = try String.fetchAll(db, sql: "SELECT name FROM ...") // [String?]
+    ///     let names = try Optional<String>.fetchAll(db, sql: "SELECT name FROM ...") // [String?]
     ///
     /// - parameters:
     ///     - db: A database connection.
@@ -552,9 +708,32 @@ extension Optional where Wrapped: DatabaseValueConvertible & StatementColumnConv
         sql: String,
         arguments: StatementArguments = StatementArguments(),
         adapter: RowAdapter? = nil)
-        throws -> [Wrapped?]
+    throws -> [Wrapped?]
     {
-        return try fetchAll(db, SQLRequest<Void>(sql: sql, arguments: arguments, adapter: adapter))
+        try fetchAll(db, SQLRequest(sql: sql, arguments: arguments, adapter: adapter))
+    }
+}
+
+extension Optional where Wrapped: DatabaseValueConvertible & StatementColumnConvertible & Hashable {
+    /// Returns a set of optional values fetched from an SQL query.
+    ///
+    ///     let names = try Optional<String>.fetchSet(db, sql: "SELECT name FROM ...") // Set<String?>
+    ///
+    /// - parameters:
+    ///     - db: A database connection.
+    ///     - sql: An SQL query.
+    ///     - arguments: Statement arguments.
+    ///     - adapter: Optional RowAdapter
+    /// - returns: A set of optional values.
+    /// - throws: A DatabaseError is thrown whenever an SQLite error occurs.
+    public static func fetchSet(
+        _ db: Database,
+        sql: String,
+        arguments: StatementArguments = StatementArguments(),
+        adapter: RowAdapter? = nil)
+    throws -> Set<Wrapped?>
+    {
+        try fetchSet(db, SQLRequest(sql: sql, arguments: arguments, adapter: adapter))
     }
 }
 
@@ -573,7 +752,7 @@ extension Optional where Wrapped: DatabaseValueConvertible & StatementColumnConv
     /// If the database is modified during the cursor iteration, the remaining
     /// elements are undefined.
     ///
-    /// The cursor must be iterated in a protected dispath queue.
+    /// The cursor must be iterated in a protected dispatch queue.
     ///
     /// - parameters:
     ///     - db: A database connection.
@@ -581,7 +760,7 @@ extension Optional where Wrapped: DatabaseValueConvertible & StatementColumnConv
     /// - returns: A cursor over fetched optional values.
     /// - throws: A DatabaseError is thrown whenever an SQLite error occurs.
     public static func fetchCursor<R: FetchRequest>(_ db: Database, _ request: R)
-        throws -> FastNullableDatabaseValueCursor<Wrapped>
+    throws -> FastNullableDatabaseValueCursor<Wrapped>
     {
         let request = try request.makePreparedRequest(db, forSingleResult: false)
         return try fetchCursor(request.statement, adapter: request.adapter)
@@ -603,10 +782,27 @@ extension Optional where Wrapped: DatabaseValueConvertible & StatementColumnConv
     }
 }
 
+extension Optional where Wrapped: DatabaseValueConvertible & StatementColumnConvertible & Hashable {
+    /// Returns a set of optional values fetched from a fetch request.
+    ///
+    ///     let request = Player.select(Column("name"))
+    ///     let names = try Optional<String>.fetchSet(db, request) // Set<String?>
+    ///
+    /// - parameters:
+    ///     - db: A database connection.
+    ///     - request: A FetchRequest.
+    /// - returns: A set of optional values.
+    /// - throws: A DatabaseError is thrown whenever an SQLite error occurs.
+    public static func fetchSet<R: FetchRequest>(_ db: Database, _ request: R) throws -> Set<Wrapped?> {
+        let request = try request.makePreparedRequest(db, forSingleResult: false)
+        return try fetchSet(request.statement, adapter: request.adapter)
+    }
+}
+
 extension FetchRequest
-    where
+where
     RowDecoder: _OptionalProtocol,
-    RowDecoder._Wrapped: DatabaseValueConvertible & StatementColumnConvertible
+    RowDecoder.Wrapped: DatabaseValueConvertible & StatementColumnConvertible
 {
     
     // MARK: Fetching Optional values
@@ -622,13 +818,13 @@ extension FetchRequest
     /// If the database is modified during the cursor iteration, the remaining
     /// elements are undefined.
     ///
-    /// The cursor must be iterated in a protected dispath queue.
+    /// The cursor must be iterated in a protected dispatch queue.
     ///
     /// - parameter db: A database connection.
     /// - returns: A cursor over fetched values.
     /// - throws: A DatabaseError is thrown whenever an SQLite error occurs.
-    public func fetchCursor(_ db: Database) throws -> FastNullableDatabaseValueCursor<RowDecoder._Wrapped> {
-        return try Optional<RowDecoder._Wrapped>.fetchCursor(db, self)
+    public func fetchCursor(_ db: Database) throws -> FastNullableDatabaseValueCursor<RowDecoder.Wrapped> {
+        try Optional<RowDecoder.Wrapped>.fetchCursor(db, self)
     }
     
     /// An array of fetched optional values.
@@ -639,7 +835,40 @@ extension FetchRequest
     /// - parameter db: A database connection.
     /// - returns: An array of values.
     /// - throws: A DatabaseError is thrown whenever an SQLite error occurs.
-    public func fetchAll(_ db: Database) throws -> [RowDecoder._Wrapped?] {
-        return try Optional<RowDecoder._Wrapped>.fetchAll(db, self)
+    public func fetchAll(_ db: Database) throws -> [RowDecoder.Wrapped?] {
+        try Optional<RowDecoder.Wrapped>.fetchAll(db, self)
+    }
+    
+    /// The first fetched value.
+    ///
+    /// The result is nil if the request returns no row, or if no value can be
+    /// extracted from the first row.
+    ///
+    ///     let request: ... // Some FetchRequest that fetches String?
+    ///     let string = try request.fetchOne(db) // String?
+    ///
+    /// - parameter db: A database connection.
+    /// - returns: An optional value.
+    /// - throws: A DatabaseError is thrown whenever an SQLite error occurs.
+    public func fetchOne(_ db: Database) throws -> RowDecoder.Wrapped? {
+        try RowDecoder.Wrapped.fetchOne(db, self)
+    }
+}
+
+extension FetchRequest
+where
+    RowDecoder: _OptionalProtocol,
+    RowDecoder.Wrapped: DatabaseValueConvertible & StatementColumnConvertible & Hashable
+{
+    /// A set of fetched optional values.
+    ///
+    ///     let request: ... // Some FetchRequest that fetches Optional<String>
+    ///     let strings = try request.fetchSet(db) // Set<String?>
+    ///
+    /// - parameter db: A database connection.
+    /// - returns: A set of values.
+    /// - throws: A DatabaseError is thrown whenever an SQLite error occurs.
+    public func fetchSet(_ db: Database) throws -> Set<RowDecoder.Wrapped?> {
+        try Optional<RowDecoder.Wrapped>.fetchSet(db, self)
     }
 }

@@ -1,11 +1,4 @@
 import Foundation
-#if SWIFT_PACKAGE
-import CSQLite
-#elseif GRDBCIPHER
-import SQLCipher
-#elseif !GRDBCUSTOMSQLITE && !GRDBCIPHER
-import SQLite3
-#endif
 
 #if !os(Linux)
 /// NSDate is stored in the database using the format
@@ -14,7 +7,7 @@ extension NSDate: DatabaseValueConvertible {
     /// Returns a database value that contains the date encoded as
     /// "yyyy-MM-dd HH:mm:ss.SSS", in the UTC time zone.
     public var databaseValue: DatabaseValue {
-        return (self as Date).databaseValue
+        (self as Date).databaseValue
     }
     
     /// Returns a date initialized from dbValue, if possible.
@@ -42,7 +35,7 @@ extension Date: DatabaseValueConvertible {
     /// Returns a database value that contains the date encoded as
     /// "yyyy-MM-dd HH:mm:ss.SSS", in the UTC time zone.
     public var databaseValue: DatabaseValue {
-        return storageDateFormatter.string(from: self).databaseValue
+        storageDateFormatter.string(from: self).databaseValue
     }
     
     /// Returns a date initialized from dbValue, if possible.
@@ -125,19 +118,21 @@ extension Date: StatementColumnConvertible {
     /// - parameters:
     ///     - sqliteStatement: A pointer to an SQLite statement.
     ///     - index: The column index.
+    @inline(__always)
     @inlinable
-    public init(sqliteStatement: SQLiteStatement, index: Int32) {
+    public init?(sqliteStatement: SQLiteStatement, index: Int32) {
         switch sqlite3_column_type(sqliteStatement, index) {
         case SQLITE_INTEGER, SQLITE_FLOAT:
             self.init(timeIntervalSince1970: sqlite3_column_double(sqliteStatement, index))
         case SQLITE_TEXT:
-            let databaseDateComponents = DatabaseDateComponents(sqliteStatement: sqliteStatement, index: index)
-            guard let date = Date(databaseDateComponents: databaseDateComponents) else {
-                fatalConversionError(to: Date.self, sqliteStatement: sqliteStatement, index: index)
+            guard let components = DatabaseDateComponents(sqliteStatement: sqliteStatement, index: index),
+                  let date = Date(databaseDateComponents: components)
+            else {
+                return nil
             }
             self.init(timeIntervalSinceReferenceDate: date.timeIntervalSinceReferenceDate)
         default:
-            fatalConversionError(to: Date.self, sqliteStatement: sqliteStatement, index: index)
+            return nil
         }
     }
 }

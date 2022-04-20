@@ -1,61 +1,96 @@
 /// [**Experimental**](http://github.com/groue/GRDB.swift#what-are-experimental-features)
 ///
-/// SQLGenerationContext is responsible for preventing SQL injection and
-/// disambiguating table names when GRDB generates SQL queries.
+/// SQLGenerationContext supports SQL generation:
 ///
-/// :nodoc:
-public struct SQLGenerationContext {
-    var arguments: StatementArguments?
-    private var resolvedNames: [TableAlias: String]
-    private var qualifierNeeded: Bool
-    
-    /// Used for SQLExpression -> SQLExpressionLiteral conversion
-    /// and SQLInterpolation
-    static func literalGenerationContext(withArguments: Bool) -> SQLGenerationContext {
-        return SQLGenerationContext(
-            arguments: withArguments ? [] : nil,
-            resolvedNames: [:],
-            qualifierNeeded: false)
+/// - It provides a database connection during SQL generation, for any purpose
+///   such as schema introspection.
+///
+/// - It provides unique table aliases in order to disambiguates table names
+///   and columns.
+///
+/// - It gathers SQL arguments in order to prevent SQL injection.
+final class SQLGenerationContext {
+    private enum Parent {
+        case none(db: Database, argumentsSink: StatementArgumentsSink)
+        case context(SQLGenerationContext)
     }
     
-    /// Used for SQLQuery.makeSelectStatement() and SQLQuery.makeDeleteStatement()
-    static func queryGenerationContext(aliases: [TableAlias]) -> SQLGenerationContext {
-        // TODO: since 5d9fa76, in the lines below, we started uniquing aliases.
-        // Something tells me this is a wrong fix. We should try to investigate
-        // and maybe revert this change. I don't see why we'd really need to
-        // unique aliases, and I'm afraid we're hiding some latent bug
-        // somewhere else.
-        
-        // Unique aliases, but with preserved ordering, so that we have stable SQL generation
-        let uniqueAliases = aliases.reduce(into: [TableAlias]()) {
-            if !$0.contains($1) {
-                $0.append($1)
-            }
+    /// A database connection.
+    var db: Database {
+        switch parent {
+        case let .none(db: db, argumentsSink: _): return db
+        case let .context(context): return context.db
         }
-        return SQLGenerationContext(
-            arguments: [],
-            resolvedNames: uniqueAliases.resolvedNames,
-            qualifierNeeded: uniqueAliases.count > 1)
     }
     
-    /// Used for TableRecord.selectionSQL
-    static func recordSelectionGenerationContext() -> SQLGenerationContext {
-        return SQLGenerationContext(
-            arguments: nil,
-            resolvedNames: [:],
-            qualifierNeeded: true)
+    /// All gathered arguments
+    var arguments: StatementArguments { argumentsSink.arguments }
+    
+    /// Access to the database connection, the arguments sink, ctes, and resolved
+    /// names of table aliases from outer contexts (useful in case of
+    /// subquery generation).
+    private let parent: Parent
+    
+    /// The arguments sink which prevents SQL injection.
+    private var argumentsSink: StatementArgumentsSink {
+        switch parent {
+        case let .none(db: _, argumentsSink: argumentsSink): return argumentsSink
+        case let .context(context): return context.argumentsSink
+        }
     }
     
-    /// Returns whether arguments could be appended
-    mutating func append(arguments newArguments: StatementArguments) -> Bool {
-        if newArguments.isEmpty {
-            return true
-        }
-        guard let arguments = arguments else {
-            return false
-        }
-        self.arguments = arguments + newArguments
-        return true
+    private let resolvedNames: [TableAlias: String]
+    private let ownAliases: Set<TableAlias>
+    private let ownCTEs: [String: SQLCTE]
+    
+    /// Creates a generation context.
+    ///
+    /// - parameter db: A database connection.
+    /// - parameter argumentsSink: An arguments sink.
+    /// - parameter aliases: An array of table aliases to disambiguate.
+    /// - parameter ctes: An dictionary of available CTEs.
+    init(
+        _ db: Database,
+        argumentsSink: StatementArgumentsSink = StatementArgumentsSink(),
+        aliases: [TableAlias] = [],
+        ctes: OrderedDictionary<String, SQLCTE> = [:])
+    {
+        self.parent = .none(db: db, argumentsSink: argumentsSink)
+        self.resolvedNames = aliases.resolvedNames
+        self.ownAliases = Set(aliases)
+        self.ownCTEs = Dictionary(uniqueKeysWithValues: ctes.lazy.map { ($0.lowercased(), $1) })
+    }
+    
+    /// Creates a generation context.
+    ///
+    /// - parameter parent: A parent context.
+    /// - parameter aliases: An array of table aliases to disambiguate.
+    /// - parameter ctes: An dictionary of available CTEs.
+    private init(
+        parent: SQLGenerationContext,
+        aliases: [TableAlias],
+        ctes: OrderedDictionary<String, SQLCTE>)
+    {
+        self.parent = .context(parent)
+        self.resolvedNames = aliases.resolvedNames
+        self.ownAliases = Set(aliases)
+        self.ownCTEs = Dictionary(uniqueKeysWithValues: ctes.lazy.map { ($0.lowercased(), $1) })
+    }
+    
+    /// Returns a generation context suitable for subqueries.
+    func subqueryContext(
+        aliases: [TableAlias] = [],
+        ctes: OrderedDictionary<String, SQLCTE> = [:]) -> SQLGenerationContext
+    {
+        SQLGenerationContext(parent: self, aliases: aliases, ctes: ctes)
+    }
+    
+    /// Returns whether arguments could be appended.
+    ///
+    /// A false result means that the generation context does not support
+    /// SQL arguments.
+    func append(arguments: StatementArguments) -> Bool {
+        argumentsSink.append(arguments: arguments)
     }
     
     /// May be nil, when a qualifier is not needed:
@@ -69,15 +104,26 @@ public struct SQLGenerationContext {
         if alias.hasUserName {
             return alias.identityName
         }
-        if qualifierNeeded == false {
-            return nil
+        if !ownAliases.contains(alias) {
+            return resolvedName(for: alias)
         }
-        return resolvedName(for: alias)
+        if ownAliases.count > 1 {
+            return resolvedName(for: alias)
+        }
+        return nil
     }
     
     /// WHERE <resolvedName> MATCH pattern
     func resolvedName(for alias: TableAlias) -> String {
-        return resolvedNames[alias] ?? alias.identityName
+        if let name = resolvedNames[alias] {
+            return name
+        }
+        switch parent {
+        case .none:
+            return alias.identityName
+        case let .context(context):
+            return context.resolvedName(for: alias)
+        }
     }
     
     /// FROM tableName <alias>
@@ -87,6 +133,52 @@ public struct SQLGenerationContext {
             return resolvedName
         }
         return nil
+    }
+    
+    func columnCount(in tableName: String) throws -> Int {
+        if let cte = ownCTEs[tableName.lowercased()] {
+            return try cte.columnCount(db)
+        }
+        switch parent {
+        case let .context(context):
+            return try context.columnCount(in: tableName)
+        case let .none(db: db, argumentsSink: _):
+            return try db.columns(in: tableName).count
+        }
+    }
+}
+
+/// A class that gathers statement arguments, and can be shared between
+/// several SQLGenerationContext.
+class StatementArgumentsSink {
+    private(set) var arguments: StatementArguments
+    private let rawSQL: Bool
+    
+    /// A sink which does not accept any arguments.
+    static let forRawSQL = StatementArgumentsSink(rawSQL: true)
+    
+    private init(rawSQL: Bool) {
+        self.arguments = []
+        self.rawSQL = rawSQL
+    }
+    
+    /// A sink which accepts arguments
+    convenience init() {
+        self.init(rawSQL: false)
+    }
+    
+    // fileprivate so that SQLGenerationContext.append(arguments:) is the only
+    // available api.
+    /// Returns false for SQLGenerationContext.rawSQLContext
+    fileprivate func append(arguments: StatementArguments) -> Bool {
+        if arguments.isEmpty {
+            return true
+        }
+        if rawSQL {
+            return false
+        }
+        self.arguments += arguments
+        return true
     }
 }
 
@@ -156,12 +248,12 @@ public class TableAlias: Hashable {
     
     // exposed to SQLGenerationContext
     fileprivate var identityName: String {
-        return userName ?? tableName
+        userName ?? tableName
     }
     
     // exposed to SQLGenerationContext
     fileprivate var hasUserName: Bool {
-        return userName != nil
+        userName != nil
     }
     
     var tableName: String {
@@ -187,6 +279,32 @@ public class TableAlias: Hashable {
         }
     }
     
+    /// Creates a TableAlias, suitable for qualifying requests or associations.
+    ///
+    /// For example:
+    ///
+    ///     // The request for all books published after their author has died
+    ///     //
+    ///     // SELECT book.*
+    ///     // FROM book
+    ///     // JOIN author ON author.id = book.authorId
+    ///     // WHERE book.publishDate >= author.deathDate
+    ///     let authorAlias = TableAlias()
+    ///     let request = Book
+    ///         .joining(required: Book.author.aliased(authorAlias))
+    ///         .filter(Column("publishDate") >= authorAlias[Column("deathDate")])
+    ///
+    /// When the alias is given a name, this name is guaranteed to be used as
+    /// the table alias in the SQL query:
+    ///
+    ///     // SELECT book.*
+    ///     // FROM book
+    ///     // JOIN author a ON a.id = book.authorId
+    ///     // WHERE book.publishDate >= a.deathDate
+    ///     let authorAlias = TableAlias(name: "a")
+    ///     let request = Book
+    ///         .joining(required: Book.author.aliased(authorAlias))
+    ///         .filter(Column("publishDate") >= authorAlias[Column("deathDate")])
     public init(name: String? = nil) {
         self.impl = .undefined(userName: name)
     }
@@ -196,6 +314,10 @@ public class TableAlias: Hashable {
     }
     
     func becomeProxy(of base: TableAlias) {
+        if self === base {
+            return
+        }
+        
         switch impl {
         case let .undefined(userName):
             if let userName = userName {
@@ -219,6 +341,10 @@ public class TableAlias: Hashable {
     
     /// Returns nil if aliases can't be merged (conflict in tables, aliases...)
     func merged(with other: TableAlias) -> TableAlias? {
+        if self === other {
+            return self
+        }
+        
         let root = self.root
         let otherRoot = other.root
         switch (root.impl, otherRoot.impl) {
@@ -273,14 +399,45 @@ public class TableAlias: Hashable {
     
     /// Returns a qualified value that is able to resolve ambiguities in
     /// joined queries.
-    public subscript(_ selectable: SQLSelectable) -> SQLSelectable {
-        return selectable.qualifiedSelectable(with: self)
+    public subscript(_ selectable: SQLSelectable) -> SQLSelection {
+        selectable.sqlSelection.qualified(with: self)
     }
     
     /// Returns a qualified expression that is able to resolve ambiguities in
     /// joined queries.
-    public subscript(_ expression: SQLExpression) -> SQLExpression {
-        return expression.qualifiedExpression(with: self)
+    public subscript(_ expression: SQLSpecificExpressible & SQLSelectable & SQLOrderingTerm) -> SQLExpression {
+        expression.sqlExpression.qualified(with: self)
+    }
+    
+    /// Returns a qualified ordering that is able to resolve ambiguities in
+    /// joined queries.
+    public subscript(_ ordering: SQLOrderingTerm) -> SQLOrdering {
+        ordering.sqlOrdering.qualified(with: self)
+    }
+    
+    /// Returns a qualified columnn that is able to resolve ambiguities in
+    /// joined queries.
+    public subscript(_ column: String) -> SQLExpression {
+        .qualifiedColumn(column, self)
+    }
+    
+    /// [**Experimental**](http://github.com/groue/GRDB.swift#what-are-experimental-features)
+    ///
+    /// An expression that evaluates to true if the record referred by this
+    /// `TableAlias` exists.
+    ///
+    /// For example, here is how filter books and only keep those that are not
+    /// associated to any author:
+    ///
+    ///     let books: [Book] = try dbQueue.read { db in
+    ///         let authorAlias = TableAlias()
+    ///         let request = Book
+    ///             .joining(optional: Book.author.aliased(authorAlias))
+    ///             .filter(!authorAlias.exists)
+    ///         return try request.fetchAll(db)
+    ///     }
+    public var exists: SQLExpression {
+        SQLExpression.qualifiedExists(self)
     }
     
     /// :nodoc:
@@ -290,7 +447,7 @@ public class TableAlias: Hashable {
     
     /// :nodoc:
     public static func == (lhs: TableAlias, rhs: TableAlias) -> Bool {
-        return ObjectIdentifier(lhs.root) == ObjectIdentifier(rhs.root)
+        ObjectIdentifier(lhs.root) == ObjectIdentifier(rhs.root)
     }
 }
 
@@ -317,7 +474,9 @@ extension Array where Element == TableAlias {
         for (lowercaseName, group) in groups {
             if group.count > 1 {
                 // It is a programmer error to reuse the same alias for multiple tables
-                GRDBPrecondition(group.count { $0.hasUserName } < 2, "ambiguous alias: \(group[0].identityName)")
+                GRDBPrecondition(
+                    group.countElements(where: \.hasUserName) < 2,
+                    "ambiguous alias: \(group[0].identityName)")
                 ambiguousGroups.append(group)
             } else {
                 uniqueLowercaseNames.insert(lowercaseName)

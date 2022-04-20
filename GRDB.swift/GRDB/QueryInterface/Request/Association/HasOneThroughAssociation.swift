@@ -6,7 +6,7 @@
 ///
 ///     struct Book: TableRecord {
 ///         static let library = belongsTo(Library.self)
-///         static let returnAddress = hasOne(Address.self, through: library, using: library.address)
+///         static let returnAddress = hasOne(Address.self, through: library, using: Library.address)
 ///         ...
 ///     }
 /// 
@@ -21,7 +21,7 @@
 /// two other associations: the `through:` and `using:` arguments. Those
 /// associations can be any other association to one (BelongsTo, HasOne,
 /// HasOneThrough).
-public struct HasOneThroughAssociation<Origin: TableRecord, Destination: TableRecord>: AssociationToOne {
+public struct HasOneThroughAssociation<Origin, Destination>: AssociationToOne {
     /// :nodoc:
     public typealias OriginRowDecoder = Origin
     
@@ -29,10 +29,5 @@ public struct HasOneThroughAssociation<Origin: TableRecord, Destination: TableRe
     public typealias RowDecoder = Destination
     
     /// :nodoc:
-    public var sqlAssociation: SQLAssociation
-    
-    /// :nodoc:
-    public init(sqlAssociation: SQLAssociation) {
-        self.sqlAssociation = sqlAssociation
-    }
+    public var _sqlAssociation: _SQLAssociation
 }

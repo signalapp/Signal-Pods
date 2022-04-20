@@ -1,26 +1,22 @@
 extension ValueReducers {
-    /// [**Experimental**](http://github.com/groue/GRDB.swift#what-are-experimental-features)
-    ///
-    /// A reducer which pass raw fetched values through.
-    ///
-    /// :nodoc:
+    /// A reducer which passes raw fetched values through.
     public struct Fetch<Value>: ValueReducer {
-        private let _fetch: (Database) throws -> Value
+        private let __fetch: (Database) throws -> Value
         
-        public init(_ fetch: @escaping (Database) throws -> Value) {
-            self._fetch = fetch
+        /// Creates a reducer which passes raw fetched values through.
+        init(fetch: @escaping (Database) throws -> Value) {
+            self.__fetch = fetch
         }
         
-        public func fetch(_ db: Database) throws -> Value {
-            return try _fetch(db)
+        /// :nodoc:
+        public func _fetch(_ db: Database) throws -> Value {
+            assert(db.isInsideTransaction, "Fetching in a non-isolated way is illegal")
+            return try __fetch(db)
         }
         
-        public func value(_ fetched: Value) -> Value? {
-            return fetched
+        /// :nodoc:
+        public func _value(_ fetched: Value) -> Value? {
+            fetched
         }
     }
 }
-
-/// :nodoc:
-@available(*, deprecated, renamed: "ValueReducers.Fetch")
-public typealias RawValueReducer<Value> = ValueReducers.Fetch<Value>

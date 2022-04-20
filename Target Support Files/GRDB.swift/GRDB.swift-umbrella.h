@@ -10,7 +10,7 @@
 #endif
 #endif
 
-#import "grdb_config.h"
+#import "SQLCipher_config.h"
 
 FOUNDATION_EXPORT double GRDBVersionNumber;
 FOUNDATION_EXPORT const unsigned char GRDBVersionString[];

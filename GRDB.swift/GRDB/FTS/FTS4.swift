@@ -5,7 +5,7 @@
 ///         t.column("content")
 ///     }
 ///
-/// See https://www.sqlite.org/fts3.html
+/// See <https://www.sqlite.org/fts3.html>
 public struct FTS4: VirtualTableModule {
     
     /// Creates a FTS4 module suitable for the Database
@@ -16,7 +16,7 @@ public struct FTS4: VirtualTableModule {
     ///         t.column("content")
     ///     }
     ///
-    /// See https://www.sqlite.org/fts3.html
+    /// See <https://www.sqlite.org/fts3.html>
     public init() {
     }
     
@@ -25,11 +25,19 @@ public struct FTS4: VirtualTableModule {
     /// The virtual table module name
     public let moduleName = "fts4"
     
+    // TODO: remove when `makeTableDefinition()` is no longer a requirement
     /// Reserved; part of the VirtualTableModule protocol.
     ///
     /// See Database.create(virtualTable:using:)
     public func makeTableDefinition() -> FTS4TableDefinition {
-        return FTS4TableDefinition()
+        preconditionFailure()
+    }
+    
+    /// Reserved; part of the VirtualTableModule protocol.
+    ///
+    /// See Database.create(virtualTable:using:)
+    public func makeTableDefinition(configuration: VirtualTableConfiguration) -> FTS4TableDefinition {
+        FTS4TableDefinition(configuration: configuration)
     }
     
     /// Reserved; part of the VirtualTableModule protocol.
@@ -101,10 +109,10 @@ public struct FTS4: VirtualTableModule {
             let rowIDColumn = try db.primaryKey(contentTable).rowIDColumn ?? Column.rowID.name
             let ftsTable = tableName.quotedDatabaseIdentifier
             let content = contentTable.quotedDatabaseIdentifier
-            let indexedColumns = definition.columns.map { $0.name }
+            let indexedColumns = definition.columns.map(\.name)
             
             let ftsColumns = (["docid"] + indexedColumns)
-                .map { $0.quotedDatabaseIdentifier }
+                .map(\.quotedDatabaseIdentifier)
                 .joined(separator: ", ")
             
             let newContentColumns = ([rowIDColumn] + indexedColumns)
@@ -113,20 +121,26 @@ public struct FTS4: VirtualTableModule {
             
             let oldRowID = "old.\(rowIDColumn.quotedDatabaseIdentifier)"
             
+            let ifNotExists = definition.configuration.ifNotExists
+                ? "IF NOT EXISTS "
+                : ""
+            
+            // swiftlint:disable line_length
             try db.execute(sql: """
-                CREATE TRIGGER \("__\(tableName)_bu".quotedDatabaseIdentifier) BEFORE UPDATE ON \(content) BEGIN
+                CREATE TRIGGER \(ifNotExists)\("__\(tableName)_bu".quotedDatabaseIdentifier) BEFORE UPDATE ON \(content) BEGIN
                     DELETE FROM \(ftsTable) WHERE docid=\(oldRowID);
                 END;
-                CREATE TRIGGER \("__\(tableName)_bd".quotedDatabaseIdentifier) BEFORE DELETE ON \(content) BEGIN
+                CREATE TRIGGER \(ifNotExists)\("__\(tableName)_bd".quotedDatabaseIdentifier) BEFORE DELETE ON \(content) BEGIN
                     DELETE FROM \(ftsTable) WHERE docid=\(oldRowID);
                 END;
-                CREATE TRIGGER \("__\(tableName)_au".quotedDatabaseIdentifier) AFTER UPDATE ON \(content) BEGIN
+                CREATE TRIGGER \(ifNotExists)\("__\(tableName)_au".quotedDatabaseIdentifier) AFTER UPDATE ON \(content) BEGIN
                     INSERT INTO \(ftsTable)(\(ftsColumns)) VALUES(\(newContentColumns));
                 END;
-                CREATE TRIGGER \("__\(tableName)_ai".quotedDatabaseIdentifier) AFTER INSERT ON \(content) BEGIN
+                CREATE TRIGGER \(ifNotExists)\("__\(tableName)_ai".quotedDatabaseIdentifier) AFTER INSERT ON \(content) BEGIN
                     INSERT INTO \(ftsTable)(\(ftsColumns)) VALUES(\(newContentColumns));
                 END;
                 """)
+            // swiftlint:enable line_length
             
             // https://www.sqlite.org/fts3.html#*fts4rebuidcmd
             
@@ -144,13 +158,14 @@ public struct FTS4: VirtualTableModule {
 ///         t.column("content")
 ///     }
 ///
-/// See https://www.sqlite.org/fts3.html
+/// See <https://www.sqlite.org/fts3.html>
 public final class FTS4TableDefinition {
     enum ContentMode {
         case raw(content: String?)
         case synchronized(contentTable: String)
     }
     
+    fileprivate let configuration: VirtualTableConfiguration
     fileprivate var columns: [FTS4ColumnDefinition] = []
     fileprivate var contentMode: ContentMode = .raw(content: nil)
     
@@ -160,7 +175,7 @@ public final class FTS4TableDefinition {
     ///         t.tokenizer = .porter
     ///     }
     ///
-    /// See https://www.sqlite.org/fts3.html#creating_and_destroying_fts_tables
+    /// See <https://www.sqlite.org/fts3.html#creating_and_destroying_fts_tables>
     public var tokenizer: FTS3TokenizerDescriptor?
     
     /// The FTS4 `content` option
@@ -172,7 +187,7 @@ public final class FTS4TableDefinition {
     /// Setting this property invalidates any synchronization previously
     /// established with the `synchronize(withTable:)` method.
     ///
-    /// See https://www.sqlite.org/fts3.html#the_content_option_
+    /// See <https://www.sqlite.org/fts3.html#the_content_option_>
     public var content: String? {
         get {
             switch contentMode {
@@ -189,17 +204,17 @@ public final class FTS4TableDefinition {
     
     /// The FTS4 `compress` option
     ///
-    /// See https://www.sqlite.org/fts3.html#the_compress_and_uncompress_options
+    /// See <https://www.sqlite.org/fts3.html#the_compress_and_uncompress_options>
     public var compress: String?
     
     /// The FTS4 `uncompress` option
     ///
-    /// See https://www.sqlite.org/fts3.html#the_compress_and_uncompress_options
+    /// See <https://www.sqlite.org/fts3.html#the_compress_and_uncompress_options>
     public var uncompress: String?
     
     /// The FTS4 `matchinfo` option
     ///
-    /// See https://www.sqlite.org/fts3.html#the_matchinfo_option
+    /// See <https://www.sqlite.org/fts3.html#the_matchinfo_option>
     public var matchinfo: String?
     
     /// Support for the FTS5 `prefix` option
@@ -210,8 +225,12 @@ public final class FTS4TableDefinition {
     ///         t.column("content")
     ///     }
     ///
-    /// See https://www.sqlite.org/fts3.html#the_prefix_option
+    /// See <https://www.sqlite.org/fts3.html#the_prefix_option>
     public var prefixes: Set<Int>?
+    
+    init(configuration: VirtualTableConfiguration) {
+        self.configuration = configuration
+    }
     
     /// Appends a table column.
     ///
@@ -234,7 +253,7 @@ public final class FTS4TableDefinition {
     /// content in the external table. SQL triggers make sure that the
     /// full-text table is kept up to date with the external table.
     ///
-    /// See https://sqlite.org/fts5.html#external_content_tables
+    /// See <https://sqlite.org/fts5.html#external_content_tables>
     public func synchronize(withTable tableName: String) {
         contentMode = .synchronized(contentTable: tableName)
     }
@@ -249,7 +268,7 @@ public final class FTS4TableDefinition {
 ///         t.column("content")      // FTS4ColumnDefinition
 ///     }
 ///
-/// See https://www.sqlite.org/fts3.html
+/// See <https://www.sqlite.org/fts3.html>
 public final class FTS4ColumnDefinition {
     fileprivate let name: String
     fileprivate var isIndexed: Bool
@@ -261,7 +280,6 @@ public final class FTS4ColumnDefinition {
         self.isLanguageId = false
     }
     
-    #if GRDBCUSTOMSQLITE || GRDBCIPHER
     /// Excludes the column from the full-text index.
     ///
     ///     try db.create(virtualTable: "document", using: FTS4()) { t in
@@ -269,39 +287,14 @@ public final class FTS4ColumnDefinition {
     ///         t.column("b").notIndexed()
     ///     }
     ///
-    /// See https://www.sqlite.org/fts3.html#the_notindexed_option
+    /// See <https://www.sqlite.org/fts3.html#the_notindexed_option>
     ///
     /// - returns: Self so that you can further refine the column definition.
-    /// :nodoc:
     @discardableResult
     public func notIndexed() -> Self {
-        // notindexed FTS4 option was added in SQLite 3.8.0 http://www.sqlite.org/changes.html#version_3_8_0
-        // It is available from iOS 8.2 and OS X 10.10
-        // https://github.com/yapstudios/YapDatabase/wiki/SQLite-version-(bundled-with-OS)
         self.isIndexed = false
         return self
     }
-    #else
-    /// Excludes the column from the full-text index.
-    ///
-    ///     try db.create(virtualTable: "document", using: FTS4()) { t in
-    ///         t.column("a")
-    ///         t.column("b").notIndexed()
-    ///     }
-    ///
-    /// See https://www.sqlite.org/fts3.html#the_notindexed_option
-    ///
-    /// - returns: Self so that you can further refine the column definition.
-    @available(OSX 10.10, *)
-    @discardableResult
-    public func notIndexed() -> Self {
-        // notindexed FTS4 option was added in SQLite 3.8.0 http://www.sqlite.org/changes.html#version_3_8_0
-        // It is available from iOS 8.2 and OS X 10.10
-        // https://github.com/yapstudios/YapDatabase/wiki/SQLite-version-(bundled-with-OS)
-        self.isIndexed = false
-        return self
-    }
-    #endif
     
     /// Uses the column as the Int32 language id hidden column.
     ///
@@ -310,7 +303,7 @@ public final class FTS4ColumnDefinition {
     ///         t.column("lid").asLanguageId()
     ///     }
     ///
-    /// See https://www.sqlite.org/fts3.html#the_languageid_option
+    /// See <https://www.sqlite.org/fts3.html#the_languageid_option>
     ///
     /// - returns: Self so that you can further refine the column definition.
     @discardableResult

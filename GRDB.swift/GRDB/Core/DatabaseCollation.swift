@@ -1,14 +1,8 @@
 import Foundation
-#if SWIFT_PACKAGE
-import CSQLite
-#elseif GRDBCIPHER
-import SQLCipher
-#elseif !GRDBCUSTOMSQLITE && !GRDBCIPHER
-import SQLite3
-#endif
 
 /// A Collation is a string comparison function used by SQLite.
 public final class DatabaseCollation {
+    /// The name of the collation
     public let name: String
     let function: (Int32, UnsafeRawPointer?, Int32, UnsafeRawPointer?) -> ComparisonResult
     
@@ -57,7 +51,7 @@ extension DatabaseCollation: Hashable {
     /// Two collations are equal if they share the same name (case insensitive)
     /// :nodoc:
     public static func == (lhs: DatabaseCollation, rhs: DatabaseCollation) -> Bool {
-        // See https://www.sqlite.org/c3ref/create_collation.html
+        // See <https://www.sqlite.org/c3ref/create_collation.html>
         return sqlite3_stricmp(lhs.name, rhs.name) == 0
     }
 }
