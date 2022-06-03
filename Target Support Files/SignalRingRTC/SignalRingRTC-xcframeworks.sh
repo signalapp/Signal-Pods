@@ -17,14 +17,14 @@ RSYNC_PROTECT_TMP_FILES=(--filter "P .*.??????")
 variant_for_slice()
 {
   case "$1" in
-  "WebRTC.xcframework/ios-arm64_x86_64-maccatalyst")
-    echo "maccatalyst"
-    ;;
   "WebRTC.xcframework/ios-arm64_x86_64-simulator")
     echo "simulator"
     ;;
   "WebRTC.xcframework/ios-arm64")
     echo ""
+    ;;
+  "WebRTC.xcframework/ios-arm64_x86_64-maccatalyst")
+    echo "maccatalyst"
     ;;
   esac
 }
@@ -32,14 +32,14 @@ variant_for_slice()
 archs_for_slice()
 {
   case "$1" in
-  "WebRTC.xcframework/ios-arm64_x86_64-maccatalyst")
-    echo "arm64 x86_64"
-    ;;
   "WebRTC.xcframework/ios-arm64_x86_64-simulator")
     echo "arm64 x86_64"
     ;;
   "WebRTC.xcframework/ios-arm64")
     echo "arm64"
+    ;;
+  "WebRTC.xcframework/ios-arm64_x86_64-maccatalyst")
+    echo "arm64 x86_64"
     ;;
   esac
 }
@@ -123,5 +123,5 @@ install_xcframework() {
   echo "Copied $source to $destination"
 }
 
-install_xcframework "${PODS_ROOT}/../ThirdParty/WebRTC/Build/WebRTC.xcframework" "SignalRingRTC/WebRTC" "framework" "ios-arm64_x86_64-maccatalyst" "ios-arm64_x86_64-simulator" "ios-arm64"
+install_xcframework "${PODS_ROOT}/../ThirdParty/WebRTC/Build/WebRTC.xcframework" "SignalRingRTC/WebRTC" "framework" "ios-arm64_x86_64-simulator" "ios-arm64" "ios-arm64_x86_64-maccatalyst"
 
