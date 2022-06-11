@@ -20,6 +20,7 @@
 #import "SignalRecipient.h"
 #import "TSContactThread.h"
 #import "TSGroupThread.h"
+#import "TSPrivateStoryThread.h"
 #import "TSThread.h"
 #import "OWSChunkedOutputStream.h"
 #import "OWSContactsOutputStream.h"
