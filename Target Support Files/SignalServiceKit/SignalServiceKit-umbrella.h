@@ -154,6 +154,7 @@
 #import "OWSIncomingContactSyncJobRecord.h"
 #import "OWSIncomingGroupSyncJobRecord.h"
 #import "OWSReceiptCredentialRedemptionJobRecord.h"
+#import "OWSSendGiftBadgeJobRecord.h"
 #import "OWSSessionResetJobRecord.h"
 #import "SSKJobRecord.h"
 #import "SSKMessageSenderJobRecord.h"
