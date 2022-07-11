@@ -233,7 +233,9 @@ public final class Database: CustomStringConvertible, CustomDebugStringConvertib
         setupDefaultFunctions()
         setupDefaultCollations()
         setupAuthorizer()
-        observationBroker.installCommitAndRollbackHooks()
+        if !configuration.readonly {
+            observationBroker.installCommitAndRollbackHooks()
+        }
         try activateExtendedCodes()
         
         #if SQLITE_HAS_CODEC
@@ -546,37 +548,10 @@ public final class Database: CustomStringConvertible, CustomDebugStringConvertib
             finally: endReadOnly)
     }
     
-    // MARK: - Snapshots
-    
-    #if SQLITE_ENABLE_SNAPSHOT
-    /// Returns a snapshot that must be freed with `sqlite3_snapshot_free`.
-    ///
-    /// See <https://www.sqlite.org/c3ref/snapshot.html>
-    func takeVersionSnapshot() throws -> UnsafeMutablePointer<sqlite3_snapshot> {
-        var snapshot: UnsafeMutablePointer<sqlite3_snapshot>?
-        let code = withUnsafeMutablePointer(to: &snapshot) {
-            sqlite3_snapshot_get(sqliteConnection, "main", $0)
-        }
-        guard code == SQLITE_OK else {
-            throw DatabaseError(resultCode: code, message: lastErrorMessage)
-        }
-        if let snapshot = snapshot {
-            return snapshot
-        } else {
-            throw DatabaseError(resultCode: .SQLITE_INTERNAL) // WTF SQLite?
-        }
+    /// Returns whether database connection is read-only.
+    var isReadOnly: Bool {
+        _readOnlyDepth > 0 || configuration.readonly
     }
-    
-    func wasChanged(since initialSnapshot: UnsafeMutablePointer<sqlite3_snapshot>) throws -> Bool {
-        let secondSnapshot = try takeVersionSnapshot()
-        defer {
-            sqlite3_snapshot_free(secondSnapshot)
-        }
-        let cmp = sqlite3_snapshot_cmp(initialSnapshot, secondSnapshot)
-        assert(cmp <= 0, "Unexpected snapshot ordering")
-        return cmp < 0
-    }
-    #endif
     
     // MARK: - Recording of the selected region
     
@@ -939,10 +914,16 @@ public final class Database: CustomStringConvertible, CustomDebugStringConvertib
     /// This method is not reentrant: you can't nest transactions.
     ///
     /// - parameters:
-    ///     - kind: The transaction type (default nil). If nil, the transaction
-    ///       type is configuration.defaultTransactionKind, which itself
-    ///       defaults to .deferred. See <https://www.sqlite.org/lang_transaction.html>
-    ///       for more information.
+    ///     - kind: The transaction type (default nil).
+    ///
+    ///       If nil, and the database connection is read-only, the transaction
+    ///       kind is `.deferred`.
+    ///
+    ///       If nil, and the database connection is not read-only, the
+    ///       transaction kind is `configuration.defaultTransactionKind`.
+    ///
+    ///       See <https://www.sqlite.org/lang_transaction.html> for
+    ///       more information.
     ///     - block: A block that executes SQL statements and return either
     ///       .commit or .rollback.
     /// - throws: The error thrown by the block.
@@ -1005,13 +986,20 @@ public final class Database: CustomStringConvertible, CustomDebugStringConvertib
     /// - parameter readOnly: If true, writes are forbidden.
     func isolated<T>(readOnly: Bool = false, _ block: () throws -> T) throws -> T {
         var result: T?
-        try inSavepoint {
-            if readOnly {
-                result = try self.readOnly(block)
-            } else {
-                result = try block()
+        if readOnly {
+            // Enter read-only mode before starting a transaction, so that the
+            // transaction commit does not trigger database observation.
+            try self.readOnly {
+                try inSavepoint {
+                    result = try block()
+                    return .commit
+                }
             }
-            return .commit
+        } else {
+            try inSavepoint {
+                result = try block()
+                return .commit
+            }
         }
         return result!
     }
@@ -1055,7 +1043,7 @@ public final class Database: CustomStringConvertible, CustomDebugStringConvertib
             //
             // For those two reasons, we open a transaction instead of a
             // top-level savepoint.
-            try inTransaction(configuration.defaultTransactionKind, block)
+            try inTransaction { try block() }
             return
         }
         
@@ -1123,13 +1111,20 @@ public final class Database: CustomStringConvertible, CustomDebugStringConvertib
     
     /// Begins a database transaction.
     ///
-    /// - parameter kind: The transaction type (default nil). If nil, the
-    ///   transaction type is configuration.defaultTransactionKind, which itself
-    ///   defaults to .deferred. See <https://www.sqlite.org/lang_transaction.html>
-    ///   for more information.
-    /// - throws: The error thrown by the block.
+    /// - parameter kind: The transaction type (default nil).
+    ///
+    ///   If nil, and the database connection is read-only, the transaction kind
+    ///   is `.deferred`.
+    ///
+    ///   If nil, and the database connection is not read-only, the transaction
+    ///   kind is `configuration.defaultTransactionKind`.
+    ///
+    ///   See <https://www.sqlite.org/lang_transaction.html> for
+    ///   more information.
+    /// - throws: A DatabaseError whenever an SQLite error occurs.
     public func beginTransaction(_ kind: TransactionKind? = nil) throws {
-        let kind = kind ?? configuration.defaultTransactionKind
+        // SQLite throws an error for non-deferred transactions when read-only.
+        let kind = kind ?? (isReadOnly ? .deferred : configuration.defaultTransactionKind)
         try execute(sql: "BEGIN \(kind.rawValue) TRANSACTION")
         assert(sqlite3_get_autocommit(sqliteConnection) == 0)
     }
@@ -1189,7 +1184,8 @@ public final class Database: CustomStringConvertible, CustomDebugStringConvertib
     
     // MARK: - Memory Management
     
-    func releaseMemory() {
+    public func releaseMemory() {
+        SchedulingWatchdog.preconditionValidQueue(self)
         sqlite3_db_release_memory(sqliteConnection)
         schemaCache.clear()
         internalStatementCache.clear()
