@@ -40,7 +40,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark -
 
-static void *kNSString_SSK_hasExcessiveDiacriticals = &kNSString_SSK_hasExcessiveDiacriticals;
+static void *kNSString_SSK_needsSanitization = &kNSString_SSK_needsSanitization;
+static void *kNSString_SSK_sanitizedCounterpart = &kNSString_SSK_sanitizedCounterpart;
 static unichar bidiLeftToRightIsolate = 0x2066;
 static unichar bidiRightToLeftIsolate = 0x2067;
 static unichar bidiFirstStrongIsolate = 0x2068;
@@ -230,7 +231,7 @@ static unichar bidiPopDirectionalIsolate = 0x2069;
 - (NSString *)filterSubstringForDisplay
 {
     // We don't want to strip a substring before filtering.
-    return self.filterForIndicScripts.filterForExcessiveDiacriticals.ensureBalancedBidiControlCharacters;
+    return self.filterForIndicScripts.sanitized.ensureBalancedBidiControlCharacters;
 }
 
 - (NSString *)filterStringForDisplay
@@ -240,7 +241,7 @@ static unichar bidiPopDirectionalIsolate = 0x2069;
 
 - (NSString *)filterFilename
 {
-    return self.ows_stripped.filterForIndicScripts.filterForExcessiveDiacriticals.filterUnsafeFilenameCharacters;
+    return self.ows_stripped.filterForIndicScripts.sanitized.filterUnsafeFilenameCharacters;
 }
 
 - (NSString *)withoutBidiControlCharacters
@@ -331,47 +332,26 @@ static unichar bidiPopDirectionalIsolate = 0x2069;
     return [NSString stringWithFormat:@"%C%@%C", bidiFirstStrongIsolate, self.ensureBalancedBidiControlCharacters, bidiPopDirectionalIsolate];
 }
 
-- (NSString *)filterForExcessiveDiacriticals
+- (NSString *)sanitized
 {
-    if (!self.hasExcessiveDiacriticals) {
+    NSNumber *cachedNeedsSanitization = objc_getAssociatedObject(self, kNSString_SSK_needsSanitization);
+    if (cachedNeedsSanitization != nil) {
+        if (cachedNeedsSanitization.boolValue) {
+            return objc_getAssociatedObject(self, kNSString_SSK_sanitizedCounterpart) ?: self;
+        } else {
+            return self;
+        }
+    }
+
+    StringSanitizer *sanitizer = [[StringSanitizer alloc] initWithString:self];
+    const BOOL needsSanitization = sanitizer.needsSanitization;
+    objc_setAssociatedObject(self, kNSString_SSK_needsSanitization, @(needsSanitization), OBJC_ASSOCIATION_COPY);
+    if (!needsSanitization) {
         return self;
     }
-    return [self stringByFoldingWithOptions:NSDiacriticInsensitiveSearch locale:[NSLocale currentLocale]];
-}
-
-- (BOOL)hasExcessiveDiacriticals
-{
-    NSNumber *cachedValue = objc_getAssociatedObject(self, kNSString_SSK_hasExcessiveDiacriticals);
-    if (!cachedValue) {
-        cachedValue = @([self computeHasExcessiveDiacriticals]);
-        objc_setAssociatedObject(self, kNSString_SSK_hasExcessiveDiacriticals, cachedValue, OBJC_ASSOCIATION_COPY);
-    }
-
-    return cachedValue.boolValue;
-}
-
-- (BOOL)computeHasExcessiveDiacriticals
-{
-    // discard any zalgo style text, by detecting maximum number of glyphs per character
-    NSUInteger index = 0;
-
-    // store in local var, it's a hot code path.
-    NSUInteger length = self.length;
-    while (index < length) {
-        // Walk the grapheme clusters in the string.
-        NSRange range = [self rangeOfComposedCharacterSequenceAtIndex:index];
-        if (range.length > 8) {
-            // There are too many characters in this grapheme cluster.
-            return YES;
-        } else if (range.location != index || range.length < 1) {
-            // This should never happen.
-            OWSFailDebug(
-                @"unexpected composed character sequence: %lu, %@", (unsigned long)index, NSStringFromRange(range));
-            return YES;
-        }
-        index = range.location + range.length;
-    }
-    return NO;
+    NSString *sanitized = sanitizer.sanitized;
+    objc_setAssociatedObject(self, kNSString_SSK_sanitizedCounterpart, sanitized, OBJC_ASSOCIATION_COPY);
+    return sanitized;
 }
 
 + (NSRegularExpression *)anyASCIIRegex
