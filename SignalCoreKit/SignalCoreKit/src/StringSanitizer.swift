@@ -13,24 +13,27 @@ import Foundation
 ///     print(sanitizer.sanitized);  // Jack said, “��������������”
 /// }
 /// ```
-@objc class StringSanitizer: NSObject {
+@objc
+public class StringSanitizer: NSObject {
     private static let maxCodePoints = 16
     private let string: String
 
     @objc(initWithString:)
-    init(_ string: String) {
+    public init(_ string: String) {
         self.string = string
     }
 
     /// Indicates if the string needs to be modified. This is slightly cheaper than calling `sanitized`.
-    @objc lazy var needsSanitization: Bool = {
+    @objc
+    private(set) public lazy var needsSanitization: Bool = {
         return string.contains {
             $0.unicodeScalars.count > Self.maxCodePoints
         }
     }()
 
     /// Returns a modified version of the string if sanitization is needed, or the original string otherwise.
-    @objc lazy var sanitized: String = {
+    @objc
+    private(set) public lazy var sanitized: String = {
         if !needsSanitization {
             return string
         }
