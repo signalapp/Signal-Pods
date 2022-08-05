@@ -34,7 +34,14 @@ non-bridge Rust APIs will be reflected in the version number on a best-effort ba
 
 # Building
 
-To build anything in this repository you must have [Rust](https://rust-lang.org) installed.
+To build anything in this repository you must have [Rust](https://rust-lang.org) installed,
+as well as Clang, libclang, [CMake](https://cmake.org), and Make.
+On a Debian-like system, you can get these extra dependencies through `apt`:
+
+```shell
+$ apt-get install clang libclang-dev cmake make
+```
+
 The build currently uses a specific version of the Rust nightly compiler, which
 will be downloaded automatically by cargo. To build and test the basic protocol
 libraries:
@@ -52,10 +59,6 @@ To build for Android you must install several additional packages including a JD
 the Android NDK/SDK, and add the Android targets to the Rust compiler, using
 
 ```rustup target add armv7-linux-androideabi aarch64-linux-android i686-linux-android x86_64-linux-android```
-
-as well as the Cargo NDK tool using
-
-```cargo install --version=1.0.0 cargo-ndk```
 
 To build the Java/Android ``jar`` and ``aar``, and run the tests:
 

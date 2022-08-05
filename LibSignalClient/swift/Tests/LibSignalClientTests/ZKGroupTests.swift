@@ -1,5 +1,5 @@
 //
-// Copyright 2020-2021 Signal Messenger, LLC.
+// Copyright 2020-2022 Signal Messenger, LLC.
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
@@ -205,7 +205,7 @@ class ZKGroupTests: TestCaseBase {
     // CLIENT
     // Receive credential
     let clientZkAuthCipher  = ClientZkAuthOperations(serverPublicParams: serverPublicParams)
-    let clientZkGroupCipher = ClientZkGroupCipher(groupSecretParams: groupSecretParams )
+    let clientZkGroupCipher = ClientZkGroupCipher(groupSecretParams: groupSecretParams)
     let authCredential      = try clientZkAuthCipher.receiveAuthCredential(uuid: uuid, redemptionTime: redemptionTime, authCredentialResponse: authCredentialResponse)
 
     // Create and decrypt user entry
@@ -219,10 +219,62 @@ class ZKGroupTests: TestCaseBase {
     // Verify presentation
     let uuidCiphertextRecv = try presentation.getUuidCiphertext()
     XCTAssertEqual(uuidCiphertext.serialize(), uuidCiphertextRecv.serialize())
-    XCTAssertEqual(try presentation.getRedemptionTime(), redemptionTime)
+    XCTAssertNil(try presentation.getPniCiphertext())
+    XCTAssertEqual(try presentation.getRedemptionTime(),
+                   Date(timeIntervalSince1970: TimeInterval(UInt64(redemptionTime) * 86400)))
     try serverZkAuth.verifyAuthCredentialPresentation(groupPublicParams: groupPublicParams, authCredentialPresentation: presentation)
 
     XCTAssertEqual(presentation.serialize(), authPresentationResult)
+  }
+
+  func testAuthWithPniIntegration() throws {
+    let aci: UUID              = TEST_ARRAY_16
+    let pni: UUID              = TEST_ARRAY_16_1
+    let redemptionTime: UInt64 = 123456 * 86400
+
+    // Generate keys (client's are per-group, server's are not)
+    // ---
+
+    // SERVER
+    let serverSecretParams = try ServerSecretParams.generate(randomness: TEST_ARRAY_32)
+    let serverPublicParams = try serverSecretParams.getPublicParams()
+    let serverZkAuth       = ServerZkAuthOperations(serverSecretParams: serverSecretParams)
+
+    // CLIENT
+    let masterKey         = try GroupMasterKey(contents: TEST_ARRAY_32_1)
+    let groupSecretParams = try GroupSecretParams.deriveFromMasterKey(groupMasterKey: masterKey)
+
+    XCTAssertEqual((try groupSecretParams.getMasterKey()).serialize(), masterKey.serialize())
+
+    let groupPublicParams = try groupSecretParams.getPublicParams()
+
+    // SERVER
+    // Issue credential
+    let authCredentialResponse = try serverZkAuth.issueAuthCredentialWithPni(randomness: TEST_ARRAY_32_2, aci: aci, pni: pni, redemptionTime: redemptionTime)
+
+    // CLIENT
+    // Receive credential
+    let clientZkAuthCipher  = ClientZkAuthOperations(serverPublicParams: serverPublicParams)
+    let clientZkGroupCipher = ClientZkGroupCipher(groupSecretParams: groupSecretParams)
+    let authCredential      = try clientZkAuthCipher.receiveAuthCredentialWithPni(aci: aci, pni: pni, redemptionTime: redemptionTime, authCredentialResponse: authCredentialResponse)
+
+    // Create and decrypt user entry
+    let aciCiphertext = try clientZkGroupCipher.encryptUuid(uuid: aci)
+    let aciPlaintext  = try clientZkGroupCipher.decryptUuid(uuidCiphertext: aciCiphertext)
+    XCTAssertEqual(aci, aciPlaintext)
+    let pniCiphertext = try clientZkGroupCipher.encryptUuid(uuid: pni)
+    let pniPlaintext  = try clientZkGroupCipher.decryptUuid(uuidCiphertext: pniCiphertext)
+    XCTAssertEqual(pni, pniPlaintext)
+
+    // Create presentation
+    let presentation = try clientZkAuthCipher.createAuthCredentialPresentation(randomness: TEST_ARRAY_32_5, groupSecretParams: groupSecretParams, authCredential: authCredential)
+
+    // Verify presentation
+    let uuidCiphertextRecv = try presentation.getUuidCiphertext()
+    XCTAssertEqual(aciCiphertext.serialize(), uuidCiphertextRecv.serialize())
+    XCTAssertEqual(pniCiphertext.serialize(), try presentation.getPniCiphertext()?.serialize())
+    XCTAssertEqual(try presentation.getRedemptionTime(), Date(timeIntervalSince1970: TimeInterval(redemptionTime)))
+    try serverZkAuth.verifyAuthCredentialPresentation(groupPublicParams: groupPublicParams, authCredentialPresentation: presentation)
   }
 
   func testProfileKeyIntegration() throws {
@@ -284,6 +336,69 @@ class ZKGroupTests: TestCaseBase {
     XCTAssertEqual(pkvB.serialize(), pkvC.serialize())
   }
 
+  func testExpiringProfileKeyIntegration() throws {
+
+    let uuid: UUID             = TEST_ARRAY_16
+    // Generate keys (client's are per-group, server's are not)
+    // ---
+
+    // SERVER
+    let serverSecretParams = try ServerSecretParams.generate(randomness: TEST_ARRAY_32)
+    let serverPublicParams = try serverSecretParams.getPublicParams()
+    let serverZkProfile    = ServerZkProfileOperations(serverSecretParams: serverSecretParams)
+
+    // CLIENT
+    let masterKey         = try GroupMasterKey(contents: TEST_ARRAY_32_1)
+    let groupSecretParams = try GroupSecretParams.deriveFromMasterKey(groupMasterKey: masterKey)
+
+    XCTAssertEqual(try groupSecretParams.getMasterKey().serialize(), masterKey.serialize())
+
+    let groupPublicParams = try groupSecretParams.getPublicParams()
+    let clientZkProfileCipher = ClientZkProfileOperations(serverPublicParams: serverPublicParams)
+
+    let profileKey  = try ProfileKey(contents: TEST_ARRAY_32_1)
+    let profileKeyCommitment = try profileKey.getCommitment(uuid: uuid)
+
+    // Create context and request
+    let context = try clientZkProfileCipher.createProfileKeyCredentialRequestContext(randomness: TEST_ARRAY_32_3, uuid: uuid, profileKey: profileKey)
+    let request = try context.getRequest()
+
+    // SERVER
+    let now = UInt64(Date().timeIntervalSince1970)
+    let startOfDay = now - (now % 86400)
+    let expiration = startOfDay + 5 * 86400
+    let response = try serverZkProfile.issueExpiringProfileKeyCredential(randomness: TEST_ARRAY_32_4, profileKeyCredentialRequest: request, uuid: uuid, profileKeyCommitment: profileKeyCommitment, expiration: expiration)
+
+    // CLIENT
+    // Gets stored profile credential
+    let clientZkGroupCipher  = ClientZkGroupCipher(groupSecretParams: groupSecretParams)
+    let profileKeyCredential = try clientZkProfileCipher.receiveExpiringProfileKeyCredential(profileKeyCredentialRequestContext: context, profileKeyCredentialResponse: response)
+
+    // Create encrypted UID and profile key
+    let uuidCiphertext = try clientZkGroupCipher.encryptUuid(uuid: uuid)
+    let plaintext      = try clientZkGroupCipher.decryptUuid(uuidCiphertext: uuidCiphertext)
+
+    XCTAssertEqual(plaintext, uuid)
+
+    let profileKeyCiphertext   = try clientZkGroupCipher.encryptProfileKey(profileKey: profileKey, uuid: uuid)
+    let decryptedProfileKey    = try clientZkGroupCipher.decryptProfileKey(profileKeyCiphertext: profileKeyCiphertext, uuid: uuid)
+    XCTAssertEqual(profileKey.serialize(), decryptedProfileKey.serialize())
+
+    XCTAssertEqual(Date(timeIntervalSince1970: TimeInterval(expiration)), profileKeyCredential.expirationTime)
+
+    let presentation = try clientZkProfileCipher.createProfileKeyCredentialPresentation(randomness: TEST_ARRAY_32_5, groupSecretParams: groupSecretParams, profileKeyCredential: profileKeyCredential)
+
+    // Verify presentation
+    try serverZkProfile.verifyProfileKeyCredentialPresentation(groupPublicParams: groupPublicParams, profileKeyCredentialPresentation: presentation)
+    try serverZkProfile.verifyProfileKeyCredentialPresentation(groupPublicParams: groupPublicParams, profileKeyCredentialPresentation: presentation, now: Date(timeIntervalSince1970: TimeInterval(expiration - 5)))
+    XCTAssertThrowsError(try serverZkProfile.verifyProfileKeyCredentialPresentation(groupPublicParams: groupPublicParams, profileKeyCredentialPresentation: presentation, now: Date(timeIntervalSince1970: TimeInterval(expiration))))
+    XCTAssertThrowsError(try serverZkProfile.verifyProfileKeyCredentialPresentation(groupPublicParams: groupPublicParams, profileKeyCredentialPresentation: presentation, now: Date(timeIntervalSince1970: TimeInterval(expiration + 5))))
+
+    let uuidCiphertextRecv = try presentation.getUuidCiphertext()
+    XCTAssertEqual(uuidCiphertext.serialize(), uuidCiphertextRecv.serialize())
+  }
+
+  @available(*, deprecated)
   func testPniIntegration() throws {
     let aci: UUID = TEST_ARRAY_16
     let pni: UUID = TEST_ARRAY_16_1

@@ -1,6 +1,6 @@
 {
   "name": "LibSignalClient",
-  "version": "0.17.0",
+  "version": "0.19.3",
   "summary": "A Swift wrapper library for communicating with the Signal messaging service.",
   "homepage": "https://github.com/signalapp/libsignal",
   "license": "AGPL-3.0-only",
@@ -9,7 +9,7 @@
   },
   "source": {
     "git": "https://github.com/signalapp/libsignal.git",
-    "tag": "v0.17.0"
+    "tag": "v0.19.3"
   },
   "swift_versions": "5",
   "platforms": {
@@ -52,7 +52,7 @@
       "script": "\n        test -e \"${LIBSIGNAL_FFI_LIB_IF_NEEDED}\" && exit 0\n        if test -e \"${PODS_TARGET_SRCROOT}/swift/build_ffi.sh\"; then\n          echo 'error: libsignal_ffi.a not built; run the following to build it:' >&2\n          echo \"CARGO_BUILD_TARGET=${CARGO_BUILD_TARGET} \\\"${PODS_TARGET_SRCROOT}/swift/build_ffi.sh\\\" --release\" >&2\n        else\n          echo 'error: libsignal_ffi.a not built; try re-running `pod install`' >&2\n        fi\n        false\n      "
     }
   ],
-  "prepare_command": "set -euo pipefail\nCARGO_BUILD_TARGET=aarch64-apple-ios swift/build_ffi.sh --release\nCARGO_BUILD_TARGET=x86_64-apple-ios swift/build_ffi.sh --release\nCARGO_BUILD_TARGET=aarch64-apple-ios-sim swift/build_ffi.sh --release\nCARGO_BUILD_TARGET=x86_64-apple-ios-macabi swift/build_ffi.sh --release --build-std\nCARGO_BUILD_TARGET=aarch64-apple-ios-macabi swift/build_ffi.sh --release --build-std",
+  "prepare_command": "set -euo pipefail\nCARGO_BUILD_TARGET=aarch64-apple-ios swift/build_ffi.sh --release\nCARGO_BUILD_TARGET=x86_64-apple-ios swift/build_ffi.sh --release\nCARGO_BUILD_TARGET=aarch64-apple-ios-sim swift/build_ffi.sh --release\nif [[ \"${SKIP_CATALYST:-0}\" != \"1\" ]]; then\n  CARGO_BUILD_TARGET=x86_64-apple-ios-macabi swift/build_ffi.sh --release --build-std\n  CARGO_BUILD_TARGET=aarch64-apple-ios-macabi swift/build_ffi.sh --release --build-std\nfi",
   "testspecs": [
     {
       "name": "Tests",
