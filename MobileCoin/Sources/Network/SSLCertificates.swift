@@ -5,19 +5,19 @@
 import Foundation
 
 public protocol SSLCertificates {
-    var trustRootsBytes : [Data] { get }
-    
+    var trustRootsBytes: [Data] { get }
+
     init?(trustRootBytes: [Data]) throws
 }
 
 extension SSLCertificates {
     init?(trustRootBytes: [Data]) {
-        return nil
+        nil
     }
-    
+
     public static func make(trustRootBytes: [Data]) -> Result<SSLCertificates, InvalidInputError> {
         do {
-            let certificate = try Self.init(trustRootBytes: trustRootBytes)
+            let certificate = try Self(trustRootBytes: trustRootBytes)
             if let certificate = certificate {
                 return .success(certificate)
             } else {

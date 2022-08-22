@@ -5,8 +5,11 @@
 import Foundation
 import LibMobileCoin
 
-final class FogReportConnection:
-    ArbitraryConnection<GrpcProtocolConnectionFactory.FogReportServiceProvider, HttpProtocolConnectionFactory.FogReportServiceProvider>, FogReportService
+final class FogReportConnection: ArbitraryConnection<
+        GrpcProtocolConnectionFactory.FogReportServiceProvider,
+        HttpProtocolConnectionFactory.FogReportServiceProvider
+    >,
+    FogReportService
 {
     private let httpFactory: HttpProtocolConnectionFactory
     private let grpcFactory: GrpcProtocolConnectionFactory

@@ -2,7 +2,8 @@
 //  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
 
-// swiftlint:disable function_parameter_count multiline_arguments multiline_function_chains
+// swiftlint:disable multiline_function_chains
+// swiftlint:disable function_default_parameter_at_end
 
 import Foundation
 
@@ -30,7 +31,11 @@ public final class MobileCoinClient {
 
     private let serviceProvider: ServiceProvider
     private let fogResolverManager: FogResolverManager
-    private let feeFetcher: BlockchainFeeFetcher
+    private let metaFetcher: BlockchainMetaFetcher
+
+    private let fogSyncChecker: FogSyncCheckable
+
+    static let latestBlockVersion = BlockVersion.legacy
 
     init(accountKey: AccountKeyWithFog, config: Config) {
         logger.info("""
@@ -40,29 +45,77 @@ public final class MobileCoinClient {
 
         self.serialQueue = DispatchQueue(label: "com.mobilecoin.\(Self.self)")
         self.callbackQueue = config.callbackQueue ?? DispatchQueue.main
-        self.accountLock = .init(Account(accountKey: accountKey))
+        self.fogSyncChecker = config.fogSyncCheckable
+        self.accountLock = .init(Account(accountKey: accountKey, syncChecker: fogSyncChecker))
         self.txOutSelectionStrategy = config.txOutSelectionStrategy
         self.mixinSelectionStrategy = config.mixinSelectionStrategy
         self.fogQueryScalingStrategy = config.fogQueryScalingStrategy
 
-        self.serviceProvider =
-        DefaultServiceProvider(networkConfig: config.networkConfig, targetQueue: serialQueue, grpcConnectionFactory: GrpcProtocolConnectionFactory(), httpConnectionFactory: HttpProtocolConnectionFactory(httpRequester: config.networkConfig.httpRequester))
+        let grpcFactory = GrpcProtocolConnectionFactory()
+        let httpFactory = HttpProtocolConnectionFactory(
+            httpRequester: config.networkConfig.httpRequester)
+
+        self.serviceProvider = DefaultServiceProvider(
+            networkConfig: config.networkConfig,
+            targetQueue: serialQueue,
+            grpcConnectionFactory: grpcFactory,
+            httpConnectionFactory: httpFactory)
+
         self.fogResolverManager = FogResolverManager(
             fogReportAttestation: config.networkConfig.fogReportAttestation,
             serviceProvider: serviceProvider,
             targetQueue: serialQueue)
-        self.feeFetcher = BlockchainFeeFetcher(
+
+        self.metaFetcher = BlockchainMetaFetcher(
             blockchainService: serviceProvider.blockchainService,
-            minimumFeeCacheTTL: config.minimumFeeCacheTTL,
+            metaCacheTTL: config.metaCacheTTL,
             targetQueue: serialQueue)
     }
 
-    public var balance: Balance {
-        accountLock.readSync { $0.cachedBalance }
+    public var balances: Balances {
+        accountLock.readSync { $0.cachedBalances }
     }
 
-    public var accountActivity: AccountActivity {
-        accountLock.readSync { $0.cachedAccountActivity }
+    public var accountTokenIds: Set<TokenId> {
+        accountLock.readSync { $0.cachedTxOutTokenIds }
+    }
+
+    public func recoverTransactions<Contact: PublicAddressProvider>(
+        contacts: Set<Contact>
+    ) -> [HistoricalTransaction] where Contact: Hashable {
+        recoverTransactions(allAccountActivity().txOuts, contacts: contacts)
+    }
+
+    public func recoverContactTransactions<Contact: PublicAddressProvider>(
+        contact: Contact
+    ) -> [HistoricalTransaction] where Contact: Hashable {
+        recoverTransactions(contacts: Set([contact]))
+    }
+
+    public func recoverTransactions<Contact: PublicAddressProvider>(
+        _ transactions: Set<OwnedTxOut>,
+        contacts: Set<Contact>
+    ) -> [HistoricalTransaction] where Contact: Hashable {
+        Self.recoverTransactions(transactions, contacts: contacts)
+    }
+
+    public func recoverContactTransactions<Contact: PublicAddressProvider>(
+        _ transactions: Set<OwnedTxOut>,
+        contact: Contact
+    ) -> [HistoricalTransaction] where Contact: Hashable {
+        recoverTransactions(transactions, contacts: Set([contact]))
+    }
+
+    public func allAccountActivity() -> AccountActivity {
+        accountLock.readSync { $0.allCachedAccountActivity }
+    }
+
+    public func accountActivity(for tokenId: TokenId) -> AccountActivity {
+        accountLock.readSync { $0.cachedAccountActivity(for: tokenId) }
+    }
+
+    public func balance(for tokenId: TokenId = .MOB) -> Balance {
+        accountLock.readSync { $0.cachedBalance(for: tokenId) }
     }
 
     public func setTransportProtocol(_ transportProtocol: TransportProtocol) {
@@ -79,7 +132,9 @@ public final class MobileCoinClient {
         serviceProvider.setFogUserAuthorization(credentials: credentials)
     }
 
-    public func updateBalance(completion: @escaping (Result<Balance, ConnectionError>) -> Void) {
+    public func updateBalances(
+        completion: @escaping (Result<Balances, BalanceUpdateError>) -> Void
+    ) {
         Account.BalanceUpdater(
             account: accountLock,
             fogViewService: serviceProvider.fogViewService,
@@ -87,7 +142,7 @@ public final class MobileCoinClient {
             fogBlockService: serviceProvider.fogBlockService,
             fogQueryScalingStrategy: fogQueryScalingStrategy,
             targetQueue: serialQueue
-        ).updateBalance { result in
+        ).updateBalances { result in
             self.callbackQueue.async {
                 completion(result)
             }
@@ -95,38 +150,39 @@ public final class MobileCoinClient {
     }
 
     public func amountTransferable(
+        tokenId: TokenId,
         feeLevel: FeeLevel = .minimum,
         completion: @escaping (Result<UInt64, BalanceTransferEstimationFetcherError>) -> Void
     ) {
         Account.TransactionEstimator(
             account: accountLock,
-            feeFetcher: feeFetcher,
+            metaFetcher: metaFetcher,
             txOutSelectionStrategy: txOutSelectionStrategy,
             targetQueue: serialQueue
-        ).amountTransferable(feeLevel: feeLevel, completion: completion)
+        ).amountTransferable(tokenId: tokenId, feeLevel: feeLevel, completion: completion)
     }
 
     public func estimateTotalFee(
-        toSendAmount amount: UInt64,
+        toSendAmount amount: Amount,
         feeLevel: FeeLevel = .minimum,
         completion: @escaping (Result<UInt64, TransactionEstimationFetcherError>) -> Void
     ) {
         Account.TransactionEstimator(
             account: accountLock,
-            feeFetcher: feeFetcher,
+            metaFetcher: metaFetcher,
             txOutSelectionStrategy: txOutSelectionStrategy,
             targetQueue: serialQueue
         ).estimateTotalFee(toSendAmount: amount, feeLevel: feeLevel, completion: completion)
     }
 
     public func requiresDefragmentation(
-        toSendAmount amount: UInt64,
+        toSendAmount amount: Amount,
         feeLevel: FeeLevel = .minimum,
         completion: @escaping (Result<Bool, TransactionEstimationFetcherError>) -> Void
     ) {
         Account.TransactionEstimator(
             account: accountLock,
-            feeFetcher: feeFetcher,
+            metaFetcher: metaFetcher,
             txOutSelectionStrategy: txOutSelectionStrategy,
             targetQueue: serialQueue
         ).requiresDefragmentation(toSendAmount: amount, feeLevel: feeLevel, completion: completion)
@@ -134,21 +190,27 @@ public final class MobileCoinClient {
 
     public func prepareTransaction(
         to recipient: PublicAddress,
-        amount: UInt64,
+        memoType: MemoType = .recoverable,
+        amount: Amount,
         fee: UInt64,
         completion: @escaping (
-            Result<(transaction: Transaction, receipt: Receipt), TransactionPreparationError>
+            Result<PendingSinglePayloadTransaction, TransactionPreparationError>
         ) -> Void
     ) {
         Account.TransactionOperations(
             account: accountLock,
             fogMerkleProofService: serviceProvider.fogMerkleProofService,
             fogResolverManager: fogResolverManager,
-            feeFetcher: feeFetcher,
+            metaFetcher: metaFetcher,
             txOutSelectionStrategy: txOutSelectionStrategy,
             mixinSelectionStrategy: mixinSelectionStrategy,
             targetQueue: serialQueue
-        ).prepareTransaction(to: recipient, amount: amount, fee: fee) { result in
+        ).prepareTransaction(
+            to: recipient,
+            memoType: memoType,
+            amount: amount,
+            fee: fee
+        ) { result in
             self.callbackQueue.async {
                 completion(result)
             }
@@ -157,21 +219,27 @@ public final class MobileCoinClient {
 
     public func prepareTransaction(
         to recipient: PublicAddress,
-        amount: UInt64,
+        memoType: MemoType = .recoverable,
+        amount: Amount,
         feeLevel: FeeLevel = .minimum,
         completion: @escaping (
-            Result<(transaction: Transaction, receipt: Receipt), TransactionPreparationError>
+            Result<PendingSinglePayloadTransaction, TransactionPreparationError>
         ) -> Void
     ) {
         Account.TransactionOperations(
             account: accountLock,
             fogMerkleProofService: serviceProvider.fogMerkleProofService,
             fogResolverManager: fogResolverManager,
-            feeFetcher: feeFetcher,
+            metaFetcher: metaFetcher,
             txOutSelectionStrategy: txOutSelectionStrategy,
             mixinSelectionStrategy: mixinSelectionStrategy,
             targetQueue: serialQueue
-        ).prepareTransaction(to: recipient, amount: amount, feeLevel: feeLevel) { result in
+        ).prepareTransaction(
+            to: recipient,
+            memoType: memoType,
+            amount: amount,
+            feeLevel: feeLevel
+        ) { result in
             self.callbackQueue.async {
                 completion(result)
             }
@@ -179,7 +247,8 @@ public final class MobileCoinClient {
     }
 
     public func prepareDefragmentationStepTransactions(
-        toSendAmount amount: UInt64,
+        toSendAmount amount: Amount,
+        recoverableMemo: Bool = false,
         feeLevel: FeeLevel = .minimum,
         completion: @escaping (Result<[Transaction], DefragTransactionPreparationError>) -> Void
     ) {
@@ -187,12 +256,14 @@ public final class MobileCoinClient {
             account: accountLock,
             fogMerkleProofService: serviceProvider.fogMerkleProofService,
             fogResolverManager: fogResolverManager,
-            feeFetcher: feeFetcher,
+            metaFetcher: metaFetcher,
             txOutSelectionStrategy: txOutSelectionStrategy,
             mixinSelectionStrategy: mixinSelectionStrategy,
             targetQueue: serialQueue
-        ).prepareDefragmentationStepTransactions(toSendAmount: amount, feeLevel: feeLevel)
-        { result in
+        ).prepareDefragmentationStepTransactions(
+            toSendAmount: amount,
+            recoverableMemo: recoverableMemo,
+            feeLevel: feeLevel) { result in
             self.callbackQueue.async {
                 completion(result)
             }
@@ -200,12 +271,13 @@ public final class MobileCoinClient {
     }
 
     public func submitTransaction(
-        _ transaction: Transaction,
-        completion: @escaping (Result<(), TransactionSubmissionError>) -> Void
+        transaction: Transaction,
+        completion: @escaping (Result<UInt64, SubmitTransactionError>) -> Void
     ) {
         TransactionSubmitter(
             consensusService: serviceProvider.consensusService,
-            feeFetcher: feeFetcher
+            metaFetcher: metaFetcher,
+            syncChecker: accountLock.accessWithoutLocking.syncCheckerLock
         ).submitTransaction(transaction) { result in
             self.callbackQueue.async {
                 completion(result)
@@ -232,149 +304,13 @@ public final class MobileCoinClient {
     public func status(of receipt: Receipt) -> Result<ReceiptStatus, InvalidInputError> {
         ReceiptStatusChecker(account: accountLock).status(receipt)
     }
-}
 
-extension MobileCoinClient {
-    private static func configDescription(accountKey: AccountKeyWithFog, config: Config) -> String {
-        let fogInfo = accountKey.fogInfo
-        return """
-            Consensus url: \(config.networkConfig.consensusUrl.url)
-            Fog url: \(config.networkConfig.fogUrl.url)
-            AccountKey PublicAddress: \
-            \(redacting: Base58Coder.encode(accountKey.accountKey.publicAddress))
-            AccountKey Fog Report url: \(fogInfo.reportUrl.url)
-            AccountKey Fog Report id: \(String(reflecting: fogInfo.reportId))
-            AccountKey Fog Report authority sPKI: 0x\(fogInfo.authoritySpki.hexEncodedString())
-            Consensus attestation: \(config.networkConfig.consensus.attestation)
-            Fog View attestation: \(config.networkConfig.fogView.attestation)
-            Fog KeyImage attestation: \(config.networkConfig.fogKeyImage.attestation)
-            Fog MerkleProof attestation: \(config.networkConfig.fogMerkleProof.attestation)
-            Fog Report attestation: \(config.networkConfig.fogReportAttestation)
-            """
-    }
-}
-
-extension MobileCoinClient {
-    @available(*, deprecated, message: "Use amountTransferable(feeLevel:completion:) instead")
-    public func amountTransferable(feeLevel: FeeLevel = .minimum)
-        -> Result<UInt64, BalanceTransferEstimationError>
-    {
-        Account.TransactionEstimator(
-            account: accountLock,
-            feeFetcher: feeFetcher,
-            txOutSelectionStrategy: txOutSelectionStrategy,
-            targetQueue: serialQueue
-        ).amountTransferable(feeLevel: feeLevel)
-    }
-
-    @available(*, deprecated, message:
-        "Use estimateTotalFee(toSendAmount:feeLevel:completion:) instead")
-    public func estimateTotalFee(
-        toSendAmount amount: UInt64,
-        feeLevel: FeeLevel = .minimum
-    ) -> Result<UInt64, TransactionEstimationError> {
-        Account.TransactionEstimator(
-            account: accountLock,
-            feeFetcher: feeFetcher,
-            txOutSelectionStrategy: txOutSelectionStrategy,
-            targetQueue: serialQueue
-        ).estimateTotalFee(toSendAmount: amount, feeLevel: feeLevel)
-    }
-
-    @available(*, deprecated, message:
-        "Use requiresDefragmentation(toSendAmount:feeLevel:completion:) instead")
-    public func requiresDefragmentation(toSendAmount amount: UInt64, feeLevel: FeeLevel = .minimum)
-        -> Result<Bool, TransactionEstimationError>
-    {
-        Account.TransactionEstimator(
-            account: accountLock,
-            feeFetcher: feeFetcher,
-            txOutSelectionStrategy: txOutSelectionStrategy,
-            targetQueue: serialQueue
-        ).requiresDefragmentation(toSendAmount: amount, feeLevel: feeLevel)
-    }
-}
-
-extension MobileCoinClient {
-    public struct Config {
-        /// - Returns: `InvalidInputError` when `consensusUrl` or `fogUrl` are not well-formed URLs
-        ///     with the appropriate schemes.
-        public static func make(
-            consensusUrl: String,
-            consensusAttestation: Attestation,
-            fogUrl: String,
-            fogViewAttestation: Attestation,
-            fogKeyImageAttestation: Attestation,
-            fogMerkleProofAttestation: Attestation,
-            fogReportAttestation: Attestation,
-            transportProtocol: TransportProtocol
-        ) -> Result<Config, InvalidInputError> {
-            ConsensusUrl.make(string: consensusUrl).flatMap { consensusUrl in
-                FogUrl.make(string: fogUrl).map { fogUrl in
-                    let attestationConfig = NetworkConfig.AttestationConfig(
-                        consensus: consensusAttestation,
-                        fogView: fogViewAttestation,
-                        fogKeyImage: fogKeyImageAttestation,
-                        fogMerkleProof: fogMerkleProofAttestation,
-                        fogReport: fogReportAttestation)
-                    let networkConfig = NetworkConfig(
-                        consensusUrl: consensusUrl,
-                        fogUrl: fogUrl,
-                        attestation: attestationConfig,
-                        transportProtocol: transportProtocol)
-                    return Config(networkConfig: networkConfig)
-                }
-            }
-        }
-
-        fileprivate var networkConfig: NetworkConfig
-
-        // default minimum fee cache TTL is 30 minutes
-        public var minimumFeeCacheTTL: TimeInterval = 30 * 60
-
-        public var cacheStorageAdapter: StorageAdapter?
-
-        /// The `DispatchQueue` on which all `MobileCoinClient` completion handlers will be called.
-        /// If `nil`, `DispatchQueue.main` will be used.
-        public var callbackQueue: DispatchQueue?
-
-        var txOutSelectionStrategy: TxOutSelectionStrategy = DefaultTxOutSelectionStrategy()
-        var mixinSelectionStrategy: MixinSelectionStrategy = DefaultMixinSelectionStrategy()
-        var fogQueryScalingStrategy: FogQueryScalingStrategy = DefaultFogQueryScalingStrategy()
-
-        init(networkConfig: NetworkConfig) {
-            self.networkConfig = networkConfig
-        }
-
-        public var transportProtocol: TransportProtocol {
-            get { networkConfig.transportProtocol }
-            set { networkConfig.transportProtocol = newValue }
-        }
-
-        public mutating func setConsensusTrustRoots(_ trustRoots: [Data])
-            -> Result<(), InvalidInputError>
-        {
-            networkConfig.setConsensusTrustRoots(trustRoots)
-        }
-
-        public mutating func setFogTrustRoots(_ trustRoots: [Data]) -> Result<(), InvalidInputError>
-        {
-            networkConfig.setFogTrustRoots(trustRoots)
-        }
-
-        public mutating func setConsensusBasicAuthorization(username: String, password: String) {
-            networkConfig.consensusAuthorization =
-                BasicCredentials(username: username, password: password)
-        }
-
-        public mutating func setFogBasicAuthorization(username: String, password: String) {
-            networkConfig.fogUserAuthorization =
-                BasicCredentials(username: username, password: password)
-        }
-
-        public var httpRequester: HttpRequester? {
-            get { networkConfig.httpRequester }
-            set { networkConfig.httpRequester = newValue }
+    public func blockVersion(
+        _ completion: @escaping (Result<BlockVersion, ConnectionError>) -> Void
+    ) {
+        metaFetcher.blockVersion {
+            completion($0)
         }
     }
+
 }

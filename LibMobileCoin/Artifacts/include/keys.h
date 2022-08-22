@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2021 The MobileCoin Foundation
+// Copyright (c) 2018-2022 The MobileCoin Foundation
 
 #ifndef KEYS_H_
 #define KEYS_H_
@@ -56,6 +56,18 @@ MC_ATTRIBUTE_NONNULL(1, 2, 4, 5);
 
 /// # Preconditions
 ///
+/// * `root_entropy` - must be 32 bytes in length.
+/// * `out_view_private_key` - length must be >= 32.
+/// * `out_spend_private_key` - length must be >= 32.
+bool mc_account_private_keys_from_root_entropy(
+  const McBuffer* MC_NONNULL root_entropy,
+  McMutableBuffer* MC_NONNULL out_view_private_key,
+  McMutableBuffer* MC_NONNULL out_spend_private_key
+)
+MC_ATTRIBUTE_NONNULL(1, 2, 3);
+
+/// # Preconditions
+///
 /// * `view_private_key` - must be a valid 32-byte Ristretto-format scalar.
 /// * `spend_private_key` - must be a valid 32-byte Ristretto-format scalar.
 /// * `out_subaddress_view_public_key` - length must be >= 32.
@@ -79,6 +91,21 @@ bool mc_account_key_get_public_address_fog_authority_sig(
   McMutableBuffer* MC_NONNULL out_fog_authority_sig
 )
 MC_ATTRIBUTE_NONNULL(1, 3);
+
+/// # Preconditions
+///
+/// * `public_address` - must be a valid `PublicAddress`.
+/// * `out_short_address_hash` - length must be >= 16 bytes
+///
+/// # Errors
+///
+/// * `LibMcError::InvalidInput`
+bool mc_account_key_get_short_address_hash(
+  const McPublicAddress* MC_NONNULL public_address,
+  McMutableBuffer* MC_NONNULL out_short_address_hash,
+  McError* MC_NULLABLE * MC_NULLABLE out_error
+)
+MC_ATTRIBUTE_NONNULL(1, 2, 3);
 
 #ifdef __cplusplus
 }

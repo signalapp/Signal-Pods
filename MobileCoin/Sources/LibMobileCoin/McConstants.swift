@@ -74,7 +74,13 @@ extension McConstants {
     static let DEFAULT_SUBADDRESS_INDEX: UInt64 = 0
 
     /// An account's "default change address" is its first subaddress.
-    static let DEFAULT_CHANGE_SUBADDRESS_INDEX: UInt64 = 1
+    static let DEFAULT_CHANGE_SUBADDRESS_INDEX = UInt64.max - 1
+
+    /// Possible subaddresses that a TxOut can be owned by
+    static let POSSIBLE_SUBADDRESSES: [UInt64] = [
+        Self.DEFAULT_CHANGE_SUBADDRESS_INDEX,
+        Self.DEFAULT_SUBADDRESS_INDEX,
+    ]
 }
 
 // MARK: - Keys
@@ -202,5 +208,14 @@ extension McConstants {
 
     /// Maximum number of Key Images that may be checked in a single request.
     static let FOG_KEY_IMAGE_MAX_REQUEST_SIZE = 2000
+
+}
+
+// MARK: - TxOut
+
+extension McConstants {
+
+    /// Maximum number of Key Images that may be checked in a single request.
+    static let LEGACY_MOB_MASKED_TOKEN_ID = Data()
 
 }

@@ -4,10 +4,8 @@
 
 import Foundation
 
-
 extension TransportProtocol: SupportedProtocols {
-    public static var supportedProtocols: [TransportProtocol] { 
+    public static var supportedProtocols: [TransportProtocol] {
         [.http]
     }
 }
-

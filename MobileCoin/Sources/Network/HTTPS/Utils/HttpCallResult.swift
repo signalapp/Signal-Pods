@@ -4,13 +4,12 @@
 
 import Foundation
 
-
 public struct HttpCallResult<ResponsePayload> {
     let error: Error?
     let status: HTTPStatus?
     let allHeaderFields: [AnyHashable: Any]?
     let response: ResponsePayload?
-    
+
     init(
         error: Error? = nil,
         status: HTTPStatus? = nil,

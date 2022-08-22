@@ -19,8 +19,11 @@ final class ConsensusHttpConnection: AttestedHttpConnection, ConsensusService {
         // Solve for shared channel TLS/Certs
         self.requester = requester
         self.client = ConsensusClient_ConsensusClientAPIRestClient()
+        let clientWrapper = AuthHttpCallableClientWrapper(
+                client: Attest_AttestedApiRestClient(),
+                requester: self.requester)
         super.init(
-            client: AuthHttpCallableClientWrapper(client: Attest_AttestedApiRestClient(), requester: self.requester),
+            client: clientWrapper,
             requester: self.requester,
             config: config,
             targetQueue: targetQueue,
@@ -46,7 +49,6 @@ extension ConsensusHttpConnection {
 
         let client: ConsensusClient_ConsensusClientAPIRestClient
         let requester: RestApiRequester
-
 
         func call(
             request: Attest_Message,

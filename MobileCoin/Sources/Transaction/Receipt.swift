@@ -1,5 +1,4 @@
 //
-
 //  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
 
@@ -24,6 +23,7 @@ public struct Receipt {
     let txOutPublicKeyTyped: RistrettoPublic
     let commitment: Data32
     let maskedValue: UInt64
+    let maskedTokenId: Data
     let confirmationNumber: TxOutConfirmationNumber
 
     /// Block index at which the transaction that produced this `Receipt` will no longer be
@@ -38,6 +38,7 @@ public struct Receipt {
         self.txOutPublicKeyTyped = txOut.publicKey
         self.commitment = txOut.commitment
         self.maskedValue = txOut.maskedValue
+        self.maskedTokenId = txOut.maskedTokenId
         self.confirmationNumber = confirmationNumber
         self.txTombstoneBlockIndex = tombstoneBlockIndex
     }
@@ -68,6 +69,7 @@ public struct Receipt {
         txOutPublicKeyTyped == txOut.publicKey
             && commitment == txOut.commitment
             && maskedValue == txOut.maskedValue
+            && maskedTokenId == txOut.maskedTokenId
     }
 
     func validateConfirmationNumber(accountKey: AccountKey) -> Bool {
@@ -78,15 +80,22 @@ public struct Receipt {
     }
 
     func unmaskValue(accountKey: AccountKey) -> Result<UInt64, InvalidInputError> {
-        guard let value = TxOutUtils.value(
+        unmaskAmount(accountKey: accountKey).map {
+            $0.value
+        }
+    }
+
+    func unmaskAmount(accountKey: AccountKey) -> Result<Amount, InvalidInputError> {
+        guard let amount = TxOutUtils.amount(
             maskedValue: maskedValue,
+            maskedTokenId: maskedTokenId,
             publicKey: txOutPublicKeyTyped,
             viewPrivateKey: accountKey.viewPrivateKey)
         else {
             logger.info("")
             return .failure(InvalidInputError("accountKey does not own Receipt"))
         }
-        return .success(value)
+        return .success(amount)
     }
 
     /// Validates whether or not `Receipt` is well-formed and matches `accountKey`, returning `nil`
@@ -98,21 +107,34 @@ public struct Receipt {
     /// subaddress of the `accountKey`, but not which one.
     @discardableResult
     public func validateAndUnmaskValue(accountKey: AccountKey) -> UInt64? {
+        validateAndUnmaskAmount(accountKey: accountKey)?.value
+    }
+
+    /// Validates whether or not `Receipt` is well-formed and matches `accountKey`, returning `nil`
+    /// if either of these conditions are not met. Otherwise, returns the `Amount` of the `TxOut`
+    /// represented by this `Receipt`. `Amount` is a value and a tokenId
+    ///
+    /// Note: Receipt does not provide enough information to distinguish between subaddresses of an
+    /// `accountKey`, so this function only validates that the `Receipt` was addressed to a
+    /// subaddress of the `accountKey`, but not which one.
+    @discardableResult
+    public func validateAndUnmaskAmount(accountKey: AccountKey) -> Amount? {
         guard validateConfirmationNumber(accountKey: accountKey) else {
             return nil
         }
 
-        guard let value = TxOutUtils.value(
+        guard let amount = TxOutUtils.amount(
                 maskedValue: maskedValue,
+                maskedTokenId: maskedTokenId,
                 publicKey: txOutPublicKeyTyped,
                 viewPrivateKey: accountKey.viewPrivateKey)
         else {
             return nil
         }
 
-        return value
+        return amount
     }
-    
+
     enum ReceivedStatus {
         case notReceived(knownToBeNotReceivedBlockCount: UInt64?)
         case received(block: BlockMetadata)
@@ -135,7 +157,7 @@ extension Receipt: Hashable {}
 extension Receipt {
     init?(_ proto: External_Receipt) {
         guard let txOutPublicKey = RistrettoPublic(proto.publicKey.data),
-              let commitment = Data32(proto.amount.commitment.data),
+              let commitment = Data32(proto.maskedAmount.commitment.data),
               let confirmationNumber = TxOutConfirmationNumber(proto.confirmation)
         else {
             logger.warning(
@@ -147,7 +169,8 @@ extension Receipt {
 
         self.txOutPublicKeyTyped = txOutPublicKey
         self.commitment = commitment
-        self.maskedValue = proto.amount.maskedValue
+        self.maskedValue = proto.maskedAmount.maskedValue
+        self.maskedTokenId = proto.maskedAmount.maskedTokenID
         self.confirmationNumber = confirmationNumber
         self.txTombstoneBlockIndex = proto.tombstoneBlock
     }
@@ -157,8 +180,9 @@ extension External_Receipt {
     init(_ receipt: Receipt) {
         self.init()
         self.publicKey = External_CompressedRistretto(receipt.txOutPublicKey)
-        self.amount.commitment = External_CompressedRistretto(receipt.commitment)
-        self.amount.maskedValue = receipt.maskedValue
+        self.maskedAmount.commitment = External_CompressedRistretto(receipt.commitment)
+        self.maskedAmount.maskedValue = receipt.maskedValue
+        self.maskedAmount.maskedTokenID = receipt.maskedTokenId
         self.confirmation = External_TxOutConfirmationNumber(receipt.confirmationNumber)
         self.tombstoneBlock = receipt.txTombstoneBlockIndex
     }

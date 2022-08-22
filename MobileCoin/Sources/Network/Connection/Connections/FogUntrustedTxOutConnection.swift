@@ -5,19 +5,21 @@
 import Foundation
 import LibMobileCoin
 
-final class FogUntrustedTxOutConnection:
-    Connection<GrpcProtocolConnectionFactory.FogUntrustedTxOutServiceProvider, HttpProtocolConnectionFactory.FogUntrustedTxOutServiceProvider>,
+final class FogUntrustedTxOutConnection: Connection<
+        GrpcProtocolConnectionFactory.FogUntrustedTxOutServiceProvider,
+        HttpProtocolConnectionFactory.FogUntrustedTxOutServiceProvider
+    >,
     FogUntrustedTxOutService
 {
     private let httpFactory: HttpProtocolConnectionFactory
     private let grpcFactory: GrpcProtocolConnectionFactory
-    private let config: ConnectionConfig<FogUrl>
+    private let config: NetworkConfig
     private let targetQueue: DispatchQueue?
 
     init(
         httpFactory: HttpProtocolConnectionFactory,
         grpcFactory: GrpcProtocolConnectionFactory,
-        config: ConnectionConfig<FogUrl>,
+        config: NetworkConfig,
         targetQueue: DispatchQueue?
     ) {
         self.httpFactory = httpFactory
@@ -27,21 +29,22 @@ final class FogUntrustedTxOutConnection:
 
         super.init(
             connectionOptionWrapperFactory: { transportProtocolOption in
+                let rotatedConfig = config.fogUntrustedTxOutConfig()
                 switch transportProtocolOption {
                 case .grpc:
                     return .grpc(
                         grpcService:
                             grpcFactory.makeFogUntrustedTxOutService(
-                                config: config,
+                                config: rotatedConfig,
                                 targetQueue: targetQueue))
                 case .http:
                     return .http(httpService:
                             httpFactory.makeFogUntrustedTxOutService(
-                                config: config,
+                                config: rotatedConfig,
                                 targetQueue: targetQueue))
                 }
             },
-            transportProtocolOption: config.transportProtocolOption,
+            transportProtocolOption: config.fogUntrustedTxOutConfig().transportProtocolOption,
             targetQueue: targetQueue)
     }
 
@@ -51,9 +54,9 @@ final class FogUntrustedTxOutConnection:
     ) {
         switch connectionOptionWrapper {
         case .grpc(let grpcConnection):
-            grpcConnection.getTxOuts(request: request, completion: completion)
+            grpcConnection.getTxOuts(request: request, completion: rotateURLOnError(completion))
         case .http(let httpConnection):
-            httpConnection.getTxOuts(request: request, completion: completion)
+            httpConnection.getTxOuts(request: request, completion: rotateURLOnError(completion))
         }
     }
 }

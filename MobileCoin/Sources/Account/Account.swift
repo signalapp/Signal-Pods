@@ -7,12 +7,16 @@ import Foundation
 final class Account {
     let accountKey: AccountKey
 
-    let fogView = FogView()
+    let fogView: FogView
+
+    let syncCheckerLock: ReadWriteDispatchLock<FogSyncCheckable>
 
     var allTxOutTrackers: [TxOutTracker] = []
 
-    init(accountKey: AccountKeyWithFog) {
+    init(accountKey: AccountKeyWithFog, syncChecker: FogSyncCheckable) {
         self.accountKey = accountKey.accountKey
+        self.syncCheckerLock = .init(syncChecker)
+        self.fogView = FogView(syncChecker: syncCheckerLock)
     }
 
     var publicAddress: PublicAddress {
@@ -42,17 +46,61 @@ final class Account {
         return knowableBlockCount
     }
 
+    @available(*, deprecated, message: "Use cachedBalance(for:TokenId)")
     var cachedBalance: Balance {
+        cachedBalance(for: .MOB)
+    }
+
+    var cachedTxOutTokenIds: Set<TokenId> {
+        Set(allTxOutTrackers
+            .map { $0.knownTxOut.tokenId })
+    }
+
+    func cachedBalance(for tokenId: TokenId) -> Balance {
         let blockCount = knowableBlockCount
         let txOutValues = allTxOutTrackers
             .filter { $0.receivedAndUnspent(asOfBlockCount: blockCount) }
+            .filter { $0.knownTxOut.tokenId == tokenId }
             .map { $0.knownTxOut.value }
-        return Balance(values: txOutValues, blockCount: blockCount)
+        return Balance(values: txOutValues, blockCount: blockCount, tokenId: tokenId)
     }
 
+    var cachedBalances: Balances {
+        let balances = cachedTxOutTokenIds.map {
+            cachedBalance(for: $0)
+        }
+        .reduce(into: [TokenId: Balance](), { result, balance in
+            result[balance.tokenId] = balance
+        })
+        return Balances(balances: balances, blockCount: knowableBlockCount)
+    }
+
+    @available(*, deprecated, message:
+        """
+        Deprecated in favor of `cachedAccountActivity(for:TokenId)` which accepts a TokenId.
+        `cachedAccountActivity` will assume the default TokenId == .MOB // UInt64(0)
+
+        Get a set of all tokenIds that are in TxOuts owned by this account with:
+
+        `MobileCoinClient(...).accountTokenIds // Set<TokenId>`
+        """)
+
     var cachedAccountActivity: AccountActivity {
+        cachedAccountActivity(for: .MOB)
+    }
+
+    func cachedAccountActivity(for tokenId: TokenId) -> AccountActivity {
         let blockCount = knowableBlockCount
-        let txOuts = allTxOutTrackers.compactMap { OwnedTxOut($0, atBlockCount: blockCount) }
+        let txOuts = allTxOutTrackers
+            .compactMap { OwnedTxOut($0, atBlockCount: blockCount) }
+            .filter { $0.tokenId == tokenId }
+        return AccountActivity(txOuts: txOuts, blockCount: blockCount, tokenId: tokenId)
+    }
+
+    var allCachedAccountActivity: AccountActivity {
+        let blockCount = knowableBlockCount
+        let txOuts = allTxOutTrackers
+            .compactMap { OwnedTxOut($0, atBlockCount: blockCount) }
         return AccountActivity(txOuts: txOuts, blockCount: blockCount)
     }
 
@@ -68,14 +116,17 @@ final class Account {
         return (txOuts: txOuts, blockCount: knowableBlockCount)
     }
 
-    var unspentTxOuts: [KnownTxOut] {
-        unspentTxOutsAndBlockCount.txOuts
+    func unspentTxOuts(tokenId: TokenId) -> [KnownTxOut] {
+        unspentTxOutsAndBlockCount(tokenId: tokenId).txOuts
     }
 
-    var unspentTxOutsAndBlockCount: (txOuts: [KnownTxOut], blockCount: UInt64) {
+    func unspentTxOutsAndBlockCount(
+        tokenId: TokenId
+    ) -> (txOuts: [KnownTxOut], blockCount: UInt64) {
         let knowableBlockCount = self.knowableBlockCount
         let txOuts = allTxOutTrackers
             .filter { $0.receivedAndUnspent(asOfBlockCount: knowableBlockCount) }
+            .filter { $0.knownTxOut.tokenId == tokenId }
             .map { $0.knownTxOut }
         return (txOuts: txOuts, blockCount: knowableBlockCount)
     }
@@ -151,13 +202,16 @@ final class Account {
 
 extension Account {
     /// - Returns: `.failure` if `accountKey` doesn't use Fog.
-    static func make(accountKey: AccountKey) -> Result<Account, InvalidInputError> {
+    static func make(
+        accountKey: AccountKey,
+        syncChecker: FogSyncCheckable
+    ) -> Result<Account, InvalidInputError> {
         guard let accountKey = AccountKeyWithFog(accountKey: accountKey) else {
             let errorMessage = "Accounts without fog URLs are not currently supported."
             logger.error(errorMessage, logFunction: false)
             return .failure(InvalidInputError(errorMessage))
         }
-        return .success(Account(accountKey: accountKey))
+        return .success(Account(accountKey: accountKey, syncChecker: syncChecker))
     }
 }
 

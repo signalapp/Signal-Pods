@@ -16,7 +16,8 @@ protocol ServiceProvider {
 
     func fogReportService(
         for fogReportUrl: FogUrl,
-        completion: @escaping (FogReportService) -> Void)
+        completion: @escaping (FogReportService) -> Void
+    )
 
     func setTransportProtocolOption(_ transportProtocolOption: TransportProtocol.Option)
 

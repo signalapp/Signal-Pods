@@ -7,7 +7,7 @@
 // For information on using the generated types, please see the documentation:
 //   https://github.com/apple/swift-protobuf/
 
-// Copyright (c) 2018-2021 The MobileCoin Foundation
+// Copyright (c) 2018-2022 The MobileCoin Foundation
 
 // Consensus service data types used by both client-facing and peer-facing APIs.
 
@@ -60,6 +60,10 @@ public enum ConsensusCommon_ProposeTxResult: SwiftProtobuf.Enum {
   case unsortedInputs // = 39
   case missingMemo // = 40
   case memosNotAllowed // = 41
+  case tokenNotYetConfigured // = 42
+  case missingMaskedTokenID // = 43
+  case maskedTokenIDNotAllowed // = 44
+  case unsortedOutputs // = 45
   case UNRECOGNIZED(Int)
 
   public init() {
@@ -101,6 +105,10 @@ public enum ConsensusCommon_ProposeTxResult: SwiftProtobuf.Enum {
     case 39: self = .unsortedInputs
     case 40: self = .missingMemo
     case 41: self = .memosNotAllowed
+    case 42: self = .tokenNotYetConfigured
+    case 43: self = .missingMaskedTokenID
+    case 44: self = .maskedTokenIDNotAllowed
+    case 45: self = .unsortedOutputs
     default: self = .UNRECOGNIZED(rawValue)
     }
   }
@@ -140,6 +148,10 @@ public enum ConsensusCommon_ProposeTxResult: SwiftProtobuf.Enum {
     case .unsortedInputs: return 39
     case .missingMemo: return 40
     case .memosNotAllowed: return 41
+    case .tokenNotYetConfigured: return 42
+    case .missingMaskedTokenID: return 43
+    case .maskedTokenIDNotAllowed: return 44
+    case .unsortedOutputs: return 45
     case .UNRECOGNIZED(let i): return i
     }
   }
@@ -184,6 +196,10 @@ extension ConsensusCommon_ProposeTxResult: CaseIterable {
     .unsortedInputs,
     .missingMemo,
     .memosNotAllowed,
+    .tokenNotYetConfigured,
+    .missingMaskedTokenID,
+    .maskedTokenIDNotAllowed,
+    .unsortedOutputs,
   ]
 }
 
@@ -202,7 +218,15 @@ public struct ConsensusCommon_LastBlockInfoResponse {
   public var mobMinimumFee: UInt64 = 0
 
   /// A map of token id -> minimum fee
-  public var minimumFees: Dictionary<UInt32,UInt64> = [:]
+  public var minimumFees: Dictionary<UInt64,UInt64> = [:]
+
+  /// Current network_block version, appropriate for new transactions.
+  ///
+  /// Note that if the server was just reconfigured, this may be HIGHER than
+  /// the highest block version in the ledger, so for clients this is a better
+  /// source of truth than the local ledger, if the client might possibly be
+  /// creating the first transaction after a reconfigure / redeploy.
+  public var networkBlockVersion: UInt32 = 0
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -250,6 +274,9 @@ public struct ConsensusCommon_ProposeTxResponse {
 
   //// The number of blocks in the ledger at the time the request was received.
   public var blockCount: UInt64 = 0
+
+  //// The block version which is in effect right now
+  public var blockVersion: UInt32 = 0
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -303,6 +330,10 @@ extension ConsensusCommon_ProposeTxResult: SwiftProtobuf._ProtoNameProviding {
     39: .same(proto: "UnsortedInputs"),
     40: .same(proto: "MissingMemo"),
     41: .same(proto: "MemosNotAllowed"),
+    42: .same(proto: "TokenNotYetConfigured"),
+    43: .same(proto: "MissingMaskedTokenId"),
+    44: .same(proto: "MaskedTokenIdNotAllowed"),
+    45: .same(proto: "UnsortedOutputs"),
   ]
 }
 
@@ -312,6 +343,7 @@ extension ConsensusCommon_LastBlockInfoResponse: SwiftProtobuf.Message, SwiftPro
     1: .same(proto: "index"),
     2: .standard(proto: "mob_minimum_fee"),
     3: .standard(proto: "minimum_fees"),
+    4: .standard(proto: "network_block_version"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -322,7 +354,8 @@ extension ConsensusCommon_LastBlockInfoResponse: SwiftProtobuf.Message, SwiftPro
       switch fieldNumber {
       case 1: try { try decoder.decodeSingularUInt64Field(value: &self.index) }()
       case 2: try { try decoder.decodeSingularUInt64Field(value: &self.mobMinimumFee) }()
-      case 3: try { try decoder.decodeMapField(fieldType: SwiftProtobuf._ProtobufMap<SwiftProtobuf.ProtobufUInt32,SwiftProtobuf.ProtobufUInt64>.self, value: &self.minimumFees) }()
+      case 3: try { try decoder.decodeMapField(fieldType: SwiftProtobuf._ProtobufMap<SwiftProtobuf.ProtobufUInt64,SwiftProtobuf.ProtobufUInt64>.self, value: &self.minimumFees) }()
+      case 4: try { try decoder.decodeSingularUInt32Field(value: &self.networkBlockVersion) }()
       default: break
       }
     }
@@ -336,7 +369,10 @@ extension ConsensusCommon_LastBlockInfoResponse: SwiftProtobuf.Message, SwiftPro
       try visitor.visitSingularUInt64Field(value: self.mobMinimumFee, fieldNumber: 2)
     }
     if !self.minimumFees.isEmpty {
-      try visitor.visitMapField(fieldType: SwiftProtobuf._ProtobufMap<SwiftProtobuf.ProtobufUInt32,SwiftProtobuf.ProtobufUInt64>.self, value: self.minimumFees, fieldNumber: 3)
+      try visitor.visitMapField(fieldType: SwiftProtobuf._ProtobufMap<SwiftProtobuf.ProtobufUInt64,SwiftProtobuf.ProtobufUInt64>.self, value: self.minimumFees, fieldNumber: 3)
+    }
+    if self.networkBlockVersion != 0 {
+      try visitor.visitSingularUInt32Field(value: self.networkBlockVersion, fieldNumber: 4)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -345,6 +381,7 @@ extension ConsensusCommon_LastBlockInfoResponse: SwiftProtobuf.Message, SwiftPro
     if lhs.index != rhs.index {return false}
     if lhs.mobMinimumFee != rhs.mobMinimumFee {return false}
     if lhs.minimumFees != rhs.minimumFees {return false}
+    if lhs.networkBlockVersion != rhs.networkBlockVersion {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -425,6 +462,7 @@ extension ConsensusCommon_ProposeTxResponse: SwiftProtobuf.Message, SwiftProtobu
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "result"),
     2: .standard(proto: "block_count"),
+    3: .standard(proto: "block_version"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -435,6 +473,7 @@ extension ConsensusCommon_ProposeTxResponse: SwiftProtobuf.Message, SwiftProtobu
       switch fieldNumber {
       case 1: try { try decoder.decodeSingularEnumField(value: &self.result) }()
       case 2: try { try decoder.decodeSingularUInt64Field(value: &self.blockCount) }()
+      case 3: try { try decoder.decodeSingularUInt32Field(value: &self.blockVersion) }()
       default: break
       }
     }
@@ -447,12 +486,16 @@ extension ConsensusCommon_ProposeTxResponse: SwiftProtobuf.Message, SwiftProtobu
     if self.blockCount != 0 {
       try visitor.visitSingularUInt64Field(value: self.blockCount, fieldNumber: 2)
     }
+    if self.blockVersion != 0 {
+      try visitor.visitSingularUInt32Field(value: self.blockVersion, fieldNumber: 3)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: ConsensusCommon_ProposeTxResponse, rhs: ConsensusCommon_ProposeTxResponse) -> Bool {
     if lhs.result != rhs.result {return false}
     if lhs.blockCount != rhs.blockCount {return false}
+    if lhs.blockVersion != rhs.blockVersion {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

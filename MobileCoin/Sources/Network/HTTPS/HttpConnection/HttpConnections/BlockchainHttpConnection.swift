@@ -24,7 +24,9 @@ final class BlockchainHttpConnection: HttpConnection, BlockchainService {
         completion:
             @escaping (Result<ConsensusCommon_LastBlockInfoResponse, ConnectionError>) -> Void
     ) {
-        performCall(GetLastBlockInfoCall(client: client, requester: requester), completion: completion)
+        performCall(
+                GetLastBlockInfoCall(client: client, requester: requester),
+                completion: completion)
     }
 }
 

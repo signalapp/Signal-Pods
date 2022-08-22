@@ -9,8 +9,13 @@ public struct HTTPResponse {
     let url: URL?
     let allHeaderFields: [AnyHashable: Any]
     let responseData: Data?
-    
-    public init(statusCode: Int, url: URL?, allHeaderFields: [AnyHashable: Any], responseData: Data?) {
+
+    public init(
+        statusCode: Int,
+        url: URL?,
+        allHeaderFields: [AnyHashable: Any],
+        responseData: Data?
+    ) {
         self.statusCode = statusCode
         self.url = url
         self.allHeaderFields = allHeaderFields

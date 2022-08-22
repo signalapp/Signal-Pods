@@ -1,6 +1,6 @@
 {
   "name": "LibMobileCoin",
-  "version": "1.2.0-pre10",
+  "version": "1.2.2",
   "summary": "A library for communicating with MobileCoin network",
   "authors": "MobileCoin",
   "homepage": "https://www.mobilecoin.com/",
@@ -9,7 +9,7 @@
   },
   "source": {
     "git": "https://github.com/mobilecoinofficial/libmobilecoin-ios-artifacts.git",
-    "tag": "v1.2.0-pre10",
+    "tag": "v1.2.2",
     "submodules": true
   },
   "platforms": {
@@ -19,7 +19,6 @@
   "swift_versions": "5.2",
   "pod_target_xcconfig": {
     "GCC_OPTIMIZATION_LEVEL": "z",
-    "LLVM_LTO": "YES",
     "ENABLE_BITCODE": "YES",
     "SUPPORTS_MACCATALYST": "YES",
     "HEADER_SEARCH_PATHS": "$(PODS_TARGET_SRCROOT)/Artifacts/include",

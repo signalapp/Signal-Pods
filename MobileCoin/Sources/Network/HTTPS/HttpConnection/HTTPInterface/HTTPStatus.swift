@@ -6,7 +6,7 @@ import Foundation
 
 /// Encapsulates the result of a HTTP call.
 public struct HTTPStatus {
-    
+
     /// The REST status code
     public var code: Int
 
@@ -32,7 +32,7 @@ extension HTTPStatus: CustomStringConvertible {
     public var description: String {
         codeDescription + (["", message].compactMap({ $0 }).joined(separator: " "))
     }
-    
+
     private var codeDescription: String {
         switch code {
         case 200:

@@ -20,7 +20,10 @@ struct TransactionStatusChecker {
         self.fogUntrustedTxOutFetcher =
             FogUntrustedTxOutFetcher(fogUntrustedTxOutService: fogUntrustedTxOutService)
         self.fogKeyImageChecker =
-            FogKeyImageChecker(fogKeyImageService: fogKeyImageService, targetQueue: targetQueue)
+            FogKeyImageChecker(
+                    fogKeyImageService: fogKeyImageService,
+                    targetQueue: targetQueue,
+                    syncChecker: account.accessWithoutLocking.syncCheckerLock)
     }
 
     func checkStatus(

@@ -7,7 +7,7 @@ import LibMobileCoin
 
 final class FogViewHttpConnection: AttestedHttpConnection, FogViewService {
     private let client: AuthHttpCallableClientWrapper<FogView_FogViewAPIRestClient>
-    private let requester : RestApiRequester
+    private let requester: RestApiRequester
 
     init(
         config: AttestedConnectionConfig<FogUrl>,
@@ -17,7 +17,9 @@ final class FogViewHttpConnection: AttestedHttpConnection, FogViewService {
         rngContext: Any? = nil
     ) {
         self.requester = requester
-        self.client = AuthHttpCallableClientWrapper(client: FogView_FogViewAPIRestClient(), requester: self.requester)
+        self.client = AuthHttpCallableClientWrapper(
+                client: FogView_FogViewAPIRestClient(),
+                requester: self.requester)
         super.init(
             client: self.client,
             requester: self.requester,
@@ -33,7 +35,7 @@ final class FogViewHttpConnection: AttestedHttpConnection, FogViewService {
         completion: @escaping (Result<FogView_QueryResponse, ConnectionError>) -> Void
     ) {
         performAttestedCall(
-            EnclaveRequestCall(client: client, requester:requester),
+            EnclaveRequestCall(client: client, requester: requester),
             requestAad: requestAad,
             request: request,
             completion: completion)

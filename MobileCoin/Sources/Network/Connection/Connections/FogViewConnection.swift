@@ -5,12 +5,15 @@
 import Foundation
 import LibMobileCoin
 
-final class FogViewConnection:
-    Connection<GrpcProtocolConnectionFactory.FogViewServiceProvider, HttpProtocolConnectionFactory.FogViewServiceProvider>, FogViewService
+final class FogViewConnection: Connection<
+        GrpcProtocolConnectionFactory.FogViewServiceProvider,
+        HttpProtocolConnectionFactory.FogViewServiceProvider
+    >,
+    FogViewService
 {
     private let httpFactory: HttpProtocolConnectionFactory
     private let grpcFactory: GrpcProtocolConnectionFactory
-    private let config: AttestedConnectionConfig<FogUrl>
+    private let config: NetworkConfig
     private let targetQueue: DispatchQueue?
     private let rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)?
     private let rngContext: Any?
@@ -18,7 +21,7 @@ final class FogViewConnection:
     init(
         httpFactory: HttpProtocolConnectionFactory,
         grpcFactory: GrpcProtocolConnectionFactory,
-        config: AttestedConnectionConfig<FogUrl>,
+        config: NetworkConfig,
         targetQueue: DispatchQueue?,
         rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)? = securityRNG,
         rngContext: Any? = nil
@@ -29,14 +32,16 @@ final class FogViewConnection:
         self.targetQueue = targetQueue
         self.rng = rng
         self.rngContext = rngContext
+
         super.init(
             connectionOptionWrapperFactory: { transportProtocolOption in
+                let rotatedConfig = config.fogViewConfig()
                 switch transportProtocolOption {
                 case .grpc:
                     return .grpc(
                         grpcService:
                             grpcFactory.makeFogViewService(
-                                config: config,
+                                config: rotatedConfig,
                                 targetQueue: targetQueue,
                                 rng: rng,
                                 rngContext: rngContext))
@@ -44,13 +49,13 @@ final class FogViewConnection:
                     return .http(
                         httpService:
                             httpFactory.makeFogViewService(
-                                config: config,
+                                config: rotatedConfig,
                                 targetQueue: targetQueue,
                                 rng: rng,
                                 rngContext: rngContext))
                 }
             },
-            transportProtocolOption: config.transportProtocolOption,
+            transportProtocolOption: config.fogViewConfig().transportProtocolOption,
             targetQueue: targetQueue)
     }
 
@@ -61,9 +66,15 @@ final class FogViewConnection:
     ) {
         switch connectionOptionWrapper {
         case .grpc(let grpcConnection):
-            grpcConnection.query(requestAad: requestAad, request: request, completion: completion)
+            grpcConnection.query(
+                    requestAad: requestAad,
+                    request: request,
+                    completion: rotateURLOnError(completion))
         case .http(let httpConnection):
-            httpConnection.query(requestAad: requestAad, request: request, completion: completion)
+            httpConnection.query(
+                    requestAad: requestAad,
+                    request: request,
+                    completion: rotateURLOnError(completion))
         }
     }
 }

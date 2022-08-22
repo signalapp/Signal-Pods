@@ -61,7 +61,7 @@ extension FogReportManager {
         }
 
         mutating func reportServer(for reportUrl: FogUrl) -> FogReportServer {
-            return networkConfigToServer[reportUrl] ?? {
+            networkConfigToServer[reportUrl] ?? {
                 let reportServer = FogReportServer(serialExclusionQueue: sharedSerialExclusionQueue)
                 networkConfigToServer[reportUrl] = reportServer
                 return reportServer

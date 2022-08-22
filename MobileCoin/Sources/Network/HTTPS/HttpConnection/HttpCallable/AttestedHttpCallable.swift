@@ -21,7 +21,7 @@ protocol AttestedHttpCallable: HttpCallable {
     func processResponse(
         response: Response,
         attestAkeCipher: AttestAke.Cipher
-    ) -> Result<(responseAad: InnerResponseAad, response: InnerResponse),
+    ) -> Result < (responseAad: InnerResponseAad, response: InnerResponse),
                 AttestedHttpConnectionError>
 }
 
@@ -37,7 +37,7 @@ extension AttestedHttpCallable where InnerRequestAad == (), InnerRequest == Requ
 
 extension AttestedHttpCallable where InnerResponseAad == (), InnerResponse == Response {
     func processResponse(response: Response, attestAkeCipher: AttestAke.Cipher)
-        -> Result<(responseAad: InnerResponseAad, response: InnerResponse),
+        -> Result < (responseAad: InnerResponseAad, response: InnerResponse),
                   AttestedHttpConnectionError>
     {
         .success((responseAad: (), response: response))
@@ -69,7 +69,7 @@ extension AttestedHttpCallable
     func processResponse(
         response: Attest_Message,
         attestAkeCipher: AttestAke.Cipher
-    ) -> Result<(responseAad: InnerResponseAad, response: InnerResponse),
+    ) -> Result < (responseAad: InnerResponseAad, response: InnerResponse),
                 AttestedHttpConnectionError>
     {
         guard response.aad == Data() else {
@@ -119,7 +119,7 @@ extension AttestedHttpCallable
     func processResponse(
         response: Attest_Message,
         attestAkeCipher: AttestAke.Cipher
-    ) -> Result<(responseAad: InnerResponseAad, response: InnerResponse),
+    ) -> Result < (responseAad: InnerResponseAad, response: InnerResponse),
                 AttestedHttpConnectionError>
     {
         guard let responseAad = try? InnerResponseAad(serializedData: response.aad) else {

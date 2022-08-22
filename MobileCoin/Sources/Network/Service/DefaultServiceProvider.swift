@@ -1,6 +1,7 @@
 //
 //  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
+// swiftlint:disable function_body_length
 
 import Foundation
 
@@ -25,44 +26,49 @@ final class DefaultServiceProvider: ServiceProvider {
     ) {
         self.grpcConnectionFactory = grpcConnectionFactory
         self.httpConnectionFactory = httpConnectionFactory
-        
-        let inner = Inner(httpFactory:httpConnectionFactory, grpcFactory:grpcConnectionFactory, targetQueue: targetQueue, transportProtocolOption: networkConfig.transportProtocol.option)
+
+        let inner = Inner(
+                httpFactory: httpConnectionFactory,
+                grpcFactory: grpcConnectionFactory,
+                targetQueue: targetQueue,
+                transportProtocolOption: networkConfig.transportProtocol.option)
+
         self.inner = .init(inner, targetQueue: targetQueue)
 
         self.consensus = ConsensusConnection(
             httpFactory: self.httpConnectionFactory,
             grpcFactory: self.grpcConnectionFactory,
-            config: networkConfig.consensus,
+            config: networkConfig,
             targetQueue: targetQueue)
         self.blockchain = BlockchainConnection(
             httpFactory: self.httpConnectionFactory,
             grpcFactory: self.grpcConnectionFactory,
-            config: networkConfig.blockchain,
+            config: networkConfig,
             targetQueue: targetQueue)
-            self.view = FogViewConnection(
+        self.view = FogViewConnection(
             httpFactory: self.httpConnectionFactory,
             grpcFactory: self.grpcConnectionFactory,
-            config: networkConfig.fogView,
+            config: networkConfig,
             targetQueue: targetQueue)
         self.merkleProof = FogMerkleProofConnection(
             httpFactory: self.httpConnectionFactory,
             grpcFactory: self.grpcConnectionFactory,
-            config: networkConfig.fogMerkleProof,
+            config: networkConfig,
             targetQueue: targetQueue)
         self.keyImage = FogKeyImageConnection(
             httpFactory: self.httpConnectionFactory,
             grpcFactory: self.grpcConnectionFactory,
-            config: networkConfig.fogKeyImage,
+            config: networkConfig,
             targetQueue: targetQueue)
         self.block = FogBlockConnection(
             httpFactory: self.httpConnectionFactory,
             grpcFactory: self.grpcConnectionFactory,
-            config: networkConfig.fogBlock,
+            config: networkConfig,
             targetQueue: targetQueue)
         self.untrustedTxOut = FogUntrustedTxOutConnection(
             httpFactory: self.httpConnectionFactory,
             grpcFactory: self.grpcConnectionFactory,
-            config: networkConfig.fogUntrustedTxOut,
+            config: networkConfig,
             targetQueue: targetQueue)
     }
 
@@ -119,10 +125,10 @@ extension DefaultServiceProvider {
 
         init(
             httpFactory: HttpProtocolConnectionFactory,
-            grpcFactory:GrpcProtocolConnectionFactory,
+            grpcFactory: GrpcProtocolConnectionFactory,
             targetQueue: DispatchQueue?,
-            transportProtocolOption: TransportProtocol.Option)
-        {
+            transportProtocolOption: TransportProtocol.Option
+        ) {
             self.httpFactory = httpFactory
             self.grpcFactory = grpcFactory
             self.targetQueue = targetQueue

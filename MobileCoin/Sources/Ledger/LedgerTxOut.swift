@@ -16,8 +16,10 @@ struct LedgerTxOut: TxOutProtocol {
         self.block = block
     }
 
+    var encryptedMemo: Data66 { txOut.encryptedMemo }
     var commitment: Data32 { txOut.commitment }
     var maskedValue: UInt64 { txOut.maskedValue }
+    var maskedTokenId: Data { txOut.maskedTokenId }
     var targetKey: RistrettoPublic { txOut.targetKey }
     var publicKey: RistrettoPublic { txOut.publicKey }
 
@@ -32,6 +34,21 @@ extension LedgerTxOut: Hashable {}
 extension LedgerTxOut {
     init?(_ txOutRecord: FogView_TxOutRecord, viewKey: RistrettoPrivate) {
         guard let partialTxOut = PartialTxOut(txOutRecord, viewKey: viewKey) else {
+            return nil
+        }
+        let globalIndex = txOutRecord.txOutGlobalIndex
+        let block = BlockMetadata(
+            index: txOutRecord.blockIndex,
+            timestamp: txOutRecord.timestampDate)
+        self.init(partialTxOut, globalIndex: globalIndex, block: block)
+    }
+}
+
+extension LedgerTxOut {
+    init?(_ fogTxOutRecordBytes: Data, viewKey: RistrettoPrivate) {
+        guard
+            let txOutRecord = try? FogView_TxOutRecord(contiguousBytes: fogTxOutRecordBytes),
+            let partialTxOut = PartialTxOut(txOutRecord, viewKey: viewKey) else {
             return nil
         }
         let globalIndex = txOutRecord.txOutGlobalIndex

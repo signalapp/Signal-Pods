@@ -51,7 +51,7 @@ struct DefaultTxOutSelectionStrategy: TxOutSelectionStrategy {
     }
 
     func estimateTotalFee(
-        toSendAmount amount: UInt64,
+        toSendAmount amount: Amount,
         feeStrategy: FeeStrategy,
         txOuts: [SelectionTxOut],
         maxInputsPerTransaction: Int
@@ -64,7 +64,7 @@ struct DefaultTxOutSelectionStrategy: TxOutSelectionStrategy {
     }
 
     func selectTransactionInputs(
-        amount: UInt64,
+        amount: Amount,
         fee: UInt64,
         fromTxOuts txOuts: [SelectionTxOut],
         maxInputs: Int
@@ -78,7 +78,7 @@ struct DefaultTxOutSelectionStrategy: TxOutSelectionStrategy {
     }
 
     func selectTransactionInputs(
-        amount: UInt64,
+        amount: Amount,
         feeStrategy: FeeStrategy,
         fromTxOuts txOuts: [SelectionTxOut],
         maxInputs: Int
@@ -91,7 +91,7 @@ struct DefaultTxOutSelectionStrategy: TxOutSelectionStrategy {
     }
 
     fileprivate func selectTransactionInputs(
-        amount: UInt64,
+        amount: Amount,
         selectionFeeLevel: SelectionFeeLevel,
         fromTxOuts txOuts: [SelectionTxOut],
         maxInputs: Int
@@ -132,7 +132,7 @@ struct DefaultTxOutSelectionStrategy: TxOutSelectionStrategy {
     }
 
     fileprivate func selectTxOuts(
-        toSendAmount amount: UInt64,
+        toSendAmount amount: Amount,
         feeStrategy: FeeStrategy,
         fromTxOuts txOuts: [SelectionTxOut],
         maxInputsPerTransaction: Int
@@ -156,13 +156,13 @@ struct DefaultTxOutSelectionStrategy: TxOutSelectionStrategy {
     /// Estimates the total amount of fees needed in order to send the specified amount, including
     /// the fees for any requisite defragmentation transactions.
     fileprivate func estimateTotalFee(
-        toSendAmount amount: UInt64,
+        toSendAmount amount: Amount,
         selectionFeeLevel: SelectionFeeLevel,
         txOuts: [SelectionTxOut],
         maxInputsPerTransaction: Int
     ) -> Result<(totalFee: UInt64, requiresDefrag: Bool), TxOutSelectionError> {
         // Ensure that amount + fee is non-zero so that we select at least 1 input.
-        let amount = amount != 0 || !selectionFeeLevel.isZeroFee ? amount : 1
+        let amount = amount.value != 0 || !selectionFeeLevel.isZeroFee ? amount.value : 1
         // Clamp maxInputs between 1 and McConstants.MAX_INPUTS, inclusive.
         let maxInputsPerTransaction = max(1, min(maxInputsPerTransaction, McConstants.MAX_INPUTS))
 
@@ -217,7 +217,7 @@ struct DefaultTxOutSelectionStrategy: TxOutSelectionStrategy {
     /// then the selectedTxOuts will not be bounded by the maximum number of inputs per transaction,
     /// and may require defragmentation steps in order to send all the TxOuts selected.
     fileprivate func selectTxOuts(
-        toSendAmount amount: UInt64,
+        toSendAmount amount: Amount,
         selectionFeeLevel: SelectionFeeLevel,
         fromTxOuts txOuts: [SelectionTxOut],
         maxInputsPerTransaction: Int,
@@ -225,7 +225,7 @@ struct DefaultTxOutSelectionStrategy: TxOutSelectionStrategy {
         allowDefrag: Bool
     ) -> Result<(txOutIds: [Int], totalFee: UInt64), TxOutSelectionError> {
         // Ensure that amount + fee is non-zero so that we select at least 1 input.
-        let amount = amount != 0 || !selectionFeeLevel.isZeroFee ? amount : 1
+        let amountValue = amount.value != 0 || !selectionFeeLevel.isZeroFee ? amount.value : 1
         // Clamp maxInputs between 1 and McConstants.MAX_INPUTS, inclusive.
         let maxInputsPerTransaction = max(1, min(maxInputsPerTransaction, McConstants.MAX_INPUTS))
 
@@ -251,7 +251,8 @@ struct DefaultTxOutSelectionStrategy: TxOutSelectionStrategy {
                 // Insufficient balance to cover amount + fee.
                 logger.error(
                     "Select TxOuts failed: insufficient TxOuts. amountToSend: " +
-                        "\(redacting: amount), txOut values: \(redacting: txOuts.map { $0.value })",
+                        "\(redacting: amountValue), " +
+                        "txOut values: \(redacting: txOuts.map { $0.value })",
                     logFunction: false)
                 return .failure(.insufficientTxOuts())
             }
@@ -326,7 +327,7 @@ struct DefaultTxOutSelectionStrategy: TxOutSelectionStrategy {
             // Use safeCompare in case summing the input values would overflow UInt64.max.
             if UInt64.safeCompare(
                 sumOfValues: selectedTxOuts.map { $0.1.value },
-                isGreaterThanOrEqualToSumOfValues: [amount, totalFee])
+                isGreaterThanOrEqualToSumOfValues: [amountValue, totalFee])
             {
                 // Success! Sum value of selectedTxOuts is enough to cover amount + fee.
                 break
@@ -354,7 +355,7 @@ struct DefaultTxOutSelectionStrategy: TxOutSelectionStrategy {
     /// ultimately send the specified amount. If no defragmentation is required, then an empty array
     /// is returns.
     func selectInputsForDefragTransactions(
-        toSendAmount amount: UInt64,
+        toSendAmount amount: Amount,
         feeStrategy: FeeStrategy,
         fromTxOuts txOuts: [SelectionTxOut],
         maxInputsPerTransaction: Int
@@ -457,7 +458,7 @@ struct DefaultTxOutSelectionStrategy: TxOutSelectionStrategy {
     fileprivate func fillFinalInputInputSlots(
         selectedTxOuts: inout [(Int, SelectionTxOut)],
         availableTxOuts: inout [(Int, SelectionTxOut)],
-        amountToSend: UInt64,
+        amountToSend: Amount,
         selectionFeeLevel: SelectionFeeLevel,
         maxInputsPerTransaction: Int,
         maxTotalFee: UInt64
@@ -497,7 +498,7 @@ struct DefaultTxOutSelectionStrategy: TxOutSelectionStrategy {
             if fee <= maxTotalFee
                 && UInt64.safeCompare(
                     sumOfValues: (selectedTxOuts + txOutsToAdd).map { $0.1.value },
-                    isLessThanOrEqualToSumOfValues: [amountToSend, fee, UInt64.max])
+                    isLessThanOrEqualToSumOfValues: [amountToSend.value, fee, UInt64.max])
             {
                 break
             }

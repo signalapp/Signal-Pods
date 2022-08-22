@@ -26,28 +26,28 @@ protocol TxOutSelectionStrategy {
     ) -> Result<UInt64, AmountTransferableError>
 
     func estimateTotalFee(
-        toSendAmount amount: UInt64,
+        toSendAmount amount: Amount,
         feeStrategy: FeeStrategy,
         txOuts: [SelectionTxOut],
         maxInputsPerTransaction: Int
     ) -> Result<(totalFee: UInt64, requiresDefrag: Bool), TxOutSelectionError>
 
     func selectTransactionInputs(
-        amount: UInt64,
+        amount: Amount,
         fee: UInt64,
         fromTxOuts txOuts: [SelectionTxOut],
         maxInputs: Int
     ) -> Result<[Int], TransactionInputSelectionError>
 
     func selectTransactionInputs(
-        amount: UInt64,
+        amount: Amount,
         feeStrategy: FeeStrategy,
         fromTxOuts txOuts: [SelectionTxOut],
         maxInputs: Int
     ) -> Result<(inputIds: [Int], fee: UInt64), TransactionInputSelectionError>
 
     func selectInputsForDefragTransactions(
-        toSendAmount amount: UInt64,
+        toSendAmount amount: Amount,
         feeStrategy: FeeStrategy,
         fromTxOuts txOuts: [SelectionTxOut],
         maxInputsPerTransaction: Int
@@ -55,7 +55,7 @@ protocol TxOutSelectionStrategy {
 }
 
 extension TxOutSelectionStrategy {
-    func amountTransferable(feeStrategy: FeeStrategy, txOuts: [SelectionTxOut])
+    func amountTransferable(tokenId: TokenId, feeStrategy: FeeStrategy, txOuts: [SelectionTxOut])
         -> Result<UInt64, AmountTransferableError>
     {
         amountTransferable(
@@ -65,7 +65,7 @@ extension TxOutSelectionStrategy {
     }
 
     func estimateTotalFee(
-        toSendAmount amount: UInt64,
+        toSendAmount amount: Amount,
         feeStrategy: FeeStrategy,
         txOuts: [SelectionTxOut]
     ) -> Result<(totalFee: UInt64, requiresDefrag: Bool), TxOutSelectionError> {
@@ -77,7 +77,7 @@ extension TxOutSelectionStrategy {
     }
 
     func selectTransactionInputs(
-        amount: UInt64,
+        amount: Amount,
         fee: UInt64,
         fromTxOuts txOuts: [SelectionTxOut]
     ) -> Result<[Int], TransactionInputSelectionError> {
@@ -89,7 +89,7 @@ extension TxOutSelectionStrategy {
     }
 
     func selectTransactionInputs(
-        amount: UInt64,
+        amount: Amount,
         feeStrategy: FeeStrategy,
         fromTxOuts txOuts: [SelectionTxOut]
     ) -> Result<(inputIds: [Int], fee: UInt64), TransactionInputSelectionError> {
@@ -101,7 +101,7 @@ extension TxOutSelectionStrategy {
     }
 
     func selectInputsForDefragTransactions(
-        toSendAmount amount: UInt64,
+        toSendAmount amount: Amount,
         feeStrategy: FeeStrategy,
         fromTxOuts txOuts: [SelectionTxOut]
     ) -> Result<[(inputIds: [Int], fee: UInt64)], TxOutSelectionError> {

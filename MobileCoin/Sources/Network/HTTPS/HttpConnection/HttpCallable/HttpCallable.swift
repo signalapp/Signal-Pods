@@ -7,13 +7,14 @@ import Foundation
 public protocol HttpCallable {
     associatedtype Request
     associatedtype Response
-    
+
     var requester: RestApiRequester { get }
-    
+
     func call(
         request: Request,
         callOptions: HTTPCallOptions?,
-        completion: @escaping (HttpCallResult<Response>) -> Void)
+        completion: @escaping (HttpCallResult<Response>) -> Void
+    )
 }
 
 extension HttpCallable {

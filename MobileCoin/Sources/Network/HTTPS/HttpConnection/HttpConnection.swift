@@ -47,7 +47,10 @@ class HttpConnection: ConnectionProtocol {
         inner.accessAsync {
             logger.info("Performing call... url: \($0.url)", logFunction: false)
 
-            call.call(request: request, callOptions: $0.requestCallOptions(), completion: performCallCallback)
+            call.call(
+                    request: request,
+                    callOptions: $0.requestCallOptions(),
+                    completion: performCallCallback)
         }
     }
 
@@ -81,13 +84,16 @@ extension HttpConnection {
         func processResponse<Response>(callResult: HttpCallResult<Response>)
             -> Result<Response, ConnectionError>
         {
-            
+
             guard let status = callResult.status else {
+                let message = "Invalid parameters, request not made."
                 return .failure(.connectionFailure(
-                    ["Invalid parameters, request not made.",
-                     callResult.error?.localizedDescription].compactMap({$0}).joined(separator: " ")))
+                    [message, callResult.error?.localizedDescription]
+                     .compactMap({ $0 })
+                     .joined(separator: " "))
+                )
             }
-            
+
             guard [403, 401].contains(status.code) == false else {
                 return .failure(.authorizationFailure("url: \(url)"))
             }

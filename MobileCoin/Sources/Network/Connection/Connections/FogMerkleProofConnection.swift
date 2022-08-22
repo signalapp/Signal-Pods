@@ -5,20 +5,23 @@
 import Foundation
 import LibMobileCoin
 
-final class FogMerkleProofConnection:
-    Connection<GrpcProtocolConnectionFactory.FogMerkleProofServiceProvider, HttpProtocolConnectionFactory.FogMerkleProofServiceProvider>, FogMerkleProofService
+final class FogMerkleProofConnection: Connection<
+        GrpcProtocolConnectionFactory.FogMerkleProofServiceProvider,
+        HttpProtocolConnectionFactory.FogMerkleProofServiceProvider
+    >,
+    FogMerkleProofService
 {
     private let httpFactory: HttpProtocolConnectionFactory
     private let grpcFactory: GrpcProtocolConnectionFactory
-    private let config: AttestedConnectionConfig<FogUrl>
+    private let config: NetworkConfig
     private let targetQueue: DispatchQueue?
     private let rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)?
-    private let rngContext: Any? 
+    private let rngContext: Any?
 
     init(
         httpFactory: HttpProtocolConnectionFactory,
         grpcFactory: GrpcProtocolConnectionFactory,
-        config: AttestedConnectionConfig<FogUrl>,
+        config: NetworkConfig,
         targetQueue: DispatchQueue?,
         rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)? = securityRNG,
         rngContext: Any? = nil
@@ -32,25 +35,26 @@ final class FogMerkleProofConnection:
 
         super.init(
             connectionOptionWrapperFactory: { transportProtocolOption in
+                let rotatedConfig = config.fogMerkleProofConfig()
                 switch transportProtocolOption {
                 case .grpc:
                     return .grpc(
                         grpcService:
                             grpcFactory.makeFogMerkleProofService(
-                                config: config,
+                                config: rotatedConfig,
                                 targetQueue: targetQueue,
                                 rng: rng,
                                 rngContext: rngContext))
                 case .http:
                     return .http(httpService:
                             httpFactory.makeFogMerkleProofService(
-                                config: config,
+                                config: rotatedConfig,
                                 targetQueue: targetQueue,
                                 rng: rng,
                                 rngContext: rngContext))
                 }
             },
-            transportProtocolOption: config.transportProtocolOption,
+            transportProtocolOption: config.fogMerkleProofConfig().transportProtocolOption,
             targetQueue: targetQueue)
     }
 
@@ -60,9 +64,9 @@ final class FogMerkleProofConnection:
     ) {
         switch connectionOptionWrapper {
         case .grpc(let grpcConnection):
-            grpcConnection.getOutputs(request: request, completion: completion)
+            grpcConnection.getOutputs(request: request, completion: rotateURLOnError(completion))
         case .http(let httpConnection):
-            httpConnection.getOutputs(request: request, completion: completion)
+            httpConnection.getOutputs(request: request, completion: rotateURLOnError(completion))
         }
     }
 }

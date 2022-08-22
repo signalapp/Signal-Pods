@@ -4,4 +4,4 @@
 
 import Foundation
 
-class GrpcProtocolConnectionFactory : ProtocolConnectionFactory {}
+class GrpcProtocolConnectionFactory: ProtocolConnectionFactory {}

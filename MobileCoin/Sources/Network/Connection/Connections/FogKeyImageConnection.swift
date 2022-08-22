@@ -5,12 +5,15 @@
 import Foundation
 import LibMobileCoin
 
-final class FogKeyImageConnection:
-    Connection<GrpcProtocolConnectionFactory.FogKeyImageServiceProvider, HttpProtocolConnectionFactory.FogKeyImageServiceProvider>, FogKeyImageService
+final class FogKeyImageConnection: Connection<
+        GrpcProtocolConnectionFactory.FogKeyImageServiceProvider,
+        HttpProtocolConnectionFactory.FogKeyImageServiceProvider
+    >,
+    FogKeyImageService
 {
     private let httpFactory: HttpProtocolConnectionFactory
     private let grpcFactory: GrpcProtocolConnectionFactory
-    private let config: AttestedConnectionConfig<FogUrl>
+    private let config: NetworkConfig
     private let targetQueue: DispatchQueue?
     private let rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)?
     private let rngContext: Any?
@@ -18,7 +21,7 @@ final class FogKeyImageConnection:
     init(
         httpFactory: HttpProtocolConnectionFactory,
         grpcFactory: GrpcProtocolConnectionFactory,
-        config: AttestedConnectionConfig<FogUrl>,
+        config: NetworkConfig,
         targetQueue: DispatchQueue?,
         rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)? = securityRNG,
         rngContext: Any? = nil
@@ -32,25 +35,26 @@ final class FogKeyImageConnection:
 
         super.init(
             connectionOptionWrapperFactory: { transportProtocolOption in
+                let rotatedConfig = config.fogKeyImageConfig()
                 switch transportProtocolOption {
                 case .grpc:
                     return .grpc(
                         grpcService:
                             grpcFactory.makeFogKeyImageService(
-                                config: config,
+                                config: rotatedConfig,
                                 targetQueue: targetQueue,
                                 rng: rng,
                                 rngContext: rngContext))
                 case .http:
                     return .http(httpService:
                             httpFactory.makeFogKeyImageService(
-                                config: config,
+                                config: rotatedConfig,
                                 targetQueue: targetQueue,
                                 rng: rng,
                                 rngContext: rngContext))
                 }
             },
-            transportProtocolOption: config.transportProtocolOption,
+            transportProtocolOption: config.fogKeyImageConfig().transportProtocolOption,
             targetQueue: targetQueue)
     }
 
@@ -60,9 +64,13 @@ final class FogKeyImageConnection:
     ) {
         switch connectionOptionWrapper {
         case .grpc(let grpcConnection):
-            grpcConnection.checkKeyImages(request: request, completion: completion)
+            grpcConnection.checkKeyImages(
+                    request: request,
+                    completion: rotateURLOnError(completion))
         case .http(let httpConnection):
-            httpConnection.checkKeyImages(request: request, completion: completion)
+            httpConnection.checkKeyImages(
+                    request: request,
+                    completion: rotateURLOnError(completion))
         }
     }
 }

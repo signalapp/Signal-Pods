@@ -8,6 +8,8 @@ import Foundation
 import LibMobileCoin
 
 final class FogView {
+    var syncCheckerLock: ReadWriteDispatchLock<FogSyncCheckable>
+
     private let rngSet = FogRngSet()
     private(set) var unscannedMissedBlocksRanges: [Range<UInt64>] = []
 
@@ -20,6 +22,10 @@ final class FogView {
 
     var allRngRecordsKnownBlockCount: UInt64 {
         rngSet.rngRecordsKnownBlockCount
+    }
+
+    init(syncChecker: ReadWriteDispatchLock<FogSyncCheckable>) {
+        self.syncCheckerLock = syncChecker
     }
 
     func queryRequest(targetBlockCount: UInt64?, numOutputs: PositiveInt)
@@ -53,6 +59,10 @@ final class FogView {
         accountKey: AccountKey
     ) -> Result<(newTxOuts: [KnownTxOut], nextRoundTargetBlockCount: UInt64?), ConnectionError> {
         logger.info("Processing Fog View query response...", logFunction: false)
+
+        syncCheckerLock.writeSync({
+           $0.setViewsHighestKnownBlock(queryResponse.highestProcessedBlockCount)
+        })
 
         return rngSet.processRngs(queryResponse: queryResponse, accountKey: accountKey).map {
             processMissedBlockRanges(queryResponse.missedBlockRanges)

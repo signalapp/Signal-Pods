@@ -60,6 +60,13 @@ The workspace can be built with `make`.
     gem install bundler
     ```
 
+1. Install pre-commit
+
+    ```
+    brew install pre-commit
+    pre-commit install
+    ```
+
 1. Build the MobileCoin Swift SDK
 
     ```

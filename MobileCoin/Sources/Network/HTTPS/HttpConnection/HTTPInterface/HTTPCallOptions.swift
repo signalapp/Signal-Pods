@@ -5,9 +5,9 @@
 import Foundation
 
 public struct HTTPCallOptions {
-    var headers: [String : String]
-    var timeoutIntervalForRequest : TimeInterval?
-    var timeoutIntervalForResource : TimeInterval?
+    var headers: [String: String]
+    var timeoutIntervalForRequest: TimeInterval?
+    var timeoutIntervalForResource: TimeInterval?
 }
 
 extension HTTPCallOptions {

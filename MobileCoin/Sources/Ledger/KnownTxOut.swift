@@ -6,30 +6,45 @@ import Foundation
 
 struct KnownTxOut: TxOutProtocol {
     private let ledgerTxOut: LedgerTxOut
-    let value: UInt64
+    let amount: Amount
     let keyImage: KeyImage
     let subaddressIndex: UInt64
+    let recoverableMemo: RecoverableMemo
+    let sharedSecret: RistrettoPrivate
 
     init?(_ ledgerTxOut: LedgerTxOut, accountKey: AccountKey) {
-        guard let value = ledgerTxOut.value(accountKey: accountKey),
+        guard let amount = ledgerTxOut.amount(accountKey: accountKey),
               let (subaddressIndex, keyImage) = ledgerTxOut.keyImage(accountKey: accountKey),
+              let sharedSecret = TxOutUtils.sharedSecret(
+                                                viewPrivateKey: accountKey.viewPrivateKey,
+                                                publicKey: ledgerTxOut.publicKey),
               let commitment = TxOutUtils.reconstructCommitment(
-                                                   maskedValue: ledgerTxOut.maskedValue,
-                                                   publicKey: ledgerTxOut.publicKey,
-                                                   viewPrivateKey: accountKey.viewPrivateKey)
+                                                    maskedValue: ledgerTxOut.maskedValue,
+                                                    publicKey: ledgerTxOut.publicKey,
+                                                    viewPrivateKey: accountKey.viewPrivateKey)
         else {
             return nil
         }
 
+        self.recoverableMemo = TxOutMemoParser.parse(
+                                            encryptedPayload: ledgerTxOut.encryptedMemo,
+                                            accountKey: accountKey,
+                                            txOutKeys: ledgerTxOut.keys)
+
         self.commitment = commitment
         self.ledgerTxOut = ledgerTxOut
-        self.value = value
+        self.amount = amount
         self.keyImage = keyImage
         self.subaddressIndex = subaddressIndex
+        self.sharedSecret = sharedSecret
     }
 
+    var value: UInt64 { amount.value }
+    var tokenId: TokenId { amount.tokenId }
+    var encryptedMemo: Data66 { ledgerTxOut.encryptedMemo }
     var commitment: Data32
     var maskedValue: UInt64 { ledgerTxOut.maskedValue }
+    var maskedTokenId: Data { ledgerTxOut.maskedTokenId }
     var targetKey: RistrettoPublic { ledgerTxOut.targetKey }
     var publicKey: RistrettoPublic { ledgerTxOut.publicKey }
     var block: BlockMetadata { ledgerTxOut.block }

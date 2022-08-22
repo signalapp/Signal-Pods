@@ -6,6 +6,7 @@ import Foundation
 
 class Connection<GrpcService: ConnectionProtocol, HttpService: ConnectionProtocol> {
     private let inner: SerialDispatchLock<Inner>
+    private var transportProtocolOption: TransportProtocol.Option
 
     private let connectionOptionWrapperFactory: (TransportProtocol.Option)
         -> ConnectionOptionWrapper<GrpcService, HttpService>
@@ -16,13 +17,20 @@ class Connection<GrpcService: ConnectionProtocol, HttpService: ConnectionProtoco
         transportProtocolOption: TransportProtocol.Option,
         targetQueue: DispatchQueue?
     ) {
+        self.transportProtocolOption = transportProtocolOption
         self.connectionOptionWrapperFactory = connectionOptionWrapperFactory
         let connectionOptionWrapper = connectionOptionWrapperFactory(transportProtocolOption)
         let inner = Inner(connectionOptionWrapper: connectionOptionWrapper)
         self.inner = .init(inner, targetQueue: targetQueue)
     }
 
+    func rotateConnection() {
+        let connectionOptionWrapper = connectionOptionWrapperFactory(self.transportProtocolOption)
+        inner.accessAsync { $0.connectionOptionWrapper = connectionOptionWrapper }
+    }
+
     func setTransportProtocolOption(_ transportProtocolOption: TransportProtocol.Option) {
+        self.transportProtocolOption = transportProtocolOption
         let connectionOptionWrapper = connectionOptionWrapperFactory(transportProtocolOption)
         inner.accessAsync { $0.connectionOptionWrapper = connectionOptionWrapper }
     }
@@ -34,6 +42,22 @@ class Connection<GrpcService: ConnectionProtocol, HttpService: ConnectionProtoco
     var connectionOptionWrapper: ConnectionOptionWrapper<GrpcService, HttpService> {
         inner.accessWithoutLocking.connectionOptionWrapper
     }
+
+    func rotateURLOnError<T>(
+        _ completion: @escaping (Result<T, ConnectionError>) -> Void
+    ) -> (Result<T, ConnectionError>) -> Void {
+        { [weak self] result in
+            switch result {
+            case .success:
+                completion(result)
+            case .failure:
+                logger.debug("rotating config on error")
+                completion(result)
+                self?.rotateConnection()
+            }
+        }
+    }
+
 }
 
 extension Connection {

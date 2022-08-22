@@ -20,6 +20,11 @@ extension InvalidInputError: CustomStringConvertible {
     }
 }
 
+public enum BalanceUpdateError: Error {
+    case connectionError(ConnectionError)
+    case fogSyncError(FogSyncError)
+}
+
 public enum ConnectionError: Error {
     case connectionFailure(String)
     case authorizationFailure(String)
@@ -137,6 +142,19 @@ extension DefragTransactionPreparationError: CustomStringConvertible {
     }
 }
 
+public struct SubmitTransactionError: Error {
+    public let submissionError: TransactionSubmissionError
+    public let consensusBlockCount: UInt64?
+}
+
+extension SubmitTransactionError: CustomStringConvertible {
+    public var description: String {
+        "Submit Transaction Error: " +
+        "Consensus Block Count == \(consensusBlockCount?.description ?? "nil"), " +
+        "\(submissionError)"
+    }
+}
+
 public enum TransactionSubmissionError: Error {
     case connectionError(ConnectionError)
     case invalidTransaction(String = String())
@@ -219,16 +237,17 @@ public struct SecurityError: Error {
 
 extension SecurityError: CustomStringConvertible {
     static var nilPublicKey = """
-        the public key could not be extracted (this can happen if the public key algorithm is not supported).
+        the public key could not be extracted \
+        (this can happen if the public key algorithm is not supported).
     """
-    
+
     public var description: String {
         guard let osstatus = status else { return "Security Error Code - \(message ?? "Unknown")" }
         if #available(iOS 11.3, *) {
-            return "Security Error Code - \(osstatus): \(SecCopyErrorMessageString(osstatus, nil) ?? "Unknown" as CFString)"
+            return "Security Error Code - \(osstatus): " +
+                   "\(SecCopyErrorMessageString(osstatus, nil) ?? "Unknown" as CFString)"
         } else {
             return "Security Error Code - \(osstatus) ... see Apple Security Framework SecBase.h"
         }
     }
 }
-

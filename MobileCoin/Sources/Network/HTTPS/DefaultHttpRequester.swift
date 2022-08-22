@@ -7,22 +7,22 @@ import Foundation
 public class DefaultHttpRequester: NSObject, HttpRequester {
     private var fogTrustRoots: SecSSLCertificates?
     private var consensusTrustRoots: SecSSLCertificates?
-    
+
     private var pinnedKeys: [SecKey] {
-        [fogTrustRoots, consensusTrustRoots].compactMap {
-            $0?.publicKeys
-        }.flatMap { $0 }
+        [fogTrustRoots, consensusTrustRoots]
+            .compactMap { $0?.publicKeys }
+            .flatMap { $0 }
     }
-    
+
     static let certPinningEnabled = true
 
-    static let defaultConfiguration : URLSessionConfiguration = {
+    static let defaultConfiguration: URLSessionConfiguration = {
         let config = URLSessionConfiguration.default
         config.timeoutIntervalForRequest = 40
         config.timeoutIntervalForResource = 40
         return config
     }()
-    
+
     private static let operationQueue: OperationQueue = {
         let queue = OperationQueue()
         queue.underlyingQueue = .global()
@@ -30,11 +30,14 @@ public class DefaultHttpRequester: NSObject, HttpRequester {
     }()
 
     private lazy var session: URLSession = {
-       URLSession(configuration: DefaultHttpRequester.defaultConfiguration, delegate: self, delegateQueue: Self.operationQueue)
+       URLSession(
+            configuration: DefaultHttpRequester.defaultConfiguration,
+            delegate: self,
+            delegateQueue: Self.operationQueue)
     }()
-    
+
     override public init() { }
-    
+
     public func request(
         url: URL,
         method: HTTPMethod,
@@ -64,11 +67,11 @@ public class DefaultHttpRequester: NSObject, HttpRequester {
         }
         task.resume()
     }
-    
+
     public func setConsensusTrustRoots(_ trustRoots: SecSSLCertificates?) {
         consensusTrustRoots = trustRoots
     }
-    
+
     public func setFogTrustRoots(_ trustRoots: SecSSLCertificates?) {
         fogTrustRoots = trustRoots
     }
@@ -77,11 +80,20 @@ public class DefaultHttpRequester: NSObject, HttpRequester {
 extension DefaultHttpRequester {
     private typealias ChainOfTrustKeyMatch = (match: Bool, index: Int, key: SecKey)
     private typealias ChainOfTrustKey = (index: Int, key: SecKey)
-    
-    public typealias URLAuthenticationChallengeCompletion = (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
 
-    func urlSession(didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping URLAuthenticationChallengeCompletion) {
-        guard let trust = challenge.protectionSpace.serverTrust, SecTrustGetCertificateCount(trust) > 0 else {
+    public typealias URLAuthenticationChallengeCompletion = (
+        URLSession.AuthChallengeDisposition,
+        URLCredential?
+    ) -> Void
+
+    func urlSession(
+        didReceive challenge: URLAuthenticationChallenge,
+        completionHandler: @escaping URLAuthenticationChallengeCompletion
+    ) {
+        guard
+            let trust = challenge.protectionSpace.serverTrust,
+            SecTrustGetCertificateCount(trust) > 0
+        else {
             // This case will probably get handled by ATS, but still...
             completionHandler(.cancelAuthenticationChallenge, nil)
             return
@@ -93,43 +105,46 @@ extension DefaultHttpRequester {
         }
 
         /// Compare pinned & server public keys
-        let matches : [ChainOfTrustKey]
-        matches = trust.publicKeyTrustChain.enumerated().map { chain -> ChainOfTrustKeyMatch in
-            let serverCertificateKey = chain.element
-            let match = pinnedKeys.contains(serverCertificateKey)
-            return (match: match, index: chain.offset, key: serverCertificateKey)
-        }.filter {
-            $0.match
-        }.map {
-            (index: $0.index, key: $0.key)
-        }
-        
+        let matches: [ChainOfTrustKey]
+        let trustChainEnumerated = trust.publicKeyTrustChain.enumerated()
+        matches = trustChainEnumerated
+            .map { chain -> ChainOfTrustKeyMatch in
+                let serverCertificateKey = chain.element
+                let match = pinnedKeys.contains(serverCertificateKey)
+                return (match: match, index: chain.offset, key: serverCertificateKey)
+            }
+            .filter { $0.match }
+            .map { (index: $0.index, key: $0.key) }
+
         switch matches.isNotEmpty {
         case true:
             let indexes = matches.map { "\($0.index)" }
             let keys = matches.compactMap { $0.key.data }.map { "\($0.base64EncodedString() )" }
-            let message = "\nSuccess: pinned certificates matched with server's chain of trust at index(es): "
-                            + "[\(indexes.joined(separator: ", "))] "
-                            + "\nwith key(s): \(keys.joined(separator: ", \n"))"
+            let message = """
+                    Success: pinned certificates matched with server's chain of trust
+                    at index(es): [\(indexes.joined(separator: ", "))] \
+                    with key(s): \(keys.joined(separator: ", \n"))
+                    """
             logger.debug(message)
             completionHandler(.useCredential, URLCredential(trust: trust))
         case false:
-            /// Failing here means that the public key of the server does not match the stored one. This can
-            /// either indicate a MITM attack, or that the backend certificate and the private key changed,
-            /// most likely due to expiration.
+            /// Failing here means that the public key of the server does not match the stored one.
+            /// This can either indicate a MITM attack, or that the backend certificate and the 
+            /// private key changed, most likely due to expiration.
             logger.error("Failure: no pinned certificate matched in the server's chain of trust")
             completionHandler(.cancelAuthenticationChallenge, nil)
         }
     }
-    
+
 }
 
 extension DefaultHttpRequester: URLSessionDelegate {
 
-    public func urlSession(_ session: URLSession,
-                           didReceive challenge: URLAuthenticationChallenge,
-                           completionHandler: @escaping URLAuthenticationChallengeCompletion)
-    {
+    public func urlSession(
+        _ session: URLSession,
+        didReceive challenge: URLAuthenticationChallenge,
+        completionHandler: @escaping URLAuthenticationChallengeCompletion
+    ) {
         urlSession(didReceive: challenge, completionHandler: completionHandler)
     }
 
@@ -137,11 +152,12 @@ extension DefaultHttpRequester: URLSessionDelegate {
 
 extension DefaultHttpRequester: URLSessionTaskDelegate {
 
-    public func urlSession(_ session: URLSession,
-                           task: URLSessionTask,
-                           didReceive challenge: URLAuthenticationChallenge,
-                           completionHandler: @escaping URLAuthenticationChallengeCompletion)
-    {
+    public func urlSession(
+        _ session: URLSession,
+        task: URLSessionTask,
+        didReceive challenge: URLAuthenticationChallenge,
+        completionHandler: @escaping URLAuthenticationChallengeCompletion
+    ) {
         urlSession(didReceive: challenge, completionHandler: completionHandler)
     }
 

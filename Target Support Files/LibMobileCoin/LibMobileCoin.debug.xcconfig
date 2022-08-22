@@ -21,7 +21,6 @@ GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1
 HEADER_SEARCH_PATHS = $(inherited) $(PODS_TARGET_SRCROOT)/Artifacts/include
 LIBMOBILECOIN_LIB_IF_NEEDED = $(PODS_TARGET_SRCROOT)/Artifacts/target/$(CARGO_BUILD_TARGET)/release/libmobilecoin.a
 LIBRARY_SEARCH_PATHS = $(inherited) "${DT_TOOLCHAIN_DIR}/usr/lib/swift/${PLATFORM_NAME}" /usr/lib/swift
-LLVM_LTO = YES
 OTHER_LDFLAGS = $(LIBMOBILECOIN_LIB_IF_NEEDED) $(inherited) -u _mc_string_free -framework "SwiftProtobuf"
 OTHER_SWIFT_FLAGS = $(inherited) -D COCOAPODS
 PODS_BUILD_DIR = ${BUILD_DIR}

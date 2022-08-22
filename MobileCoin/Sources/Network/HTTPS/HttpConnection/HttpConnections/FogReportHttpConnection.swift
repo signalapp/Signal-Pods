@@ -19,7 +19,10 @@ final class FogReportHttpConnection: ArbitraryHttpConnection, FogReportService {
         request: Report_ReportRequest,
         completion: @escaping (Result<Report_ReportResponse, ConnectionError>) -> Void
     ) {
-        performCall(GetReportsCall(client: client, requester: requester), request: request, completion: completion)
+        performCall(
+                GetReportsCall(client: client, requester: requester),
+                request: request,
+                completion: completion)
     }
 }
 

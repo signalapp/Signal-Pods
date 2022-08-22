@@ -7,44 +7,68 @@ import LibMobileCoin
 
 struct TransactionSubmitter {
     private let consensusService: ConsensusService
-    private let feeFetcher: BlockchainFeeFetcher
+    private let metaFetcher: BlockchainMetaFetcher
+    private let syncCheckerLock: ReadWriteDispatchLock<FogSyncCheckable>
 
-    init(consensusService: ConsensusService, feeFetcher: BlockchainFeeFetcher) {
+    init(
+        consensusService: ConsensusService,
+        metaFetcher: BlockchainMetaFetcher,
+        syncChecker: ReadWriteDispatchLock<FogSyncCheckable>
+    ) {
         self.consensusService = consensusService
-        self.feeFetcher = feeFetcher
+        self.metaFetcher = metaFetcher
+        self.syncCheckerLock = syncChecker
     }
 
     func submitTransaction(
         _ transaction: Transaction,
-        completion: @escaping (Result<(), TransactionSubmissionError>) -> Void
+        completion: @escaping (Result<UInt64, SubmitTransactionError>) -> Void
     ) {
         logger.info(
             "Submitting transaction... transaction: " +
             "\(redacting: transaction.serializedData.base64EncodedString())",
             logFunction: false)
+
         consensusService.proposeTx(External_Tx(transaction)) {
             switch $0 {
             case .success(let response):
-                let responseResult = self.processResponse(response)
+                // Consensus Block Index Cannot be less than 0
+                let blockCount = response.blockCount > 0 ? response.blockCount - 1 : 0
+
+                syncCheckerLock.writeSync {
+                    $0.setConsensusHighestKnownBlock(blockCount)
+                }
+
+                let responseResult = self.processResponse(response, blockCount).mapError {
+                    SubmitTransactionError(submissionError: $0, consensusBlockCount: blockCount)
+                }
+
                 if case .txFeeError = response.result {
-                    self.feeFetcher.resetCache {
+                    self.metaFetcher.resetCache {
+                        completion(responseResult)
+                    }
+                } else if metaFetcher.cachedBlockVersion() ?? 0 != response.blockVersion {
+                    self.metaFetcher.resetCache {
                         completion(responseResult)
                     }
                 } else {
                     completion(responseResult)
                 }
             case .failure(let error):
-                completion(.failure(.connectionError(error)))
+                completion(.failure(
+                    SubmitTransactionError(
+                        submissionError: .connectionError(error),
+                        consensusBlockCount: nil)))
             }
         }
     }
 
-    func processResponse(_ response: ConsensusCommon_ProposeTxResponse)
-        -> Result<(), TransactionSubmissionError>
+    func processResponse(_ response: ConsensusCommon_ProposeTxResponse, _ blockIndex: UInt64)
+        -> Result<UInt64, TransactionSubmissionError>
     {
         switch response.result {
         case .ok:
-            return .success(())
+            return .success(blockIndex)
         case .inputsProofsLengthMismatch, .noInputs, .tooManyInputs,
              .insufficientInputSignatures, .invalidInputSignature,
              .invalidTransactionSignature, .invalidRangeProof, .insufficientRingSize,
@@ -53,8 +77,12 @@ struct TransactionSubmitter {
              .duplicateKeyImages, .duplicateOutputPublicKey, .missingTxOutMembershipProof,
              .invalidTxOutMembershipProof, .invalidRistrettoPublicKey,
              .tombstoneBlockExceeded, .invalidLedgerContext, .memosNotAllowed,
-             .membershipProofValidationError, .keyError, .unsortedInputs:
-            return .failure(.invalidTransaction())
+             .membershipProofValidationError, .keyError, .unsortedInputs,
+             .tokenNotYetConfigured, .missingMaskedTokenID, .maskedTokenIDNotAllowed,
+             .unsortedOutputs:
+            return .failure(.invalidTransaction(
+                        "Error Code: \(response.result) " +
+                        "(\(response.result.rawValue))"))
         case .txFeeError:
             return .failure(.feeError())
         case .tombstoneBlockTooFar:
@@ -82,4 +110,12 @@ struct TransactionSubmitter {
                 "Consensus.proposeTx returned unrecognized result: \(resultCode)")))
         }
     }
+}
+
+extension ConsensusCommon_ProposeTxResult {
+    /**
+     * The name of the enumeration (as written in case).
+     */
+    var name: String { String(describing: self) }
+
 }

@@ -52,6 +52,28 @@ extension MobileCoinUrlProtocol {
 }
 
 struct MobileCoinUrl<Scheme: MobileCoin.Scheme>: MobileCoinUrlProtocol {
+
+    // convenience method that takes an array of url strings and returns a
+    // resulting array of MobileCoinUrl only if all strings are valid
+    static func make(strings: [String]) -> Result<[MobileCoinUrl], InvalidInputError> {
+        guard !strings.isEmpty else {
+            return .failure(InvalidInputError("String url array cannot be empty"))
+        }
+
+        var mcUrls: [MobileCoinUrl] = []
+        for string in strings {
+            let result = make(string: string)
+            switch result {
+            case .success(let mcUrl):
+                mcUrls.append(mcUrl)
+            case .failure(let error):
+                return .failure(error)
+            }
+        }
+
+        return .success(mcUrls)
+    }
+
     static func make(string: String) -> Result<MobileCoinUrl, InvalidInputError> {
         guard let url = URL(string: string) else {
             return .failure(InvalidInputError("Could not parse url: \(string)"))

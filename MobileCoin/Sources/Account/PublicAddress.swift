@@ -139,6 +139,12 @@ extension External_PublicAddress {
 }
 
 extension PublicAddress {
+    func calculateAddressHash() -> AddressHash? {
+        AccountKeyUtils.publicAddressShortHash(publicAddress: self)
+    }
+}
+
+extension PublicAddress {
     struct FogInfo {
         fileprivate static func make(reportUrl: String, reportId: String, authoritySig: Data)
             -> Result<FogInfo, InvalidInputError>

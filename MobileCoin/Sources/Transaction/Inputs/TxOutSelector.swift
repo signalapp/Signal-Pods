@@ -64,16 +64,17 @@ final class TxOutSelector {
         self.txOutSelectionStrategy = txOutSelectionStrategy
     }
 
-    func amountTransferable(feeStrategy: FeeStrategy, txOuts: [KnownTxOut])
+    func amountTransferable(tokenId: TokenId, feeStrategy: FeeStrategy, txOuts: [KnownTxOut])
         -> Result<UInt64, AmountTransferableError>
     {
         txOutSelectionStrategy.amountTransferable(
+            tokenId: tokenId,
             feeStrategy: feeStrategy,
             txOuts: txOuts.map(SelectionTxOut.init))
     }
 
     func estimateTotalFee(
-        toSendAmount amount: UInt64,
+        toSendAmount amount: Amount,
         feeStrategy: FeeStrategy,
         txOuts: [KnownTxOut]
     ) -> Result<(totalFee: UInt64, requiresDefrag: Bool), TxOutSelectionError> {
@@ -84,7 +85,7 @@ final class TxOutSelector {
     }
 
     func selectTransactionInputs(
-        amount: UInt64,
+        amount: Amount,
         fee: UInt64,
         fromTxOuts txOuts: [KnownTxOut]
     ) -> Result<[KnownTxOut], TransactionInputSelectionError> {
@@ -96,7 +97,7 @@ final class TxOutSelector {
     }
 
     func selectTransactionInputs(
-        amount: UInt64,
+        amount: Amount,
         feeStrategy: FeeStrategy,
         fromTxOuts txOuts: [KnownTxOut]
     ) -> Result<(inputs: [KnownTxOut], fee: UInt64), TransactionInputSelectionError> {
@@ -108,7 +109,7 @@ final class TxOutSelector {
     }
 
     func selectInputsForDefragTransactions(
-        toSendAmount amount: UInt64,
+        toSendAmount amount: Amount,
         feeStrategy: FeeStrategy,
         fromTxOuts txOuts: [KnownTxOut]
     ) -> Result<[(inputs: [KnownTxOut], fee: UInt64)], TxOutSelectionError> {

@@ -5,7 +5,10 @@
 import Foundation
 
 typealias ConnectionWrapperFactory = (TransportProtocol.Option)
-                                    -> ConnectionOptionWrapper<ConnectionProtocol, ConnectionProtocol>
+                                    -> ConnectionOptionWrapper<
+                                        ConnectionProtocol,
+                                        ConnectionProtocol
+                                    >
 
 public struct TransportProtocol {
     public static let grpc = TransportProtocol(option: .grpc)
@@ -21,7 +24,7 @@ extension TransportProtocol {
     }
 }
 
-extension TransportProtocol : CustomStringConvertible {
+extension TransportProtocol: CustomStringConvertible {
     public var description: String {
         switch option {
         case .grpc:
@@ -32,8 +35,8 @@ extension TransportProtocol : CustomStringConvertible {
     }
 }
 
-extension TransportProtocol : Equatable { }
-extension TransportProtocol : Hashable { }
+extension TransportProtocol: Equatable { }
+extension TransportProtocol: Hashable { }
 
 extension TransportProtocol {
     var certificateValidator: SSLCertificateValidator {

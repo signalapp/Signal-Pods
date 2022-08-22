@@ -4,10 +4,10 @@
 
 import Foundation
 
-public struct SecSSLCertificates : SSLCertificates {
+public struct SecSSLCertificates: SSLCertificates {
     public let trustRootsBytes: [Data]
     public let publicKeys: [SecKey]
-    
+
     public init?(trustRootBytes bytes: [Data]) throws {
         switch Self.trustRoots(from: bytes) {
         case .success(let keys):
@@ -26,4 +26,3 @@ public struct SecSSLCertificates : SSLCertificates {
         }
     }
 }
-

@@ -30,11 +30,16 @@ extension External_KeyImage {
     }
 }
 
-extension External_Amount {
-    init<CommitmentType: DataConvertible>(commitment: CommitmentType, maskedValue: UInt64) {
+extension External_MaskedAmount {
+    init<CommitmentType: DataConvertible>(
+        commitment: CommitmentType,
+        maskedValue: UInt64,
+        maskedTokenId: Data
+    ) {
         self.init()
         self.commitment = External_CompressedRistretto(commitment)
         self.maskedValue = maskedValue
+        self.maskedTokenID = maskedTokenId
     }
 }
 

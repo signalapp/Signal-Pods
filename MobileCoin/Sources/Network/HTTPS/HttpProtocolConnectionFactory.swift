@@ -5,12 +5,12 @@
 import Foundation
 
 class HttpProtocolConnectionFactory: ProtocolConnectionFactory {
-    let requester : HttpRequester
-    
+    let requester: HttpRequester
+
     init(httpRequester: HttpRequester?) {
         self.requester = httpRequester ?? DefaultHttpRequester()
     }
-    
+
     func makeConsensusService(
         config: AttestedConnectionConfig<ConsensusUrl>,
         targetQueue: DispatchQueue?,
@@ -24,7 +24,7 @@ class HttpProtocolConnectionFactory: ProtocolConnectionFactory {
                         rng: rng,
                         rngContext: rngContext)
     }
-    
+
     func makeBlockchainService(
         config: ConnectionConfig<ConsensusUrl>,
         targetQueue: DispatchQueue?
@@ -34,7 +34,7 @@ class HttpProtocolConnectionFactory: ProtocolConnectionFactory {
                         requester: RestApiRequester(requester: requester, baseUrl: config.url),
                         targetQueue: targetQueue)
     }
-    
+
     func makeFogViewService(
         config: AttestedConnectionConfig<FogUrl>,
         targetQueue: DispatchQueue?,
@@ -48,7 +48,7 @@ class HttpProtocolConnectionFactory: ProtocolConnectionFactory {
                 rng: rng,
                 rngContext: rngContext)
     }
-        
+
     func makeFogMerkleProofService(
         config: AttestedConnectionConfig<FogUrl>,
         targetQueue: DispatchQueue?,
@@ -62,7 +62,7 @@ class HttpProtocolConnectionFactory: ProtocolConnectionFactory {
                         rng: rng,
                         rngContext: rngContext)
     }
-    
+
     func makeFogKeyImageService(
         config: AttestedConnectionConfig<FogUrl>,
         targetQueue: DispatchQueue?,
@@ -76,7 +76,7 @@ class HttpProtocolConnectionFactory: ProtocolConnectionFactory {
                         rng: rng,
                         rngContext: rngContext)
     }
-    
+
     func makeFogBlockService(
         config: ConnectionConfig<FogUrl>,
         targetQueue: DispatchQueue?
@@ -86,7 +86,7 @@ class HttpProtocolConnectionFactory: ProtocolConnectionFactory {
                         requester: RestApiRequester(requester: requester, baseUrl: config.url),
                         targetQueue: targetQueue)
     }
-    
+
     func makeFogUntrustedTxOutService(
         config: ConnectionConfig<FogUrl>,
         targetQueue: DispatchQueue?
@@ -108,4 +108,3 @@ class HttpProtocolConnectionFactory: ProtocolConnectionFactory {
             targetQueue: targetQueue)
     }
 }
-

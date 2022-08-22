@@ -7,7 +7,7 @@
 // For information on using the generated types, please see the documentation:
 //   https://github.com/apple/swift-protobuf/
 
-// Copyright (c) 2018-2021 The MobileCoin Foundation
+// Copyright (c) 2018-2022 The MobileCoin Foundation
 
 // MUST BE KEPT IN SYNC WITH RUST CODE!
 
@@ -23,6 +23,49 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
   struct _2: SwiftProtobuf.ProtobufAPIVersion_2 {}
   typealias Version = _2
 }
+
+//// A list of "known" token id's and their names.
+////
+//// Note that this is not an exhaustive list and clients should gracefully handle
+//// the scenario that they receive a tx out with a token id they don't know about yet.
+////
+//// If changing this, please keep it in sync with the list defined in
+//// mc-transaction-core in the tokens module.
+public enum External_KnownTokenId: SwiftProtobuf.Enum {
+  public typealias RawValue = Int
+  case mob // = 0
+  case UNRECOGNIZED(Int)
+
+  public init() {
+    self = .mob
+  }
+
+  public init?(rawValue: Int) {
+    switch rawValue {
+    case 0: self = .mob
+    default: self = .UNRECOGNIZED(rawValue)
+    }
+  }
+
+  public var rawValue: Int {
+    switch self {
+    case .mob: return 0
+    case .UNRECOGNIZED(let i): return i
+    }
+  }
+
+}
+
+#if swift(>=4.2)
+
+extension External_KnownTokenId: CaseIterable {
+  // The compiler won't synthesize support with the UNRECOGNIZED case.
+  public static var allCases: [External_KnownTokenId] = [
+    .mob,
+  ]
+}
+
+#endif  // swift(>=4.2)
 
 //// A Ristretto private key.
 public struct External_RistrettoPrivate {
@@ -70,6 +113,32 @@ public struct External_Ed25519Signature {
   // methods supported on all messages.
 
   public var data: Data = Data()
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
+public struct External_Ed25519MultiSig {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var signatures: [External_Ed25519Signature] = []
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
+public struct External_Ed25519SignerSet {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var signers: [External_Ed25519Public] = []
+
+  public var threshold: UInt32 = 0
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -224,47 +293,6 @@ public struct External_RootEntropy {
   public init() {}
 }
 
-//// A ViewKey is a reduced AccountKey -- it contains the private key necessary to
-//// view your transactions and see the amounts, but not to send new transactions.
-//// This concept is part of Cryptonote.
-//// In Mobilecoin, all public addresses correspond to subaddresses, and often
-//// the "default subaddress" is used.
-//// The ViewKey similarly corresponds to a particular subaddress.
-public struct External_ViewKey {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
-
-  //// The view-private-key of the account. This enables to check if a transaction
-  //// corresponds to this subaddress, and to interact with fog.
-  public var viewPrivateKey: External_RistrettoPrivate {
-    get {return _viewPrivateKey ?? External_RistrettoPrivate()}
-    set {_viewPrivateKey = newValue}
-  }
-  /// Returns true if `viewPrivateKey` has been explicitly set.
-  public var hasViewPrivateKey: Bool {return self._viewPrivateKey != nil}
-  /// Clears the value of `viewPrivateKey`. Subsequent reads from it will return its default value.
-  public mutating func clearViewPrivateKey() {self._viewPrivateKey = nil}
-
-  //// The spend public key of the account.
-  //// This value also appears in the public address.
-  public var spendPublicKey: External_CompressedRistretto {
-    get {return _spendPublicKey ?? External_CompressedRistretto()}
-    set {_spendPublicKey = newValue}
-  }
-  /// Returns true if `spendPublicKey` has been explicitly set.
-  public var hasSpendPublicKey: Bool {return self._spendPublicKey != nil}
-  /// Clears the value of `spendPublicKey`. Subsequent reads from it will return its default value.
-  public mutating func clearSpendPublicKey() {self._spendPublicKey = nil}
-
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
-
-  public init() {}
-
-  fileprivate var _viewPrivateKey: External_RistrettoPrivate? = nil
-  fileprivate var _spendPublicKey: External_CompressedRistretto? = nil
-}
-
 //// A 32-byte scalar associated to the ristretto group.
 //// This is the same as RistrettoPrivate, but they are used in different places.
 //// TODO: MC-1605 Consider to factor out this type, or just this proto message.
@@ -383,8 +411,8 @@ public struct External_TxOutConfirmationNumber {
   public init() {}
 }
 
-/// Amount.
-public struct External_Amount {
+/// MaskedAmount.
+public struct External_MaskedAmount {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -401,6 +429,9 @@ public struct External_Amount {
 
   /// `masked_value = value XOR_8 Blake2B("value_mask" || shared_secret)`
   public var maskedValue: UInt64 = 0
+
+  /// `masked_token_id = token_id XOR_8 Blake2B("token_id_mask" || shared_secret)`
+  public var maskedTokenID: Data = Data()
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -442,14 +473,14 @@ public struct External_TxOut {
   // methods supported on all messages.
 
   /// Amount.
-  public var amount: External_Amount {
-    get {return _amount ?? External_Amount()}
-    set {_amount = newValue}
+  public var maskedAmount: External_MaskedAmount {
+    get {return _maskedAmount ?? External_MaskedAmount()}
+    set {_maskedAmount = newValue}
   }
-  /// Returns true if `amount` has been explicitly set.
-  public var hasAmount: Bool {return self._amount != nil}
-  /// Clears the value of `amount`. Subsequent reads from it will return its default value.
-  public mutating func clearAmount() {self._amount = nil}
+  /// Returns true if `maskedAmount` has been explicitly set.
+  public var hasMaskedAmount: Bool {return self._maskedAmount != nil}
+  /// Clears the value of `maskedAmount`. Subsequent reads from it will return its default value.
+  public mutating func clearMaskedAmount() {self._maskedAmount = nil}
 
   /// Public key.
   public var targetKey: External_CompressedRistretto {
@@ -497,7 +528,7 @@ public struct External_TxOut {
 
   public init() {}
 
-  fileprivate var _amount: External_Amount? = nil
+  fileprivate var _maskedAmount: External_MaskedAmount? = nil
   fileprivate var _targetKey: External_CompressedRistretto? = nil
   fileprivate var _publicKey: External_CompressedRistretto? = nil
   fileprivate var _eFogHint: External_EncryptedFogHint? = nil
@@ -537,6 +568,9 @@ public struct External_TxPrefix {
 
   /// The block index at which this transaction is no longer valid.
   public var tombstoneBlock: UInt64 = 0
+
+  /// Token id for the fee for this transaction
+  public var feeTokenID: UInt64 = 0
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -676,14 +710,14 @@ public struct External_Receipt {
 
   /// Amount of the TxOut.
   /// Note: This value is self-reported by the sender and is unverifiable.
-  public var amount: External_Amount {
-    get {return _amount ?? External_Amount()}
-    set {_amount = newValue}
+  public var maskedAmount: External_MaskedAmount {
+    get {return _maskedAmount ?? External_MaskedAmount()}
+    set {_maskedAmount = newValue}
   }
-  /// Returns true if `amount` has been explicitly set.
-  public var hasAmount: Bool {return self._amount != nil}
-  /// Clears the value of `amount`. Subsequent reads from it will return its default value.
-  public mutating func clearAmount() {self._amount = nil}
+  /// Returns true if `maskedAmount` has been explicitly set.
+  public var hasMaskedAmount: Bool {return self._maskedAmount != nil}
+  /// Clears the value of `maskedAmount`. Subsequent reads from it will return its default value.
+  public mutating func clearMaskedAmount() {self._maskedAmount = nil}
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -691,7 +725,7 @@ public struct External_Receipt {
 
   fileprivate var _publicKey: External_CompressedRistretto? = nil
   fileprivate var _confirmation: External_TxOutConfirmationNumber? = nil
-  fileprivate var _amount: External_Amount? = nil
+  fileprivate var _maskedAmount: External_MaskedAmount? = nil
 }
 
 //// The signature over an IAS JSON reponse, created by Intel
@@ -737,16 +771,222 @@ public struct External_VerificationReport {
   fileprivate var _sig: External_VerificationSignature? = nil
 }
 
+//// The contents of a mint-tx, which is a transaction to mint new tokens.
+public struct External_MintTxPrefix {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  //// Token ID we are minting.
+  public var tokenID: UInt64 = 0
+
+  //// Amount we are minting.
+  public var amount: UInt64 = 0
+
+  //// The destination's public subaddress view key 'C'.
+  public var viewPublicKey: External_CompressedRistretto {
+    get {return _viewPublicKey ?? External_CompressedRistretto()}
+    set {_viewPublicKey = newValue}
+  }
+  /// Returns true if `viewPublicKey` has been explicitly set.
+  public var hasViewPublicKey: Bool {return self._viewPublicKey != nil}
+  /// Clears the value of `viewPublicKey`. Subsequent reads from it will return its default value.
+  public mutating func clearViewPublicKey() {self._viewPublicKey = nil}
+
+  //// The destination's public subaddress spend key `D`.
+  public var spendPublicKey: External_CompressedRistretto {
+    get {return _spendPublicKey ?? External_CompressedRistretto()}
+    set {_spendPublicKey = newValue}
+  }
+  /// Returns true if `spendPublicKey` has been explicitly set.
+  public var hasSpendPublicKey: Bool {return self._spendPublicKey != nil}
+  /// Clears the value of `spendPublicKey`. Subsequent reads from it will return its default value.
+  public mutating func clearSpendPublicKey() {self._spendPublicKey = nil}
+
+  //// Nonce, to prevent replay attacks.
+  //// Must be exactly 64 bytes long (see constant constants::NONCE_LENGTH).
+  public var nonce: Data = Data()
+
+  //// The block index at which this transaction is no longer valid.
+  public var tombstoneBlock: UInt64 = 0
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+
+  fileprivate var _viewPublicKey: External_CompressedRistretto? = nil
+  fileprivate var _spendPublicKey: External_CompressedRistretto? = nil
+}
+
+//// A mint transaction coupled with a signature over it.
+public struct External_MintTx {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var prefix: External_MintTxPrefix {
+    get {return _prefix ?? External_MintTxPrefix()}
+    set {_prefix = newValue}
+  }
+  /// Returns true if `prefix` has been explicitly set.
+  public var hasPrefix: Bool {return self._prefix != nil}
+  /// Clears the value of `prefix`. Subsequent reads from it will return its default value.
+  public mutating func clearPrefix() {self._prefix = nil}
+
+  public var signature: External_Ed25519MultiSig {
+    get {return _signature ?? External_Ed25519MultiSig()}
+    set {_signature = newValue}
+  }
+  /// Returns true if `signature` has been explicitly set.
+  public var hasSignature: Bool {return self._signature != nil}
+  /// Clears the value of `signature`. Subsequent reads from it will return its default value.
+  public mutating func clearSignature() {self._signature = nil}
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+
+  fileprivate var _prefix: External_MintTxPrefix? = nil
+  fileprivate var _signature: External_Ed25519MultiSig? = nil
+}
+
+//// A minting configuration for a single token ID.
+//// The minting configuration specifies who is allowed to submit mint
+//// transactions, for which token and at what total limit.
+public struct External_MintConfig {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  //// Token ID this configuration applies to.
+  public var tokenID: UInt64 = 0
+
+  //// The set of keys that can sign a minting transaction.
+  public var signerSet: External_Ed25519SignerSet {
+    get {return _signerSet ?? External_Ed25519SignerSet()}
+    set {_signerSet = newValue}
+  }
+  /// Returns true if `signerSet` has been explicitly set.
+  public var hasSignerSet: Bool {return self._signerSet != nil}
+  /// Clears the value of `signerSet`. Subsequent reads from it will return its default value.
+  public mutating func clearSignerSet() {self._signerSet = nil}
+
+  //// The maximal amount this configuration can mint from the moment it has
+  //// been applied.
+  public var mintLimit: UInt64 = 0
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+
+  fileprivate var _signerSet: External_Ed25519SignerSet? = nil
+}
+
+//// The contents of a mint-config transaction. This transaction alters the
+//// minting configuration for a single token ID.
+public struct External_MintConfigTxPrefix {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  //// Token ID we are replacing the configuration set for.
+  public var tokenID: UInt64 = 0
+
+  //// The new configuration.
+  public var configs: [External_MintConfig] = []
+
+  //// Nonce, to prevent replay attacks.
+  //// Must be exactly 64 bytes long (see constant constants::NONCE_LENGTH).
+  public var nonce: Data = Data()
+
+  //// The block index at which this transaction is no longer valid.
+  public var tombstoneBlock: UInt64 = 0
+
+  //// The maximal amount that can be minted by configurations specified in
+  //// this tx. This amount is shared amongst all configs.
+  public var totalMintLimit: UInt64 = 0
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
+//// A mint-config transaction coupled with a signature over it.
+public struct External_MintConfigTx {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var prefix: External_MintConfigTxPrefix {
+    get {return _prefix ?? External_MintConfigTxPrefix()}
+    set {_prefix = newValue}
+  }
+  /// Returns true if `prefix` has been explicitly set.
+  public var hasPrefix: Bool {return self._prefix != nil}
+  /// Clears the value of `prefix`. Subsequent reads from it will return its default value.
+  public mutating func clearPrefix() {self._prefix = nil}
+
+  public var signature: External_Ed25519MultiSig {
+    get {return _signature ?? External_Ed25519MultiSig()}
+    set {_signature = newValue}
+  }
+  /// Returns true if `signature` has been explicitly set.
+  public var hasSignature: Bool {return self._signature != nil}
+  /// Clears the value of `signature`. Subsequent reads from it will return its default value.
+  public mutating func clearSignature() {self._signature = nil}
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+
+  fileprivate var _prefix: External_MintConfigTxPrefix? = nil
+  fileprivate var _signature: External_Ed25519MultiSig? = nil
+}
+
+//// A mint-config transaction coupled with the data used to validate it.
+public struct External_ValidatedMintConfigTx {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var mintConfigTx: External_MintConfigTx {
+    get {return _mintConfigTx ?? External_MintConfigTx()}
+    set {_mintConfigTx = newValue}
+  }
+  /// Returns true if `mintConfigTx` has been explicitly set.
+  public var hasMintConfigTx: Bool {return self._mintConfigTx != nil}
+  /// Clears the value of `mintConfigTx`. Subsequent reads from it will return its default value.
+  public mutating func clearMintConfigTx() {self._mintConfigTx = nil}
+
+  public var signerSet: External_Ed25519SignerSet {
+    get {return _signerSet ?? External_Ed25519SignerSet()}
+    set {_signerSet = newValue}
+  }
+  /// Returns true if `signerSet` has been explicitly set.
+  public var hasSignerSet: Bool {return self._signerSet != nil}
+  /// Clears the value of `signerSet`. Subsequent reads from it will return its default value.
+  public mutating func clearSignerSet() {self._signerSet = nil}
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+
+  fileprivate var _mintConfigTx: External_MintConfigTx? = nil
+  fileprivate var _signerSet: External_Ed25519SignerSet? = nil
+}
+
 #if swift(>=5.5) && canImport(_Concurrency)
+extension External_KnownTokenId: @unchecked Sendable {}
 extension External_RistrettoPrivate: @unchecked Sendable {}
 extension External_CompressedRistretto: @unchecked Sendable {}
 extension External_Ed25519Public: @unchecked Sendable {}
 extension External_Ed25519Signature: @unchecked Sendable {}
+extension External_Ed25519MultiSig: @unchecked Sendable {}
+extension External_Ed25519SignerSet: @unchecked Sendable {}
 extension External_AccountKey: @unchecked Sendable {}
 extension External_PublicAddress: @unchecked Sendable {}
 extension External_RootIdentity: @unchecked Sendable {}
 extension External_RootEntropy: @unchecked Sendable {}
-extension External_ViewKey: @unchecked Sendable {}
 extension External_CurveScalar: @unchecked Sendable {}
 extension External_KeyImage: @unchecked Sendable {}
 extension External_Range: @unchecked Sendable {}
@@ -754,7 +994,7 @@ extension External_TxOutMembershipHash: @unchecked Sendable {}
 extension External_TxOutMembershipElement: @unchecked Sendable {}
 extension External_TxOutMembershipProof: @unchecked Sendable {}
 extension External_TxOutConfirmationNumber: @unchecked Sendable {}
-extension External_Amount: @unchecked Sendable {}
+extension External_MaskedAmount: @unchecked Sendable {}
 extension External_EncryptedFogHint: @unchecked Sendable {}
 extension External_EncryptedMemo: @unchecked Sendable {}
 extension External_TxOut: @unchecked Sendable {}
@@ -767,11 +1007,23 @@ extension External_TxHash: @unchecked Sendable {}
 extension External_Receipt: @unchecked Sendable {}
 extension External_VerificationSignature: @unchecked Sendable {}
 extension External_VerificationReport: @unchecked Sendable {}
+extension External_MintTxPrefix: @unchecked Sendable {}
+extension External_MintTx: @unchecked Sendable {}
+extension External_MintConfig: @unchecked Sendable {}
+extension External_MintConfigTxPrefix: @unchecked Sendable {}
+extension External_MintConfigTx: @unchecked Sendable {}
+extension External_ValidatedMintConfigTx: @unchecked Sendable {}
 #endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
 fileprivate let _protobuf_package = "external"
+
+extension External_KnownTokenId: SwiftProtobuf._ProtoNameProviding {
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    0: .same(proto: "MOB"),
+  ]
+}
 
 extension External_RistrettoPrivate: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = _protobuf_package + ".RistrettoPrivate"
@@ -896,6 +1148,76 @@ extension External_Ed25519Signature: SwiftProtobuf.Message, SwiftProtobuf._Messa
 
   public static func ==(lhs: External_Ed25519Signature, rhs: External_Ed25519Signature) -> Bool {
     if lhs.data != rhs.data {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension External_Ed25519MultiSig: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".Ed25519MultiSig"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "signatures"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeRepeatedMessageField(value: &self.signatures) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.signatures.isEmpty {
+      try visitor.visitRepeatedMessageField(value: self.signatures, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: External_Ed25519MultiSig, rhs: External_Ed25519MultiSig) -> Bool {
+    if lhs.signatures != rhs.signatures {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension External_Ed25519SignerSet: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".Ed25519SignerSet"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "signers"),
+    2: .same(proto: "threshold"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeRepeatedMessageField(value: &self.signers) }()
+      case 2: try { try decoder.decodeSingularUInt32Field(value: &self.threshold) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.signers.isEmpty {
+      try visitor.visitRepeatedMessageField(value: self.signers, fieldNumber: 1)
+    }
+    if self.threshold != 0 {
+      try visitor.visitSingularUInt32Field(value: self.threshold, fieldNumber: 2)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: External_Ed25519SignerSet, rhs: External_Ed25519SignerSet) -> Bool {
+    if lhs.signers != rhs.signers {return false}
+    if lhs.threshold != rhs.threshold {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -1102,48 +1424,6 @@ extension External_RootEntropy: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
 
   public static func ==(lhs: External_RootEntropy, rhs: External_RootEntropy) -> Bool {
     if lhs.data != rhs.data {return false}
-    if lhs.unknownFields != rhs.unknownFields {return false}
-    return true
-  }
-}
-
-extension External_ViewKey: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".ViewKey"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .standard(proto: "view_private_key"),
-    2: .standard(proto: "spend_public_key"),
-  ]
-
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      // The use of inline closures is to circumvent an issue where the compiler
-      // allocates stack space for every case branch when no optimizations are
-      // enabled. https://github.com/apple/swift-protobuf/issues/1034
-      switch fieldNumber {
-      case 1: try { try decoder.decodeSingularMessageField(value: &self._viewPrivateKey) }()
-      case 2: try { try decoder.decodeSingularMessageField(value: &self._spendPublicKey) }()
-      default: break
-      }
-    }
-  }
-
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    // The use of inline closures is to circumvent an issue where the compiler
-    // allocates stack space for every if/case branch local when no optimizations
-    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
-    // https://github.com/apple/swift-protobuf/issues/1182
-    try { if let v = self._viewPrivateKey {
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
-    } }()
-    try { if let v = self._spendPublicKey {
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
-    } }()
-    try unknownFields.traverse(visitor: &visitor)
-  }
-
-  public static func ==(lhs: External_ViewKey, rhs: External_ViewKey) -> Bool {
-    if lhs._viewPrivateKey != rhs._viewPrivateKey {return false}
-    if lhs._spendPublicKey != rhs._spendPublicKey {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -1401,11 +1681,12 @@ extension External_TxOutConfirmationNumber: SwiftProtobuf.Message, SwiftProtobuf
   }
 }
 
-extension External_Amount: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".Amount"
+extension External_MaskedAmount: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".MaskedAmount"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "commitment"),
     2: .standard(proto: "masked_value"),
+    3: .standard(proto: "masked_token_id"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -1416,6 +1697,7 @@ extension External_Amount: SwiftProtobuf.Message, SwiftProtobuf._MessageImplemen
       switch fieldNumber {
       case 1: try { try decoder.decodeSingularMessageField(value: &self._commitment) }()
       case 2: try { try decoder.decodeSingularFixed64Field(value: &self.maskedValue) }()
+      case 3: try { try decoder.decodeSingularBytesField(value: &self.maskedTokenID) }()
       default: break
       }
     }
@@ -1432,12 +1714,16 @@ extension External_Amount: SwiftProtobuf.Message, SwiftProtobuf._MessageImplemen
     if self.maskedValue != 0 {
       try visitor.visitSingularFixed64Field(value: self.maskedValue, fieldNumber: 2)
     }
+    if !self.maskedTokenID.isEmpty {
+      try visitor.visitSingularBytesField(value: self.maskedTokenID, fieldNumber: 3)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: External_Amount, rhs: External_Amount) -> Bool {
+  public static func ==(lhs: External_MaskedAmount, rhs: External_MaskedAmount) -> Bool {
     if lhs._commitment != rhs._commitment {return false}
     if lhs.maskedValue != rhs.maskedValue {return false}
+    if lhs.maskedTokenID != rhs.maskedTokenID {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -1510,7 +1796,7 @@ extension External_EncryptedMemo: SwiftProtobuf.Message, SwiftProtobuf._MessageI
 extension External_TxOut: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = _protobuf_package + ".TxOut"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "amount"),
+    1: .standard(proto: "masked_amount"),
     2: .standard(proto: "target_key"),
     3: .standard(proto: "public_key"),
     4: .standard(proto: "e_fog_hint"),
@@ -1523,7 +1809,7 @@ extension External_TxOut: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
       // allocates stack space for every case branch when no optimizations are
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try { try decoder.decodeSingularMessageField(value: &self._amount) }()
+      case 1: try { try decoder.decodeSingularMessageField(value: &self._maskedAmount) }()
       case 2: try { try decoder.decodeSingularMessageField(value: &self._targetKey) }()
       case 3: try { try decoder.decodeSingularMessageField(value: &self._publicKey) }()
       case 4: try { try decoder.decodeSingularMessageField(value: &self._eFogHint) }()
@@ -1538,7 +1824,7 @@ extension External_TxOut: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
     // allocates stack space for every if/case branch local when no optimizations
     // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
     // https://github.com/apple/swift-protobuf/issues/1182
-    try { if let v = self._amount {
+    try { if let v = self._maskedAmount {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
     } }()
     try { if let v = self._targetKey {
@@ -1557,7 +1843,7 @@ extension External_TxOut: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
   }
 
   public static func ==(lhs: External_TxOut, rhs: External_TxOut) -> Bool {
-    if lhs._amount != rhs._amount {return false}
+    if lhs._maskedAmount != rhs._maskedAmount {return false}
     if lhs._targetKey != rhs._targetKey {return false}
     if lhs._publicKey != rhs._publicKey {return false}
     if lhs._eFogHint != rhs._eFogHint {return false}
@@ -1612,6 +1898,7 @@ extension External_TxPrefix: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
     2: .same(proto: "outputs"),
     3: .same(proto: "fee"),
     4: .standard(proto: "tombstone_block"),
+    5: .standard(proto: "fee_token_id"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -1624,6 +1911,7 @@ extension External_TxPrefix: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
       case 2: try { try decoder.decodeRepeatedMessageField(value: &self.outputs) }()
       case 3: try { try decoder.decodeSingularUInt64Field(value: &self.fee) }()
       case 4: try { try decoder.decodeSingularUInt64Field(value: &self.tombstoneBlock) }()
+      case 5: try { try decoder.decodeSingularFixed64Field(value: &self.feeTokenID) }()
       default: break
       }
     }
@@ -1642,6 +1930,9 @@ extension External_TxPrefix: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
     if self.tombstoneBlock != 0 {
       try visitor.visitSingularUInt64Field(value: self.tombstoneBlock, fieldNumber: 4)
     }
+    if self.feeTokenID != 0 {
+      try visitor.visitSingularFixed64Field(value: self.feeTokenID, fieldNumber: 5)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -1650,6 +1941,7 @@ extension External_TxPrefix: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
     if lhs.outputs != rhs.outputs {return false}
     if lhs.fee != rhs.fee {return false}
     if lhs.tombstoneBlock != rhs.tombstoneBlock {return false}
+    if lhs.feeTokenID != rhs.feeTokenID {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -1827,7 +2119,7 @@ extension External_Receipt: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
     1: .standard(proto: "public_key"),
     2: .same(proto: "confirmation"),
     3: .standard(proto: "tombstone_block"),
-    4: .same(proto: "amount"),
+    4: .standard(proto: "masked_amount"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -1839,7 +2131,7 @@ extension External_Receipt: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
       case 1: try { try decoder.decodeSingularMessageField(value: &self._publicKey) }()
       case 2: try { try decoder.decodeSingularMessageField(value: &self._confirmation) }()
       case 3: try { try decoder.decodeSingularUInt64Field(value: &self.tombstoneBlock) }()
-      case 4: try { try decoder.decodeSingularMessageField(value: &self._amount) }()
+      case 4: try { try decoder.decodeSingularMessageField(value: &self._maskedAmount) }()
       default: break
       }
     }
@@ -1859,7 +2151,7 @@ extension External_Receipt: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
     if self.tombstoneBlock != 0 {
       try visitor.visitSingularUInt64Field(value: self.tombstoneBlock, fieldNumber: 3)
     }
-    try { if let v = self._amount {
+    try { if let v = self._maskedAmount {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 4)
     } }()
     try unknownFields.traverse(visitor: &visitor)
@@ -1869,7 +2161,7 @@ extension External_Receipt: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
     if lhs._publicKey != rhs._publicKey {return false}
     if lhs._confirmation != rhs._confirmation {return false}
     if lhs.tombstoneBlock != rhs.tombstoneBlock {return false}
-    if lhs._amount != rhs._amount {return false}
+    if lhs._maskedAmount != rhs._maskedAmount {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -1950,6 +2242,302 @@ extension External_VerificationReport: SwiftProtobuf.Message, SwiftProtobuf._Mes
     if lhs._sig != rhs._sig {return false}
     if lhs.chain != rhs.chain {return false}
     if lhs.httpBody != rhs.httpBody {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension External_MintTxPrefix: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".MintTxPrefix"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .standard(proto: "token_id"),
+    2: .same(proto: "amount"),
+    3: .standard(proto: "view_public_key"),
+    4: .standard(proto: "spend_public_key"),
+    5: .same(proto: "nonce"),
+    6: .standard(proto: "tombstone_block"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularUInt64Field(value: &self.tokenID) }()
+      case 2: try { try decoder.decodeSingularUInt64Field(value: &self.amount) }()
+      case 3: try { try decoder.decodeSingularMessageField(value: &self._viewPublicKey) }()
+      case 4: try { try decoder.decodeSingularMessageField(value: &self._spendPublicKey) }()
+      case 5: try { try decoder.decodeSingularBytesField(value: &self.nonce) }()
+      case 6: try { try decoder.decodeSingularUInt64Field(value: &self.tombstoneBlock) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    if self.tokenID != 0 {
+      try visitor.visitSingularUInt64Field(value: self.tokenID, fieldNumber: 1)
+    }
+    if self.amount != 0 {
+      try visitor.visitSingularUInt64Field(value: self.amount, fieldNumber: 2)
+    }
+    try { if let v = self._viewPublicKey {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
+    } }()
+    try { if let v = self._spendPublicKey {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 4)
+    } }()
+    if !self.nonce.isEmpty {
+      try visitor.visitSingularBytesField(value: self.nonce, fieldNumber: 5)
+    }
+    if self.tombstoneBlock != 0 {
+      try visitor.visitSingularUInt64Field(value: self.tombstoneBlock, fieldNumber: 6)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: External_MintTxPrefix, rhs: External_MintTxPrefix) -> Bool {
+    if lhs.tokenID != rhs.tokenID {return false}
+    if lhs.amount != rhs.amount {return false}
+    if lhs._viewPublicKey != rhs._viewPublicKey {return false}
+    if lhs._spendPublicKey != rhs._spendPublicKey {return false}
+    if lhs.nonce != rhs.nonce {return false}
+    if lhs.tombstoneBlock != rhs.tombstoneBlock {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension External_MintTx: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".MintTx"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "prefix"),
+    2: .same(proto: "signature"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularMessageField(value: &self._prefix) }()
+      case 2: try { try decoder.decodeSingularMessageField(value: &self._signature) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    try { if let v = self._prefix {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
+    } }()
+    try { if let v = self._signature {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
+    } }()
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: External_MintTx, rhs: External_MintTx) -> Bool {
+    if lhs._prefix != rhs._prefix {return false}
+    if lhs._signature != rhs._signature {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension External_MintConfig: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".MintConfig"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .standard(proto: "token_id"),
+    2: .standard(proto: "signer_set"),
+    3: .standard(proto: "mint_limit"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularUInt64Field(value: &self.tokenID) }()
+      case 2: try { try decoder.decodeSingularMessageField(value: &self._signerSet) }()
+      case 3: try { try decoder.decodeSingularUInt64Field(value: &self.mintLimit) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    if self.tokenID != 0 {
+      try visitor.visitSingularUInt64Field(value: self.tokenID, fieldNumber: 1)
+    }
+    try { if let v = self._signerSet {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
+    } }()
+    if self.mintLimit != 0 {
+      try visitor.visitSingularUInt64Field(value: self.mintLimit, fieldNumber: 3)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: External_MintConfig, rhs: External_MintConfig) -> Bool {
+    if lhs.tokenID != rhs.tokenID {return false}
+    if lhs._signerSet != rhs._signerSet {return false}
+    if lhs.mintLimit != rhs.mintLimit {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension External_MintConfigTxPrefix: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".MintConfigTxPrefix"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .standard(proto: "token_id"),
+    2: .same(proto: "configs"),
+    3: .same(proto: "nonce"),
+    4: .standard(proto: "tombstone_block"),
+    5: .standard(proto: "total_mint_limit"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularUInt64Field(value: &self.tokenID) }()
+      case 2: try { try decoder.decodeRepeatedMessageField(value: &self.configs) }()
+      case 3: try { try decoder.decodeSingularBytesField(value: &self.nonce) }()
+      case 4: try { try decoder.decodeSingularUInt64Field(value: &self.tombstoneBlock) }()
+      case 5: try { try decoder.decodeSingularUInt64Field(value: &self.totalMintLimit) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if self.tokenID != 0 {
+      try visitor.visitSingularUInt64Field(value: self.tokenID, fieldNumber: 1)
+    }
+    if !self.configs.isEmpty {
+      try visitor.visitRepeatedMessageField(value: self.configs, fieldNumber: 2)
+    }
+    if !self.nonce.isEmpty {
+      try visitor.visitSingularBytesField(value: self.nonce, fieldNumber: 3)
+    }
+    if self.tombstoneBlock != 0 {
+      try visitor.visitSingularUInt64Field(value: self.tombstoneBlock, fieldNumber: 4)
+    }
+    if self.totalMintLimit != 0 {
+      try visitor.visitSingularUInt64Field(value: self.totalMintLimit, fieldNumber: 5)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: External_MintConfigTxPrefix, rhs: External_MintConfigTxPrefix) -> Bool {
+    if lhs.tokenID != rhs.tokenID {return false}
+    if lhs.configs != rhs.configs {return false}
+    if lhs.nonce != rhs.nonce {return false}
+    if lhs.tombstoneBlock != rhs.tombstoneBlock {return false}
+    if lhs.totalMintLimit != rhs.totalMintLimit {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension External_MintConfigTx: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".MintConfigTx"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "prefix"),
+    2: .same(proto: "signature"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularMessageField(value: &self._prefix) }()
+      case 2: try { try decoder.decodeSingularMessageField(value: &self._signature) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    try { if let v = self._prefix {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
+    } }()
+    try { if let v = self._signature {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
+    } }()
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: External_MintConfigTx, rhs: External_MintConfigTx) -> Bool {
+    if lhs._prefix != rhs._prefix {return false}
+    if lhs._signature != rhs._signature {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension External_ValidatedMintConfigTx: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".ValidatedMintConfigTx"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .standard(proto: "mint_config_tx"),
+    2: .standard(proto: "signer_set"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularMessageField(value: &self._mintConfigTx) }()
+      case 2: try { try decoder.decodeSingularMessageField(value: &self._signerSet) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    try { if let v = self._mintConfigTx {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
+    } }()
+    try { if let v = self._signerSet {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
+    } }()
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: External_ValidatedMintConfigTx, rhs: External_ValidatedMintConfigTx) -> Bool {
+    if lhs._mintConfigTx != rhs._mintConfigTx {return false}
+    if lhs._signerSet != rhs._signerSet {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

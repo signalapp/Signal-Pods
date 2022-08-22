@@ -12,7 +12,7 @@ enum AccountKeyUtils {
         viewPrivateKey: RistrettoPrivate,
         spendPrivateKey: RistrettoPrivate,
         subaddressIndex: UInt64
-    ) -> (subaddressViewPrivateKey: RistrettoPrivate, subaddressSpendPrivateKey: RistrettoPrivate) {
+    ) -> (viewKey: RistrettoPrivate, spendKey: RistrettoPrivate) {
         var subaddressViewPrivateKeyOut = Data32()
         var subaddressSpendPrivateKeyOut = Data32()
         viewPrivateKey.asMcBuffer { viewKeyBufferPtr in
@@ -91,10 +91,60 @@ enum AccountKeyUtils {
             }
         }
     }
+
+    static func publicAddressShortHash(
+        publicAddress: PublicAddress
+    ) -> AddressHash? {
+        publicAddress.withUnsafeCStructPointer { publicAddressPtr in
+            switch Data16.make(withMcMutableBuffer: { bufferPtr, errorPtr in
+                mc_account_key_get_short_address_hash(
+                    publicAddressPtr,
+                    bufferPtr,
+                    &errorPtr)
+            }) {
+            case .success(let bytes):
+                return AddressHash(bytes)
+            case .failure(let error):
+                switch error.errorCode {
+                case .invalidInput:
+                    // Safety: This condition indicates a programming error and can only
+                    // happen if arguments mc_account_key_get_short_address_hash are
+                    // supplied incorrectly.
+                    logger.warning("error: \(redacting: error)")
+                    return nil
+                default:
+                    // Safety: mc_account_key_get_short_address_hash should not throw
+                    // non-documented errors.
+                    logger.fatalError("Unhandled LibMobileCoin error: \(redacting: error)")
+                }
+            }
+        }
+    }
 }
 
 extension McAccountKey {
-    fileprivate static func withUnsafePointer<T>(
+    static func withUnsafePointer<T>(
+        viewPrivateKey: RistrettoPrivate,
+        spendPrivateKey: RistrettoPrivate,
+        fogInfo: AccountKey.FogInfo?,
+        body: (UnsafePointer<McAccountKey>) throws -> T
+    ) rethrows -> T {
+        guard let fogInfo = fogInfo else {
+            return try McAccountKey.withUnsafePointer(
+                viewPrivateKey: viewPrivateKey,
+                spendPrivateKey: spendPrivateKey,
+                body: body)
+        }
+        return try McAccountKey.withUnsafePointer(
+            viewPrivateKey: viewPrivateKey,
+            spendPrivateKey: spendPrivateKey,
+            reportUrl: fogInfo.reportUrlString,
+            reportId: fogInfo.reportId,
+            authoritySpki: fogInfo.authoritySpki,
+            body: body)
+    }
+
+    static func withUnsafePointer<T>(
         viewPrivateKey: RistrettoPrivate,
         spendPrivateKey: RistrettoPrivate,
         reportUrl: String,

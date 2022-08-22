@@ -54,13 +54,16 @@ extension TransferPayload {
         // convert to Data32 in order to be able to verify the raw Data is valid
         let rootEntropy = Data32(transferPayload.rootEntropy)
         let bip39 = Data32(transferPayload.bip39Entropy)
-        
+
         // must have exactly one of bip39 or rootEntropy
         switch (bip39, rootEntropy) {
         case (.some(let bip39), nil):
-            self.init(bip39:bip39, txOutPublicKey:txOutPublicKey, memo:transferPayload.memo)
+            self.init(bip39: bip39, txOutPublicKey: txOutPublicKey, memo: transferPayload.memo)
         case (nil, .some(let rootEntropy)):
-            self.init(rootEntropy:rootEntropy, txOutPublicKey:txOutPublicKey, memo:transferPayload.memo)
+            self.init(
+                rootEntropy: rootEntropy,
+                txOutPublicKey: txOutPublicKey,
+                memo: transferPayload.memo)
         default:
             return nil
         }

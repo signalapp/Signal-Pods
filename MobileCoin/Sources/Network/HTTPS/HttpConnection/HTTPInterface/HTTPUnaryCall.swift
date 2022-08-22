@@ -9,11 +9,14 @@ import SwiftProtobuf
 ///
 /// Note: while this object is a `struct`, its implementation delegates to `Call`. It therefore
 /// has reference semantics.
-public struct HTTPUnaryCall<RequestPayload:SwiftProtobuf.Message, ResponsePayload:SwiftProtobuf.Message> : HTTPClientCall {
+public struct HTTPUnaryCall<
+    RequestPayload: SwiftProtobuf.Message,
+    ResponsePayload: SwiftProtobuf.Message
+>: HTTPClientCall {
     public var path: String
-    
+
     public var method: HTTPMethod = .POST
-    
+
     public var response: ResponsePayload?
 
     /// The options used in the URLSession

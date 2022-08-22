@@ -4,7 +4,7 @@
 
 import Foundation
 
-class SecSSLCertificateValidator : SSLCertificateValidator {
+class SecSSLCertificateValidator: SSLCertificateValidator {
     func validate(_ possibleCertificateData: [Data]) -> Result<SSLCertificates, InvalidInputError> {
         SecSSLCertificates.make(trustRootBytes: possibleCertificateData)
     }
