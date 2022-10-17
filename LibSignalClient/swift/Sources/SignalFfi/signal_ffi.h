@@ -42,8 +42,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 #define SignalAUTH_CREDENTIAL_LEN 181
 
-#define SignalAUTH_CREDENTIAL_PRESENTATION_V1_LEN 493
-
 #define SignalAUTH_CREDENTIAL_PRESENTATION_V2_LEN 461
 
 #define SignalAUTH_CREDENTIAL_RESPONSE_LEN 361
@@ -53,8 +51,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 #define SignalAUTH_CREDENTIAL_WITH_PNI_RESPONSE_LEN 425
 
 #define SignalPNI_CREDENTIAL_LEN 161
-
-#define SignalPNI_CREDENTIAL_PRESENTATION_V1_LEN 841
 
 #define SignalPNI_CREDENTIAL_PRESENTATION_V2_LEN 841
 
@@ -71,8 +67,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 #define SignalPROFILE_KEY_CREDENTIAL_LEN 145
 
 #define SignalEXPIRING_PROFILE_KEY_CREDENTIAL_LEN 153
-
-#define SignalPROFILE_KEY_CREDENTIAL_PRESENTATION_V1_LEN 713
 
 #define SignalPROFILE_KEY_CREDENTIAL_PRESENTATION_V2_LEN 713
 
@@ -1357,7 +1351,8 @@ SignalFfiError *signal_server_secret_params_issue_auth_credential_with_pni_deter
 
 SignalFfiError *signal_server_secret_params_verify_auth_credential_presentation(const unsigned char (*server_secret_params)[SignalSERVER_SECRET_PARAMS_LEN],
                                                                                 const unsigned char (*group_public_params)[SignalGROUP_PUBLIC_PARAMS_LEN],
-                                                                                SignalBorrowedBuffer presentation_bytes);
+                                                                                SignalBorrowedBuffer presentation_bytes,
+                                                                                uint64_t current_time_in_seconds);
 
 SignalFfiError *signal_server_secret_params_issue_profile_key_credential_deterministic(unsigned char (*out)[SignalPROFILE_KEY_CREDENTIAL_RESPONSE_LEN],
                                                                                        const unsigned char (*server_secret_params)[SignalSERVER_SECRET_PARAMS_LEN],
