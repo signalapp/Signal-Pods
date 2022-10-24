@@ -73,10 +73,6 @@ typedef NS_ENUM(NSInteger, TSMACType) {
 + (uint64_t)randomUInt64;
 + (unsigned)randomUnsigned;
 
-#pragma mark - SHA and HMAC methods
-
-+ (nullable NSString *)truncatedSHA1Base64EncodedWithoutPadding:(NSString *)string;
-
 #pragma mark - AES-GCM
 
 + (nullable AES25GCMEncryptionResult *)encryptAESGCMWithData:(NSData *)plaintext

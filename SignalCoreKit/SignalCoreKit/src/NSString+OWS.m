@@ -3,40 +3,10 @@
 //
 
 #import "NSString+OWS.h"
-#import "iOSVersions.h"
 #import <objc/runtime.h>
 #import <SignalCoreKit/SignalCoreKit-Swift.h>
 
 NS_ASSUME_NONNULL_BEGIN
-
-@interface UnicodeCodeRange : NSObject
-
-@property (nonatomic) unichar first;
-@property (nonatomic) unichar last;
-
-@end
-
-#pragma mark -
-
-@implementation UnicodeCodeRange
-
-+ (UnicodeCodeRange *)rangeWithStart:(unichar)first last:(unichar)last
-{
-    OWSAssertDebug(first <= last);
-
-    UnicodeCodeRange *range = [UnicodeCodeRange new];
-    range.first = first;
-    range.last = last;
-    return range;
-}
-
-- (NSComparisonResult)compare:(UnicodeCodeRange *)other
-{
-
-    return self.first > other.first;
-}
-
-@end
 
 #pragma mark -
 
@@ -90,106 +60,6 @@ static unichar bidiPopDirectionalIsolate = 0x2069;
     return [self stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 }
 
-+ (BOOL)shouldFilterIndic
-{
-    static BOOL result = NO;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        result = (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(11, 0) && !SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(11, 3));
-    });
-    return result;
-}
-
-+ (BOOL)isIndicVowel:(unichar)c
-{
-    static NSArray<UnicodeCodeRange *> *ranges;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        // From:
-        //    https://unicode.org/charts/PDF/U0C00.pdf
-        //    https://unicode.org/charts/PDF/U0980.pdf
-        //    https://unicode.org/charts/PDF/U0900.pdf
-        ranges = [@[
-            // Telugu:
-            [UnicodeCodeRange rangeWithStart:0xC05 last:0xC14],
-            [UnicodeCodeRange rangeWithStart:0xC3E last:0xC4C],
-            [UnicodeCodeRange rangeWithStart:0xC60 last:0xC63],
-            // Bengali
-            [UnicodeCodeRange rangeWithStart:0x985 last:0x994],
-            [UnicodeCodeRange rangeWithStart:0x9BE last:0x9C8],
-            [UnicodeCodeRange rangeWithStart:0x9CB last:0x9CC],
-            [UnicodeCodeRange rangeWithStart:0x9E0 last:0x9E3],
-            // Devanagari
-            [UnicodeCodeRange rangeWithStart:0x904 last:0x914],
-            [UnicodeCodeRange rangeWithStart:0x93A last:0x93B],
-            [UnicodeCodeRange rangeWithStart:0x93E last:0x94C],
-            [UnicodeCodeRange rangeWithStart:0x94E last:0x94F],
-            [UnicodeCodeRange rangeWithStart:0x955 last:0x957],
-            [UnicodeCodeRange rangeWithStart:0x960 last:0x963],
-            [UnicodeCodeRange rangeWithStart:0x972 last:0x977],
-        ] sortedArrayUsingSelector:@selector(compare:)];
-    });
-
-    for (UnicodeCodeRange *range in ranges) {
-        if (c < range.first) {
-            // For perf, we can take advantage of the fact that the
-            // ranges are sorted to exit early if the character lies
-            // before the current range.
-            return NO;
-        }
-        if (range.first <= c && c <= range.last) {
-            return YES;
-        }
-    }
-    return NO;
-}
-
-+ (NSCharacterSet *)problematicCharacterSetForIndicScript
-{
-    static NSCharacterSet *characterSet;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        characterSet = [NSCharacterSet characterSetWithCharactersInString:@"\u200C"];
-    });
-
-    return characterSet;
-}
-
-// See: https://manishearth.github.io/blog/2018/02/15/picking-apart-the-crashing-ios-string/
-- (NSString *)filterForIndicScripts
-{
-    if (!NSString.shouldFilterIndic) {
-        return self;
-    }
-
-    if ([self rangeOfCharacterFromSet:[[self class] problematicCharacterSetForIndicScript]].location == NSNotFound) {
-        return self;
-    }
-
-    NSMutableString *filteredForIndic = [NSMutableString new];
-    for (NSUInteger index = 0; index < self.length; index++) {
-        unichar c = [self characterAtIndex:index];
-        if (c == 0x200C) {
-            NSUInteger nextIndex = index + 1;
-            if (nextIndex < self.length) {
-                unichar next = [self characterAtIndex:nextIndex];
-                if ([NSString isIndicVowel:next]) {
-                    // Discard ZWNJ (zero-width non-joiner) whenever we find a ZWNJ
-                    // followed by an Indic (Telugu, Bengali, Devanagari) vowel
-                    // and replace it with 0xFFFD, the Unicode "replacement character."
-                    [filteredForIndic appendFormat:@"\uFFFD"];
-                    OWSLogError(@"Filtered unsafe Indic script.");
-                    // Then discard the vowel too.
-                    index++;
-                    continue;
-                }
-            }
-        }
-        [filteredForIndic appendFormat:@"%C", c];
-    }
-    return [filteredForIndic copy];
-}
-
 + (NSCharacterSet *)unsafeFilenameCharacterSet
 {
     static NSCharacterSet *characterSet;
@@ -231,7 +101,7 @@ static unichar bidiPopDirectionalIsolate = 0x2069;
 - (NSString *)filterSubstringForDisplay
 {
     // We don't want to strip a substring before filtering.
-    return self.filterForIndicScripts.sanitized.ensureBalancedBidiControlCharacters;
+    return self.sanitized.ensureBalancedBidiControlCharacters;
 }
 
 - (NSString *)filterStringForDisplay
@@ -241,7 +111,7 @@ static unichar bidiPopDirectionalIsolate = 0x2069;
 
 - (NSString *)filterFilename
 {
-    return self.ows_stripped.filterForIndicScripts.sanitized.filterUnsafeFilenameCharacters;
+    return self.ows_stripped.sanitized.filterUnsafeFilenameCharacters;
 }
 
 - (NSString *)withoutBidiControlCharacters
@@ -391,7 +261,7 @@ static unichar bidiPopDirectionalIsolate = 0x2069;
 }
 
 
-- (BOOL)isOnlyASCII;
+- (BOOL)isOnlyASCII
 {
     return [self.class.onlyASCIIRegex rangeOfFirstMatchInString:self
                                                         options:0

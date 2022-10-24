@@ -23,9 +23,6 @@ const NSUInteger kAES256CTR_IVLength = 16;
 // length of authentication tag for AES256-GCM
 static const NSUInteger kAESGCM256_TagLength = 16;
 
-// length of key used for websocket envelope authentication
-static const NSUInteger kHMAC256_EnvelopeKeyLength = 20;
-
 const NSUInteger kAES256_KeyByteLength = 32;
 
 @implementation OWSAES256Key
@@ -200,32 +197,6 @@ const NSUInteger kAES256_KeyByteLength = 32;
     unsigned result = 0;
     [data getBytes:&result range:NSMakeRange(0, size)];
     return result;
-}
-
-#pragma mark - SHA1
-
-// Used by TSContactManager to send hashed/truncated contact list to server.
-+ (nullable NSString *)truncatedSHA1Base64EncodedWithoutPadding:(NSString *)string
-{
-    NSData *_Nullable stringData = [string dataUsingEncoding:NSUTF8StringEncoding];
-    if (!stringData) {
-        OWSFailDebug(@"could not convert string to utf-8.");
-        return nil;
-    }
-    if (stringData.length >= UINT32_MAX) {
-        OWSFailDebug(@"string data is too long.");
-        return nil;
-    }
-    uint32_t dataLength = (uint32_t)stringData.length;
-
-    NSMutableData *_Nullable hashData = [NSMutableData dataWithLength:20];
-    if (!hashData) {
-        OWSFail(@"Could not allocate buffer.");
-    }
-    CC_SHA1(stringData.bytes, dataLength, hashData.mutableBytes);
-
-    NSData *truncatedData = [hashData subdataWithRange:NSMakeRange(0, 10)];
-    return [[truncatedData base64EncodedString] stringByReplacingOccurrencesOfString:@"=" withString:@""];
 }
 
 #pragma mark - AES-GCM

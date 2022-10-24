@@ -2,7 +2,6 @@
   "name": "SignalCoreKit",
   "version": "1.0.0",
   "summary": "A Swift & Objective-C library used by other Signal libraries.",
-  "description": "A Swift & Objective-C library used by other Signal libraries.",
   "homepage": "https://github.com/signalapp/SignalCoreKit",
   "license": "GPLv3",
   "authors": {
@@ -14,9 +13,10 @@
   },
   "social_media_url": "https://twitter.com/signalapp",
   "platforms": {
-    "ios": "10.0"
+    "ios": "12.2"
   },
   "requires_arc": true,
+  "swift_versions": "5.0",
   "source_files": [
     "SignalCoreKit/src/**/*.{h,m,mm,swift}",
     "SignalCoreKit/Private/**/*.{h,m,mm,swift}"
@@ -40,5 +40,6 @@
       "test_type": "unit",
       "source_files": "SignalCoreKitTests/src/**/*.{h,m,swift}"
     }
-  ]
+  ],
+  "swift_version": "5.0"
 }
