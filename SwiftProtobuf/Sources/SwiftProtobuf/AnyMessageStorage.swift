@@ -4,7 +4,7 @@
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See LICENSE.txt for license information:
-// https://github.com/apple/swift-protobuf/blob/master/LICENSE.txt
+// https://github.com/apple/swift-protobuf/blob/main/LICENSE.txt
 //
 // -----------------------------------------------------------------------------
 ///
@@ -69,17 +69,26 @@ fileprivate func unpack(contentJSON: Data,
   var value = String()
   try contentJSON.withUnsafeBytes { (body: UnsafeRawBufferPointer) in
     if body.count > 0 {
+      // contentJSON will be the valid JSON for inside an object (everything but
+      // the '{' and '}', so minimal validation is needed.
       var scanner = JSONScanner(source: body, options: options, extensions: extensions)
-      let key = try scanner.nextQuotedString()
-      if key != "value" {
-        // The only thing within a WKT should be "value".
-        throw AnyUnpackError.malformedWellKnownTypeJSON
+      while !scanner.complete {
+        let key = try scanner.nextQuotedString()
+        try scanner.skipRequiredColon()
+        if key == "value" {
+          value = try scanner.skip()
+          break
+        }
+        if !options.ignoreUnknownFields {
+          // The only thing within a WKT should be "value".
+          throw AnyUnpackError.malformedWellKnownTypeJSON
+        }
+        let _ = try scanner.skip()
+        try scanner.skipRequiredComma()
       }
-      try scanner.skipRequiredColon()  // Can't fail
-      value = try scanner.skip()
-      if !scanner.complete {
-        // If that wasn't the end, then there was another key,
-        // and WKTs should only have the one.
+      if !options.ignoreUnknownFields && !scanner.complete {
+        // If that wasn't the end, then there was another key, and WKTs should
+        // only have the one when not skipping unknowns.
         throw AnyUnpackError.malformedWellKnownTypeJSON
       }
     }
@@ -401,6 +410,18 @@ extension AnyMessageStorage {
   func encodedJSONString(options: JSONEncodingOptions) throws -> String {
     switch state {
     case .binary(let valueData):
+      // Follow the C++ protostream_objectsource.cc's
+      // ProtoStreamObjectSource::RenderAny() special casing of an empty value.
+      guard !valueData.isEmpty else {
+        if _typeURL.isEmpty {
+          return "{}"
+        }
+        var jsonEncoder = JSONEncoder()
+        jsonEncoder.startField(name: "@type")
+        jsonEncoder.putStringValue(value: _typeURL)
+        jsonEncoder.endObject()
+        return jsonEncoder.stringResult
+      }
       // Transcode by decoding the binary data to a message object
       // and then recode back into JSON.
       guard let messageType = Google_Protobuf_Any.messageType(forTypeURL: _typeURL) else {

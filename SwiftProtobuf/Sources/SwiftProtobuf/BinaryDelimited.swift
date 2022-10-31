@@ -4,7 +4,7 @@
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See LICENSE.txt for license information:
-// https://github.com/apple/swift-protobuf/blob/master/LICENSE.txt
+// https://github.com/apple/swift-protobuf/blob/main/LICENSE.txt
 //
 // -----------------------------------------------------------------------------
 ///
@@ -12,6 +12,7 @@
 ///
 // -----------------------------------------------------------------------------
 
+#if !os(WASI)
 import Foundation
 
 /// Helper methods for reading/writing messages with a length prefix.
@@ -230,3 +231,4 @@ internal func decodeVarint(_ stream: InputStream) throws -> UInt64 {
     }
   }
 }
+#endif

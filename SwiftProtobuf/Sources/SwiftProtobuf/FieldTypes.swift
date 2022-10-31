@@ -4,7 +4,7 @@
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See LICENSE.txt for license information:
-// https://github.com/apple/swift-protobuf/blob/master/LICENSE.txt
+// https://github.com/apple/swift-protobuf/blob/main/LICENSE.txt
 //
 // -----------------------------------------------------------------------------
 ///
@@ -23,6 +23,8 @@
 // -----------------------------------------------------------------------------
 
 import Foundation
+
+// TODO: `FieldType` and `FieldType.BaseType` should require `Sendable` but we cannot do so yet without possibly breaking compatibility.
 
 // Note: The protobuf- and JSON-specific methods here are defined
 // in ProtobufTypeAdditions.swift and JSONTypeAdditions.swift

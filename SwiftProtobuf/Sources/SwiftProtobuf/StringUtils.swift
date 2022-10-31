@@ -4,7 +4,7 @@
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See LICENSE.txt for license information:
-// https://github.com/apple/swift-protobuf/blob/master/LICENSE.txt
+// https://github.com/apple/swift-protobuf/blob/main/LICENSE.txt
 //
 // -----------------------------------------------------------------------------
 ///
@@ -20,11 +20,8 @@
 
 import Foundation
 
-/*
-  Note: Once our minimum support version is at least Swift 5.3, we
-  should probably recast the following to use
-  String(unsafeUninitializedCapacity:)
-*/
+// Note: Once our minimum support version is at least Swift 5.3, we should
+// probably recast the following to use String(unsafeUninitializedCapacity:)
 
 // Note: We're trying to avoid Foundation's String(format:) since that's not
 // universally available.

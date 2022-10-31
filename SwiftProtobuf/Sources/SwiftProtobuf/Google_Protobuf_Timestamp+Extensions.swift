@@ -4,7 +4,7 @@
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See LICENSE.txt for license information:
-// https://github.com/apple/swift-protobuf/blob/master/LICENSE.txt
+// https://github.com/apple/swift-protobuf/blob/main/LICENSE.txt
 //
 // -----------------------------------------------------------------------------
 ///
@@ -147,8 +147,10 @@ private func parseTimestamp(s: String) throws -> (Int64, Int32) {
   }
 
   var seconds: Int64 = 0
-  // "+" or "-" starts Timezone offset
-  if value[pos] == plus || value[pos] == dash {
+  // "Z" or "+" or "-" starts Timezone offset
+  if pos >= value.count {
+    throw JSONDecodingError.malformedTimestamp
+  } else if value[pos] == plus || value[pos] == dash {
     if pos + 6 > value.count {
       throw JSONDecodingError.malformedTimestamp
     }

@@ -4,7 +4,7 @@
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See LICENSE.txt for license information:
-// https://github.com/apple/swift-protobuf/blob/master/LICENSE.txt
+// https://github.com/apple/swift-protobuf/blob/main/LICENSE.txt
 //
 // -----------------------------------------------------------------------------
 ///
@@ -12,7 +12,7 @@
 ///
 // -----------------------------------------------------------------------------
 
-/// Options for JSONDecoding.
+/// Options for binary decoding.
 public struct BinaryDecodingOptions {
   /// The maximum nesting of message with messages.  The default is 100.
   ///

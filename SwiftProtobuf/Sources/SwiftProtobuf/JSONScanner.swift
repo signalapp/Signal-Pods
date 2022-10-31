@@ -4,7 +4,7 @@
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See LICENSE.txt for license information:
-// https://github.com/apple/swift-protobuf/blob/master/LICENSE.txt
+// https://github.com/apple/swift-protobuf/blob/main/LICENSE.txt
 //
 // -----------------------------------------------------------------------------
 ///
@@ -374,9 +374,8 @@ internal struct JSONScanner {
   private let source: UnsafeRawBufferPointer
   private var index: UnsafeRawBufferPointer.Index
   private var numberParser = DoubleParser()
-  internal var options: JSONDecodingOptions
-  internal var extensions: ExtensionMap
-  internal var recursionLimit: Int
+  internal let options: JSONDecodingOptions
+  internal let extensions: ExtensionMap
   internal var recursionBudget: Int
 
   /// True if the scanner has read all of the data from the source, with the
@@ -406,24 +405,23 @@ internal struct JSONScanner {
   ) {
     self.source = source
     self.index = source.startIndex
-    self.recursionLimit = options.messageDepthLimit
     self.recursionBudget = options.messageDepthLimit
     self.options = options
     self.extensions = extensions ?? SimpleExtensionMap()
   }
 
-  private mutating func incrementRecursionDepth() throws {
+  internal mutating func incrementRecursionDepth() throws {
     recursionBudget -= 1
     if recursionBudget < 0 {
       throw JSONDecodingError.messageDepthLimit
     }
   }
 
-  private mutating func decrementRecursionDepth() {
+  internal mutating func decrementRecursionDepth() {
     recursionBudget += 1
     // This should never happen, if it does, something is probably corrupting memory, and
     // simply throwing doesn't make much sense.
-    if recursionBudget > recursionLimit {
+    if recursionBudget > options.messageDepthLimit {
       fatalError("Somehow JSONDecoding unwound more objects than it started")
     }
   }
@@ -1265,7 +1263,11 @@ internal struct JSONScanner {
         if let fieldNumber = names.number(forJSONName: key) {
           return fieldNumber
         }
-        fieldName = utf8ToString(bytes: key.baseAddress!, count: key.count)!
+        if let s = utf8ToString(bytes: key.baseAddress!, count: key.count) {
+          fieldName = s
+        } else {
+          throw JSONDecodingError.invalidUTF8
+        }
       } else {
         // Slow path:  We parsed a String; lookups from String are slower.
         fieldName = try nextQuotedString()
@@ -1274,8 +1276,8 @@ internal struct JSONScanner {
           return fieldNumber
         }
       }
-      if let first = fieldName.first, first == "[",
-         let last = fieldName.last, last == "]"
+      if let first = fieldName.utf8.first, first == UInt8(ascii: "["),
+         let last = fieldName.utf8.last, last == UInt8(ascii: "]")
       {
         fieldName.removeFirst()
         fieldName.removeLast()
@@ -1376,6 +1378,12 @@ internal struct JSONScanner {
     return false
   }
 
+  /// If the next non-whitespace character is "[", skip it
+  /// and return true.  Otherwise, return false.
+  internal mutating func skipOptionalArrayStart() -> Bool {
+    return skipOptionalCharacter(asciiOpenSquareBracket)
+  }
+
   /// If the next non-whitespace character is "]", skip it
   /// and return true.  Otherwise, return false.
   internal mutating func skipOptionalArrayEnd() -> Bool {
@@ -1411,38 +1419,63 @@ internal struct JSONScanner {
 
   /// Advance index past the next value.  This is used
   /// by skip() and by unknown field handling.
+  /// Note: This handles objects {...} recursively but arrays [...] non-recursively
+  /// This avoids us requiring excessive stack space for deeply nested
+  /// arrays (which are not included in the recursion budget check).
   private mutating func skipValue() throws {
     skipWhitespace()
-    guard hasMoreContent else {
-      throw JSONDecodingError.truncated
-    }
-    switch currentByte {
-    case asciiDoubleQuote: // " begins a string
-      try skipString()
-    case asciiOpenCurlyBracket: // { begins an object
-      try skipObject()
-    case asciiOpenSquareBracket: // [ begins an array
-      try skipArray()
-    case asciiLowerN: // n must be null
-      if !skipOptionalKeyword(bytes: [
-        asciiLowerN, asciiLowerU, asciiLowerL, asciiLowerL
-      ]) {
-        throw JSONDecodingError.truncated
-      }
-    case asciiLowerF: // f must be false
-      if !skipOptionalKeyword(bytes: [
-        asciiLowerF, asciiLowerA, asciiLowerL, asciiLowerS, asciiLowerE
-      ]) {
-        throw JSONDecodingError.truncated
-      }
-    case asciiLowerT: // t must be true
-      if !skipOptionalKeyword(bytes: [
-        asciiLowerT, asciiLowerR, asciiLowerU, asciiLowerE
-      ]) {
-        throw JSONDecodingError.truncated
-      }
-    default: // everything else is a number token
-      _ = try nextDouble()
+    var totalArrayDepth = 0
+    while true {
+        var arrayDepth = 0
+        while skipOptionalArrayStart() {
+            arrayDepth += 1
+        }
+        guard hasMoreContent else {
+          throw JSONDecodingError.truncated
+        }
+        switch currentByte {
+        case asciiDoubleQuote: // " begins a string
+            try skipString()
+        case asciiOpenCurlyBracket: // { begins an object
+            try skipObject()
+        case asciiCloseSquareBracket: // ] ends an empty array
+            if arrayDepth == 0 {
+                throw JSONDecodingError.failure
+            }
+            // We also close out [[]] or [[[]]] here
+            while arrayDepth > 0 && skipOptionalArrayEnd() {
+                arrayDepth -= 1
+            }
+        case asciiLowerN: // n must be null
+            if !skipOptionalKeyword(bytes: [
+                asciiLowerN, asciiLowerU, asciiLowerL, asciiLowerL
+            ]) {
+                throw JSONDecodingError.truncated
+            }
+        case asciiLowerF: // f must be false
+            if !skipOptionalKeyword(bytes: [
+                asciiLowerF, asciiLowerA, asciiLowerL, asciiLowerS, asciiLowerE
+            ]) {
+                throw JSONDecodingError.truncated
+            }
+        case asciiLowerT: // t must be true
+            if !skipOptionalKeyword(bytes: [
+                asciiLowerT, asciiLowerR, asciiLowerU, asciiLowerE
+            ]) {
+                throw JSONDecodingError.truncated
+            }
+        default: // everything else is a number token
+            _ = try nextDouble()
+        }
+        totalArrayDepth += arrayDepth
+        while totalArrayDepth > 0 && skipOptionalArrayEnd() {
+            totalArrayDepth -= 1
+        }
+        if totalArrayDepth > 0 {
+            try skipRequiredComma()
+        } else {
+            return
+        }
     }
   }
 
@@ -1464,21 +1497,6 @@ internal struct JSONScanner {
     }
   }
 
-  /// Advance the index past the next complete [...] construct.
-  private mutating func skipArray() throws {
-    try skipRequiredArrayStart()
-    if skipOptionalArrayEnd() {
-      return
-    }
-    while true {
-      try skipValue()
-      if skipOptionalArrayEnd() {
-        return
-      }
-      try skipRequiredComma()
-    }
-  }
-
   /// Advance the index past the next complete quoted string.
   ///
   // Caveat:  This does not fully validate; it will accept
@@ -1491,6 +1509,9 @@ internal struct JSONScanner {
   // they don't know; newer clients may reject the same input due to
   // schema mismatches or other issues.
   private mutating func skipString() throws {
+    guard hasMoreContent else {
+      throw JSONDecodingError.truncated
+    }
     if currentByte != asciiDoubleQuote {
       throw JSONDecodingError.malformedString
     }

@@ -4,7 +4,7 @@
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See LICENSE.txt for license information:
-// https://github.com/apple/swift-protobuf/blob/master/LICENSE.txt
+// https://github.com/apple/swift-protobuf/blob/main/LICENSE.txt
 //
 // -----------------------------------------------------------------------------
 ///
@@ -14,6 +14,8 @@
 /// methods to support binary and JSON coding.
 ///
 // -----------------------------------------------------------------------------
+
+// TODO: `Enum` should require `Sendable` but we cannot do so yet without possibly breaking compatibility.
 
 /// Generated enum types conform to this protocol.
 public protocol Enum: RawRepresentable, Hashable {

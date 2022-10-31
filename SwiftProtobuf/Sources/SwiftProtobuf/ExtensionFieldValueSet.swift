@@ -4,7 +4,7 @@
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See LICENSE.txt for license information:
-// https://github.com/apple/swift-protobuf/blob/master/LICENSE.txt
+// https://github.com/apple/swift-protobuf/blob/main/LICENSE.txt
 //
 // -----------------------------------------------------------------------------
 ///
@@ -13,6 +13,8 @@
 /// it does not need to be very sophisticated.
 ///
 // -----------------------------------------------------------------------------
+
+// TODO: `ExtensionFieldValueSet` should be `Sendable` but we cannot do so yet without possibly breaking compatibility.
 
 public struct ExtensionFieldValueSet: Hashable {
   fileprivate var values = [Int : AnyExtensionField]()
@@ -76,6 +78,12 @@ public struct ExtensionFieldValueSet: Hashable {
   public subscript(index: Int) -> AnyExtensionField? {
     get { return values[index] }
     set { values[index] = newValue }
+  }
+
+  mutating func modify<ReturnType>(index: Int, _ modifier: (inout AnyExtensionField?) throws -> ReturnType) rethrows -> ReturnType {
+    // This internal helper exists to invoke the _modify accessor on Dictionary for the given operation, which can avoid CoWs
+    // during the modification operation.
+    return try modifier(&values[index])
   }
 
   public var isInitialized: Bool {
