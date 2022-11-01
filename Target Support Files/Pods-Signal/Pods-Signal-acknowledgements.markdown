@@ -4447,7 +4447,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ## SSZipArchive
 
-Copyright (c) 2010-2015, Sam Soffes, http://soff.es
+Copyright (c) 2013-2021, ZipArchive, https://github.com/ZipArchive
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
