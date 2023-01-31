@@ -36,7 +36,7 @@ public extension String {
         isEmpty ? nil : self
     }
 
-    var filterForDisplay: String? {
+    var filterForDisplay: String {
         return (self as NSString).filterStringForDisplay()
     }
 
