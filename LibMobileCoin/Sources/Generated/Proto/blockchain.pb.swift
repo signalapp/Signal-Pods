@@ -175,36 +175,81 @@ public struct Blockchain_BlockSignature {
   fileprivate var _signer: External_Ed25519Public? = nil
 }
 
-/// Version 1 of an archived block.
-/// Note: The block.version field within the block may or may not be equal to 1.
-public struct Blockchain_ArchiveBlockV1 {
+public struct Blockchain_BlockMetadataContents {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  /// Block
-  public var block: Blockchain_Block {
-    get {return _block ?? Blockchain_Block()}
-    set {_block = newValue}
+  /// The Block ID.
+  public var blockID: Blockchain_BlockID {
+    get {return _blockID ?? Blockchain_BlockID()}
+    set {_blockID = newValue}
   }
-  /// Returns true if `block` has been explicitly set.
-  public var hasBlock: Bool {return self._block != nil}
-  /// Clears the value of `block`. Subsequent reads from it will return its default value.
-  public mutating func clearBlock() {self._block = nil}
+  /// Returns true if `blockID` has been explicitly set.
+  public var hasBlockID: Bool {return self._blockID != nil}
+  /// Clears the value of `blockID`. Subsequent reads from it will return its default value.
+  public mutating func clearBlockID() {self._blockID = nil}
 
-  /// Contents of the block.
-  public var blockContents: Blockchain_BlockContents {
-    get {return _blockContents ?? Blockchain_BlockContents()}
-    set {_blockContents = newValue}
+  /// Quorum set configuration at the time of externalization.
+  public var quorumSet: QuorumSet_QuorumSet {
+    get {return _quorumSet ?? QuorumSet_QuorumSet()}
+    set {_quorumSet = newValue}
   }
-  /// Returns true if `blockContents` has been explicitly set.
-  public var hasBlockContents: Bool {return self._blockContents != nil}
-  /// Clears the value of `blockContents`. Subsequent reads from it will return its default value.
-  public mutating func clearBlockContents() {self._blockContents = nil}
+  /// Returns true if `quorumSet` has been explicitly set.
+  public var hasQuorumSet: Bool {return self._quorumSet != nil}
+  /// Clears the value of `quorumSet`. Subsequent reads from it will return its default value.
+  public mutating func clearQuorumSet() {self._quorumSet = nil}
 
-  /// Block signature, when available.
-  public var signature: Blockchain_BlockSignature {
-    get {return _signature ?? Blockchain_BlockSignature()}
+  /// IAS report for the enclave which generated the signature.
+  public var verificationReport: External_VerificationReport {
+    get {return _verificationReport ?? External_VerificationReport()}
+    set {_verificationReport = newValue}
+  }
+  /// Returns true if `verificationReport` has been explicitly set.
+  public var hasVerificationReport: Bool {return self._verificationReport != nil}
+  /// Clears the value of `verificationReport`. Subsequent reads from it will return its default value.
+  public mutating func clearVerificationReport() {self._verificationReport = nil}
+
+  /// Responder ID of the consensus node that externalized this block.
+  public var responderID: String = String()
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+
+  fileprivate var _blockID: Blockchain_BlockID? = nil
+  fileprivate var _quorumSet: QuorumSet_QuorumSet? = nil
+  fileprivate var _verificationReport: External_VerificationReport? = nil
+}
+
+public struct Blockchain_BlockMetadata {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  /// Metadata signed by the consensus node.
+  public var contents: Blockchain_BlockMetadataContents {
+    get {return _contents ?? Blockchain_BlockMetadataContents()}
+    set {_contents = newValue}
+  }
+  /// Returns true if `contents` has been explicitly set.
+  public var hasContents: Bool {return self._contents != nil}
+  /// Clears the value of `contents`. Subsequent reads from it will return its default value.
+  public mutating func clearContents() {self._contents = nil}
+
+  /// Message signing key (signer).
+  public var nodeKey: External_Ed25519Public {
+    get {return _nodeKey ?? External_Ed25519Public()}
+    set {_nodeKey = newValue}
+  }
+  /// Returns true if `nodeKey` has been explicitly set.
+  public var hasNodeKey: Bool {return self._nodeKey != nil}
+  /// Clears the value of `nodeKey`. Subsequent reads from it will return its default value.
+  public mutating func clearNodeKey() {self._nodeKey = nil}
+
+  /// Signature using `node_key` over the Digestible encoding of `contents`.
+  public var signature: External_Ed25519Signature {
+    get {return _signature ?? External_Ed25519Signature()}
     set {_signature = newValue}
   }
   /// Returns true if `signature` has been explicitly set.
@@ -216,9 +261,63 @@ public struct Blockchain_ArchiveBlockV1 {
 
   public init() {}
 
-  fileprivate var _block: Blockchain_Block? = nil
-  fileprivate var _blockContents: Blockchain_BlockContents? = nil
-  fileprivate var _signature: Blockchain_BlockSignature? = nil
+  fileprivate var _contents: Blockchain_BlockMetadataContents? = nil
+  fileprivate var _nodeKey: External_Ed25519Public? = nil
+  fileprivate var _signature: External_Ed25519Signature? = nil
+}
+
+/// Version 1 of an archived block.
+/// Note: The block.version field within the block may or may not be equal to 1.
+public struct Blockchain_ArchiveBlockV1 {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  /// The block (header).
+  public var block: Blockchain_Block {
+    get {return _storage._block ?? Blockchain_Block()}
+    set {_uniqueStorage()._block = newValue}
+  }
+  /// Returns true if `block` has been explicitly set.
+  public var hasBlock: Bool {return _storage._block != nil}
+  /// Clears the value of `block`. Subsequent reads from it will return its default value.
+  public mutating func clearBlock() {_uniqueStorage()._block = nil}
+
+  /// Contents of the block.
+  public var blockContents: Blockchain_BlockContents {
+    get {return _storage._blockContents ?? Blockchain_BlockContents()}
+    set {_uniqueStorage()._blockContents = newValue}
+  }
+  /// Returns true if `blockContents` has been explicitly set.
+  public var hasBlockContents: Bool {return _storage._blockContents != nil}
+  /// Clears the value of `blockContents`. Subsequent reads from it will return its default value.
+  public mutating func clearBlockContents() {_uniqueStorage()._blockContents = nil}
+
+  /// Block signature, when available.
+  public var signature: Blockchain_BlockSignature {
+    get {return _storage._signature ?? Blockchain_BlockSignature()}
+    set {_uniqueStorage()._signature = newValue}
+  }
+  /// Returns true if `signature` has been explicitly set.
+  public var hasSignature: Bool {return _storage._signature != nil}
+  /// Clears the value of `signature`. Subsequent reads from it will return its default value.
+  public mutating func clearSignature() {_uniqueStorage()._signature = nil}
+
+  /// Additional signed metadata about this block.
+  public var metadata: Blockchain_BlockMetadata {
+    get {return _storage._metadata ?? Blockchain_BlockMetadata()}
+    set {_uniqueStorage()._metadata = newValue}
+  }
+  /// Returns true if `metadata` has been explicitly set.
+  public var hasMetadata: Bool {return _storage._metadata != nil}
+  /// Clears the value of `metadata`. Subsequent reads from it will return its default value.
+  public mutating func clearMetadata() {_uniqueStorage()._metadata = nil}
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+
+  fileprivate var _storage = _StorageClass.defaultInstance
 }
 
 /// An archived block.
@@ -279,6 +378,8 @@ extension Blockchain_BlockContentsHash: @unchecked Sendable {}
 extension Blockchain_Block: @unchecked Sendable {}
 extension Blockchain_BlockContents: @unchecked Sendable {}
 extension Blockchain_BlockSignature: @unchecked Sendable {}
+extension Blockchain_BlockMetadataContents: @unchecked Sendable {}
+extension Blockchain_BlockMetadata: @unchecked Sendable {}
 extension Blockchain_ArchiveBlockV1: @unchecked Sendable {}
 extension Blockchain_ArchiveBlock: @unchecked Sendable {}
 extension Blockchain_ArchiveBlock.OneOf_Block: @unchecked Sendable {}
@@ -523,11 +624,65 @@ extension Blockchain_BlockSignature: SwiftProtobuf.Message, SwiftProtobuf._Messa
   }
 }
 
-extension Blockchain_ArchiveBlockV1: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".ArchiveBlockV1"
+extension Blockchain_BlockMetadataContents: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".BlockMetadataContents"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "block"),
-    2: .standard(proto: "block_contents"),
+    1: .standard(proto: "block_id"),
+    2: .standard(proto: "quorum_set"),
+    3: .standard(proto: "verification_report"),
+    4: .standard(proto: "responder_id"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularMessageField(value: &self._blockID) }()
+      case 2: try { try decoder.decodeSingularMessageField(value: &self._quorumSet) }()
+      case 3: try { try decoder.decodeSingularMessageField(value: &self._verificationReport) }()
+      case 4: try { try decoder.decodeSingularStringField(value: &self.responderID) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    try { if let v = self._blockID {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
+    } }()
+    try { if let v = self._quorumSet {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
+    } }()
+    try { if let v = self._verificationReport {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
+    } }()
+    if !self.responderID.isEmpty {
+      try visitor.visitSingularStringField(value: self.responderID, fieldNumber: 4)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Blockchain_BlockMetadataContents, rhs: Blockchain_BlockMetadataContents) -> Bool {
+    if lhs._blockID != rhs._blockID {return false}
+    if lhs._quorumSet != rhs._quorumSet {return false}
+    if lhs._verificationReport != rhs._verificationReport {return false}
+    if lhs.responderID != rhs.responderID {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Blockchain_BlockMetadata: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".BlockMetadata"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "contents"),
+    2: .standard(proto: "node_key"),
     3: .same(proto: "signature"),
   ]
 
@@ -537,8 +692,8 @@ extension Blockchain_ArchiveBlockV1: SwiftProtobuf.Message, SwiftProtobuf._Messa
       // allocates stack space for every case branch when no optimizations are
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try { try decoder.decodeSingularMessageField(value: &self._block) }()
-      case 2: try { try decoder.decodeSingularMessageField(value: &self._blockContents) }()
+      case 1: try { try decoder.decodeSingularMessageField(value: &self._contents) }()
+      case 2: try { try decoder.decodeSingularMessageField(value: &self._nodeKey) }()
       case 3: try { try decoder.decodeSingularMessageField(value: &self._signature) }()
       default: break
       }
@@ -550,10 +705,10 @@ extension Blockchain_ArchiveBlockV1: SwiftProtobuf.Message, SwiftProtobuf._Messa
     // allocates stack space for every if/case branch local when no optimizations
     // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
     // https://github.com/apple/swift-protobuf/issues/1182
-    try { if let v = self._block {
+    try { if let v = self._contents {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
     } }()
-    try { if let v = self._blockContents {
+    try { if let v = self._nodeKey {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
     } }()
     try { if let v = self._signature {
@@ -562,10 +717,102 @@ extension Blockchain_ArchiveBlockV1: SwiftProtobuf.Message, SwiftProtobuf._Messa
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Blockchain_ArchiveBlockV1, rhs: Blockchain_ArchiveBlockV1) -> Bool {
-    if lhs._block != rhs._block {return false}
-    if lhs._blockContents != rhs._blockContents {return false}
+  public static func ==(lhs: Blockchain_BlockMetadata, rhs: Blockchain_BlockMetadata) -> Bool {
+    if lhs._contents != rhs._contents {return false}
+    if lhs._nodeKey != rhs._nodeKey {return false}
     if lhs._signature != rhs._signature {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Blockchain_ArchiveBlockV1: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".ArchiveBlockV1"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "block"),
+    2: .standard(proto: "block_contents"),
+    3: .same(proto: "signature"),
+    4: .same(proto: "metadata"),
+  ]
+
+  fileprivate class _StorageClass {
+    var _block: Blockchain_Block? = nil
+    var _blockContents: Blockchain_BlockContents? = nil
+    var _signature: Blockchain_BlockSignature? = nil
+    var _metadata: Blockchain_BlockMetadata? = nil
+
+    static let defaultInstance = _StorageClass()
+
+    private init() {}
+
+    init(copying source: _StorageClass) {
+      _block = source._block
+      _blockContents = source._blockContents
+      _signature = source._signature
+      _metadata = source._metadata
+    }
+  }
+
+  fileprivate mutating func _uniqueStorage() -> _StorageClass {
+    if !isKnownUniquelyReferenced(&_storage) {
+      _storage = _StorageClass(copying: _storage)
+    }
+    return _storage
+  }
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    _ = _uniqueStorage()
+    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      while let fieldNumber = try decoder.nextFieldNumber() {
+        // The use of inline closures is to circumvent an issue where the compiler
+        // allocates stack space for every case branch when no optimizations are
+        // enabled. https://github.com/apple/swift-protobuf/issues/1034
+        switch fieldNumber {
+        case 1: try { try decoder.decodeSingularMessageField(value: &_storage._block) }()
+        case 2: try { try decoder.decodeSingularMessageField(value: &_storage._blockContents) }()
+        case 3: try { try decoder.decodeSingularMessageField(value: &_storage._signature) }()
+        case 4: try { try decoder.decodeSingularMessageField(value: &_storage._metadata) }()
+        default: break
+        }
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every if/case branch local when no optimizations
+      // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+      // https://github.com/apple/swift-protobuf/issues/1182
+      try { if let v = _storage._block {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
+      } }()
+      try { if let v = _storage._blockContents {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
+      } }()
+      try { if let v = _storage._signature {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
+      } }()
+      try { if let v = _storage._metadata {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 4)
+      } }()
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Blockchain_ArchiveBlockV1, rhs: Blockchain_ArchiveBlockV1) -> Bool {
+    if lhs._storage !== rhs._storage {
+      let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
+        let _storage = _args.0
+        let rhs_storage = _args.1
+        if _storage._block != rhs_storage._block {return false}
+        if _storage._blockContents != rhs_storage._blockContents {return false}
+        if _storage._signature != rhs_storage._signature {return false}
+        if _storage._metadata != rhs_storage._metadata {return false}
+        return true
+      }
+      if !storagesAreEqual {return false}
+    }
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

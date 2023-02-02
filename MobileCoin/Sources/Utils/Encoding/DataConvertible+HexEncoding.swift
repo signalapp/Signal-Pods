@@ -16,3 +16,9 @@ extension DataConvertible {
         HexEncoding.hexEncodedString(fromData: self.data)
     }
 }
+
+extension Data {
+    public func hexEncodedString() -> String {
+        HexEncoding.hexEncodedString(fromData: self)
+    }
+}

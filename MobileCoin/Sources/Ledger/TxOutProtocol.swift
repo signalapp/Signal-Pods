@@ -8,8 +8,7 @@ import LibMobileCoin
 protocol TxOutProtocol {
     var encryptedMemo: Data66 { get }
     var commitment: Data32 { get }
-    var maskedValue: UInt64 { get }
-    var maskedTokenId: Data { get }
+    var maskedAmount: MaskedAmount { get }
     var targetKey: RistrettoPublic { get }
     var publicKey: RistrettoPublic { get }
 }
@@ -46,8 +45,7 @@ extension TxOutProtocol {
     ///     does not own `TxOut` or because ` TxOut` amounts are incongruent.
     func amount(accountKey: AccountKey) -> Amount? {
         TxOutUtils.amount(
-            maskedValue: maskedValue,
-            maskedTokenId: maskedTokenId,
+            maskedAmount: maskedAmount,
             publicKey: publicKey,
             viewPrivateKey: accountKey.viewPrivateKey)
     }
@@ -85,10 +83,16 @@ extension FogView_TxOutRecord {
     init(_ txOut: TxOutProtocol) {
         self.init()
         self.txOutAmountCommitmentData = txOut.commitment.data
-        self.txOutAmountMaskedValue = txOut.maskedValue
-        self.txOutAmountMaskedTokenID = txOut.maskedTokenId
+        self.txOutAmountMaskedValue = txOut.maskedAmount.maskedValue
         self.txOutTargetKeyData = txOut.targetKey.data
         self.txOutPublicKeyData = txOut.publicKey.data
         self.txOutEMemoData = txOut.encryptedMemo.data
+
+        switch txOut.maskedAmount.version {
+        case .v1:
+            self.txOutAmountMaskedV1TokenID = txOut.maskedAmount.maskedTokenId
+        case .v2:
+            self.txOutAmountMaskedV2TokenID = txOut.maskedAmount.maskedTokenId
+        }
     }
 }

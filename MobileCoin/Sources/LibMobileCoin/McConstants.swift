@@ -23,7 +23,7 @@ extension McConstants {
     static let MAX_TOMBSTONE_BLOCKS: UInt64 = 100
 
     /// Minimum allowed fee, denominated in picoMOB.
-    static let DEFAULT_MINIMUM_FEE: UInt64 = 10_000_000_000
+    static let DEFAULT_MINIMUM_FEE: UInt64 = 400_000_000
 
     /// Transaction hash length, in bytes.
     static let TX_HASH_LEN = 32

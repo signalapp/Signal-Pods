@@ -94,6 +94,47 @@ public struct Printable_TransferPayload {
   fileprivate var _txOutPublicKey: External_CompressedRistretto? = nil
 }
 
+//// Message encoding information required to locate a TxOut,
+//// un-blind the amount, and spend the TxOut. This can be used to give
+//// MobileCoin to both FOG & non-FOG users who may not yet have
+/// a MobileCoin account enabled
+public struct Printable_TxOutGiftCode {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  /// The global index of the TxOut that has been gifted. This allows
+  /// the receiver to find & uniquely identify the TxOut
+  public var globalIndex: UInt64 = 0
+
+  /// The one-time private key which can be used to spend the TxOut
+  public var onetimePrivateKey: External_RistrettoPrivate {
+    get {return _onetimePrivateKey ?? External_RistrettoPrivate()}
+    set {_onetimePrivateKey = newValue}
+  }
+  /// Returns true if `onetimePrivateKey` has been explicitly set.
+  public var hasOnetimePrivateKey: Bool {return self._onetimePrivateKey != nil}
+  /// Clears the value of `onetimePrivateKey`. Subsequent reads from it will return its default value.
+  public mutating func clearOnetimePrivateKey() {self._onetimePrivateKey = nil}
+
+  /// The shared secret used to un-blind the amount of the TxOut
+  public var sharedSecret: External_CompressedRistretto {
+    get {return _sharedSecret ?? External_CompressedRistretto()}
+    set {_sharedSecret = newValue}
+  }
+  /// Returns true if `sharedSecret` has been explicitly set.
+  public var hasSharedSecret: Bool {return self._sharedSecret != nil}
+  /// Clears the value of `sharedSecret`. Subsequent reads from it will return its default value.
+  public mutating func clearSharedSecret() {self._sharedSecret = nil}
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+
+  fileprivate var _onetimePrivateKey: External_RistrettoPrivate? = nil
+  fileprivate var _sharedSecret: External_CompressedRistretto? = nil
+}
+
 //// This wraps all of the above messages using "oneof", allowing us to
 //// have a single encoding scheme and extend as necessary simply by adding
 //// new messages without breaking backwards compatibility
@@ -128,12 +169,21 @@ public struct Printable_PrintableWrapper {
     set {wrapper = .transferPayload(newValue)}
   }
 
+  public var txOutGiftCode: Printable_TxOutGiftCode {
+    get {
+      if case .txOutGiftCode(let v)? = wrapper {return v}
+      return Printable_TxOutGiftCode()
+    }
+    set {wrapper = .txOutGiftCode(newValue)}
+  }
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public enum OneOf_Wrapper: Equatable {
     case publicAddress(External_PublicAddress)
     case paymentRequest(Printable_PaymentRequest)
     case transferPayload(Printable_TransferPayload)
+    case txOutGiftCode(Printable_TxOutGiftCode)
 
   #if !swift(>=4.1)
     public static func ==(lhs: Printable_PrintableWrapper.OneOf_Wrapper, rhs: Printable_PrintableWrapper.OneOf_Wrapper) -> Bool {
@@ -153,6 +203,10 @@ public struct Printable_PrintableWrapper {
         guard case .transferPayload(let l) = lhs, case .transferPayload(let r) = rhs else { preconditionFailure() }
         return l == r
       }()
+      case (.txOutGiftCode, .txOutGiftCode): return {
+        guard case .txOutGiftCode(let l) = lhs, case .txOutGiftCode(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
       default: return false
       }
     }
@@ -165,6 +219,7 @@ public struct Printable_PrintableWrapper {
 #if swift(>=5.5) && canImport(_Concurrency)
 extension Printable_PaymentRequest: @unchecked Sendable {}
 extension Printable_TransferPayload: @unchecked Sendable {}
+extension Printable_TxOutGiftCode: @unchecked Sendable {}
 extension Printable_PrintableWrapper: @unchecked Sendable {}
 extension Printable_PrintableWrapper.OneOf_Wrapper: @unchecked Sendable {}
 #endif  // swift(>=5.5) && canImport(_Concurrency)
@@ -281,12 +336,61 @@ extension Printable_TransferPayload: SwiftProtobuf.Message, SwiftProtobuf._Messa
   }
 }
 
+extension Printable_TxOutGiftCode: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".TxOutGiftCode"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .standard(proto: "global_index"),
+    2: .standard(proto: "onetime_private_key"),
+    3: .standard(proto: "shared_secret"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularUInt64Field(value: &self.globalIndex) }()
+      case 2: try { try decoder.decodeSingularMessageField(value: &self._onetimePrivateKey) }()
+      case 3: try { try decoder.decodeSingularMessageField(value: &self._sharedSecret) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    if self.globalIndex != 0 {
+      try visitor.visitSingularUInt64Field(value: self.globalIndex, fieldNumber: 1)
+    }
+    try { if let v = self._onetimePrivateKey {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
+    } }()
+    try { if let v = self._sharedSecret {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
+    } }()
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Printable_TxOutGiftCode, rhs: Printable_TxOutGiftCode) -> Bool {
+    if lhs.globalIndex != rhs.globalIndex {return false}
+    if lhs._onetimePrivateKey != rhs._onetimePrivateKey {return false}
+    if lhs._sharedSecret != rhs._sharedSecret {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
 extension Printable_PrintableWrapper: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = _protobuf_package + ".PrintableWrapper"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .standard(proto: "public_address"),
     2: .standard(proto: "payment_request"),
     3: .standard(proto: "transfer_payload"),
+    4: .standard(proto: "tx_out_gift_code"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -334,6 +438,19 @@ extension Printable_PrintableWrapper: SwiftProtobuf.Message, SwiftProtobuf._Mess
           self.wrapper = .transferPayload(v)
         }
       }()
+      case 4: try {
+        var v: Printable_TxOutGiftCode?
+        var hadOneofValue = false
+        if let current = self.wrapper {
+          hadOneofValue = true
+          if case .txOutGiftCode(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {
+          if hadOneofValue {try decoder.handleConflictingOneOf()}
+          self.wrapper = .txOutGiftCode(v)
+        }
+      }()
       default: break
       }
     }
@@ -356,6 +473,10 @@ extension Printable_PrintableWrapper: SwiftProtobuf.Message, SwiftProtobuf._Mess
     case .transferPayload?: try {
       guard case .transferPayload(let v)? = self.wrapper else { preconditionFailure() }
       try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
+    }()
+    case .txOutGiftCode?: try {
+      guard case .txOutGiftCode(let v)? = self.wrapper else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 4)
     }()
     case nil: break
     }

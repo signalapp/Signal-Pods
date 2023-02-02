@@ -12,11 +12,38 @@ public struct DestinationMemo {
     let memoData64: Data64
     let addressHash: AddressHash
     let numRecipients: PositiveUInt8
-    let fee: UInt64
-    let totalOutlay: UInt64
+    public let fee: UInt64
+    public let totalOutlay: UInt64
 }
 
 extension DestinationMemo: Equatable, Hashable { }
+
+extension DestinationMemo: Encodable {
+    enum CodingKeys: String, CodingKey {
+        case typeBytes
+        case typeName
+        case data
+    }
+
+    enum DataCodingKeys: String, CodingKey {
+        case addressHashHex
+        case numberOfRecipients
+        case fee
+        case totalOutlay
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(Self.type, forKey: .typeBytes)
+        try container.encode(Self.typeName, forKey: .typeName)
+
+        var data = container.nestedContainer(keyedBy: DataCodingKeys.self, forKey: .data)
+        try data.encode(addressHashHex, forKey: .addressHashHex)
+        try data.encode(String(numberOfRecipients), forKey: .numberOfRecipients)
+        try data.encode(String(fee), forKey: .fee)
+        try data.encode(String(totalOutlay), forKey: .totalOutlay)
+    }
+}
 
 struct RecoverableDestinationMemo {
     let memoData: Data64

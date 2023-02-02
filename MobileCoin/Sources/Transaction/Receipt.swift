@@ -21,9 +21,7 @@ import LibMobileCoin
 /// party sent them a particular `TxOut`.
 public struct Receipt {
     let txOutPublicKeyTyped: RistrettoPublic
-    let commitment: Data32
-    let maskedValue: UInt64
-    let maskedTokenId: Data
+    let maskedAmount: MaskedAmount
     let confirmationNumber: TxOutConfirmationNumber
 
     /// Block index at which the transaction that produced this `Receipt` will no longer be
@@ -36,9 +34,7 @@ public struct Receipt {
         tombstoneBlockIndex: UInt64
     ) {
         self.txOutPublicKeyTyped = txOut.publicKey
-        self.commitment = txOut.commitment
-        self.maskedValue = txOut.maskedValue
-        self.maskedTokenId = txOut.maskedTokenId
+        self.maskedAmount = txOut.maskedAmount
         self.confirmationNumber = confirmationNumber
         self.txTombstoneBlockIndex = tombstoneBlockIndex
     }
@@ -55,6 +51,8 @@ public struct Receipt {
         self.init(proto)
     }
 
+    var commitment: Data32 { maskedAmount.commitment }
+
     public var serializedData: Data {
         let proto = External_Receipt(self)
         return proto.serializedDataInfallible
@@ -65,12 +63,14 @@ public struct Receipt {
         txOutPublicKeyTyped.data
     }
 
+    // swiftlint:disable todo
     func matchesTxOut(_ txOut: TxOutProtocol) -> Bool {
         txOutPublicKeyTyped == txOut.publicKey
             && commitment == txOut.commitment
-            && maskedValue == txOut.maskedValue
-            && maskedTokenId == txOut.maskedTokenId
+            // TODO - verify with core-eng that commitment is sufficient, 
+            // remove after confirmation
     }
+    // swiftlint:enable todo
 
     func validateConfirmationNumber(accountKey: AccountKey) -> Bool {
         TxOutUtils.validateConfirmationNumber(
@@ -87,8 +87,7 @@ public struct Receipt {
 
     func unmaskAmount(accountKey: AccountKey) -> Result<Amount, InvalidInputError> {
         guard let amount = TxOutUtils.amount(
-            maskedValue: maskedValue,
-            maskedTokenId: maskedTokenId,
+            maskedAmount: maskedAmount,
             publicKey: txOutPublicKeyTyped,
             viewPrivateKey: accountKey.viewPrivateKey)
         else {
@@ -124,8 +123,7 @@ public struct Receipt {
         }
 
         guard let amount = TxOutUtils.amount(
-                maskedValue: maskedValue,
-                maskedTokenId: maskedTokenId,
+                maskedAmount: maskedAmount,
                 publicKey: txOutPublicKeyTyped,
                 viewPrivateKey: accountKey.viewPrivateKey)
         else {
@@ -156,8 +154,10 @@ extension Receipt: Hashable {}
 
 extension Receipt {
     init?(_ proto: External_Receipt) {
+
         guard let txOutPublicKey = RistrettoPublic(proto.publicKey.data),
-              let commitment = Data32(proto.maskedAmount.commitment.data),
+              let maskedAmountProto = proto.maskedAmount,
+              let maskedAmount = MaskedAmount(maskedAmountProto),
               let confirmationNumber = TxOutConfirmationNumber(proto.confirmation)
         else {
             logger.warning(
@@ -168,9 +168,7 @@ extension Receipt {
         }
 
         self.txOutPublicKeyTyped = txOutPublicKey
-        self.commitment = commitment
-        self.maskedValue = proto.maskedAmount.maskedValue
-        self.maskedTokenId = proto.maskedAmount.maskedTokenID
+        self.maskedAmount = maskedAmount
         self.confirmationNumber = confirmationNumber
         self.txTombstoneBlockIndex = proto.tombstoneBlock
     }
@@ -180,10 +178,18 @@ extension External_Receipt {
     init(_ receipt: Receipt) {
         self.init()
         self.publicKey = External_CompressedRistretto(receipt.txOutPublicKey)
-        self.maskedAmount.commitment = External_CompressedRistretto(receipt.commitment)
-        self.maskedAmount.maskedValue = receipt.maskedValue
-        self.maskedAmount.maskedTokenID = receipt.maskedTokenId
         self.confirmation = External_TxOutConfirmationNumber(receipt.confirmationNumber)
         self.tombstoneBlock = receipt.txTombstoneBlockIndex
+
+        switch receipt.maskedAmount.version {
+        case .v1:
+            self.maskedAmountV1.commitment = External_CompressedRistretto(receipt.commitment)
+            self.maskedAmountV1.maskedValue = receipt.maskedAmount.maskedValue
+            self.maskedAmountV1.maskedTokenID = receipt.maskedAmount.maskedTokenId
+        case .v2:
+            self.maskedAmountV2.commitment = External_CompressedRistretto(receipt.commitment)
+            self.maskedAmountV2.maskedValue = receipt.maskedAmount.maskedValue
+            self.maskedAmountV2.maskedTokenID = receipt.maskedAmount.maskedTokenId
+        }
     }
 }

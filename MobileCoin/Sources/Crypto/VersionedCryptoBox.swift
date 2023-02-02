@@ -7,13 +7,13 @@
 import Foundation
 import LibMobileCoin
 
-enum VersionedCryptoBoxError: Error {
+public enum VersionedCryptoBoxError: Error {
     case invalidInput(String)
     case unsupportedVersion(String)
 }
 
 extension VersionedCryptoBoxError: CustomStringConvertible {
-    var description: String {
+    public var description: String {
         "Versioned CryptoBox error: " + {
             switch self {
             case .invalidInput(let reason):

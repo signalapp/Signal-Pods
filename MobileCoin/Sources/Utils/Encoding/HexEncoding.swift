@@ -4,7 +4,7 @@
 
 import Foundation
 
-enum HexEncoding {
+public enum HexEncoding {
     static func data(fromHexEncodedString hexEncodedString: String) -> Data? {
         guard hexEncodedString.count.isMultiple(of: 2) else { return nil }
         let byteStrings = hexEncodedString.chunked(maxLength: 2)

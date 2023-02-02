@@ -41,6 +41,27 @@ func withMcInfallible(_ body: () -> Bool) {
     }
 }
 
+func withMcError<T>(_ body: (inout UnsafeMutablePointer<McError>?) -> T)
+    -> Result<T, LibMobileCoinError>
+{
+    var error: UnsafeMutablePointer<McError>?
+    let value = body(&error)
+
+    if let mcError = error {
+        let err: LibMobileCoinError
+        do {
+            err = try LibMobileCoinError.make(consuming: mcError).get()
+        } catch {
+            logger.fatalError("Error: \(#function): \(error)")
+        }
+        guard err.errorCode != .panic else {
+            logger.fatalError("LibMobileCoin function panicked: \(redacting: err.description)")
+        }
+        return .failure(err)
+    }
+    return .success((value))
+}
+
 func withMcError(_ body: (inout UnsafeMutablePointer<McError>?) -> Bool)
     -> Result<(), LibMobileCoinError>
 {

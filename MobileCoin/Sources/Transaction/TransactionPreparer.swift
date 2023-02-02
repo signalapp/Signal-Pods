@@ -13,12 +13,15 @@ struct TransactionPreparer {
     private let fogResolverManager: FogResolverManager
     private let mixinSelectionStrategy: MixinSelectionStrategy
     private let fogMerkleProofFetcher: FogMerkleProofFetcher
+    private let localRng: MobileCoinRng
+    private let rngSeed: RngSeed
 
     init(
         accountKey: AccountKey,
         fogMerkleProofService: FogMerkleProofService,
         fogResolverManager: FogResolverManager,
         mixinSelectionStrategy: MixinSelectionStrategy,
+        rngSeed: RngSeed,
         targetQueue: DispatchQueue?
     ) {
         self.serialQueue = DispatchQueue(
@@ -31,6 +34,8 @@ struct TransactionPreparer {
         self.fogMerkleProofFetcher = FogMerkleProofFetcher(
             fogMerkleProofService: fogMerkleProofService,
             targetQueue: targetQueue)
+        self.localRng = MobileCoinDefaultRng()
+        self.rngSeed = rngSeed
     }
 
     func prepareSelfAddressedTransaction(
@@ -75,7 +80,8 @@ struct TransactionPreparer {
                         fee: fee,
                         tombstoneBlockIndex: tombstoneBlockIndex,
                         fogResolver: fogResolver,
-                        blockVersion: blockVersion
+                        blockVersion: blockVersion,
+                        rngSeed: rngSeed
                     ).mapError { .invalidInput(String(describing: $0)) }
                     .map { $0.transaction }
                 })
@@ -136,7 +142,8 @@ struct TransactionPreparer {
                         fee: fee,
                         tombstoneBlockIndex: tombstoneBlockIndex,
                         fogResolver: fogResolver,
-                        blockVersion: blockVersion
+                        blockVersion: blockVersion,
+                        rngSeed: rngSeed
                     ).mapError { .invalidInput(String(describing: $0)) }
                 })
         })
@@ -148,7 +155,9 @@ struct TransactionPreparer {
         merkleRootBlock: UInt64? = nil,
         completion: @escaping (Result<[PreparedTxInput], ConnectionError>) -> Void
     ) {
-        let inputsMixinIndices = mixinSelectionStrategy.selectMixinIndices(
+        var inputsMixinIndices: [[UInt64]]
+
+        inputsMixinIndices = mixinSelectionStrategy.selectMixinIndices(
             forRealTxOutIndices: inputs.map { $0.globalIndex },
             selectionRange: ledgerTxOutCount.map { ..<$0 }
         ).map { Array($0) }

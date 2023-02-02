@@ -10,6 +10,7 @@ import LibMobileCoin
 
 enum TransactionBuilderError: Error {
     case invalidInput(String)
+    case invalidBlockVersion(String)
     case attestationVerificationFailed(String)
 }
 
@@ -19,6 +20,8 @@ extension TransactionBuilderError: CustomStringConvertible {
             switch self {
             case .invalidInput(let reason):
                 return "Invalid input: \(reason)"
+            case .invalidBlockVersion(let reason):
+                return "Invalid Block Version: \(reason)"
             case .attestationVerificationFailed(let reason):
                 return "Attestation verification failed: \(reason)"
             }
@@ -39,23 +42,35 @@ final class TransactionBuilder {
         fogResolver: FogResolver = FogResolver(),
         memoBuilder: TxOutMemoBuilder = DefaultMemoBuilder(),
         blockVersion: BlockVersion
-    ) {
+    ) throws {
         self.tombstoneBlockIndex = tombstoneBlockIndex
         self.memoBuilder = memoBuilder
-        self.ptr = memoBuilder.withUnsafeOpaquePointer { memoBuilderPtr in
+        let result: Result<OpaquePointer, TransactionBuilderError>
+        result = memoBuilder.withUnsafeOpaquePointer { memoBuilderPtr in
             fogResolver.withUnsafeOpaquePointer { fogResolverPtr in
                 // Safety: mc_transaction_builder_create should never return nil.
-                withMcInfallible {
+                withMcError { errorPtr in
                     mc_transaction_builder_create(
                             fee.value,
                             fee.tokenId.value,
                             tombstoneBlockIndex,
                             fogResolverPtr,
                             memoBuilderPtr,
-                            blockVersion)
+                            blockVersion,
+                            &errorPtr)
+                }.mapError {
+                    switch $0.errorCode {
+                    case .invalidInput:
+                        return .invalidBlockVersion("\(redacting: $0.description)")
+                    default:
+                        // Safety: mc_transaction_builder_add_input should not throw
+                        // non-documented errors.
+                        logger.fatalError("Unhandled LibMobileCoin error: \(redacting: $0)")
+                    }
                 }
             }
         }
+        self.ptr = try result.get()
     }
 
     deinit {
@@ -74,8 +89,7 @@ extension TransactionBuilder {
         tombstoneBlockIndex: UInt64,
         fogResolver: FogResolver,
         blockVersion: BlockVersion,
-        rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)? = securityRNG,
-        rngContext: Any? = nil
+        rngSeed: RngSeed
     ) -> Result<PendingSinglePayloadTransaction, TransactionBuilderError> {
         build(
             inputs: inputs,
@@ -86,8 +100,7 @@ extension TransactionBuilder {
             tombstoneBlockIndex: tombstoneBlockIndex,
             fogResolver: fogResolver,
             blockVersion: blockVersion,
-            rng: rng,
-            rngContext: rngContext
+            rngSeed: rngSeed
         ).map { pendingTransaction in
             pendingTransaction.singlePayload
         }
@@ -102,8 +115,7 @@ extension TransactionBuilder {
         tombstoneBlockIndex: UInt64,
         fogResolver: FogResolver,
         blockVersion: BlockVersion,
-        rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)? = securityRNG,
-        rngContext: Any? = nil
+        rngSeed: RngSeed
     ) -> Result<PendingSinglePayloadTransaction, TransactionBuilderError> {
         Math.positiveRemainingAmount(
             inputValues: inputs.map { $0.knownTxOut.value },
@@ -120,8 +132,7 @@ extension TransactionBuilder {
                 tombstoneBlockIndex: tombstoneBlockIndex,
                 fogResolver: fogResolver,
                 blockVersion: blockVersion,
-                rng: rng,
-                rngContext: rngContext
+                rngSeed: rngSeed
             ).map { pendingTransaction in
                 pendingTransaction.singlePayload
             }
@@ -137,8 +148,7 @@ extension TransactionBuilder {
         tombstoneBlockIndex: UInt64,
         fogResolver: FogResolver,
         blockVersion: BlockVersion,
-        rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)? = securityRNG,
-        rngContext: Any? = nil
+        rngSeed: RngSeed
     ) -> Result<PendingTransaction, TransactionBuilderError> {
         outputsAddingChangeOutput(
             inputs: inputs,
@@ -154,8 +164,7 @@ extension TransactionBuilder {
                 tombstoneBlockIndex: tombstoneBlockIndex,
                 fogResolver: fogResolver,
                 blockVersion: blockVersion,
-                rng: rng,
-                rngContext: rngContext)
+                rngSeed: rngSeed)
         }
     }
 
@@ -168,19 +177,26 @@ extension TransactionBuilder {
         tombstoneBlockIndex: UInt64,
         fogResolver: FogResolver,
         blockVersion: BlockVersion,
-        rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)? = securityRNG,
-        rngContext: Any? = nil
+        rngSeed: RngSeed
     ) -> Result<PendingTransaction, TransactionBuilderError> {
         guard Math.totalOutlayCheck(for: possibleTransaction, fee: fee, inputs: inputs) else {
             return .failure(.invalidInput("Input values != output values + fee"))
         }
 
-        let builder = TransactionBuilder(
-            fee: fee,
-            tombstoneBlockIndex: tombstoneBlockIndex,
-            fogResolver: fogResolver,
-            memoBuilder: memoType.createMemoBuilder(accountKey: accountKey),
-            blockVersion: blockVersion)
+        let builder: TransactionBuilder
+        do {
+            builder = try TransactionBuilder(
+                fee: fee,
+                tombstoneBlockIndex: tombstoneBlockIndex,
+                fogResolver: fogResolver,
+                memoBuilder: memoType.createMemoBuilder(accountKey: accountKey),
+                blockVersion: blockVersion)
+        } catch {
+            guard let error = error as? TransactionBuilderError else {
+                return .failure(.invalidInput("Unknown Error"))
+            }
+            return .failure(error)
+        }
 
         for input in inputs {
             if case .failure(let error) =
@@ -190,12 +206,13 @@ extension TransactionBuilder {
             }
         }
 
+        let seededRng = MobileCoinChaCha20Rng(rngSeed: rngSeed)
+
         let payloadContexts = possibleTransaction.outputs.map { output in
             builder.addOutput(
                 publicAddress: output.recipient,
                 amount: output.amount.value,
-                rng: rng,
-                rngContext: rngContext
+                rng: seededRng
             )
         }
 
@@ -203,11 +220,12 @@ extension TransactionBuilder {
             blockVersion: blockVersion,
             accountKey: accountKey,
             builder: builder,
-            changeAmount: possibleTransaction.changeAmount)
+            changeAmount: possibleTransaction.changeAmount,
+            rng: seededRng)
 
         return payloadContexts.collectResult().flatMap { payloadContexts in
             changeContext.flatMap { changeContext in
-                builder.build(rng: rng, rngContext: rngContext).map { transaction in
+                builder.build(rng: seededRng).map { transaction in
                     PendingTransaction(
                         transaction: transaction,
                         payloadTxOutContexts: payloadContexts,
@@ -222,8 +240,7 @@ extension TransactionBuilder {
         accountKey: AccountKey,
         builder: TransactionBuilder,
         changeAmount: PositiveUInt64?,
-        rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)? = securityRNG,
-        rngContext: Any? = nil
+        rng: MobileCoinRng
     ) -> Result<TxOutContext, TransactionBuilderError> {
         switch blockVersion {
         case .legacy:
@@ -232,14 +249,12 @@ extension TransactionBuilder {
             return builder.addOutput(
                 publicAddress: accountKey.publicAddress,
                 amount: changeAmount?.value ?? 0,
-                rng: rng,
-                rngContext: rngContext)
+                rng: rng)
         default:
             return builder.addChangeOutput(
                 accountKey: accountKey,
                 amount: changeAmount?.value ?? 0,
-                rng: rng,
-                rngContext: rngContext)
+                rng: rng)
         }
     }
 
@@ -248,8 +263,7 @@ extension TransactionBuilder {
         amount: UInt64,
         fogResolver: FogResolver = FogResolver(),
         blockVersion: BlockVersion,
-        rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)?,
-        rngContext: Any?
+        rng: MobileCoinRng
     ) -> Result<TxOut, TransactionBuilderError> {
         outputWithReceipt(
             publicAddress: publicAddress,
@@ -257,8 +271,7 @@ extension TransactionBuilder {
             tombstoneBlockIndex: 0,
             fogResolver: fogResolver,
             blockVersion: blockVersion,
-            rng: rng,
-            rngContext: rngContext
+            rng: rng
         ).map { $0.txOut }
     }
 
@@ -268,19 +281,25 @@ extension TransactionBuilder {
         tombstoneBlockIndex: UInt64,
         fogResolver: FogResolver = FogResolver(),
         blockVersion: BlockVersion,
-        rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)?,
-        rngContext: Any?
+        rng: MobileCoinRng
     ) -> Result<TxOutContext, TransactionBuilderError> {
-        let transactionBuilder = TransactionBuilder(
-            fee: Amount(value: 0, tokenId: .MOB),
-            tombstoneBlockIndex: tombstoneBlockIndex,
-            fogResolver: fogResolver,
-            blockVersion: blockVersion)
+        let transactionBuilder: TransactionBuilder
+        do {
+            transactionBuilder = try TransactionBuilder(
+                fee: Amount(value: 0, tokenId: .MOB),
+                tombstoneBlockIndex: tombstoneBlockIndex,
+                fogResolver: fogResolver,
+                blockVersion: blockVersion)
+        } catch {
+            guard let error = error as? TransactionBuilderError else {
+                return .failure(.invalidInput("Unknown Error"))
+            }
+            return .failure(error)
+        }
         return transactionBuilder.addOutput(
             publicAddress: publicAddress,
             amount: amount,
-            rng: rng,
-            rngContext: rngContext)
+            rng: rng)
     }
 
     private static func outputsAddingChangeOutput(
@@ -328,37 +347,32 @@ extension TransactionBuilder {
     private func addOutput(
         publicAddress: PublicAddress,
         amount: UInt64,
-        rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)?,
-        rngContext: Any?
+        rng: MobileCoinRng
     ) -> Result<TxOutContext, TransactionBuilderError> {
         TransactionBuilderUtils.addOutput(
             ptr: ptr,
             tombstoneBlockIndex: tombstoneBlockIndex,
             publicAddress: publicAddress,
             amount: amount,
-            rng: rng,
-            rngContext: rngContext)
+            rng: rng)
     }
 
     private func addChangeOutput(
         accountKey: AccountKey,
         amount: UInt64,
-        rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)?,
-        rngContext: Any?
+        rng: MobileCoinRng
     ) -> Result<TxOutContext, TransactionBuilderError> {
         TransactionBuilderUtils.addChangeOutput(
             ptr: ptr,
             tombstoneBlockIndex: tombstoneBlockIndex,
             accountKey: accountKey,
             amount: amount,
-            rng: rng,
-            rngContext: rngContext)
+            rng: rng)
     }
 
     private func build(
-        rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)?,
-        rngContext: Any?
+        rng: MobileCoinRng
     ) -> Result<Transaction, TransactionBuilderError> {
-        TransactionBuilderUtils.build(ptr: ptr, rng: rng, rngContext: rngContext)
+        TransactionBuilderUtils.build(ptr: ptr, rng: rng)
     }
 }

@@ -10,10 +10,10 @@ struct TxOut: TxOutProtocol {
 
     fileprivate let proto: External_TxOut
 
-    let commitment: Data32
     let targetKey: RistrettoPublic
     let publicKey: RistrettoPublic
     let eMemo: Data66
+    let maskedAmount: MaskedAmount
 
     /// - Returns: `nil` when the input is not deserializable.
     init?(serializedData: Data) {
@@ -37,12 +37,12 @@ struct TxOut: TxOutProtocol {
         }
     }
 
+    var commitment: Data32 { maskedAmount.commitment }
+
     var serializedData: Data {
         proto.serializedDataInfallible
     }
 
-    var maskedValue: UInt64 { proto.maskedAmount.maskedValue }
-    var maskedTokenId: Data { proto.maskedAmount.maskedTokenID }
     var encryptedFogHint: Data { proto.eFogHint.data }
     var encryptedMemo: Data66 {
         guard proto.hasEMemo else {
@@ -57,9 +57,11 @@ extension TxOut: Hashable {}
 
 extension TxOut {
     static func make(_ proto: External_TxOut) -> Result<TxOut, InvalidInputError> {
-        guard let commitment = Data32(proto.maskedAmount.commitment.data) else {
+        guard
+            let maskedAmountProto = proto.maskedAmount,
+            let maskedAmount = MaskedAmount(maskedAmountProto) else {
             return .failure(
-                InvalidInputError("Failed parsing External_TxOut: invalid commitment format"))
+                InvalidInputError("Failed parsing External_TxOut: invalid maskedAmount format"))
         }
         guard let targetKey = RistrettoPublic(proto.targetKey.data) else {
             return .failure(
@@ -69,7 +71,7 @@ extension TxOut {
             return .failure(
                 InvalidInputError("Failed parsing External_TxOut: invalid public key format"))
         }
-        guard [0, 4, 8].contains(proto.maskedAmount.maskedTokenID.count) else {
+        guard [0, 4, 8].contains(maskedAmount.maskedTokenId.count) else {
             return .failure(
                 InvalidInputError("Masked Token ID should be 0, 4, or 8 bytes"))
         }
@@ -85,7 +87,7 @@ extension TxOut {
         return .success(
             TxOut(
                 proto: proto,
-                commitment: commitment,
+                maskedAmount: maskedAmount,
                 targetKey: targetKey,
                 publicKey: publicKey,
                 eMemo: eMemo))
@@ -93,13 +95,13 @@ extension TxOut {
 
     private init(
         proto: External_TxOut,
-        commitment: Data32,
+        maskedAmount: MaskedAmount,
         targetKey: RistrettoPublic,
         publicKey: RistrettoPublic,
         eMemo: Data66
     ) {
         self.proto = proto
-        self.commitment = commitment
+        self.maskedAmount = maskedAmount
         self.targetKey = targetKey
         self.publicKey = publicKey
         self.eMemo = eMemo
@@ -119,6 +121,12 @@ extension External_TxOut {
 }
 
 extension FogView_TxOutRecord {
+    var encryptedMemo: Data66 {
+        Data66(self.txOutEMemoData.data) ?? Data66()
+    }
+}
+
+extension FogView_TxOutRecordLegacy {
     var encryptedMemo: Data66 {
         Data66(self.txOutEMemoData.data) ?? Data66()
     }

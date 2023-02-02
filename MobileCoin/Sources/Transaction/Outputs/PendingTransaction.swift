@@ -34,3 +34,34 @@ public struct PendingSinglePayloadTransaction {
 }
 
 extension PendingTransaction: Equatable, Hashable {}
+extension PendingSinglePayloadTransaction: Equatable {}
+
+extension PendingSinglePayloadTransaction {
+    func isIdempotent(with lhs: PendingSinglePayloadTransaction) -> Bool {
+        Self.areIdempotent(self, lhs)
+    }
+
+    static func areIdempotent(
+        _ rhs: PendingSinglePayloadTransaction,
+        _ lhs: PendingSinglePayloadTransaction
+    ) -> Bool {
+        rhs.payloadTxOutContext.txOutPublicKey == lhs.payloadTxOutContext.txOutPublicKey
+    }
+}
+
+extension PendingTransaction {
+    func isIdempotent(with lhs: PendingTransaction) -> Bool {
+        Self.areIdempotent(self, lhs)
+    }
+
+    static func areIdempotent(
+        _ rhs: PendingTransaction,
+        _ lhs: PendingTransaction
+    ) -> Bool {
+        rhs.payloadTxOutContexts.map {
+            $0.txOutPublicKey
+        } == lhs.payloadTxOutContexts.map {
+            $0.txOutPublicKey
+        }
+    }
+}

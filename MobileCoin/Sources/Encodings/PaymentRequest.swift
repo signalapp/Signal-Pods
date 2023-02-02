@@ -9,12 +9,18 @@ public struct PaymentRequest {
     public let publicAddress: PublicAddress
     public let value: UInt64?
     public let memo: String?
+    public let tokenID: UInt64
 
     /// # Notes:
     /// * Providing a `value` of `0` is the same as passing `nil`, meaning no value is specified.
     /// * Providing an empty string for `memo` is the same as passing `nil`, meaning no memo is
     ///     specified.
-    public init(publicAddress: PublicAddress, value: UInt64? = nil, memo: String? = nil) {
+    public init(
+        publicAddress: PublicAddress,
+        value: UInt64? = nil,
+        memo: String? = nil,
+        tokenID: UInt64 = 0
+    ) {
         self.publicAddress = publicAddress
 
         if let value = value, value != 0 {
@@ -28,6 +34,8 @@ public struct PaymentRequest {
         } else {
             self.memo = nil
         }
+
+        self.tokenID = tokenID
     }
 }
 
@@ -42,6 +50,7 @@ extension PaymentRequest {
         self.publicAddress = publicAddress
         self.value = paymentRequest.value != 0 ? paymentRequest.value : nil
         self.memo = !paymentRequest.memo.isEmpty ? paymentRequest.memo : nil
+        self.tokenID = paymentRequest.tokenID
     }
 }
 
@@ -55,5 +64,6 @@ extension Printable_PaymentRequest {
         if let memo = paymentRequest.memo {
             self.memo = memo
         }
+        self.tokenID = paymentRequest.tokenID
     }
 }

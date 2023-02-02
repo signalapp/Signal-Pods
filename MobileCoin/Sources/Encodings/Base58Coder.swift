@@ -52,6 +52,8 @@ public enum Base58Coder {
                 return nil
             }
             return .transferPayload(transferPayload)
+        case .txOutGiftCode:
+            return nil
         case .none:
             return nil
         }

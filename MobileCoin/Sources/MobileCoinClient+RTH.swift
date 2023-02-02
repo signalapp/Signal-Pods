@@ -10,8 +10,12 @@ extension MobileCoinClient {
         txOut: OwnedTxOut,
         contacts: Set<Contact>
     ) -> HistoricalTransaction where Contact: Hashable {
-        let (memo, contact) = txOut.recoverableMemo.recover(contacts: contacts)
-        return HistoricalTransaction(memo: memo, txOut: txOut, contact: contact)
+        let (memo, unauthenticated, contact) = txOut.recoverableMemo.recover(contacts: contacts)
+        return HistoricalTransaction(
+            memo: memo,
+            unauthenticatedMemo: unauthenticated,
+            txOut: txOut,
+            contact: contact)
     }
 
     static public func recoverTransactions<Contact: PublicAddressProvider>(

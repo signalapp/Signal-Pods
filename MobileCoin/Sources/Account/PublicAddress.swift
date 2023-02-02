@@ -58,6 +58,8 @@ public struct PublicAddress {
 
     public var fogReportUrlString: String? { fogInfo?.reportUrlString }
 
+    public var addressHash: Data? { calculateAddressHash()?.data }
+
     var fogReportUrl: FogUrl? { fogInfo?.reportUrl }
     var fogReportId: String? { fogInfo?.reportId }
     var fogAuthoritySig: Data? { fogInfo?.authoritySig }

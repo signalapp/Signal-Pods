@@ -10,10 +10,33 @@ public struct SenderWithPaymentRequestMemo {
 
     let memoData64: Data64
     let addressHash: AddressHash
-    let paymentRequestId: UInt64
+    public let paymentRequestId: UInt64
 }
 
 extension SenderWithPaymentRequestMemo: Equatable, Hashable { }
+
+extension SenderWithPaymentRequestMemo: Encodable {
+    enum CodingKeys: String, CodingKey {
+        case typeBytes
+        case typeName
+        case data
+    }
+
+    enum DataCodingKeys: String, CodingKey {
+        case addressHashHex
+        case paymentRequestId
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(Self.type, forKey: .typeBytes)
+        try container.encode(Self.typeName, forKey: .typeName)
+
+        var data = container.nestedContainer(keyedBy: DataCodingKeys.self, forKey: .data)
+        try data.encode(addressHashHex, forKey: .addressHashHex)
+        try data.encode(String(paymentRequestId), forKey: .paymentRequestId)
+    }
+}
 
 struct RecoverableSenderWithPaymentRequestMemo {
     let memoData: Data64
@@ -39,6 +62,20 @@ struct RecoverableSenderWithPaymentRequestMemo {
             return nil
         }
 
+        let paymentReqId = SenderWithPaymentRequestMemoUtils.getPaymentRequestId(memoData: memoData)
+        guard let paymentRequestId = paymentReqId else {
+            logger.debug("Unable to get payment request id")
+            return nil
+        }
+
+        let addressHash = SenderWithPaymentRequestMemoUtils.getAddressHash(memoData: memoData)
+        return SenderWithPaymentRequestMemo(
+            memoData64: memoData,
+            addressHash: addressHash,
+            paymentRequestId: paymentRequestId)
+    }
+
+    func unauthenticatedMemo() -> SenderWithPaymentRequestMemo? {
         let paymentReqId = SenderWithPaymentRequestMemoUtils.getPaymentRequestId(memoData: memoData)
         guard let paymentRequestId = paymentReqId else {
             logger.debug("Unable to get payment request id")

@@ -79,7 +79,10 @@ struct TransactionSubmitter {
              .tombstoneBlockExceeded, .invalidLedgerContext, .memosNotAllowed,
              .membershipProofValidationError, .keyError, .unsortedInputs,
              .tokenNotYetConfigured, .missingMaskedTokenID, .maskedTokenIDNotAllowed,
-             .unsortedOutputs:
+             .unsortedOutputs, .inputRulesNotAllowed, .inputRuleMissingRequiredOutput,
+             .inputRuleMaxTombstoneBlockExceeded, .unknownMaskedAmountVersion,
+             .inputRulePartialFill, .inputRuleInvalidAmountSharedSecret, .inputRuleTxOutConversion,
+             .inputRuleAmount, .feeMapDigestMismatch:
             return .failure(.invalidTransaction(
                         "Error Code: \(response.result) " +
                         "(\(response.result.rawValue))"))
@@ -89,7 +92,7 @@ struct TransactionSubmitter {
             return .failure(.tombstoneBlockTooFar())
         case .missingMemo:
             return .failure(.missingMemo("Missing memo"))
-        case .containsSpentKeyImage, .containsExistingOutputPublicKey:
+        case .containsSpentKeyImage:
             // This exact Tx might have already been submitted (and succeeded), or else the
             // inputs were already spent by another Tx.
             //
@@ -102,7 +105,9 @@ struct TransactionSubmitter {
             // decide how they want to proceed. Note: performing a Transaction status check
             // can help disambiguate the situation.
             return .failure(.inputsAlreadySpent())
-        case .ledger:
+        case .containsExistingOutputPublicKey:
+            return .failure(.outputAlreadyExists())
+        case .ledger, .ledgerTxOutIndexOutOfBounds:
             return .failure(.connectionError(
                 .invalidServerResponse("Consensus.proposeTx returned ledger error")))
         case .UNRECOGNIZED(let resultCode):

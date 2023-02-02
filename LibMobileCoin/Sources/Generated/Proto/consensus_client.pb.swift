@@ -39,6 +39,7 @@ public enum ConsensusClient_MintValidationResultCode: SwiftProtobuf.Enum {
   case noGovernors // = 10
   case nonceAlreadyUsed // = 11
   case noMatchingMintConfig // = 12
+  case mintingToFogNotSupported // = 13
   case UNRECOGNIZED(Int)
 
   public init() {
@@ -60,6 +61,7 @@ public enum ConsensusClient_MintValidationResultCode: SwiftProtobuf.Enum {
     case 10: self = .noGovernors
     case 11: self = .nonceAlreadyUsed
     case 12: self = .noMatchingMintConfig
+    case 13: self = .mintingToFogNotSupported
     default: self = .UNRECOGNIZED(rawValue)
     }
   }
@@ -79,6 +81,7 @@ public enum ConsensusClient_MintValidationResultCode: SwiftProtobuf.Enum {
     case .noGovernors: return 10
     case .nonceAlreadyUsed: return 11
     case .noMatchingMintConfig: return 12
+    case .mintingToFogNotSupported: return 13
     case .UNRECOGNIZED(let i): return i
     }
   }
@@ -103,6 +106,7 @@ extension ConsensusClient_MintValidationResultCode: CaseIterable {
     .noGovernors,
     .nonceAlreadyUsed,
     .noMatchingMintConfig,
+    .mintingToFogNotSupported,
   ]
 }
 
@@ -214,6 +218,7 @@ extension ConsensusClient_MintValidationResultCode: SwiftProtobuf._ProtoNameProv
     10: .same(proto: "NoGovernors"),
     11: .same(proto: "NonceAlreadyUsed"),
     12: .same(proto: "NoMatchingMintConfig"),
+    13: .same(proto: "MintingToFogNotSupported"),
   ]
 }
 

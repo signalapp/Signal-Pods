@@ -5,6 +5,15 @@
 import Foundation
 import LibMobileCoin
 
+func withMcRngObjCallback<T>(
+    rng: MobileCoinRng,
+    _ body: (UnsafeMutablePointer<McRngCallback>?) throws -> T
+) rethrows -> T {
+    let rawRng = Unmanaged.passUnretained(rng).toOpaque()
+    var rngCallback = McRngCallback(rng: mobileCoinRNG, context: rawRng)
+    return try body(&rngCallback)
+}
+
 func withMcRngCallback<T>(
     rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)?,
     rngContext: Any?,

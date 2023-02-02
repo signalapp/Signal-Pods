@@ -1,6 +1,6 @@
 {
   "name": "LibMobileCoin",
-  "version": "1.2.2",
+  "version": "4.0.0-pre3",
   "summary": "A library for communicating with MobileCoin network",
   "authors": "MobileCoin",
   "homepage": "https://www.mobilecoin.com/",
@@ -9,11 +9,11 @@
   },
   "source": {
     "git": "https://github.com/mobilecoinofficial/libmobilecoin-ios-artifacts.git",
-    "tag": "v1.2.2",
+    "tag": "v4.0.0-pre3",
     "submodules": true
   },
   "platforms": {
-    "ios": "10.0"
+    "ios": "11.0"
   },
   "default_subspecs": "Core",
   "swift_versions": "5.2",
@@ -24,7 +24,7 @@
     "HEADER_SEARCH_PATHS": "$(PODS_TARGET_SRCROOT)/Artifacts/include",
     "SWIFT_INCLUDE_PATHS": "$(HEADER_SEARCH_PATHS)",
     "LIBMOBILECOIN_LIB_IF_NEEDED": "$(PODS_TARGET_SRCROOT)/Artifacts/target/$(CARGO_BUILD_TARGET)/release/libmobilecoin.a",
-    "OTHER_LDFLAGS": "-u _mc_string_free $(LIBMOBILECOIN_LIB_IF_NEEDED)",
+    "OTHER_LDFLAGS": "-lz -u _mc_string_free $(LIBMOBILECOIN_LIB_IF_NEEDED)",
     "CARGO_BUILD_TARGET[sdk=iphonesimulator*][arch=arm64]": "aarch64-apple-ios-sim",
     "CARGO_BUILD_TARGET[sdk=iphonesimulator*][arch=*]": "x86_64-apple-ios",
     "CARGO_BUILD_TARGET[sdk=iphoneos*]": "aarch64-apple-ios",

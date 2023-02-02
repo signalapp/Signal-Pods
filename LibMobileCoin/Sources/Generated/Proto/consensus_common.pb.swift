@@ -64,6 +64,16 @@ public enum ConsensusCommon_ProposeTxResult: SwiftProtobuf.Enum {
   case missingMaskedTokenID // = 43
   case maskedTokenIDNotAllowed // = 44
   case unsortedOutputs // = 45
+  case inputRulesNotAllowed // = 46
+  case inputRuleMissingRequiredOutput // = 47
+  case inputRuleMaxTombstoneBlockExceeded // = 48
+  case unknownMaskedAmountVersion // = 49
+  case inputRulePartialFill // = 50
+  case inputRuleInvalidAmountSharedSecret // = 51
+  case inputRuleTxOutConversion // = 52
+  case inputRuleAmount // = 53
+  case ledgerTxOutIndexOutOfBounds // = 54
+  case feeMapDigestMismatch // = 55
   case UNRECOGNIZED(Int)
 
   public init() {
@@ -109,6 +119,16 @@ public enum ConsensusCommon_ProposeTxResult: SwiftProtobuf.Enum {
     case 43: self = .missingMaskedTokenID
     case 44: self = .maskedTokenIDNotAllowed
     case 45: self = .unsortedOutputs
+    case 46: self = .inputRulesNotAllowed
+    case 47: self = .inputRuleMissingRequiredOutput
+    case 48: self = .inputRuleMaxTombstoneBlockExceeded
+    case 49: self = .unknownMaskedAmountVersion
+    case 50: self = .inputRulePartialFill
+    case 51: self = .inputRuleInvalidAmountSharedSecret
+    case 52: self = .inputRuleTxOutConversion
+    case 53: self = .inputRuleAmount
+    case 54: self = .ledgerTxOutIndexOutOfBounds
+    case 55: self = .feeMapDigestMismatch
     default: self = .UNRECOGNIZED(rawValue)
     }
   }
@@ -152,6 +172,16 @@ public enum ConsensusCommon_ProposeTxResult: SwiftProtobuf.Enum {
     case .missingMaskedTokenID: return 43
     case .maskedTokenIDNotAllowed: return 44
     case .unsortedOutputs: return 45
+    case .inputRulesNotAllowed: return 46
+    case .inputRuleMissingRequiredOutput: return 47
+    case .inputRuleMaxTombstoneBlockExceeded: return 48
+    case .unknownMaskedAmountVersion: return 49
+    case .inputRulePartialFill: return 50
+    case .inputRuleInvalidAmountSharedSecret: return 51
+    case .inputRuleTxOutConversion: return 52
+    case .inputRuleAmount: return 53
+    case .ledgerTxOutIndexOutOfBounds: return 54
+    case .feeMapDigestMismatch: return 55
     case .UNRECOGNIZED(let i): return i
     }
   }
@@ -200,6 +230,16 @@ extension ConsensusCommon_ProposeTxResult: CaseIterable {
     .missingMaskedTokenID,
     .maskedTokenIDNotAllowed,
     .unsortedOutputs,
+    .inputRulesNotAllowed,
+    .inputRuleMissingRequiredOutput,
+    .inputRuleMaxTombstoneBlockExceeded,
+    .unknownMaskedAmountVersion,
+    .inputRulePartialFill,
+    .inputRuleInvalidAmountSharedSecret,
+    .inputRuleTxOutConversion,
+    .inputRuleAmount,
+    .ledgerTxOutIndexOutOfBounds,
+    .feeMapDigestMismatch,
   ]
 }
 
@@ -278,6 +318,9 @@ public struct ConsensusCommon_ProposeTxResponse {
   //// The block version which is in effect right now
   public var blockVersion: UInt32 = 0
 
+  //// Human-readable error message, in case of nonzero ProposeTxResult
+  public var errMsg: String = String()
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -334,6 +377,16 @@ extension ConsensusCommon_ProposeTxResult: SwiftProtobuf._ProtoNameProviding {
     43: .same(proto: "MissingMaskedTokenId"),
     44: .same(proto: "MaskedTokenIdNotAllowed"),
     45: .same(proto: "UnsortedOutputs"),
+    46: .same(proto: "InputRulesNotAllowed"),
+    47: .same(proto: "InputRuleMissingRequiredOutput"),
+    48: .same(proto: "InputRuleMaxTombstoneBlockExceeded"),
+    49: .same(proto: "UnknownMaskedAmountVersion"),
+    50: .same(proto: "InputRulePartialFill"),
+    51: .same(proto: "InputRuleInvalidAmountSharedSecret"),
+    52: .same(proto: "InputRuleTxOutConversion"),
+    53: .same(proto: "InputRuleAmount"),
+    54: .same(proto: "LedgerTxOutIndexOutOfBounds"),
+    55: .same(proto: "FeeMapDigestMismatch"),
   ]
 }
 
@@ -463,6 +516,7 @@ extension ConsensusCommon_ProposeTxResponse: SwiftProtobuf.Message, SwiftProtobu
     1: .same(proto: "result"),
     2: .standard(proto: "block_count"),
     3: .standard(proto: "block_version"),
+    4: .standard(proto: "err_msg"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -474,6 +528,7 @@ extension ConsensusCommon_ProposeTxResponse: SwiftProtobuf.Message, SwiftProtobu
       case 1: try { try decoder.decodeSingularEnumField(value: &self.result) }()
       case 2: try { try decoder.decodeSingularUInt64Field(value: &self.blockCount) }()
       case 3: try { try decoder.decodeSingularUInt32Field(value: &self.blockVersion) }()
+      case 4: try { try decoder.decodeSingularStringField(value: &self.errMsg) }()
       default: break
       }
     }
@@ -489,6 +544,9 @@ extension ConsensusCommon_ProposeTxResponse: SwiftProtobuf.Message, SwiftProtobu
     if self.blockVersion != 0 {
       try visitor.visitSingularUInt32Field(value: self.blockVersion, fieldNumber: 3)
     }
+    if !self.errMsg.isEmpty {
+      try visitor.visitSingularStringField(value: self.errMsg, fieldNumber: 4)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -496,6 +554,7 @@ extension ConsensusCommon_ProposeTxResponse: SwiftProtobuf.Message, SwiftProtobu
     if lhs.result != rhs.result {return false}
     if lhs.blockCount != rhs.blockCount {return false}
     if lhs.blockVersion != rhs.blockVersion {return false}
+    if lhs.errMsg != rhs.errMsg {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

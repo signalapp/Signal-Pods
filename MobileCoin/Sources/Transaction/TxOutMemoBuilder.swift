@@ -11,6 +11,8 @@ public enum MemoType {
     case customRecoverable(sender: AccountKey)
     case recoverablePaymentRequest(id: UInt64)
     case customPaymentRequest(sender: AccountKey, id: UInt64)
+    case recoverablePaymentIntent(id: UInt64)
+    case customPaymentIntent(sender: AccountKey, id: UInt64)
 
     func createMemoBuilder(accountKey: AccountKey) -> TxOutMemoBuilder {
         switch self {
@@ -28,6 +30,14 @@ public enum MemoType {
             return TxOutMemoBuilder.createRecoverablePaymentRequestMemoBuilder(
                 paymentRequestId: id,
                 accountKey: sender)
+        case .recoverablePaymentIntent(let id):
+            return TxOutMemoBuilder.createRecoverablePaymentIntentMemoBuilder(
+                paymentIntentId: id,
+                accountKey: accountKey)
+        case let .customPaymentIntent(sender, id):
+            return TxOutMemoBuilder.createRecoverablePaymentIntentMemoBuilder(
+                paymentIntentId: id,
+                accountKey: sender)
         }
     }
 }
@@ -36,6 +46,7 @@ enum RTHMemoType {
     case unused
     case recoverable(sender: AccountKey)
     case recoverablePaymentRequest(sender: AccountKey, id: UInt64)
+    case recoverablePaymentIntent(sender: AccountKey, id: UInt64)
 }
 
 class TxOutMemoBuilder {
@@ -66,6 +77,15 @@ class TxOutMemoBuilder {
                 accountKey: accountKey)
     }
 
+    static func createRecoverablePaymentIntentMemoBuilder(
+        paymentIntentId: UInt64,
+        accountKey: AccountKey
+    ) -> RecoverablePaymentIntentMemoBuilder {
+        RecoverablePaymentIntentMemoBuilder(
+                paymentIntentId: paymentIntentId,
+                accountKey: accountKey)
+    }
+
     func withUnsafeOpaquePointer<R>(_ body: (OpaquePointer) throws -> R) rethrows -> R {
         try body(ptr)
     }
@@ -79,6 +99,10 @@ class TxOutMemoBuilder {
         case let .recoverablePaymentRequest(sender, id):
             return createRecoverablePaymentRequestMemoBuilder(
                     paymentRequestId: id,
+                    accountKey: sender)
+        case let .recoverablePaymentIntent(sender, id):
+            return createRecoverablePaymentIntentMemoBuilder(
+                    paymentIntentId: id,
                     accountKey: sender)
         }
     }
@@ -117,6 +141,21 @@ final class RecoverablePaymentRequestMemoBuilder: TxOutMemoBuilder {
         let pointer = withMcInfallible {
             accountKey.withUnsafeCStructPointer { acctKeyPtr in
                 mc_memo_builder_sender_payment_request_and_destination_create(requestId, acctKeyPtr)
+            }
+        }
+        super.init(ptr: pointer)
+    }
+}
+
+final class RecoverablePaymentIntentMemoBuilder: TxOutMemoBuilder {
+    init(
+        paymentIntentId intentId: UInt64,
+        accountKey: AccountKey
+    ) {
+        // Safety: mc_memo_builder_sender_and_destination_create should never return nil.
+        let pointer = withMcInfallible {
+            accountKey.withUnsafeCStructPointer { acctKeyPtr in
+                mc_memo_builder_sender_payment_intent_and_destination_create(intentId, acctKeyPtr)
             }
         }
         super.init(ptr: pointer)

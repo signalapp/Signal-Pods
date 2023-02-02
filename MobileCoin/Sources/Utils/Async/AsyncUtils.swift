@@ -43,3 +43,35 @@ func performAsync<Value1, Value2, Failure: Error>(
     body1(callback(success: { results.0 = $0 }))
     body2(callback(success: { results.1 = $0 }))
 }
+
+#if swift(>=5.5)
+// swiftlint:disable superfluous_disable_command
+// swiftlint:disable multiline_parameters
+
+@available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
+public func withTimeout<T>(
+    seconds: TimeInterval,
+    block: @escaping @Sendable () async throws -> T
+) async throws -> T {
+    try await withThrowingTaskGroup(of: T.self) { group in
+        let deadline = Date(timeIntervalSinceNow: seconds)
+        group.addTask {
+            try await block()
+        }
+        group.addTask {
+            let interval = deadline.timeIntervalSinceNow
+            if interval > 0 {
+                try await Task.sleep(nanoseconds: UInt64(interval * 1_000_000_000))
+            }
+            try Task.checkCancellation()
+            throw TimedOutError()
+        }
+        guard let result = try await group.next() else {
+            throw TimedOutError()
+        }
+        group.cancelAll()
+        return result
+    }
+}
+
+#endif

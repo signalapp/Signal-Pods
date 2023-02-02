@@ -395,9 +395,58 @@ public struct FogView_TxOutRecord {
   public var txOutEMemoData: Data = Data()
 
   //// The masked token id associated to the amount field in the TxOut that was recovered
-  public var txOutAmountMaskedTokenID: Data = Data()
+  public var txOutAmountMaskedTokenID: FogView_TxOutRecord.OneOf_TxOutAmountMaskedTokenID? = nil
+
+  //// The masked token id associated to the v1 amount field in the TxOut that was recovered
+  //// The presence of this field indicates that a MaskedAmountV1 object was serialized.
+  public var txOutAmountMaskedV1TokenID: Data {
+    get {
+      if case .txOutAmountMaskedV1TokenID(let v)? = txOutAmountMaskedTokenID {return v}
+      return Data()
+    }
+    set {txOutAmountMaskedTokenID = .txOutAmountMaskedV1TokenID(newValue)}
+  }
+
+  //// The masked token id associated to the v2 amount field in the TxOut that was recovered
+  //// The presence of this field indicates that a MaskedAmountV2 object was serialized.
+  public var txOutAmountMaskedV2TokenID: Data {
+    get {
+      if case .txOutAmountMaskedV2TokenID(let v)? = txOutAmountMaskedTokenID {return v}
+      return Data()
+    }
+    set {txOutAmountMaskedTokenID = .txOutAmountMaskedV2TokenID(newValue)}
+  }
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  //// The masked token id associated to the amount field in the TxOut that was recovered
+  public enum OneOf_TxOutAmountMaskedTokenID: Equatable {
+    //// The masked token id associated to the v1 amount field in the TxOut that was recovered
+    //// The presence of this field indicates that a MaskedAmountV1 object was serialized.
+    case txOutAmountMaskedV1TokenID(Data)
+    //// The masked token id associated to the v2 amount field in the TxOut that was recovered
+    //// The presence of this field indicates that a MaskedAmountV2 object was serialized.
+    case txOutAmountMaskedV2TokenID(Data)
+
+  #if !swift(>=4.1)
+    public static func ==(lhs: FogView_TxOutRecord.OneOf_TxOutAmountMaskedTokenID, rhs: FogView_TxOutRecord.OneOf_TxOutAmountMaskedTokenID) -> Bool {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch (lhs, rhs) {
+      case (.txOutAmountMaskedV1TokenID, .txOutAmountMaskedV1TokenID): return {
+        guard case .txOutAmountMaskedV1TokenID(let l) = lhs, case .txOutAmountMaskedV1TokenID(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.txOutAmountMaskedV2TokenID, .txOutAmountMaskedV2TokenID): return {
+        guard case .txOutAmountMaskedV2TokenID(let l) = lhs, case .txOutAmountMaskedV2TokenID(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      default: return false
+      }
+    }
+  #endif
+  }
 
   public init() {}
 }
@@ -411,6 +460,7 @@ extension FogView_RngRecord: @unchecked Sendable {}
 extension FogView_DecommissionedIngestInvocation: @unchecked Sendable {}
 extension FogView_TxOutSearchResult: @unchecked Sendable {}
 extension FogView_TxOutRecord: @unchecked Sendable {}
+extension FogView_TxOutRecord.OneOf_TxOutAmountMaskedTokenID: @unchecked Sendable {}
 #endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
@@ -720,7 +770,8 @@ extension FogView_TxOutRecord: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
     7: .same(proto: "timestamp"),
     8: .standard(proto: "tx_out_amount_commitment_data_crc32"),
     9: .standard(proto: "tx_out_e_memo_data"),
-    10: .standard(proto: "tx_out_amount_masked_token_id"),
+    10: .standard(proto: "tx_out_amount_masked_v1_token_id"),
+    11: .standard(proto: "tx_out_amount_masked_v2_token_id"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -738,13 +789,32 @@ extension FogView_TxOutRecord: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
       case 7: try { try decoder.decodeSingularFixed64Field(value: &self.timestamp) }()
       case 8: try { try decoder.decodeSingularFixed32Field(value: &self.txOutAmountCommitmentDataCrc32) }()
       case 9: try { try decoder.decodeSingularBytesField(value: &self.txOutEMemoData) }()
-      case 10: try { try decoder.decodeSingularBytesField(value: &self.txOutAmountMaskedTokenID) }()
+      case 10: try {
+        var v: Data?
+        try decoder.decodeSingularBytesField(value: &v)
+        if let v = v {
+          if self.txOutAmountMaskedTokenID != nil {try decoder.handleConflictingOneOf()}
+          self.txOutAmountMaskedTokenID = .txOutAmountMaskedV1TokenID(v)
+        }
+      }()
+      case 11: try {
+        var v: Data?
+        try decoder.decodeSingularBytesField(value: &v)
+        if let v = v {
+          if self.txOutAmountMaskedTokenID != nil {try decoder.handleConflictingOneOf()}
+          self.txOutAmountMaskedTokenID = .txOutAmountMaskedV2TokenID(v)
+        }
+      }()
       default: break
       }
     }
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
     if !self.txOutAmountCommitmentData.isEmpty {
       try visitor.visitSingularBytesField(value: self.txOutAmountCommitmentData, fieldNumber: 1)
     }
@@ -772,8 +842,16 @@ extension FogView_TxOutRecord: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
     if !self.txOutEMemoData.isEmpty {
       try visitor.visitSingularBytesField(value: self.txOutEMemoData, fieldNumber: 9)
     }
-    if !self.txOutAmountMaskedTokenID.isEmpty {
-      try visitor.visitSingularBytesField(value: self.txOutAmountMaskedTokenID, fieldNumber: 10)
+    switch self.txOutAmountMaskedTokenID {
+    case .txOutAmountMaskedV1TokenID?: try {
+      guard case .txOutAmountMaskedV1TokenID(let v)? = self.txOutAmountMaskedTokenID else { preconditionFailure() }
+      try visitor.visitSingularBytesField(value: v, fieldNumber: 10)
+    }()
+    case .txOutAmountMaskedV2TokenID?: try {
+      guard case .txOutAmountMaskedV2TokenID(let v)? = self.txOutAmountMaskedTokenID else { preconditionFailure() }
+      try visitor.visitSingularBytesField(value: v, fieldNumber: 11)
+    }()
+    case nil: break
     }
     try unknownFields.traverse(visitor: &visitor)
   }

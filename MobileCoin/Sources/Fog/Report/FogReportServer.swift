@@ -108,7 +108,8 @@ extension FogReportServer {
         private var cachedReportResponse: Report_ReportResponse?
 
         func cachedReportResponse(
-            satisfyingReportParams reportParams: [(reportId: String, minPubkeyExpiry: UInt64)]
+            satisfyingReportParams reportParams: [(reportId: String,
+                                                   desiredMinPubkeyExpiry: UInt64)]
         ) -> Report_ReportResponse? {
             logger.info("reportParams: \(reportParams)")
             guard let reportResponse = cachedReportResponse else {
@@ -129,9 +130,12 @@ extension FogReportServer {
 }
 
 extension Report_ReportResponse {
-    fileprivate func isValid(reportParams: [(reportId: String, minPubkeyExpiry: UInt64)]) -> Bool {
-        reportParams.allSatisfy { reportId, minPubkeyExpiry in
-            reports.contains { $0.fogReportID == reportId && $0.pubkeyExpiry >= minPubkeyExpiry }
+    fileprivate func isValid(reportParams: [(reportId: String,
+                                             desiredMinPubkeyExpiry: UInt64)]) -> Bool {
+        reportParams.allSatisfy { reportId, desiredMinPubkeyExpiry in
+            reports.contains {
+                $0.fogReportID == reportId && $0.pubkeyExpiry >= desiredMinPubkeyExpiry
+            }
         }
     }
 }

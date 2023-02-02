@@ -77,7 +77,7 @@ extension Data {
         }
         guard success else {
             // This condition indicates a programming error.
-            logger.fatalError("Infallible LibMobileCoin function failed.")
+            logger.fatalError("Infallible Unsafe Mutable Data Allocation failed.")
         }
     }
 
