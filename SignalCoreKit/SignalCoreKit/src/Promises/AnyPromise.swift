@@ -97,7 +97,7 @@ public class AnyPromise: NSObject {
     @objc
     @available(swift, obsoleted: 1.0)
     public var doneInBackground: ((@escaping (Any) -> Void) -> AnyPromise) {
-        { AnyPromise(self.anyPromise.done(on: .global(), $0)) }
+        { AnyPromise(self.anyPromise.done(on: DispatchQueue.global(), $0)) }
     }
 
     @objc
@@ -120,7 +120,7 @@ public class AnyPromise: NSObject {
     @available(swift, obsoleted: 1.0)
     public var thenInBackground: ((@escaping (Any) -> AnyPromise) -> AnyPromise) {
         { block in
-            AnyPromise(self.anyPromise.then(on: .global()) { block($0).anyPromise })
+            AnyPromise(self.anyPromise.then(on: DispatchQueue.global()) { block($0).anyPromise })
         }
     }
 
@@ -139,7 +139,7 @@ public class AnyPromise: NSObject {
     @objc
     @available(swift, obsoleted: 1.0)
     public var catchInBackground: ((@escaping (Error) -> Void) -> AnyPromise) {
-        { AnyPromise(self.anyPromise.catch(on: .global(), $0)) }
+        { AnyPromise(self.anyPromise.catch(on: DispatchQueue.global(), $0)) }
     }
 
     @objc
@@ -191,12 +191,17 @@ public class AnyPromise: NSObject {
 }
 
 extension AnyPromise: Thenable, Catchable {
+
     public typealias Value = Any
 
     public var result: Result<Value, Error>? { anyPromise.result }
 
     public func observe(on queue: DispatchQueue? = nil, block: @escaping (Result<Value, Error>) -> Void) {
         anyPromise.observe(on: queue, block: block)
+    }
+
+    public func observe(on scheduler: Scheduler?, block: @escaping (Result<Value, Error>) -> Void) {
+        anyPromise.observe(on: scheduler, block: block)
     }
 
     public func resolve(_ value: Any) {

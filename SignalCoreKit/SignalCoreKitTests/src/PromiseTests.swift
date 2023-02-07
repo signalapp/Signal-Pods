@@ -12,11 +12,11 @@ class PromiseTests: XCTestCase {
         let mapExpectation = expectation(description: "Expect map on global queue")
         let doneExpectation = expectation(description: "Expect done on main queue")
 
-        firstly(on: .global()) { () -> String in
+        firstly(on: DispatchQueue.global()) { () -> String in
             XCTAssertTrue(DispatchQueueIsCurrentQueue(.global()))
             guaranteeExpectation.fulfill()
             return "abc"
-        }.map(on: .global()) { string -> String in
+        }.map(on: DispatchQueue.global()) { string -> String in
             XCTAssertTrue(DispatchQueueIsCurrentQueue(.global()))
             mapExpectation.fulfill()
             return string + "xyz"
@@ -34,11 +34,11 @@ class PromiseTests: XCTestCase {
         let mapExpectation = expectation(description: "Expect map on main queue")
         let doneExpectation = expectation(description: "Expect done on main queue")
 
-        firstly(on: .global()) { () -> String in
+        firstly(on: DispatchQueue.global()) { () -> String in
             XCTAssertTrue(DispatchQueueIsCurrentQueue(.global()))
             guaranteeExpectation.fulfill()
             return "abc"
-        }.map(on: .main) { string -> String in
+        }.map(on: DispatchQueue.main) { string -> String in
             XCTAssertTrue(DispatchQueueIsCurrentQueue(.main))
             mapExpectation.fulfill()
             return string + "xyz"
@@ -60,7 +60,7 @@ class PromiseTests: XCTestCase {
             case assertion
         }
 
-        firstly(on: .global()) { () -> String in
+        firstly(on: DispatchQueue.global()) { () -> String in
             XCTAssertTrue(DispatchQueueIsCurrentQueue(.global()))
             guaranteeExpectation.fulfill()
             return "abc"
@@ -68,7 +68,7 @@ class PromiseTests: XCTestCase {
             XCTAssertTrue(DispatchQueueIsCurrentQueue(.main))
             mapExpectation.fulfill()
             throw SimpleError.assertion
-        }.done(on: .main) { _ in
+        }.done(on: DispatchQueue.main) { _ in
             XCTAssert(false, "Done should never be called.")
         }.catch { error in
             XCTAssertTrue(DispatchQueueIsCurrentQueue(.main))
@@ -82,7 +82,7 @@ class PromiseTests: XCTestCase {
     func test_recovery() {
         let doneExpectation = expectation(description: "Done")
 
-        firstly(on: .global()) { () -> String in
+        firstly(on: DispatchQueue.global()) { () -> String in
             return "abc"
         }.map { _ -> String in
             throw OWSGenericError("some error")
@@ -102,7 +102,7 @@ class PromiseTests: XCTestCase {
         let ensureExpectation1 = expectation(description: "ensure on success")
         let ensureExpectation2 = expectation(description: "ensure on failure")
 
-        firstly(on: .global()) { () -> String in
+        firstly(on: DispatchQueue.global()) { () -> String in
             return "abc"
         }.map { _ -> String in
             throw OWSGenericError("some error")
@@ -114,7 +114,7 @@ class PromiseTests: XCTestCase {
             XCTAssert(true, "Catch should be called.")
         }
 
-        firstly(on: .global()) { () -> String in
+        firstly(on: DispatchQueue.global()) { () -> String in
             return "abc"
         }.map { string -> String in
             return string + "xyz"
@@ -134,8 +134,8 @@ class PromiseTests: XCTestCase {
         let when2 = expectation(description: "when2")
 
         Promise.when(fulfilled: [
-            firstly(on: .global()) { "abc" },
-            firstly(on: .main) { "xyz" }.map { $0 + "abc" }
+            firstly(on: DispatchQueue.global()) { "abc" },
+            firstly(on: DispatchQueue.main) { "xyz" }.map { $0 + "abc" }
         ]).done {
             when1.fulfill()
         }.catch { _ in
@@ -143,8 +143,8 @@ class PromiseTests: XCTestCase {
         }
 
         Promise.when(fulfilled: [
-            firstly(on: .global()) { "abc" },
-            firstly(on: .main) { "xyz" }.map { _ in throw OWSGenericError("an error") }
+            firstly(on: DispatchQueue.global()) { "abc" },
+            firstly(on: DispatchQueue.main) { "xyz" }.map { _ in throw OWSGenericError("an error") }
         ]).done {
             XCTAssert(false, "Done should never be called.")
         }.catch { _ in
@@ -161,11 +161,11 @@ class PromiseTests: XCTestCase {
         var chainOneCounter = 0
 
         Promise.when(resolved: [
-            firstly(on: .main) { () -> String in
+            firstly(on: DispatchQueue.main) { () -> String in
                 chainOneCounter += 1
                 throw OWSGenericError("error")
             },
-            firstly(on: .global()) { () -> String in
+            firstly(on: DispatchQueue.global()) { () -> String in
                 sleep(2)
                 chainOneCounter += 1
                 return "abc"
@@ -178,11 +178,11 @@ class PromiseTests: XCTestCase {
         var chainTwoCounter = 0
 
         Promise.when(fulfilled: [
-            firstly(on: .main) { () -> String in
+            firstly(on: DispatchQueue.main) { () -> String in
                 chainTwoCounter += 1
                 throw OWSGenericError("error")
             },
-            firstly(on: .global()) { () -> String in
+            firstly(on: DispatchQueue.global()) { () -> String in
                 sleep(2)
                 chainTwoCounter += 1
                 return "abc"
@@ -198,12 +198,12 @@ class PromiseTests: XCTestCase {
     }
 
     func test_wait() throws {
-        XCTAssertEqual(firstly(on: .global()) { () -> Int in
+        XCTAssertEqual(firstly(on: DispatchQueue.global()) { () -> Int in
             sleep(1)
             return 5000
         }.wait(), 5000)
 
-        XCTAssertThrowsError(try firstly(on: .global()) { () -> Int in
+        XCTAssertThrowsError(try firstly(on: DispatchQueue.global()) { () -> Int in
             sleep(1)
             throw OWSGenericError("An error")
         }.wait())
@@ -212,7 +212,7 @@ class PromiseTests: XCTestCase {
     func test_timeout() {
         let expectTimeout = expectation(description: "timeout")
 
-        firstly(on: .global()) { () -> String in
+        firstly(on: DispatchQueue.global()) { () -> String in
             sleep(15)
             return "default"
         }.timeout(
@@ -225,7 +225,7 @@ class PromiseTests: XCTestCase {
 
         let expectNoTimeout = expectation(description: "noTimeout")
 
-        firstly(on: .global()) { () -> String in
+        firstly(on: DispatchQueue.global()) { () -> String in
             sleep(1)
             return "default"
         }.timeout(
@@ -244,11 +244,11 @@ class PromiseTests: XCTestCase {
         let mapExpectation = expectation(description: "Expect map on global queue")
         let doneExpectation = expectation(description: "Expect done on main queue")
 
-        AnyPromise(firstly(on: .global()) { () -> String in
+        AnyPromise(firstly(on: DispatchQueue.global()) { () -> String in
             XCTAssertTrue(DispatchQueueIsCurrentQueue(.global()))
             anyPromiseExpectation.fulfill()
             return "abc"
-        }).map(on: .global()) { string -> String in
+        }).map(on: DispatchQueue.global()) { string -> String in
             XCTAssertTrue(string is String)
             XCTAssertTrue(DispatchQueueIsCurrentQueue(.global()))
             mapExpectation.fulfill()
@@ -264,18 +264,18 @@ class PromiseTests: XCTestCase {
 
     func test_deepPromiseChain() {
         var sharedValue = 0
-        var promise = firstly(on: .global()) {
+        var promise = firstly(on: DispatchQueue.global()) {
             sharedValue += 1
         }
 
         let testDepth = 1000
         for _ in 0..<testDepth {
-            promise = promise.then(on: .global()) {
+            promise = promise.then(on: DispatchQueue.global()) {
                 sharedValue += 1
                 return .value(())
             }
         }
-        promise.done(on: .global()) {
+        promise.done(on: DispatchQueue.global()) {
             sharedValue += 1
         }.wait()
 
@@ -286,7 +286,7 @@ class PromiseTests: XCTestCase {
         let (promise, future) = Promise<Int>.pending()
 
         var doneCalled = false
-        _ = promise.done(on: .main) { argValue in
+        _ = promise.done(on: DispatchQueue.main) { argValue in
             switch promise.result {
             case .success(let resultValue):
                 XCTAssertEqual(resultValue, argValue)

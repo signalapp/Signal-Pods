@@ -5,17 +5,20 @@
 import Foundation
 
 public extension Thenable {
-    func nilTimeout(seconds: TimeInterval) -> Promise<Value?> {
-        let timeout: Promise<Value?> = Guarantee.after(seconds: seconds).asPromise().map { nil }
+    func nilTimeout(
+        on scheduler: Scheduler? = nil,
+        seconds: TimeInterval
+    ) -> Promise<Value?> {
+        let timeout: Promise<Value?> = Guarantee.after(on: scheduler, seconds: seconds).asPromise().map(on: scheduler) { nil }
 
         return Promise.race([
-            map { (a: Value?) -> (Value?, Bool) in
+            map(on: scheduler) { (a: Value?) -> (Value?, Bool) in
                 (a, false)
             },
-            timeout.map { (a: Value?) -> (Value?, Bool) in
+            timeout.map(on: scheduler) { (a: Value?) -> (Value?, Bool) in
                 (a, true)
             }
-        ]).map { result, didTimeout in
+        ]).map(on: scheduler) { result, didTimeout in
             if didTimeout {
                 Logger.info("Timed out, returning nil value.")
             }
@@ -23,15 +26,19 @@ public extension Thenable {
         }
     }
 
-    func timeout(seconds: TimeInterval, substituteValue: Value) -> Promise<Value> {
-        let timeout: Promise<Value> = Guarantee.after(seconds: seconds).asPromise().map {
+    func timeout(
+        on scheduler: Scheduler? = nil,
+        seconds: TimeInterval,
+        substituteValue: Value
+    ) -> Promise<Value> {
+        let timeout: Promise<Value> = Guarantee.after(on: scheduler, seconds: seconds).asPromise().map(on: scheduler) {
             return substituteValue
         }
 
         return Promise.race([
-            map { ($0, false) },
-            timeout.map { ($0, true) }
-        ]).map { result, didTimeout in
+            map(on: scheduler) { ($0, false) },
+            timeout.map(on: scheduler) { ($0, true) }
+        ]).map(on: scheduler) { result, didTimeout in
             if didTimeout {
                 Logger.info("Timed out, returning substitute value.")
             }
@@ -42,6 +49,7 @@ public extension Thenable {
 
 public extension Promise {
     func timeout(
+        on scheduler: Scheduler? = nil,
         seconds: TimeInterval,
         ticksWhileSuspended: Bool = false,
         description: String? = nil,
@@ -49,12 +57,16 @@ public extension Promise {
     ) -> Promise<Value> {
         let timeout: Promise<Value>
         if ticksWhileSuspended {
-            timeout = Guarantee.after(wallInterval: seconds).asPromise().map { throw TimeoutError.wallTimeout }
+            timeout = Guarantee.after(on: scheduler, wallInterval: seconds)
+                .asPromise()
+                .map(on: scheduler) { throw TimeoutError.wallTimeout }
         } else {
-            timeout = Guarantee.after(seconds: seconds).asPromise().map { throw TimeoutError.relativeTimeout }
+            timeout = Guarantee.after(on: scheduler, seconds: seconds)
+                .asPromise()
+                .map(on: scheduler) { throw TimeoutError.relativeTimeout }
         }
 
-        return Promise.race([self, timeout]).recover { error -> Promise<Value> in
+        return Promise.race(on: scheduler, [self, timeout]).recover(on: scheduler) { error -> Promise<Value> in
             switch error {
             case is TimeoutError:
                 let underlyingError = timeoutErrorBlock()
@@ -79,7 +91,10 @@ enum TimeoutError: Error {
 }
 
 public extension Thenable where Value == Void {
-    func timeout(seconds: TimeInterval) -> Promise<Void> {
-        return timeout(seconds: seconds, substituteValue: ())
+    func timeout(
+        on scheduler: Scheduler? = nil,
+        seconds: TimeInterval
+    ) -> Promise<Void> {
+        return timeout(on: scheduler, seconds: seconds, substituteValue: ())
     }
 }

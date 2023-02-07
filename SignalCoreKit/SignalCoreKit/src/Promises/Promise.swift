@@ -44,11 +44,11 @@ public final class Promise<Value>: Thenable, Catchable {
     }
 
     public convenience init(
-        on queue: DispatchQueue,
+        on scheduler: Scheduler,
         _ block: @escaping (Future<Value>) throws -> Void
     ) {
         self.init()
-        queue.asyncIfNecessary {
+        scheduler.asyncIfNecessary {
             do {
                 try block(self.future)
             } catch {
@@ -57,8 +57,8 @@ public final class Promise<Value>: Thenable, Catchable {
         }
     }
 
-    public func observe(on queue: DispatchQueue? = nil, block: @escaping (Result<Value, Error>) -> Void) {
-        future.observe(on: queue, block: block)
+    public func observe(on scheduler: Scheduler? = nil, block: @escaping (Result<Value, Error>) -> Void) {
+        future.observe(on: scheduler, block: block)
     }
 }
 
@@ -69,7 +69,7 @@ public extension Promise {
         if result == nil {
             let group = DispatchGroup()
             group.enter()
-            observe(on: .global()) { result = $0; group.leave() }
+            observe(on: DispatchQueue.global()) { result = $0; group.leave() }
             group.wait()
         }
 

@@ -8,34 +8,34 @@ public protocol Thenable: AnyObject {
     associatedtype Value
     var result: Result<Value, Error>? { get }
     init()
-    func observe(on queue: DispatchQueue?, block: @escaping (Result<Value, Error>) -> Void)
+    func observe(on scheduler: Scheduler?, block: @escaping (Result<Value, Error>) -> Void)
 }
 
 public extension Thenable {
     func map<T>(
-        on queue: DispatchQueue? = nil,
+        on scheduler: Scheduler? = nil,
         _ block: @escaping (Value) throws -> T
     ) -> Promise<T> {
-        observe(on: queue, block: block)
+        observe(on: scheduler, block: block)
     }
 
     func done(
-        on queue: DispatchQueue? = nil,
+        on queue: Scheduler? = nil,
         _ block: @escaping (Value) throws -> Void
     ) -> Promise<Void> {
         observe(on: queue, block: block)
     }
 
     func then<T: Thenable>(
-        on queue: DispatchQueue? = nil,
+        on scheduler: Scheduler? = nil,
         _ block: @escaping (Value) throws -> T
     ) -> Promise<T.Value> {
         let (promise, future) = Promise<T.Value>.pending()
-        observe(on: queue) { result in
+        observe(on: scheduler) { result in
             do {
                 switch result {
                 case .success(let value):
-                    future.resolve(on: queue, with: try block(value))
+                    future.resolve(on: scheduler, with: try block(value))
                 case .failure(let error):
                     future.reject(error)
                 }
@@ -51,16 +51,20 @@ public extension Thenable {
         return value
     }
 
-    func asVoid() -> Promise<Void> { map { _ in } }
+    func asVoid(
+        on scheduler: Scheduler? = nil
+    ) -> Promise<Void> {
+        map(on: scheduler) { _ in }
+    }
 }
 
 fileprivate extension Thenable {
     func observe<T>(
-        on queue: DispatchQueue?,
+        on scheduler: Scheduler?,
         block: @escaping (Value) throws -> T
     ) -> Promise<T> {
         let (promise, future) = Promise<T>.pending()
-        observe(on: queue) { result in
+        observe(on: scheduler) { result in
             do {
                 switch result {
                 case .success(let value):

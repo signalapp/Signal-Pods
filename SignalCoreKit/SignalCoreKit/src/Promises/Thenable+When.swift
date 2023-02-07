@@ -7,41 +7,68 @@ import Foundation
 // MARK: - Fulfilled
 
 public extension Thenable {
-    static func when<T: Thenable>(fulfilled thenables: [T]) -> Promise<[Value]> where T.Value == Value {
-        _when(fulfilled: thenables).map { thenables.compactMap { $0.value } }
+    static func when<T: Thenable>(
+        on scheduler: Scheduler? = nil,
+        fulfilled thenables: [T]
+    ) -> Promise<[Value]> where T.Value == Value {
+        _when(on: scheduler, fulfilled: thenables).map(on: scheduler) { thenables.compactMap { $0.value } }
     }
 
-    static func when<T: Thenable, U: Thenable>(fulfilled tt: T, _ tu: U) -> Promise<(T.Value, U.Value)> where T.Value == Value {
-        Guarantee<Any>._when(fulfilled: [
+    static func when<T: Thenable, U: Thenable>(
+        on scheduler: Scheduler? = nil,
+        fulfilled tt: T,
+        _ tu: U
+    ) -> Promise<(T.Value, U.Value)> where T.Value == Value {
+        Guarantee<Any>._when(on: scheduler, fulfilled: [
             AnyPromise(tt), AnyPromise(tu)
-        ]).map { (tt.value!, tu.value!) }
+        ]).map(on: scheduler) { (tt.value!, tu.value!) }
     }
 
-    static func when<T: Thenable, U: Thenable, V: Thenable>(fulfilled tt: T, _ tu: U, _ tv: V) -> Promise<(T.Value, U.Value, V.Value)> where T.Value == Value {
-        Guarantee<Any>._when(fulfilled: [
+    static func when<T: Thenable, U: Thenable, V: Thenable>(
+        on scheduler: Scheduler? = nil,
+        fulfilled tt: T,
+        _ tu: U,
+        _ tv: V
+    ) -> Promise<(T.Value, U.Value, V.Value)> where T.Value == Value {
+        Guarantee<Any>._when(on: scheduler, fulfilled: [
             AnyPromise(tt), AnyPromise(tu), AnyPromise(tv)
-        ]).map { (tt.value!, tu.value!, tv.value!) }
+        ]).map(on: scheduler) { (tt.value!, tu.value!, tv.value!) }
     }
 
-    static func when<T: Thenable, U: Thenable, V: Thenable, W: Thenable>(fulfilled tt: T, _ tu: U, _ tv: V, _ tw: W) -> Promise<(T.Value, U.Value, V.Value, W.Value)> where T.Value == Value {
-        Guarantee<Any>._when(fulfilled: [
+    static func when<T: Thenable, U: Thenable, V: Thenable, W: Thenable>(
+        on scheduler: Scheduler? = nil,
+        fulfilled tt: T,
+        _ tu: U,
+        _ tv: V,
+        _ tw: W
+    ) -> Promise<(T.Value, U.Value, V.Value, W.Value)> where T.Value == Value {
+        Guarantee<Any>._when(on: scheduler, fulfilled: [
             AnyPromise(tt), AnyPromise(tu), AnyPromise(tv), AnyPromise(tw)
-        ]).map { (tt.value!, tu.value!, tv.value!, tw.value!) }
+        ]).map(on: scheduler) { (tt.value!, tu.value!, tv.value!, tw.value!) }
     }
 }
 
 public extension Thenable where Value == Void {
-    static func when<T: Thenable>(fulfilled thenables: T...) -> Promise<Void> {
-        _when(fulfilled: thenables)
+    static func when<T: Thenable>(
+        on scheduler: Scheduler? = nil,
+        fulfilled thenables: T...
+    ) -> Promise<Void> {
+        _when(on: scheduler, fulfilled: thenables)
     }
 
-    static func when<T: Thenable>(fulfilled thenables: [T]) -> Promise<Void> {
-        _when(fulfilled: thenables)
+    static func when<T: Thenable>(
+        on scheduler: Scheduler? = nil,
+        fulfilled thenables: [T]
+    ) -> Promise<Void> {
+        _when(on: scheduler, fulfilled: thenables)
     }
 }
 
 fileprivate extension Thenable {
-    static func _when<T: Thenable>(fulfilled thenables: [T]) -> Promise<Void> {
+    static func _when<T: Thenable>(
+        on scheduler: Scheduler?,
+        fulfilled thenables: [T]
+    ) -> Promise<Void> {
         guard !thenables.isEmpty else { return Promise.value(()) }
 
         var pendingPromiseCount = thenables.count
@@ -51,7 +78,7 @@ fileprivate extension Thenable {
         let lock = UnfairLock()
 
         for thenable in thenables {
-            thenable.observe(on: nil) { result in
+            thenable.observe(on: scheduler) { result in
                 lock.withLock {
                     switch result {
                     case .success:
@@ -73,12 +100,18 @@ fileprivate extension Thenable {
 // MARK: - Resolved
 
 public extension Thenable {
-    static func when<T: Thenable>(resolved thenables: T...) -> Guarantee<[Result<Value, Error>]> where T.Value == Value {
-        when(resolved: thenables)
+    static func when<T: Thenable>(
+        on scheduler: Scheduler? = nil,
+        resolved thenables: T...
+    ) -> Guarantee<[Result<Value, Error>]> where T.Value == Value {
+        when(on: scheduler, resolved: thenables)
     }
 
-    static func when<T: Thenable>(resolved thenables: [T]) -> Guarantee<[Result<Value, Error>]> where T.Value == Value {
-        _when(resolved: thenables).map { thenables.compactMap { $0.result } }
+    static func when<T: Thenable>(
+        on scheduler: Scheduler? = nil,
+        resolved thenables: [T]
+    ) -> Guarantee<[Result<Value, Error>]> where T.Value == Value {
+        _when(on: scheduler, resolved: thenables).map(on: scheduler) { thenables.compactMap { $0.result } }
     }
 }
 
@@ -87,7 +120,10 @@ public extension Thenable where Value == Void {
 }
 
 fileprivate extension Thenable {
-    static func _when<T: Thenable>(resolved thenables: [T]) -> Guarantee<Void> {
+    static func _when<T: Thenable>(
+        on scheduler: Scheduler?,
+        resolved thenables: [T]
+    ) -> Guarantee<Void> {
         guard !thenables.isEmpty else { return Guarantee.value(()) }
 
         var pendingPromiseCount = thenables.count
@@ -97,7 +133,7 @@ fileprivate extension Thenable {
         let lock = UnfairLock()
 
         for thenable in thenables {
-            thenable.observe(on: nil) { _ in
+            thenable.observe(on: scheduler) { _ in
                 lock.withLock {
                     pendingPromiseCount -= 1
                     if pendingPromiseCount == 0 { future.resolve() }

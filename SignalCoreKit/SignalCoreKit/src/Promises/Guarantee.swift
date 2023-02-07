@@ -30,15 +30,15 @@ public final class Guarantee<Value>: Thenable {
     }
 
     public convenience init(
-        on queue: DispatchQueue,
+        on scheduler: Scheduler,
         _ block: @escaping (@escaping (Value) -> Void) -> Void
     ) {
         self.init()
-        queue.asyncIfNecessary { block { self.future.resolve($0) } }
+        scheduler.asyncIfNecessary { block { self.future.resolve($0) } }
     }
 
-    public func observe(on queue: DispatchQueue? = nil, block: @escaping (Result<Value, Error>) -> Void) {
-        future.observe(on: queue, block: block)
+    public func observe(on scheduler: Scheduler? = nil, block: @escaping (Result<Value, Error>) -> Void) {
+        future.observe(on: scheduler, block: block)
     }
 }
 
@@ -49,7 +49,7 @@ public extension Guarantee {
         if result == nil {
             let group = DispatchGroup()
             group.enter()
-            observe(on: .global()) { result = $0; group.leave() }
+            observe(on: DispatchQueue.global()) { result = $0; group.leave() }
             group.wait()
         }
 
@@ -66,36 +66,36 @@ public extension Guarantee {
 
 public extension Guarantee {
     func map<T>(
-        on queue: DispatchQueue? = nil,
+        on scheduler: Scheduler? = nil,
         _ block: @escaping (Value) -> T
     ) -> Guarantee<T> {
-        observe(on: queue, block: block)
+        observe(on: scheduler, block: block)
     }
 
     @discardableResult
     func done(
-        on queue: DispatchQueue? = nil,
+        on scheduler: Scheduler? = nil,
         _ block: @escaping (Value) -> Void
     ) -> Guarantee<Void> {
-        observe(on: queue, block: block)
+        observe(on: scheduler, block: block)
     }
 
     @discardableResult
     func then<T>(
-        on queue: DispatchQueue? = nil,
+        on scheduler: Scheduler? = nil,
         _ block: @escaping (Value) -> Guarantee<T>
     ) -> Guarantee<T> {
-        observe(on: queue, block: block)
+        observe(on: scheduler, block: block)
     }
 }
 
 fileprivate extension Guarantee {
     func observe<T>(
-        on queue: DispatchQueue? = nil,
+        on scheduler: Scheduler? = nil,
         block: @escaping (Value) -> T
     ) -> Guarantee<T> {
         let (guarantee, future) = Guarantee<T>.pending()
-        observe(on: queue) { result in
+        observe(on: scheduler) { result in
             switch result {
             case .success(let value):
                 future.resolve(block(value))
@@ -107,14 +107,14 @@ fileprivate extension Guarantee {
     }
 
     func observe<T>(
-        on queue: DispatchQueue? = nil,
+        on scheduler: Scheduler? = nil,
         block: @escaping (Value) -> Guarantee<T>
     ) -> Guarantee<T> {
         let (guarantee, future) = Guarantee<T>.pending()
-        observe(on: queue) { result in
+        observe(on: scheduler) { result in
             switch result {
             case .success(let value):
-                future.resolve(on: queue, with: block(value))
+                future.resolve(on: scheduler, with: block(value))
             case .failure(let error):
                 owsFail("Unexpectedly received error result from unfailable promise \(error)")
             }
@@ -128,8 +128,8 @@ public struct GuaranteeFuture<Value> {
     fileprivate init(future: Future<Value>) { self.future = future }
     public var isSealed: Bool { future.isSealed }
     public func resolve(_ value: Value) { future.resolve(value) }
-    public func resolve<T: Thenable>(on queue: DispatchQueue? = nil, with thenable: T) where T.Value == Value {
-        future.resolve(on: queue, with: thenable)
+    public func resolve<T: Thenable>(on scheduler: Scheduler? = nil, with thenable: T) where T.Value == Value {
+        future.resolve(on: scheduler, with: thenable)
     }
 }
 

@@ -5,31 +5,35 @@
 import Foundation
 
 public func firstly<T: Thenable>(
+    on scheduler: Scheduler? = nil,
     _ block: () throws -> T
 ) -> Promise<T.Value> {
     let (promise, future) = Promise<T.Value>.pending()
     do {
-        future.resolve(with: try block())
+        future.resolve(on: scheduler, with: try block())
     } catch {
         future.reject(error)
     }
     return promise
 }
 
-public func firstly<T>(_ block: () -> Guarantee<T>) -> Guarantee<T> {
+public func firstly<T>(
+    on scheduler: Scheduler? = nil,
+    _ block: () -> Guarantee<T>
+) -> Guarantee<T> {
     let (promise, future) = Guarantee<T>.pending()
-    future.resolve(with: block())
+    future.resolve(on: scheduler, with: block())
     return promise
 }
 
 public func firstly<T: Thenable>(
-    on queue: DispatchQueue,
+    on scheduler: Scheduler,
     _ block: @escaping () throws -> T
 ) -> Promise<T.Value> {
     let (promise, future) = Promise<T.Value>.pending()
-    queue.asyncIfNecessary {
+    scheduler.asyncIfNecessary {
         do {
-            future.resolve(on: queue, with: try block())
+            future.resolve(on: scheduler, with: try block())
         } catch {
             future.reject(error)
         }
@@ -37,20 +41,20 @@ public func firstly<T: Thenable>(
     return promise
 }
 
-public func firstly<T>(on queue: DispatchQueue, _ block: @escaping () -> Guarantee<T>) -> Guarantee<T> {
+public func firstly<T>(on scheduler: Scheduler, _ block: @escaping () -> Guarantee<T>) -> Guarantee<T> {
     let (promise, future) = Guarantee<T>.pending()
-    queue.asyncIfNecessary {
-        future.resolve(on: queue, with: block())
+    scheduler.asyncIfNecessary {
+        future.resolve(on: scheduler, with: block())
     }
     return promise
 }
 
 public func firstly<T>(
-    on queue: DispatchQueue,
+    on scheduler: Scheduler,
     _ block: @escaping () throws -> T
 ) -> Promise<T> {
     let (promise, future) = Promise<T>.pending()
-    queue.asyncIfNecessary {
+    scheduler.asyncIfNecessary {
         do {
             future.resolve(try block())
         } catch {
@@ -61,11 +65,11 @@ public func firstly<T>(
 }
 
 public func firstly<T>(
-    on queue: DispatchQueue,
+    on scheduler: Scheduler,
     _ block: @escaping () -> T
 ) -> Guarantee<T> {
     let (guarantee, future) = Guarantee<T>.pending()
-    queue.asyncIfNecessary {
+    scheduler.asyncIfNecessary {
         future.resolve(block())
     }
     return guarantee

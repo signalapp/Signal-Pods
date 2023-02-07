@@ -23,14 +23,14 @@ public final class Future<Value> {
         self.resultUnsynchronized = .failure(error)
     }
 
-    public func observe(on queue: DispatchQueue? = nil, block: @escaping (ResultType) -> Void) {
+    public func observe(on scheduler: Scheduler? = nil, block: @escaping (ResultType) -> Void) {
         lock.withLock {
             func execute(_ result: ResultType) {
-                // If a queue is not specified, try and run on the main
+                // If a scheduler is not specified, try and run on the main
                 // queue. Eventually we'll want to switch this default,
                 // but for now it matches the behavior we expect from
                 // PromiseKit.
-                (queue ?? .main).asyncIfNecessary {
+                (scheduler ?? DispatchQueue.main).asyncIfNecessary {
                     block(result)
                 }
             }
@@ -60,12 +60,12 @@ public final class Future<Value> {
     }
 
     public func resolve<T: Thenable>(
-        on queue: DispatchQueue? = nil,
+        on scheduler: Scheduler? = nil,
         with thenable: T
     ) where T.Value == Value {
-        thenable.done(on: queue) { value in
+        thenable.done(on: scheduler) { value in
             self.sealResult(.success(value))
-        }.catch { error in
+        }.catch(on: scheduler) { error in
             self.sealResult(.failure(error))
         }
     }

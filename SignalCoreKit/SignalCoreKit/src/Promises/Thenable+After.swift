@@ -7,7 +7,10 @@ import Foundation
 public extension Guarantee where Value == Void {
 
     /// Uses `mach_absolute_time` (pauses while suspended)
-    static func after(seconds: TimeInterval) -> Guarantee<Void> {
+    static func after(
+        on scheduler: Scheduler? = nil,
+        seconds: TimeInterval
+    ) -> Guarantee<Void> {
         let (guarantee, future) = Guarantee<Void>.pending()
 
         // This check isn't *great* but there's no proper API for this. It's unlikely this suffix will
@@ -23,16 +26,19 @@ public extension Guarantee where Value == Void {
             Logger.info("Building a time-elapsed guarantee with process-clock interval of: \(seconds)")
         }
 
-        DispatchQueue.global().asyncAfter(deadline: .now() + seconds) {
+        (scheduler ?? DispatchQueue.global()).asyncAfter(deadline: .now() + seconds) {
             future.resolve()
         }
         return guarantee
     }
 
     /// Uses `gettimeofday` (ticks while suspended)
-    static func after(wallInterval: TimeInterval) -> Guarantee<Void> {
+    static func after(
+        on scheduler: Scheduler? = nil,
+        wallInterval: TimeInterval
+    ) -> Guarantee<Void> {
         let (guarantee, future) = Guarantee<Void>.pending()
-        DispatchQueue.global().asyncAfter(wallDeadline: .now() + wallInterval) {
+        (scheduler ?? DispatchQueue.global()).asyncAfter(wallDeadline: .now() + wallInterval) {
             future.resolve()
         }
         return guarantee
