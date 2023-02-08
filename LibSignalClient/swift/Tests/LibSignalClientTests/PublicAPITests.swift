@@ -42,26 +42,6 @@ class PublicAPITests: TestCaseBase {
         XCTAssertEqual(derived, okm)
     }
 
-    func testAesGcmSiv() {
-        let ptext: [UInt8] = [0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]
-        let expected_ctext: [UInt8] = [0x1d, 0xe2, 0x29, 0x67, 0x23, 0x7a, 0x81, 0x32, 0x91, 0x21, 0x3f, 0x26, 0x7e, 0x3b, 0x45, 0x2f, 0x02, 0xd0, 0x1a, 0xe3, 0x3e, 0x4e, 0xc8, 0x54]
-        let ad: [UInt8] = [0x01]
-        let key: [UInt8] = [0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]
-        let nonce: [UInt8] = [0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]
-
-        let gcm_siv = try! Aes256GcmSiv(key)
-
-        let ctext = try! gcm_siv.encrypt(ptext, nonce, ad)
-        XCTAssertEqual(ctext, expected_ctext)
-
-        let recovered = try! gcm_siv.decrypt(ctext, nonce, ad)
-        XCTAssertEqual(recovered, ptext)
-
-        XCTAssertThrowsError(try gcm_siv.decrypt(ptext, nonce, ad))
-        XCTAssertThrowsError(try gcm_siv.decrypt(ctext, ad, nonce))
-    }
-
     func testAddress() {
         let addr = try! ProtocolAddress(name: "addr1", deviceId: 5)
         XCTAssertEqual(addr.name, "addr1")
@@ -152,6 +132,9 @@ class PublicAPITests: TestCaseBase {
         XCTAssertEqual(aliceFingerprint.scannable.encoding, ALICE_SCANNABLE_FINGERPRINT_V1)
         XCTAssertEqual(bobFingerprint.scannable.encoding, BOB_SCANNABLE_FINGERPRINT_V1)
 
+        XCTAssertTrue(try! bobFingerprint.scannable.compare(againstEncoding: aliceFingerprint.scannable.encoding))
+        XCTAssertTrue(try! aliceFingerprint.scannable.compare(againstEncoding: bobFingerprint.scannable.encoding))
+
         // testVectorsVersion2
 
         let aliceFingerprint2 = try! generator.create(version: VERSION_2,
@@ -172,6 +155,12 @@ class PublicAPITests: TestCaseBase {
         XCTAssertEqual(aliceFingerprint2.scannable.encoding, ALICE_SCANNABLE_FINGERPRINT_V2)
         XCTAssertEqual(bobFingerprint2.scannable.encoding, BOB_SCANNABLE_FINGERPRINT_V2)
 
+        XCTAssertTrue(try! bobFingerprint2.scannable.compare(againstEncoding: aliceFingerprint2.scannable.encoding))
+        XCTAssertTrue(try! aliceFingerprint2.scannable.compare(againstEncoding: bobFingerprint2.scannable.encoding))
+
+        XCTAssertThrowsError(try bobFingerprint2.scannable.compare(againstEncoding: aliceFingerprint.scannable.encoding))
+        XCTAssertThrowsError(try bobFingerprint.scannable.compare(againstEncoding: aliceFingerprint2.scannable.encoding))
+
         // testMismatchingFingerprints
 
         let mitmIdentityKey = PrivateKey.generate().publicKey
@@ -191,8 +180,8 @@ class PublicAPITests: TestCaseBase {
         XCTAssertNotEqual(aliceFingerprintM.displayable.formatted,
                           bobFingerprintM.displayable.formatted)
 
-        XCTAssertEqual(try! bobFingerprintM.scannable.compare(against: aliceFingerprintM.scannable), false)
-        XCTAssertEqual(try! aliceFingerprintM.scannable.compare(against: bobFingerprintM.scannable), false)
+        XCTAssertFalse(try! bobFingerprintM.scannable.compare(againstEncoding: aliceFingerprintM.scannable.encoding))
+        XCTAssertFalse(try! aliceFingerprintM.scannable.compare(againstEncoding: bobFingerprintM.scannable.encoding))
 
         XCTAssertEqual(aliceFingerprintM.displayable.formatted.count, 60)
 
@@ -215,8 +204,11 @@ class PublicAPITests: TestCaseBase {
         XCTAssertNotEqual(aliceFingerprintI.displayable.formatted,
                           bobFingerprintI.displayable.formatted)
 
-        XCTAssertEqual(try! bobFingerprintI.scannable.compare(against: aliceFingerprintI.scannable), false)
-        XCTAssertEqual(try! aliceFingerprintI.scannable.compare(against: bobFingerprintI.scannable), false)
+        XCTAssertFalse(try! bobFingerprintI.scannable.compare(againstEncoding: aliceFingerprintI.scannable.encoding))
+        XCTAssertFalse(try! aliceFingerprintI.scannable.compare(againstEncoding: bobFingerprintI.scannable.encoding))
+
+        // Test bad fingerprint
+        XCTAssertThrowsError(try aliceFingerprintI.scannable.compare(againstEncoding: []))
     }
 
     func testGroupCipher() {
@@ -335,7 +327,6 @@ class PublicAPITests: TestCaseBase {
             ("testPkOperations", testPkOperations),
             ("testHkdfSimple", testHkdfSimple),
             ("testHkdfUsingRFCExample", testHkdfUsingRFCExample),
-            ("testAesGcmSiv", testAesGcmSiv),
             ("testGroupCipher", testGroupCipher),
             ("testSenderCertifications", testSenderCertificates),
             ("testSerializationRoundTrip", testSerializationRoundTrip),
