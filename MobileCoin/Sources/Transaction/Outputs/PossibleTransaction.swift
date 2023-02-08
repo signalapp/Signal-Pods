@@ -6,13 +6,13 @@ import Foundation
 
 struct PossibleTransaction {
     var outputs: [TransactionOutput]
-    var changeAmount: PositiveUInt64?
+    var changeAmount: Amount
 }
 
 extension PossibleTransaction: Equatable, Hashable { }
 
 extension PossibleTransaction {
-    init(_ outputs: [TransactionOutput], _ changeAmount: PositiveUInt64?) {
+    init(_ outputs: [TransactionOutput], _ changeAmount: Amount) {
         self.outputs = outputs
         self.changeAmount = changeAmount
     }

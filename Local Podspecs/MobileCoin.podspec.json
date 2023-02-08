@@ -1,6 +1,6 @@
 {
   "name": "MobileCoin",
-  "version": "4.0.0-pre8",
+  "version": "4.0.0",
   "summary": "A library for communicating with MobileCoin network",
   "authors": "MobileCoin",
   "homepage": "https://www.mobilecoin.com/",
@@ -9,7 +9,7 @@
   },
   "source": {
     "git": "https://github.com/mobilecoinofficial/MobileCoin-Swift.git",
-    "tag": "v4.0.0-pre8",
+    "tag": "v4.0.0",
     "submodules": true
   },
   "platforms": {
@@ -61,7 +61,7 @@
       ],
       "dependencies": {
         "LibMobileCoin/Core": [
-          "4.0.0-pre3"
+          "~> 4.0.0-pre3"
         ],
         "gRPC-Swift": [
           "1.0.0"
@@ -104,7 +104,7 @@
       ],
       "dependencies": {
         "LibMobileCoin/CoreHTTP": [
-          "4.0.0-pre3"
+          "~> 4.0.0-pre3"
         ],
         "Logging": [
           "~> 1.4"

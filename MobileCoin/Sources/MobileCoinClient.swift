@@ -3,7 +3,7 @@
 //
 
 // swiftlint:disable multiline_function_chains
-// swiftlint:disable function_default_parameter_at_end
+// swiftlint:disable function_default_parameter_at_end type_body_length file_length
 
 import Foundation
 
@@ -189,6 +189,71 @@ public final class MobileCoinClient {
         ).requiresDefragmentation(toSendAmount: amount, feeLevel: feeLevel, completion: completion)
     }
 
+    public func createSignedContingentInput(
+        recipient: PublicAddress,
+        amountToSend: Amount,
+        amountToReceive: Amount,
+        completion: @escaping (
+            Result<SignedContingentInput, SignedContingentInputCreationError>
+        ) -> Void
+    ) {
+        guard let rngSeed = defaultRng.generateRngSeed() else {
+            completion(.failure(
+                SignedContingentInputCreationError.invalidInput("Couldn't create 32byte RNG seed")))
+            return
+        }
+        Account.SCIOperations(
+            account: accountLock,
+            fogMerkleProofService: serviceProvider.fogMerkleProofService,
+            fogResolverManager: fogResolverManager,
+            metaFetcher: metaFetcher,
+            txOutSelectionStrategy: txOutSelectionStrategy,
+            mixinSelectionStrategy: mixinSelectionStrategy,
+            rngSeed: rngSeed,
+            targetQueue: serialQueue
+        ).createSignedContingentInput(
+            to: recipient,
+            memoType: .unused,
+            amountToSend: amountToSend,
+            amountToReceive: amountToReceive
+        ) { result in
+            self.callbackQueue.async {
+                completion(result)
+            }
+        }
+    }
+
+    public func prepareCancelSignedContingentInputTransaction(
+        signedContingentInput: SignedContingentInput,
+        feeLevel: FeeLevel,
+        completion: @escaping (
+            Result<PendingSinglePayloadTransaction, SignedContingentInputCancelationError>
+        ) -> Void
+    ) {
+        guard let rngSeed = defaultRng.generateRngSeed() else {
+            completion(.failure(SignedContingentInputCancelationError.unknownError(
+                "Couldn't create 32byte RNG seed")))
+            return
+        }
+        Account.SCIOperations(
+            account: accountLock,
+            fogMerkleProofService: serviceProvider.fogMerkleProofService,
+            fogResolverManager: fogResolverManager,
+            metaFetcher: metaFetcher,
+            txOutSelectionStrategy: txOutSelectionStrategy,
+            mixinSelectionStrategy: mixinSelectionStrategy,
+            rngSeed: rngSeed,
+            targetQueue: serialQueue
+        ).prepareCancelSignedContingentInputTransaction(
+            signedContingentInput: signedContingentInput,
+            feeLevel: feeLevel
+        ) { result in
+            self.callbackQueue.async {
+                completion(result)
+            }
+        }
+    }
+
     public func prepareTransaction(
         to recipient: PublicAddress,
         memoType: MemoType = .recoverable,
@@ -330,6 +395,83 @@ public final class MobileCoinClient {
         ).prepareDefragmentationStepTransactions(
             toSendAmount: amount,
             recoverableMemo: recoverableMemo,
+            feeLevel: feeLevel) { result in
+            self.callbackQueue.async {
+                completion(result)
+            }
+        }
+    }
+
+    public func submitDefragStepTransactions(
+        transactions: [Transaction],
+        completion: @escaping (Result<[UInt64], SubmitTransactionError>) -> Void
+    ) {
+        transactions.mapAsync({ transaction, callback in
+            self.submitTransaction(transaction: transaction, completion: callback)
+        },
+        serialQueue: serialQueue,
+        completion: { result in
+            completion(result.map { $0.compactMap { $0 } })
+        })
+    }
+
+    public func prepareTransaction(
+        presignedInput: SignedContingentInput,
+        fee: Amount,
+        completion: @escaping (Result<PendingTransaction, TransactionPreparationError>)
+        -> Void
+    ) {
+        guard let rngSeed = defaultRng.generateRngSeed() else {
+            completion(.failure(
+                TransactionPreparationError.invalidInput(
+                    "Could not create 32-byte RNG seed")))
+            return
+        }
+
+        Account.TransactionOperations(
+            account: accountLock,
+            fogMerkleProofService: serviceProvider.fogMerkleProofService,
+            fogResolverManager: fogResolverManager,
+            metaFetcher: metaFetcher,
+            txOutSelectionStrategy: txOutSelectionStrategy,
+            mixinSelectionStrategy: mixinSelectionStrategy,
+            rngSeed: rngSeed,
+            targetQueue: serialQueue
+        ).preparePresignedInputTransaction(
+            presignedInput: presignedInput,
+            memoType: .unused,
+            fee: fee) { result in
+            self.callbackQueue.async {
+                completion(result)
+            }
+        }
+    }
+
+    public func prepareTransaction(
+        presignedInput: SignedContingentInput,
+        feeLevel: FeeLevel = .minimum,
+        completion: @escaping (Result<PendingTransaction, TransactionPreparationError>)
+        -> Void
+    ) {
+        guard let rngSeed = defaultRng.generateRngSeed() else {
+            completion(.failure(
+                TransactionPreparationError.invalidInput(
+                    "Could not create 32-byte RNG seed")))
+            return
+        }
+
+        Account.TransactionOperations(
+            account: accountLock,
+            fogMerkleProofService: serviceProvider.fogMerkleProofService,
+            fogResolverManager: fogResolverManager,
+            metaFetcher: metaFetcher,
+            txOutSelectionStrategy: txOutSelectionStrategy,
+            mixinSelectionStrategy: mixinSelectionStrategy,
+            rngSeed: rngSeed,
+            targetQueue: serialQueue
+        ).preparePresignedInputTransaction(
+            presignedInput: presignedInput,
+            memoType: .unused,
             feeLevel: feeLevel) { result in
             self.callbackQueue.async {
                 completion(result)

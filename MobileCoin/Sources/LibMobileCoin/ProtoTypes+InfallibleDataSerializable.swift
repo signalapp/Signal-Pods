@@ -21,6 +21,8 @@ extension External_Tx: InfallibleDataSerializable {}
 
 extension External_Receipt: InfallibleDataSerializable {}
 
+extension External_SignedContingentInput: InfallibleDataSerializable {}
+
 // MARK: - Printable
 
 extension Printable_PrintableWrapper: InfallibleDataSerializable {}

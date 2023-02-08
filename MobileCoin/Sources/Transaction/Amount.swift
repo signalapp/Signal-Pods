@@ -35,3 +35,10 @@ extension Amount {
         self.tokenId = TokenId(amount.token_id)
     }
 }
+
+extension Amount {
+    init(_ amount: External_UnmaskedAmount) {
+        self.value = amount.value
+        self.tokenId = TokenId(amount.tokenID)
+    }
+}

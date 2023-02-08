@@ -26,6 +26,7 @@ public struct TokenId {
 extension TokenId {
     public static var MOB = TokenId(0)
     public static var MOBUSD = TokenId(1)
+    public static var TestToken = TokenId(8192)
 }
 
 extension TokenId: CustomStringConvertible {
@@ -37,6 +38,7 @@ extension TokenId: CustomStringConvertible {
         [
             .MOB: "MOB",
             .MOBUSD: "MOBUSD",
+            .TestToken: "TestToken",
         ]
     }()
 
@@ -44,6 +46,7 @@ extension TokenId: CustomStringConvertible {
         [
             .MOB: 12,
             .MOBUSD: 6,
+            .TestToken: 6,
         ]
     }()
 }

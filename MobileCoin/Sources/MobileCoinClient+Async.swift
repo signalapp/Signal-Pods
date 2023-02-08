@@ -61,6 +61,47 @@ extension MobileCoinClient {
         }
     }
 
+    public func createSignedContingentInput(
+        recipient: PublicAddress,
+        amountToSend: Amount,
+        amountToReceive: Amount
+    ) async throws -> SignedContingentInput {
+        try await withCheckedThrowingContinuation { continuation in
+            createSignedContingentInput(
+                recipient: recipient,
+                amountToSend: amountToSend,
+                amountToReceive: amountToReceive) {
+                    continuation.resume(with: $0)
+            }
+        }
+    }
+
+    public func prepareCancelSignedContingentInputTransaction(
+        signedContingentInput: SignedContingentInput,
+        feeLevel: FeeLevel
+    ) async throws -> PendingSinglePayloadTransaction
+    {
+        try await withCheckedThrowingContinuation { continuation in
+            prepareCancelSignedContingentInputTransaction(
+                    signedContingentInput: signedContingentInput,
+                    feeLevel: feeLevel) {
+                continuation.resume(with: $0)
+            }
+        }
+    }
+
+    public func prepareTransaction(
+        presignedInput: SignedContingentInput,
+        feeLevel: FeeLevel = .minimum
+    ) async throws -> PendingTransaction {
+        try await withCheckedThrowingContinuation { continuation in
+            prepareTransaction(presignedInput: presignedInput,
+                               feeLevel: feeLevel) {
+                continuation.resume(with: $0)
+            }
+        }
+    }
+
     @discardableResult
     public func submitTransaction(
         transaction: Transaction

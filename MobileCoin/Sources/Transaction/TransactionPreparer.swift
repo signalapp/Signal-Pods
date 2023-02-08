@@ -2,7 +2,7 @@
 //  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
 
-// swiftlint:disable function_parameter_count multiline_function_chains
+// swiftlint:disable function_parameter_count multiline_function_chains function_body_length
 
 import Foundation
 
@@ -73,15 +73,16 @@ struct TransactionPreparer {
             completion($0.mapError { .connectionError($0) }
                 .flatMap { fogResolver, preparedInputs in
                     TransactionBuilder.build(
+                        context: TransactionBuilder.Context(
+                            accountKey: accountKey,
+                            blockVersion: blockVersion,
+                            fogResolver: fogResolver,
+                            memoType: recoverableMemo ? .recoverable : .unused,
+                            tombstoneBlockIndex: tombstoneBlockIndex,
+                            fee: fee,
+                            rngSeed: rngSeed),
                         inputs: preparedInputs,
-                        accountKey: self.accountKey,
-                        sendingAllTo: self.selfPaymentAddress,
-                        memoType: recoverableMemo ? .recoverable : .unused,
-                        fee: fee,
-                        tombstoneBlockIndex: tombstoneBlockIndex,
-                        fogResolver: fogResolver,
-                        blockVersion: blockVersion,
-                        rngSeed: rngSeed
+                        sendingAllTo: self.selfPaymentAddress
                     ).mapError { .invalidInput(String(describing: $0)) }
                     .map { $0.transaction }
                 })
@@ -100,6 +101,12 @@ struct TransactionPreparer {
             Result<PendingSinglePayloadTransaction, TransactionPreparationError>
         ) -> Void
     ) {
+        guard let tokenId = inputs.first?.amount.tokenId else {
+            serialQueue.async {
+                completion(.failure(.invalidInput("prepareTransaction error: No inputs available")))
+            }
+            return
+        }
         guard amount.value > 0, let positiveValue = PositiveUInt64(amount.value) else {
             let errorMessage = "PrepareTransactionWithFee error: Cannot spend 0 \(amount.tokenId)"
             logger.error(errorMessage, logFunction: false)
@@ -134,16 +141,85 @@ struct TransactionPreparer {
             completion($0.mapError { .connectionError($0) }
                 .flatMap { fogResolver, preparedInputs in
                     TransactionBuilder.build(
+                        context: TransactionBuilder.Context(
+                            accountKey: self.accountKey,
+                            blockVersion: blockVersion,
+                            fogResolver: fogResolver,
+                            memoType: memoType,
+                            tombstoneBlockIndex: tombstoneBlockIndex,
+                            fee: fee,
+                            rngSeed: rngSeed
+                            ),
                         inputs: preparedInputs,
-                        accountKey: self.accountKey,
                         to: recipient,
-                        memoType: memoType,
-                        amount: positiveValue,
-                        fee: fee,
-                        tombstoneBlockIndex: tombstoneBlockIndex,
-                        fogResolver: fogResolver,
-                        blockVersion: blockVersion,
-                        rngSeed: rngSeed
+                        amount: Amount(positiveValue.value, in: tokenId)
+                    ).mapError { .invalidInput(String(describing: $0)) }
+                })
+        })
+    }
+
+    func preparePresignedInputTransaction(
+        presignedInput: SignedContingentInput,
+        inputs: [KnownTxOut],
+        memoType: MemoType,
+        amount: Amount,
+        fee: Amount,
+        tombstoneBlockIndex: UInt64,
+        blockVersion: BlockVersion,
+        completion: @escaping (
+            Result<PendingTransaction, TransactionPreparationError>
+        ) -> Void
+    ) {
+        guard amount.value > 0, let positiveValue = PositiveUInt64(amount.value) else {
+            let errorMessage = "preparePresignedInputTransaction error: Cannot spend 0 " +
+                "\(amount.tokenId)"
+            logger.error(errorMessage, logFunction: false)
+            serialQueue.async {
+                completion(.failure(.invalidInput(errorMessage)))
+            }
+            return
+        }
+
+        // NOTE: fee is not included here as it will be paid from the SCI reward amount input,
+        // not the consumer (this user's) inputs
+        guard UInt64.safeCompare(
+                sumOfValues: inputs.map { $0.value },
+                isGreaterThanOrEqualToSumOfValues: [positiveValue.value])
+        else {
+            logger.warning(
+                "Insufficient balance to prepare transaction: sum of inputs: " +
+                    "\(redacting: inputs.map { $0.value }) < amount: \(redacting: amount)",
+                logFunction: false)
+            serialQueue.async {
+                completion(.failure(.insufficientBalance()))
+            }
+            return
+        }
+
+        // create change output for required amount to get SCI input
+
+        performAsync(body1: { callback in
+            fogResolverManager.fogResolver(
+                addresses: [selfPaymentAddress],
+                desiredMinPubkeyExpiry: tombstoneBlockIndex,
+                completion: callback)
+        }, body2: { callback in
+            prepareInputs(inputs: inputs, completion: callback)
+        }, completion: {
+            completion($0.mapError { .connectionError($0) }
+                .flatMap { fogResolver, preparedInputs in
+
+                    TransactionBuilder.build(
+                        context: TransactionBuilder.Context(
+                            accountKey: self.accountKey,
+                            blockVersion: blockVersion,
+                            fogResolver: fogResolver,
+                            memoType: memoType,
+                            tombstoneBlockIndex: tombstoneBlockIndex,
+                            fee: fee,
+                            rngSeed: rngSeed),
+                        inputs: preparedInputs,
+                        presignedInput: presignedInput
                     ).mapError { .invalidInput(String(describing: $0)) }
                 })
         })

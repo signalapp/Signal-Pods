@@ -127,6 +127,107 @@ extension TransactionEstimationFetcherError: LocalizedError {
     }
 }
 
+public enum SignedContingentInputCreationError: Error {
+    case invalidInput(String)
+    case insufficientBalance(String = String())
+    case defragmentationRequired(String = String())
+    case connectionError(ConnectionError)
+    case requiresBlockVersion3(String)
+}
+
+extension SignedContingentInputCreationError {
+    static func create(
+        from transactionPreparationError: TransactionPreparationError
+    ) -> SignedContingentInputCreationError {
+        switch transactionPreparationError {
+        case .invalidInput(let reason):
+            return .invalidInput(reason)
+        case .insufficientBalance(let reason):
+            return .insufficientBalance(reason)
+        case .defragmentationRequired(let reason):
+            return .defragmentationRequired(reason)
+        case .connectionError(let innerError):
+            return .connectionError(innerError)
+        }
+    }
+
+    static func create(
+        from transactionInputSelectionError: TransactionInputSelectionError
+    ) -> SignedContingentInputCreationError {
+        switch transactionInputSelectionError {
+        case .insufficientTxOuts(let reason):
+            return .insufficientBalance(reason)
+        case .defragmentationRequired(let reason):
+            return .defragmentationRequired(reason)
+        }
+    }
+}
+
+extension SignedContingentInputCreationError: CustomStringConvertible {
+    public var description: String {
+        "SignedContingentInput creation error: " + {
+            switch self {
+            case .invalidInput(let reason):
+                return "Invalid input: \(reason)"
+            case .insufficientBalance(let reason):
+                return "Insufficient balance\(!reason.isEmpty ? ": \(reason)" : "")"
+            case .defragmentationRequired(let reason):
+                return "Defragmentation required\(!reason.isEmpty ? ": \(reason)" : "")"
+            case .connectionError(let innerError):
+                return "\(innerError)"
+            case .requiresBlockVersion3(let reason):
+                return "Invalid block version: \(reason)"
+            }
+        }()
+    }
+}
+
+extension SignedContingentInputCreationError: LocalizedError {
+    public var errorDescription: String? {
+        "\(self)"
+    }
+}
+
+public enum SignedContingentInputCancelationError: Error {
+    case invalidSCI
+    case inputError(String = String())
+    case alreadySpent(String = String())
+    case unownedTxOut(String = String())
+    case connectionError(ConnectionError)
+    case transactionPreparationError(TransactionPreparationError)
+    case unknownError(String)
+}
+
+extension SignedContingentInputCancelationError: CustomStringConvertible {
+    public var description: String {
+        "SignedContingentInput cancelation error: " + {
+            switch self {
+            case .invalidSCI:
+                return "Invalid signed contingent input"
+            case .inputError(let reason):
+                return "Input error\(!reason.isEmpty ? ": \(reason)" : "")"
+            case .alreadySpent(let reason):
+                return "Transaction for SCI already spent\(!reason.isEmpty ? ": \(reason)" : "")"
+            case .unownedTxOut(let reason):
+                return "The SCI txout is not owned by this account" +
+                "\(!reason.isEmpty ? ": \(reason)" : "")"
+            case .connectionError(let innerError):
+                return "\(innerError)"
+            case .transactionPreparationError(let innerError):
+                return "\(innerError)"
+            case .unknownError(let reason):
+                return "Unknown Error: \(reason)"
+            }
+        }()
+    }
+}
+
+extension SignedContingentInputCancelationError: LocalizedError {
+    public var errorDescription: String? {
+        "\(self)"
+    }
+}
+
 public enum TransactionPreparationError: Error {
     case invalidInput(String)
     case insufficientBalance(String = String())
@@ -179,6 +280,39 @@ extension DefragTransactionPreparationError: CustomStringConvertible {
 }
 
 extension DefragTransactionPreparationError: LocalizedError {
+    public var errorDescription: String? {
+        "\(self)"
+    }
+}
+
+public enum SCITransactionPreparationError: Error {
+    case invalidInput(String)
+    case insufficientBalance(String = String())
+    case defragmentationRequired(String = String())
+    case connectionError(ConnectionError)
+    case requiresBlockVersion3(String = String())
+}
+
+extension SCITransactionPreparationError: CustomStringConvertible {
+    public var description: String {
+        "Transaction preparation error: " + {
+            switch self {
+            case .invalidInput(let reason):
+                return "Invalid input: \(reason)"
+            case .insufficientBalance(let reason):
+                return "Insufficient balance\(!reason.isEmpty ? ": \(reason)" : "")"
+            case .defragmentationRequired(let reason):
+                return "Defragmentation required\(!reason.isEmpty ? ": \(reason)" : "")"
+            case .connectionError(let innerError):
+                return "\(innerError)"
+            case .requiresBlockVersion3(let reason):
+                return "Invalid block version: \(reason)"
+            }
+        }()
+    }
+}
+
+extension SCITransactionPreparationError: LocalizedError {
     public var errorDescription: String? {
         "\(self)"
     }
