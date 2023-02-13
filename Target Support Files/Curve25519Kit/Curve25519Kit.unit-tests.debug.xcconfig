@@ -1,10 +1,10 @@
 APPLICATION_EXTENSION_API_ONLY = YES
 CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO
-FRAMEWORK_SEARCH_PATHS = $(inherited) "${PODS_CONFIGURATION_BUILD_DIR}/CocoaLumberjack" "${PODS_CONFIGURATION_BUILD_DIR}/Curve25519Kit" "${PODS_CONFIGURATION_BUILD_DIR}/LibSignalClient" "${PODS_CONFIGURATION_BUILD_DIR}/SignalCoreKit" "${PODS_ROOT}/OpenSSL-Universal/Frameworks" "${PODS_XCFRAMEWORKS_BUILD_DIR}/OpenSSL-Universal"
+FRAMEWORK_SEARCH_PATHS = $(inherited) "${PODS_CONFIGURATION_BUILD_DIR}/CocoaLumberjack" "${PODS_CONFIGURATION_BUILD_DIR}/Curve25519Kit" "${PODS_CONFIGURATION_BUILD_DIR}/LibSignalClient" "${PODS_CONFIGURATION_BUILD_DIR}/SignalCoreKit"
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1
 LD_RUNPATH_SEARCH_PATHS = $(inherited) /usr/lib/swift "$(PLATFORM_DIR)/Developer/Library/Frameworks" '@executable_path/Frameworks' '@loader_path/Frameworks'
 LIBRARY_SEARCH_PATHS = $(inherited) "$(PLATFORM_DIR)/Developer/Library/Frameworks" "${DT_TOOLCHAIN_DIR}/usr/lib/swift/${PLATFORM_NAME}" /usr/lib/swift
-OTHER_LDFLAGS = $(inherited) -ObjC -framework "CocoaLumberjack" -framework "Curve25519Kit" -framework "LibSignalClient" -framework "OpenSSL" -framework "Security" -framework "SignalCoreKit"
+OTHER_LDFLAGS = $(inherited) -ObjC -framework "CocoaLumberjack" -framework "Curve25519Kit" -framework "LibSignalClient" -framework "Security" -framework "SignalCoreKit"
 OTHER_SWIFT_FLAGS = $(inherited) -D COCOAPODS
 PODS_BUILD_DIR = ${BUILD_DIR}
 PODS_CONFIGURATION_BUILD_DIR = ${PODS_BUILD_DIR}/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)

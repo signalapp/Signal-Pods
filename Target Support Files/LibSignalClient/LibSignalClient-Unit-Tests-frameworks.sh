@@ -179,31 +179,26 @@ if [[ "$CONFIGURATION" == "App Store Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/LibSignalClient/LibSignalClient.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SignalCoreKit/SignalCoreKit.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/CocoaLumberjack/CocoaLumberjack.framework"
-  install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/OpenSSL-Universal/OpenSSL.framework"
 fi
 if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/LibSignalClient/LibSignalClient.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SignalCoreKit/SignalCoreKit.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/CocoaLumberjack/CocoaLumberjack.framework"
-  install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/OpenSSL-Universal/OpenSSL.framework"
 fi
 if [[ "$CONFIGURATION" == "Profiling" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/LibSignalClient/LibSignalClient.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SignalCoreKit/SignalCoreKit.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/CocoaLumberjack/CocoaLumberjack.framework"
-  install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/OpenSSL-Universal/OpenSSL.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/LibSignalClient/LibSignalClient.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SignalCoreKit/SignalCoreKit.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/CocoaLumberjack/CocoaLumberjack.framework"
-  install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/OpenSSL-Universal/OpenSSL.framework"
 fi
 if [[ "$CONFIGURATION" == "Testable Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/LibSignalClient/LibSignalClient.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SignalCoreKit/SignalCoreKit.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/CocoaLumberjack/CocoaLumberjack.framework"
-  install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/OpenSSL-Universal/OpenSSL.framework"
 fi
 if [ "${COCOAPODS_PARALLEL_CODE_SIGN}" == "true" ]; then
   wait

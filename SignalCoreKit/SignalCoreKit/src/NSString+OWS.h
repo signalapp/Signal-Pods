@@ -25,8 +25,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) NSString *ensureBalancedBidiControlCharacters;
 @property (nonatomic, readonly) NSString *bidirectionallyBalancedAndIsolated;
 
-- (BOOL)isValidE164;
-
 + (NSString *)formatDurationSeconds:(uint32_t)durationSeconds useShortFormat:(BOOL)useShortFormat;
 
 - (NSString *)stringByPrependingCharacter:(unichar)character;
