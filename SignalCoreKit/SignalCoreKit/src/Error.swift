@@ -9,7 +9,6 @@ public struct OWSAssertionError: Error {
     public static var test_skipAssertions = false
     #endif
 
-    public let errorCode: Int = SCKError.Code.assertionError.rawValue
     public let description: String
     public init(_ description: String,
                 file: String = #file,
@@ -30,7 +29,6 @@ public struct OWSAssertionError: Error {
 
 // An error that won't assert.
 public struct OWSGenericError: Error {
-    public let errorCode: Int = SCKError.Code.genericError.rawValue
     public let description: String
     public init(_ description: String) {
         self.description = description

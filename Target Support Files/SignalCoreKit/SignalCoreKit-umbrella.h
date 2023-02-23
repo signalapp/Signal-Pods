@@ -20,7 +20,6 @@
 #import "OWSAsserts.h"
 #import "OWSLogs.h"
 #import "Randomness.h"
-#import "SCKError.h"
 #import "SCKExceptionWrapper.h"
 #import "SignalCoreKit.h"
 #import "Threading.h"
