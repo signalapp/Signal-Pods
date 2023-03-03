@@ -1,13 +1,13 @@
 {
   "name": "SignalRingRTC",
-  "version": "2.25.0",
+  "version": "2.25.1",
   "summary": "A Swift & Objective-C library used by the Signal iOS app for WebRTC interactions.",
   "description": "A Swift & Objective-C library used by the Signal iOS app for WebRTC interactions.\"",
   "license": "AGPLv3",
   "homepage": "https://github.com/signalapp/ringrtc",
   "source": {
     "git": "https://github.com/signalapp/ringrtc.git",
-    "tag": "v2.25.0"
+    "tag": "v2.25.1"
   },
   "authors": {
     "Calling Team": "callingteam@signal.org"
@@ -41,7 +41,7 @@
   "pod_target_xcconfig": {
     "LIBRINGRTC_IF_NEEDED": "$(PODS_TARGET_SRCROOT)/out/release/libringrtc/$(CARGO_BUILD_TARGET)/libringrtc.a",
     "OTHER_LDFLAGS": "$(LIBRINGRTC_IF_NEEDED)",
-    "RINGRTC_PREBUILD_DIR": "$(USER_LIBRARY_DIR)/Caches/org.signal.ringrtc/prebuild-2.25.0",
+    "RINGRTC_PREBUILD_DIR": "$(USER_LIBRARY_DIR)/Caches/org.signal.ringrtc/prebuild-2.25.1",
     "CARGO_BUILD_TARGET[sdk=iphonesimulator*][arch=arm64]": "aarch64-apple-ios-sim",
     "CARGO_BUILD_TARGET[sdk=iphonesimulator*][arch=*]": "x86_64-apple-ios",
     "CARGO_BUILD_TARGET[sdk=iphoneos*]": "aarch64-apple-ios",
