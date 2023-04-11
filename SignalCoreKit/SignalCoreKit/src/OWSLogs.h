@@ -12,27 +12,27 @@ static const NSUInteger ddLogLevel = DDLogLevelAll;
 static const NSUInteger ddLogLevel = DDLogLevelInfo;
 #endif
 
-static inline BOOL ShouldLogVerbose()
+static inline BOOL ShouldLogVerbose(void)
 {
     return ddLogLevel >= DDLogLevelVerbose;
 }
 
-static inline BOOL ShouldLogDebug()
+static inline BOOL ShouldLogDebug(void)
 {
     return ddLogLevel >= DDLogLevelDebug;
 }
 
-static inline BOOL ShouldLogInfo()
+static inline BOOL ShouldLogInfo(void)
 {
     return ddLogLevel >= DDLogLevelInfo;
 }
 
-static inline BOOL ShouldLogWarning()
+static inline BOOL ShouldLogWarning(void)
 {
     return ddLogLevel >= DDLogLevelWarning;
 }
 
-static inline BOOL ShouldLogError()
+static inline BOOL ShouldLogError(void)
 {
     return ddLogLevel >= DDLogLevelError;
 }
