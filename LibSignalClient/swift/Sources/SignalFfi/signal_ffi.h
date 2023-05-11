@@ -14,6 +14,8 @@ SPDX-License-Identifier: AGPL-3.0-only
 #include <stdint.h>
 #include <stdlib.h>
 
+#define SignalBoxHeader_MAX_SIZE 32
+
 #define SignalNUM_AUTH_CRED_ATTRIBUTES 3
 
 #define SignalNUM_PROFILE_KEY_CRED_ATTRIBUTES 4
@@ -164,6 +166,9 @@ typedef enum {
   SignalErrorCodeUsernameBadCharacter = 124,
   SignalErrorCodeUsernameTooShort = 125,
   SignalErrorCodeUsernameTooLong = 126,
+  SignalErrorCodeIoError = 130,
+  SignalErrorCodeInvalidMediaInput = 131,
+  SignalErrorCodeUnsupportedMediaInput = 132,
 } SignalErrorCode;
 
 /**
@@ -185,6 +190,8 @@ typedef struct SignalFingerprint SignalFingerprint;
 
 typedef struct SignalHsmEnclaveClient SignalHsmEnclaveClient;
 
+typedef struct SignalIncrementalMac SignalIncrementalMac;
+
 typedef struct SignalPinHash SignalPinHash;
 
 typedef struct SignalPlaintextContent SignalPlaintextContent;
@@ -203,6 +210,11 @@ typedef struct SignalPrivateKey SignalPrivateKey;
 typedef struct SignalProtocolAddress SignalProtocolAddress;
 
 typedef struct SignalPublicKey SignalPublicKey;
+
+/**
+ * Sanitized metadata returned by the sanitizer.
+ */
+typedef struct SignalSanitizedMetadata SignalSanitizedMetadata;
 
 typedef struct SignalSenderCertificate SignalSenderCertificate;
 
@@ -230,6 +242,8 @@ typedef struct SignalSignedPreKeyRecord SignalSignedPreKeyRecord;
 typedef struct SignalSvr2Client SignalSvr2Client;
 
 typedef struct SignalUnidentifiedSenderMessageContent SignalUnidentifiedSenderMessageContent;
+
+typedef struct SignalValidatingMac SignalValidatingMac;
 
 typedef struct {
   const unsigned char *base;
@@ -329,6 +343,16 @@ typedef struct {
   SignalLoadSenderKey load_sender_key;
   SignalStoreSenderKey store_sender_key;
 } SignalSenderKeyStore;
+
+typedef int (*SignalRead)(void *ctx, uint8_t *buf, uintptr_t buf_len, uintptr_t *amount_read);
+
+typedef int (*SignalSkip)(void *ctx, uint64_t amount);
+
+typedef struct {
+  void *ctx;
+  SignalRead read;
+  SignalSkip skip;
+} SignalInputStream;
 
 typedef uint8_t SignalRandomnessBytes[SignalRANDOMNESS_LEN];
 
@@ -533,6 +557,10 @@ SignalFfiError *signal_publickey_get_public_key_bytes(SignalOwnedBuffer *out,
 SignalFfiError *signal_address_get_device_id(uint32_t *out, const SignalProtocolAddress *obj);
 
 SignalFfiError *signal_address_get_name(const char **out, const SignalProtocolAddress *obj);
+
+SignalFfiError *signal_publickey_equals(bool *out,
+                                        const SignalPublicKey *lhs,
+                                        const SignalPublicKey *rhs);
 
 SignalFfiError *signal_publickey_compare(int32_t *out,
                                          const SignalPublicKey *key1,
@@ -1480,6 +1508,37 @@ SignalFfiError *signal_svr2_client_new(SignalSvr2Client **out,
                                        SignalBorrowedBuffer attestation_msg,
                                        uint64_t current_timestamp);
 
+SignalFfiError *signal_incremental_mac_calculate_chunk_size(uint32_t *out, uint32_t data_size);
+
+SignalFfiError *signal_incremental_mac_destroy(SignalIncrementalMac *p);
+
+SignalFfiError *signal_incremental_mac_initialize(SignalIncrementalMac **out,
+                                                  SignalBorrowedBuffer key,
+                                                  uint32_t chunk_size);
+
+SignalFfiError *signal_incremental_mac_update(SignalOwnedBuffer *out,
+                                              SignalIncrementalMac *mac,
+                                              SignalBorrowedBuffer bytes,
+                                              uint32_t offset,
+                                              uint32_t length);
+
+SignalFfiError *signal_incremental_mac_finalize(SignalOwnedBuffer *out, SignalIncrementalMac *mac);
+
+SignalFfiError *signal_validating_mac_destroy(SignalValidatingMac *p);
+
+SignalFfiError *signal_validating_mac_initialize(SignalValidatingMac **out,
+                                                 SignalBorrowedBuffer key,
+                                                 uint32_t chunk_size,
+                                                 SignalBorrowedBuffer digests);
+
+SignalFfiError *signal_validating_mac_update(bool *out,
+                                             SignalValidatingMac *mac,
+                                             SignalBorrowedBuffer bytes,
+                                             uint32_t offset,
+                                             uint32_t length);
+
+SignalFfiError *signal_validating_mac_finalize(bool *out, SignalValidatingMac *mac);
+
 SignalFfiError *signal_username_hash(uint8_t (*out)[32], const char *username);
 
 SignalFfiError *signal_username_proof(SignalOwnedBuffer *out,
@@ -1492,5 +1551,39 @@ SignalFfiError *signal_username_candidates_from(const char **out,
                                                 const char *nickname,
                                                 uint32_t min_len,
                                                 uint32_t max_len);
+
+#if defined(SIGNAL_MEDIA_SUPPORTED)
+SignalFfiError *signal_signal_media_check_available(void);
+#endif
+
+#if defined(SIGNAL_MEDIA_SUPPORTED)
+SignalFfiError *signal_mp4_sanitizer_sanitize(SignalSanitizedMetadata **out,
+                                              const SignalInputStream *input,
+                                              uint64_t len);
+#endif
+
+#if defined(SIGNAL_MEDIA_SUPPORTED)
+SignalFfiError *signal_sanitized_metadata_destroy(SignalSanitizedMetadata *p);
+#endif
+
+#if defined(SIGNAL_MEDIA_SUPPORTED)
+SignalFfiError *signal_sanitized_metadata_clone(SignalSanitizedMetadata **new_obj,
+                                                const SignalSanitizedMetadata *obj);
+#endif
+
+#if defined(SIGNAL_MEDIA_SUPPORTED)
+SignalFfiError *signal_sanitized_metadata_get_metadata(SignalOwnedBuffer *out,
+                                                       const SignalSanitizedMetadata *sanitized);
+#endif
+
+#if defined(SIGNAL_MEDIA_SUPPORTED)
+SignalFfiError *signal_sanitized_metadata_get_data_offset(uint64_t *out,
+                                                          const SignalSanitizedMetadata *sanitized);
+#endif
+
+#if defined(SIGNAL_MEDIA_SUPPORTED)
+SignalFfiError *signal_sanitized_metadata_get_data_len(uint64_t *out,
+                                                       const SignalSanitizedMetadata *sanitized);
+#endif
 
 #endif /* SIGNAL_FFI_H_ */
