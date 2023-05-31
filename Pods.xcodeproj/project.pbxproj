@@ -29,6 +29,7 @@
 		034FDC77DE7332E9AF1EE5D3DCEB1181 /* common_sse41.h in Headers */ = {isa = PBXBuildFile; fileRef = A9E2D6779AF226F4455963049F317042 /* common_sse41.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		03E4DD9268D0A6960D60C84AA54EE9AC /* FogSearchKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3DB194507498CD09D9BFCF09F850929 /* FogSearchKey.swift */; };
 		03F642DEE3055916FB3FD5E6876B3381 /* Pods-SignalShareExtension-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = B03452354F0C63045A47E3DABF8DFD33 /* Pods-SignalShareExtension-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		042343B4ABC3065ED11941FD1D2465C1 /* SFU.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC882415C3D71BD254D32FCC03D9F36D /* SFU.swift */; };
 		0440E99349C4AA12D682EE6D48AE33F8 /* PersistableRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = E04DDC21D56C8B190BDF21FB123EA0CF /* PersistableRecord.swift */; };
 		0456BCAAAEA6277BA86CAB17DC4B1322 /* DatabaseRegion.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD40C695CEF4EAC9D0F3D270CBE6F60 /* DatabaseRegion.swift */; };
 		046DDC5B3C194BACD2DC00893A44B124 /* YYImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 6C7B98B615E7B43D9F74CD54C01B3C12 /* YYImage.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -221,7 +222,6 @@
 		23732F421E61DB92D5FD7DED8C87F98C /* AnyMessageStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C02E8D535487B55B2DBF4FF3BB9431 /* AnyMessageStorage.swift */; };
 		23DA56C127B851DB61F0EBEC3F8280CD /* InfallibleDataSerializable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0A28FBBE1122B62136F51F6C989133 /* InfallibleDataSerializable.swift */; };
 		242E0F0CB31CEA52D35754C1F61DD48C /* FogMerkleProofConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACA04B7CA64064BDF6954CE92B77171 /* FogMerkleProofConnection.swift */; };
-		243104274D333ECCEDCE55DC48598637 /* CallContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1AF06BB5D944153461795D787B81EDD /* CallContext.swift */; };
 		247FCFE6730E4933A105AA2826976755 /* AuthCredential.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80AFD9AAF193C23C412062760B48B2F8 /* AuthCredential.swift */; };
 		250BB367DBBBBF183E283AA06B520819 /* Cds2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CEC919812AE55C9B7F630C44EA776F5 /* Cds2.swift */; };
 		251B0563FF3D9359F31194F32816D3B9 /* libPhoneNumber-iOS-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = BBBF32E92D4091DEEF6BA7C61A68A67E /* libPhoneNumber-iOS-dummy.m */; };
@@ -288,7 +288,6 @@
 		313E0494E04449BCEC3E8E8830DD42D2 /* CustomRedactingStringConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = B86C50904CE0BB0258C13B5D79226B44 /* CustomRedactingStringConvertible.swift */; };
 		3169500E63EEB2A9665D5614B1A9B78D /* ConnectionConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0A229B92454C7B059481CB82D0B8EFA /* ConnectionConfig.swift */; };
 		3182B1F0CC6C411ADAC92A231039367F /* NSArray+MTLManipulationAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = F0166C4FC27B00955E8AA54C944C91B3 /* NSArray+MTLManipulationAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		318FCA5FFF8267CA026115F03A9D98B2 /* CallManagerGlobal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26D9AFBD50CC56538B1FBF035DCFE1BE /* CallManagerGlobal.swift */; };
 		31CFDD70F856F83CFA0041B9A1AB0CC1 /* Curve25519KitSwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8BB0BAD2CD4CC72AA07B737D8F10C /* Curve25519KitSwiftTests.swift */; };
 		31E5EFA2F940B425DD5A94308510299F /* Balance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52FA54F07AC84F8B98DCFF18053C1A3D /* Balance.swift */; };
 		322AEDF28F9BFB73363AFD37FBAB4FB6 /* filter_enc.c in Sources */ = {isa = PBXBuildFile; fileRef = 7D74E8682B3ABFCF8DAA4BF6354FC316 /* filter_enc.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
@@ -355,6 +354,7 @@
 		3FEBC267754A2A7121E8B184BCC7060E /* Username.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11AC585AFA0FBFD7D3D1CE0B54395E7D /* Username.swift */; };
 		4018901DC465FF1EF468C713069ECD7C /* ge_add.h in Headers */ = {isa = PBXBuildFile; fileRef = 04B63307E2B48C9B1BE0C756FDE56B69 /* ge_add.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		4019BFB8BBB8A2D25CAD8D01CC4C556E /* BinaryDelimited.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F640687E42458551BCE864B1BBAC2B4 /* BinaryDelimited.swift */; };
+		40F33C99E0AFACBB4490E20A637BAEBA /* CallManagerGlobal.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2004A6F23914481B750DC519F07879D /* CallManagerGlobal.swift */; };
 		4116E1C3E0B9ED92F166275616D6C85A /* AuthCredentialWithPniResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D38A0C03D7627B2A0A52B3EFD29C276 /* AuthCredentialWithPniResponse.swift */; };
 		412094648202868EEE5B1B49D2EBB5A5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03B2FAA7F7DE467181C0BC3C70177945 /* Foundation.framework */; };
 		419B3AF6450BB7B3F7789F90DCEE62E5 /* MTLTransformerErrorHandling.m in Sources */ = {isa = PBXBuildFile; fileRef = A4E2C9CDDF4BBDB01482D5773A548933 /* MTLTransformerErrorHandling.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
@@ -366,6 +366,7 @@
 		427E5077CB191E1A0CC05538F1938896 /* tree_dec.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E8A13B9D4223D137C76F53916E9AA6B /* tree_dec.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
 		42AED50E8B7A79984208E0F06106D43E /* UnsafeBufferPointer+Shims.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58730A24236E9F254EC6FA816DF745F1 /* UnsafeBufferPointer+Shims.swift */; };
 		42F9804B0F4D9693BE764004643DEA87 /* AccountKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25369F6770275F8ACCEC150F9F424C80 /* AccountKey.swift */; };
+		432454B2437964F3B92758A1BBDD5EB0 /* ConnectionMediaStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80268567ACE4D2FF0831C9FE1DCDB9FC /* ConnectionMediaStream.swift */; };
 		435D1EF6752EC51E26EF9A8290F1738F /* quant_levels_dec_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB0635C0A712A90A2BF47E25E17801E /* quant_levels_dec_utils.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		43C996A3EF39E7387CBCAC42CDE235DB /* SimpleExtensionMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19DC9C709FD4CA14FF9749CFF326C3A5 /* SimpleExtensionMap.swift */; };
 		43D6FC29243AEBA438A877922F59B8C0 /* Thenable+Timeout.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3697D1C7873B1827E036E4FFA0950A1 /* Thenable+Timeout.swift */; };
@@ -514,7 +515,6 @@
 		5E504839B11462A0AD25F87FEC9C1B1A /* DatabasePromise.swift in Sources */ = {isa = PBXBuildFile; fileRef = B76146A3067C0700FB7699AE24CA72F8 /* DatabasePromise.swift */; };
 		5E60DBAE354D14DE8343F5417F3733B7 /* AnimationKeypathExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3CE76A1E18FBE3174C5C1F0AF9DB801 /* AnimationKeypathExtension.swift */; };
 		5E6EF05EF562D9398E5865D300115D64 /* MTLModel+NSCoding.h in Headers */ = {isa = PBXBuildFile; fileRef = 89B7363E9C47543BAE9E61DB740387E5 /* MTLModel+NSCoding.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5E906B1A7D0193999AB46C7D61F14466 /* SignalRingRTC-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 1330C121D1F872FD08CEBE15E0115D53 /* SignalRingRTC-dummy.m */; };
 		5EC1D5E522BFA2D078308C609C7058E7 /* types.h in Headers */ = {isa = PBXBuildFile; fileRef = BD0740AA03A76AB8BDE9FF6A96D74D8B /* types.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5ED93B99081319DE509558D2FE5E977F /* NodePropertyMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 081D6C0BE79F928598D63832B75D59BB /* NodePropertyMap.swift */; };
 		5EFC6AD7A3FF3044917387522FDC85AB /* legacyview.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FF7C2688B38E50336C784E5CBE0BC64 /* legacyview.pb.swift */; };
@@ -604,6 +604,7 @@
 		6CDACBC5A769797CF1E14A0219B0D5F3 /* AuthCredentialPresentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA5B4EA12B779852EB2F4BA30693788 /* AuthCredentialPresentation.swift */; };
 		6CFF65E9B9517D122346E2D8E56AED90 /* alpha_processing.c in Sources */ = {isa = PBXBuildFile; fileRef = 1A1A6C218E2BCAC7C01016A6362795AD /* alpha_processing.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
 		6D354E9CE226EE6D04C6C019A1973C63 /* Thenable+Race.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7BA5D6D8C87A024E3FFB5EB655F3AC5 /* Thenable+Race.swift */; };
+		6D4EAFDD7C61CDD27C8DC305B24EF12A /* SignalRingRTC.h in Headers */ = {isa = PBXBuildFile; fileRef = D7547EF329A5E726FF229CA1D1983876 /* SignalRingRTC.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6DA5B24E9D65E7C0CD4FD71EA14AB7D0 /* NBPhoneNumberMetaData.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3A4F60011BE7CEEA1D7628FDF52810E0 /* NBPhoneNumberMetaData.plist */; };
 		6DC7318C128F1F2088F6A9FEB36BB2E9 /* mz_strm_wzaes.h in Headers */ = {isa = PBXBuildFile; fileRef = FA667F718B7151E36816B8F4E4892B9D /* mz_strm_wzaes.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		6DE7407DEAA8D5E9C0F474F623E8F78D /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE056525BBB537DF0D9C7D2326BA78D3 /* Error.swift */; };
@@ -700,16 +701,17 @@
 		7DA54910C27AA68E943E66FD2359C993 /* ConsensusHttpConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4EDC62F56625DAEF6E408CA98C02F13 /* ConsensusHttpConnection.swift */; };
 		7DA8088F2AEE899BF5B75FD7818908D1 /* SignedContingentInputBuilderUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44A53C6E1741389C30C3799642457A07 /* SignedContingentInputBuilderUtils.swift */; };
 		7DCC98275B2B429ABED98BBA88ED4444 /* HttpCallResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38DA7D795ACE5BE9231331B19C3AE996 /* HttpCallResult.swift */; };
+		7DD51B8051A8251EE3C1E7F30558BC06 /* CallManagerUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D1D1AF437530648E65A481626469FC6 /* CallManagerUtil.swift */; };
 		7DE8EA46B2EE2566A40BAFF84418A29B /* FogReportServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBAE88961E92A4A81F145063CCDA28EF /* FogReportServer.swift */; };
 		7E75CBDB0E0F1CB4240B275B5CBF791C /* ArbitraryHttpConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A3713C37B16C4ECA917DAD38B8B54D /* ArbitraryHttpConnection.swift */; };
 		7E77DA9A4008247329C063688B0CD8CC /* AnimationViewBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 757C2F936221327AE414D3DB07B5EF60 /* AnimationViewBase.swift */; };
 		7E7E3F48AC8F26A8DA565412E3DC1199 /* Result+Throws.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75A8D9E10C1FA37293D3F3494D85A7EE /* Result+Throws.swift */; };
-		7E97123D0AF9AF78655BB0A3822F622E /* CallManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E482491AD052C21522966AB242B889 /* CallManager.swift */; };
 		7EB0D50D0AC8529013DC68C97FAAEE2C /* String+OWS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32D22E3C0683DA272411F22772692DE5 /* String+OWS.swift */; };
 		7EBA063BDB105BFC3DAA34A84DC6748C /* SQLAssociation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FDD358795D399B9120E9D633A503570 /* SQLAssociation.swift */; };
 		7EC49449704740B19EF547D1FC685293 /* SolidLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD49185384F96E3A9675F9BB38D26EC /* SolidLayer.swift */; };
 		7ED92B4FD82F18CDABC4E32D49FB7334 /* TxOutMemoParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFDF65B98819DE0B05CAC89A36BAEC0B /* TxOutMemoParser.swift */; };
 		7F12F152E466806C18A900DFF16F1441 /* YYSpriteSheetImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 65FC3F02F76C22780A698E1E48A41260 /* YYSpriteSheetImage.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
+		7F61DC793D2574A9BEEC2A6B92BE982D /* RingValidation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA52AD1B8FE2ED90333AA8420E8BC4BB /* RingValidation.swift */; };
 		7F88A9225EF34B24E90E5AD30A30A658 /* ClientZkReceiptOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD06A57D69815E463EAF68407C16039 /* ClientZkReceiptOperations.swift */; };
 		7FC8753E46D8BF0D7D13E5841E5CA9AD /* LottieConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EA901910816E3998023281CA6E19B16 /* LottieConfiguration.swift */; };
 		7FFB056CC969F2AC12006C03EF78E9C8 /* Mantle-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 56944DC6C6295A52A00C6916064BA98F /* Mantle-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -735,7 +737,6 @@
 		835E45753E10D8BB786E6F13A114E7A6 /* Compatibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0A313A662D96C9D9D2FB379FE39B8E7 /* Compatibility.swift */; };
 		83717203CFBD8E8903C522037DB4D32F /* Data+TypeConversions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D42C1CB5187C9CDEFD63D29BF8150FA1 /* Data+TypeConversions.swift */; };
 		83A39A0C742D5F69B807265A5C8FA34E /* SignalCoreKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 13C93C0196678F93DE09647F57711B22 /* SignalCoreKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		83AA03F5E5E6DC2A7BC58893B01227F5 /* SFU.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F061CD7D0D7E12B5AA3EEDDDA5D010B /* SFU.swift */; };
 		83B41D68869C5200333A543892A6DB42 /* RestApiRequester.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC62D89CDE3D2F3A875C6BA25EA10A67 /* RestApiRequester.swift */; };
 		83F5B4DBC4652A12E10BDBF881062514 /* Pods-SignalTests-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 8E0B1573CA275E0EE001ADF91F5E80B4 /* Pods-SignalTests-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		84231FEF3076EC37C812B14F978D1133 /* DatabaseFunction.swift in Sources */ = {isa = PBXBuildFile; fileRef = F02D88065B0534AB23F65296FE460AB8 /* DatabaseFunction.swift */; };
@@ -754,7 +755,6 @@
 		85FB17589B446C395E9E0085F09EC26E /* Glyph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 883D978178E2F174CF59094711CDD1AB /* Glyph.swift */; };
 		8649E36B5C0A2499A6918FDAABC8352A /* AnimationViewInitializers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C73CDA82E58938F924ABAD2B88568B /* AnimationViewInitializers.swift */; };
 		8659C43996A616EDD598BD83747EB019 /* Export.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A09C3B56022F168E4CCAEB92ABD6175 /* Export.swift */; };
-		865B67EF57268737B0B611F7BF0F27BC /* VideoCaptureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB4A48595C538A1C325A5FE71A55C5AC /* VideoCaptureController.swift */; };
 		8683E1E4486852B39DFDAC51C6FBFD70 /* LayerTextProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = C88FE4120B51B77721E6B13A83C4030F /* LayerTextProvider.swift */; };
 		871F022A9E96F0C07A15724FE16286B3 /* DDFileLogger+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ED10AF4AF37C968A8CCEE5ED6F16A01 /* DDFileLogger+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8741F01AAFC6666196D7D9A5654CE9F9 /* NSError+MTLModelException.m in Sources */ = {isa = PBXBuildFile; fileRef = D18A95631A86C022DFEBA84649AE8492 /* NSError+MTLModelException.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
@@ -773,8 +773,8 @@
 		89ED9FA2124B8DC8A7079615CAEA9DEA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03B2FAA7F7DE467181C0BC3C70177945 /* Foundation.framework */; };
 		8A02D45825AD518A6E39D693BDB40FD2 /* PureLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 455B3E878E9E605385240A85BEC60BA6 /* PureLayout.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8A2B67A452B0902A1190A144CC25DF92 /* ShapeItemLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F4A04EABDBA982750FD338D999AC3D2 /* ShapeItemLayer.swift */; };
-		8A347BCAC014E285E8B80AA7D34A5763 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34FAA0B2FB4EFA6F63961A8A28F1FD02 /* Logging.swift */; };
 		8A5C8212F4FE8EBC74B75B61FA549CCD /* CLIColor.m in Sources */ = {isa = PBXBuildFile; fileRef = D94140B5572F860A8F353FD5A80E7411 /* CLIColor.m */; };
+		8A657A4E910FDE72A0BABBD4C688C37C /* ringrtc.h in Headers */ = {isa = PBXBuildFile; fileRef = EC200CC65E1B231EB948EF89C685079F /* ringrtc.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8A67B5AAC72875D6B816ECDF66BA434C /* Google_Protobuf_ListValue+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DB8DEDD58B96E3500E29FE286F65222 /* Google_Protobuf_ListValue+Extensions.swift */; };
 		8B030C614BCBB9A407FE8A4BDEABE09F /* idec_dec.c in Sources */ = {isa = PBXBuildFile; fileRef = 4154DCDC1B974171D9CD58A6D01C2A20 /* idec_dec.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
 		8B2F648B0E4226F5D1B723393B8093EE /* OwnedTxOut.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0FC7B1CD0FA3A2C7731ECD7E1D8D780 /* OwnedTxOut.swift */; };
@@ -789,7 +789,6 @@
 		8DAE159E292B1876D0C84E4B21F1D8C4 /* color_cache_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 70CB1AF321CA858C609B53701BED5885 /* color_cache_utils.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
 		8DC009CF856BECFD937121D54DB2D93C /* SignedContingentInputCreator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB2A9CE076D2C8A1532C3AD196C0C53D /* SignedContingentInputCreator.swift */; };
 		8DC3365564F28A258D9F4042D097AD56 /* Curve25519Kit.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F32BB93C32983849AA96F4A5A3B5F93 /* Curve25519Kit.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8DCF696AE0FFD2C519695510DC34C4C1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03B2FAA7F7DE467181C0BC3C70177945 /* Foundation.framework */; };
 		8DDE699F02DB3AE16DF93F40A4F4BB21 /* DebuggerUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 634183C0BA4FBC912D426B97AC055C73 /* DebuggerUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8DEB5BF6AFE41AB48893BCF62FF441D1 /* encode.h in Headers */ = {isa = PBXBuildFile; fileRef = 17D8519B7FA2180DC4E5EF903302A14C /* encode.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8E370B58DB1FC38229499494295B234B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03B2FAA7F7DE467181C0BC3C70177945 /* Foundation.framework */; };
@@ -844,6 +843,7 @@
 		9716D661B3124924E423E32F049B0A8A /* lossless_sse2.c in Sources */ = {isa = PBXBuildFile; fileRef = 9607959E865807DEFF1F19AD55581873 /* lossless_sse2.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
 		971AB0FC3E6B0C251BED94B8B4BD3AEE /* Pods-SignalTests-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = F5BB14640D787DE8ED282E2297E7DFD6 /* Pods-SignalTests-dummy.m */; };
 		971BCC9400131FA54F2DA74A8182C92B /* CryptographyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81363338A40138FF22ED1900F812D370 /* CryptographyTests.swift */; };
+		972E232651D940DD2F0D0B5784319000 /* HTTP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50D77D3B3131F13ABD7959EFBEECA73E /* HTTP.swift */; };
 		977B99E2D880557ABE7618A75A7EB18D /* OWSSwiftUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2A330E4B4637621E9CB87DA867643BA /* OWSSwiftUtils.swift */; };
 		97913F7101A41526B5243C9444FED288 /* AssetLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 879F02820848AFF36D918043E54D4FC5 /* AssetLibrary.swift */; };
 		97CD6A693306C54807C3EDC34EB827E5 /* SQLInterpolation+QueryInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BE636BA78FC28ACC1303B4AD04B61E6 /* SQLInterpolation+QueryInterface.swift */; };
@@ -862,8 +862,8 @@
 		9A2BEC2D2EB647F59DA6E93281A6B45F /* AnimatedControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = D865C0B1A5ED10C01B4B5C5FC2703186 /* AnimatedControl.swift */; };
 		9A73B9F1F85BA725A3386D7CCB0394ED /* NSNumber.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FE01F0BE3BBCEFDD63168EFADCF9553 /* NSNumber.swift */; };
 		9A76FBA99EE90001AC2BF9835B044449 /* GroupMasterKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = B23DAB7645DFEFDBD9F7D5C8358B8BA3 /* GroupMasterKey.swift */; };
+		9AA04707F24BEBD1A0BDBEF54E85E47A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03B2FAA7F7DE467181C0BC3C70177945 /* Foundation.framework */; };
 		9AAA8E0E4DD65CD6A74935F245641BE2 /* MobileCoinMinimal.m in Sources */ = {isa = PBXBuildFile; fileRef = 835F1A754EA14A8A70759A6BEDEDBC53 /* MobileCoinMinimal.m */; };
-		9AB06D02F004C016B13460646FBD40DB /* ConnectionMediaStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 940375A29FB8F1D5260C70ADFDDCEB06 /* ConnectionMediaStream.swift */; };
 		9AC4983AFCF6C59C06262A8D1CEF8857 /* GrpcProtocolConnectionFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF3C1980E15F4CD9D5F937D497851096 /* GrpcProtocolConnectionFactory.swift */; };
 		9B2C0A4E78E78D46EE693BBBFAC39BDF /* UIView+Promise.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A443C01886DB2DC0251C863E2510E4 /* UIView+Promise.swift */; };
 		9B304DAFD7BDBD4FE8F29E106A58CC2D /* FogResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C768A1927AC1CA8C712B8D924299CE /* FogResolver.swift */; };
@@ -1002,6 +1002,7 @@
 		B0095F00EFC3E7C2BCDBCBFE22E6995A /* EXTRuntimeExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C27DE03F7274FC78AA3A64770A9A493 /* EXTRuntimeExtensions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B04C415AFD05E8809A143DB9EF1BB019 /* AssociationAggregate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7079D053AAD801E153D5CCB4D5518CFB /* AssociationAggregate.swift */; };
 		B0667C25E3BFF81F72612AE9B29F4181 /* Collection+Chunked.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33CD3A50F1E6414B6EC6D72DE1382C6 /* Collection+Chunked.swift */; };
+		B070D90FDE90645FCE6BAF0AA8776468 /* CallContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECEED8641A74841D023EDC9DFC3852D6 /* CallContext.swift */; };
 		B077A4A1590D61AF1628ABEB43294FF1 /* thread_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 35BCE20D942361E9DDDE7D1542A9F9EC /* thread_utils.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
 		B09681608EC76BD5C32B90277B7489DD /* DDDispatchQueueLogFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = E66484373FD08385D88442489CE99BE7 /* DDDispatchQueueLogFormatter.m */; };
 		B096C1AAA9F18379EB1C9CED98AFF523 /* PreKeyBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FE432E6F0B03D49FE4D4399B5BF5734 /* PreKeyBundle.swift */; };
@@ -1069,6 +1070,7 @@
 		BB4C316D73A2E73F43E8CD7DCC1AB6B2 /* SQLCipher-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = A3F3EB840269749DB20D3152DD6CB78D /* SQLCipher-dummy.m */; };
 		BB4E4ACB076B561F7B42015C7A9F3570 /* MobileCoinClient+Async.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F2E48C7D2B2608982B0C723BF574861 /* MobileCoinClient+Async.swift */; };
 		BB4E7C700260D99BDCD5ECD1C04B3A4E /* DefaultTxOutSelectionStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = D173A61CB1D9EED58D2107879BA48A52 /* DefaultTxOutSelectionStrategy.swift */; };
+		BB533A0CD713849D5D34394923AA8860 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = A57043CE88B9D3CC57F75A5517F47791 /* Logging.swift */; };
 		BB97A6EF2EA0AC4278A1AA7DE095EE13 /* fog.h in Headers */ = {isa = PBXBuildFile; fileRef = 72C4635A9A9164A901CDDB61BCC4E864 /* fog.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BBD33D4169E7879E527E9B25578A4D98 /* OWSAsserts.m in Sources */ = {isa = PBXBuildFile; fileRef = 46DFD28A30ECC3DC1903DFD86AF13273 /* OWSAsserts.m */; };
 		BC042E34D0869F526CAB38262FDC403F /* Record.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8354A74D4F82E121EFC5A7043C16C6C8 /* Record.swift */; };
@@ -1080,7 +1082,6 @@
 		BD1E64BACF8FB52AD23A1F11FEF3646E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 26D5873D321DC7BBB3734C39713DFEF8 /* UIKit.framework */; };
 		BD445F6B9F68E1635FC634D6258E5766 /* Account+TransactionEstimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531468CAF5CE0F561B7F34477BFC3C7C /* Account+TransactionEstimator.swift */; };
 		BD5B667C2C1D5B50DE1D88302EF2F19B /* enc.c in Sources */ = {isa = PBXBuildFile; fileRef = 40B18773BAD4AE6E28AF17A4B3F77D0C /* enc.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
-		BDABD2D785F660EC1F595A913D824A35 /* RingValidation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8515C4594E50FDA429D38460CCFC081 /* RingValidation.swift */; };
 		BDBF9D49BC50B3A9F1D2F9F88E446BCE /* HTTPStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = A74FEF928DD6467746FE60E5C758436F /* HTTPStatus.swift */; };
 		BDC0B4090F69ABED8C51B4875C88854D /* dec_neon.c in Sources */ = {isa = PBXBuildFile; fileRef = E5D608409DF74B39B8B4674A42588352 /* dec_neon.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
 		BE0B1F5092EFCADCB183990CEDB4E779 /* Guarantee+Timeout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 182880B1DEB61F68D3137196EAB5C57B /* Guarantee+Timeout.swift */; };
@@ -1152,6 +1153,7 @@
 		CA5D1B9B70756FA723A6AD632009CE0E /* FogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86194495E804B8F88A63030909D5133D /* FogView.swift */; };
 		CA60F4CED104CC8CF8B78DCAEE59A94E /* OWSDataParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FFE393CF383029FE31F38EA2FE4FC08 /* OWSDataParser.swift */; };
 		CACADC11FC10BFC46C1B631AF592EBDA /* YYImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CF8684CE28FB392AFCAE4F8B24D4DA2 /* YYImage.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
+		CAEF018CD76D04A3FA3DDB4577F92866 /* SignalRingRTC-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = B78110BCC8F1CA27622FC1FA2CF52DA3 /* SignalRingRTC-dummy.m */; };
 		CB3589EF58A3567A5BF9D2118DD8E68E /* dec_msa.c in Sources */ = {isa = PBXBuildFile; fileRef = 415AD27BD00A61909AD346F35CA1A4E7 /* dec_msa.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
 		CB88746C272305F6752576E25081FF83 /* picture_psnr_enc.c in Sources */ = {isa = PBXBuildFile; fileRef = 55274CCCBE4BEACADEB9B169D3EA0666 /* picture_psnr_enc.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
 		CB8E61995619A48529E6DAF528CCE709 /* MobileCoinChaCha20Rng.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E0F375F3326BA928D62A26B6AE640B5 /* MobileCoinChaCha20Rng.swift */; };
@@ -1183,7 +1185,6 @@
 		D1053CEC4B59C75F2AE265D509F1C857 /* ExtensionFields.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DE808967EEFB7103274DAAD62536C42 /* ExtensionFields.swift */; };
 		D15BED23D8887CE227455C2F9603F83D /* AnyNodeProperty.swift in Sources */ = {isa = PBXBuildFile; fileRef = D634F7187E19F2C18A741502B80F9703 /* AnyNodeProperty.swift */; };
 		D189EBB9B07A75E1AA48630A32C9DC01 /* Map.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B03282D77C04DA397AC58F54DD39481 /* Map.swift */; };
-		D19917D55629918AC5CC91227AE67985 /* FFI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E43051A1A7431F68275B3C1F718B468 /* FFI.swift */; };
 		D1C0FD419A4CCF87273450B550B9EC62 /* enc_sse41.c in Sources */ = {isa = PBXBuildFile; fileRef = D1DE8263866F2D55711CB88EC452B722 /* enc_sse41.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
 		D1C4FCEB4785B9B60886A8EA297AE307 /* BinaryEncodingVisitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = C29DB92888CAB87FB14F490B4A3C80C2 /* BinaryEncodingVisitor.swift */; };
 		D1E6EFEF4C7992A919907EA86EE2217C /* AttestAke.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDAD6CE16B122697678A7D47A8C5CCDC /* AttestAke.swift */; };
@@ -1224,6 +1225,7 @@
 		D6A7317D0D5F001210D5BB1BE773B0F4 /* DefaultServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65AC16BFF43A6D2CD895979A7D4E0AF5 /* DefaultServiceProvider.swift */; };
 		D6BC5516E5829CD10DE63A2858852A66 /* LibMobileCoin-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = F6FC3DB252369A8B1118F66A4AE0450F /* LibMobileCoin-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D72DBF747EDC9698581ECE278E3EF9C0 /* Dictionary+GroupingPairs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 417F919CB7CE19CA1A47F3F3C851CB08 /* Dictionary+GroupingPairs.swift */; };
+		D75C12A1D79482754BC286F216FAB3E4 /* CallManagerInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 573F90254E4047050D928EED847A8B19 /* CallManagerInterface.swift */; };
 		D775E5D782B2354516E7BF124C4992A4 /* MTLTransformerErrorHandling.h in Headers */ = {isa = PBXBuildFile; fileRef = 904650D6CAACB20547030BAD4F5C8B72 /* MTLTransformerErrorHandling.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D776AE39F02E7A8887B4A74A4EA0B8C0 /* GradientValueProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 801B372AF2CF7C5AA8D9F8749D903355 /* GradientValueProvider.swift */; };
 		D787154821AE338F9EF1FEA22D59D35B /* OWSLogs.m in Sources */ = {isa = PBXBuildFile; fileRef = 0E756FDCEA22AF5A0B38938496F4A41D /* OWSLogs.m */; };
@@ -1252,10 +1254,11 @@
 		DC8475471823441201E7687C9D234294 /* fe_cmov.c in Sources */ = {isa = PBXBuildFile; fileRef = 08A1BD5F8942785486B6236A9B0D6F68 /* fe_cmov.c */; };
 		DC963BD2DE63888E1514ABDC133DEE5F /* DataConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = 644F12EA65B20534830A286C36A24F66 /* DataConvertible.swift */; };
 		DCE46ABB9989510BCE7CEB137DDF6CDC /* DatabasePublishers.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4D6AD37F31534A398CB12B5AC674323 /* DatabasePublishers.swift */; };
+		DD0BFBABA0649DC6B81BC0AADC6658B5 /* GroupCall.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E9BAB4C16E2EEBD6362C5419A3CD80E /* GroupCall.swift */; };
 		DD69ED48198082CC1D8EA851A45C12E0 /* PositiveInt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 940BF1EF92E5F1BDD6450A7480026C4F /* PositiveInt.swift */; };
 		DDC66EFCEDA557996ECEF873343774CB /* SolidCompositionLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 074F5F7380E4434429650EF0B3EF1338 /* SolidCompositionLayer.swift */; };
+		DDEA6DE6EF80368BA13AE671A344D135 /* VideoCaptureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5781FF30E2EFC9562DB5C623B0E5BC68 /* VideoCaptureController.swift */; };
 		DE228DBD2CA9E82636817B98FD5696EF /* ZipArchive.h in Headers */ = {isa = PBXBuildFile; fileRef = 16751965D9EF5938E4A200D0C1AF9654 /* ZipArchive.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		DE51E60B9E24A1B2F787A69527C59B51 /* CallLinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = C89E3F56FC25F1A24271F21DEB260D1B /* CallLinks.swift */; };
 		DE635F512551C23F63D8D53F6B977C21 /* NBRegExMatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = ECFD559CFC146691AC043AA5AE135F0F /* NBRegExMatcher.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DEA77C6354275723F321F4BA935C6E75 /* CompositionLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20B4F18ADC8E3082A5009F20D18C583 /* CompositionLayer.swift */; };
 		DEBE5C69E6AF3AE371C8DD4101137D91 /* utils.c in Sources */ = {isa = PBXBuildFile; fileRef = DE3A85986AFE9364B6F5C4E78B8F7A33 /* utils.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
@@ -1269,7 +1272,6 @@
 		E05E04409E6278EE570BFB88EB7134B4 /* McTransactionBuilderRing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BF797BE8429856832DFE035090DC5EC /* McTransactionBuilderRing.swift */; };
 		E062096BCDB44EAA0489C94535E0C5FC /* TimeUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0175530A19513BED306D3D6AC65AB0 /* TimeUtils.swift */; };
 		E06BFC830CD8E79C06899ABA27773567 /* upsampling_mips_dsp_r2.c in Sources */ = {isa = PBXBuildFile; fileRef = 10CD5FE77CC45E6774F1769B737BF091 /* upsampling_mips_dsp_r2.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
-		E0C1464548D4B7A2A6C6992C9947BAE5 /* GroupCall.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C758391360F94E15E02C011B4A9FAF3 /* GroupCall.swift */; };
 		E0D526029D6AD735889CA1174C0D7645 /* fe_tobytes.c in Sources */ = {isa = PBXBuildFile; fileRef = 844BDABA3A9EBC19183B5E581F59F13D /* fe_tobytes.c */; };
 		E0E49B6BF0940EB5F81A3A9724DDB6BD /* fe_neg.c in Sources */ = {isa = PBXBuildFile; fileRef = 5784748DA7F2CC86D1BEA51EFC964020 /* fe_neg.c */; };
 		E11295F6334779181F52393E406793D8 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 98EDBF7B4609E035952A2B10C676E0FE /* CoreGraphics.framework */; };
@@ -1319,7 +1321,6 @@
 		E987F3389097911D87445F133325CA81 /* Varint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80E3953C2301CB283435D82F62C58B44 /* Varint.swift */; };
 		E9940C32F5A1B71B7F2D40138B110A38 /* Thenable+When.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1499B71F4674717957F40D8114FA79C4 /* Thenable+When.swift */; };
 		E99E89317A06D12FBDFD4B1A0CD2916E /* animi.h in Headers */ = {isa = PBXBuildFile; fileRef = 12E2AA407DA1039FE55A96E9435D5375 /* animi.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		E9A703422AD53BF88137C280DA313038 /* CallManagerInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D7ACA4B0F9D1752527A157552040E0F /* CallManagerInterface.swift */; };
 		E9CD85BE47BAFD52D570201C8ED8A3C4 /* Vectors.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26070D73A79E51E79E77C101FBC4B1A /* Vectors.swift */; };
 		E9EF84EFFB32CBBF81FD9398D00503DE /* MutableData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C73A694E1C0A0392B0C2265BC1A0882 /* MutableData.swift */; };
 		EA7297FEC6BF8B5071B01EF839657BA6 /* libwebp-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 840544C4FAEE74A478C4E65C1306A5EA /* libwebp-dummy.m */; };
@@ -1338,11 +1339,11 @@
 		ECFB71F9EC1024343DDF1C2A192F5043 /* common.h in Headers */ = {isa = PBXBuildFile; fileRef = E6FA2BA2739FF569B3454DDCA041414B /* common.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		ED3B6CB3DF514A7DBA1A36D58BEE0FA2 /* UuidCiphertext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A75B0652991816EDF400C741A15C658F /* UuidCiphertext.swift */; };
 		ED4EA6787C99DD2FB663EA04B7777B0C /* GradientStrokeRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594EE15DFE68FAF98B648E792454AA2B /* GradientStrokeRenderer.swift */; };
+		ED6054A812AC1244CADA1FE80DA2CCE4 /* CallLinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D8DB8DB27DBC55D2829F7AAAFBBBBCE /* CallLinks.swift */; };
 		ED7AA6426D61CB0745A54B2B754B02BD /* DebuggerUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3267622E768F9037EB4EBF83DC897151 /* DebuggerUtils.m */; };
 		ED90F771115038BF3AC87360F850E9E4 /* cpu.c in Sources */ = {isa = PBXBuildFile; fileRef = D329C3A0E723E3CC9F1E68D5A9F8E340 /* cpu.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
 		EDA85F32905C7A215C0F9EC47FB25E60 /* Guarantee.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21B0F1665162F2CF2509587BAA113B5F /* Guarantee.swift */; };
 		EE29075ABB8F66F2CA4038FC6D7F8903 /* AnimationPublic.swift in Sources */ = {isa = PBXBuildFile; fileRef = F48A95F4C3821B01DD807BF23EE29A71 /* AnimationPublic.swift */; };
-		EE46B49F26BDED3B4C6211426B8F44C9 /* ringrtc.h in Headers */ = {isa = PBXBuildFile; fileRef = 43E36205EE75DA9B7F40B0691B7EA0B3 /* ringrtc.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EE5CB3115FF22B2A6CD78CCCE6DCC738 /* GRDB.swift-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 810E08E034B8B7B98B5AF73DF8F7DD89 /* GRDB.swift-dummy.m */; };
 		EE6D7D07FE677302F848880EF1615B1B /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = A07C779A9F88706F05A63576A5B36889 /* sqlite3.c */; settings = {COMPILER_FLAGS = "-DNDEBUG -DSQLITE_HAS_CODEC -DSQLITE_TEMP_STORE=2 -DSQLITE_SOUNDEX -DSQLITE_THREADSAFE -DSQLITE_ENABLE_RTREE -DSQLITE_ENABLE_STAT3 -DSQLITE_ENABLE_STAT4 -DSQLITE_ENABLE_COLUMN_METADATA -DSQLITE_ENABLE_MEMORY_MANAGEMENT -DSQLITE_ENABLE_LOAD_EXTENSION -DSQLITE_ENABLE_FTS4 -DSQLITE_ENABLE_FTS4_UNICODE61 -DSQLITE_ENABLE_FTS3_PARENTHESIS -DSQLITE_ENABLE_UNLOCK_NOTIFY -DSQLITE_ENABLE_JSON1 -DSQLITE_ENABLE_FTS5 -DSQLCIPHER_CRYPTO_CC -DHAVE_USLEEP=1 -DSQLITE_MAX_VARIABLE_NUMBER=99999 -fno-objc-arc"; }; };
 		EEDA1D16A01F5DFD4DB8AE830E6FF705 /* Account+SCIOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8343A6E89AFE6DDF1005155CA9D6BC0 /* Account+SCIOperations.swift */; };
@@ -1378,6 +1379,7 @@
 		F3FA76320A48D5FBFDB2BDFF851D207D /* Association.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2632DB0470FDDDF5A69D7C39D960E8AE /* Association.swift */; };
 		F40C81ABF548A696D8107989A4867A11 /* AttestableHttpClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = D61F585E10862D56CFAD701E2037A90F /* AttestableHttpClient.swift */; };
 		F41613C0CB48D37DCDB64458745E34C4 /* libPhoneNumber-iOS-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 03C55D933607A2BAF2E6CD9B59BBA601 /* libPhoneNumber-iOS-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F420C37B9050F59F7F13CB3EA450FAC9 /* Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D821066FAAEB31F088B84DEF4DD8E8B /* Connection.swift */; };
 		F475D9B19B228215A9C9DAB1F4614E96 /* LayerImageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BEE43124142BEE493C4D70B4AB45037 /* LayerImageProvider.swift */; };
 		F498F5F44E3956B52BA07146B9BE5A67 /* DDFileLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 28AE5780DA3140EFF71D2A32A5615705 /* DDFileLogger.m */; };
 		F4B8A4434B7D4C2EBBB5F9209E870AE2 /* blockchain.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = A62ED0CB3B5ABA2E8B2081D0AAC3BA7E /* blockchain.pb.swift */; };
@@ -1395,12 +1397,10 @@
 		F718822197D7EA30436F58E07BE9EA32 /* AccountActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E3A904E72263AB7EAD6B5484DEB2EA /* AccountActivity.swift */; };
 		F73BB5EC87781A523FF4DFCA759A116F /* WrappedNIOSSLCertificateValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC3E928822B3D62449B0532D1B0CCB94 /* WrappedNIOSSLCertificateValidator.swift */; };
 		F7803120520A426056943812989D79CA /* NotificationCenter+Promise.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C8B5F0BFE25B56D79838101681E993 /* NotificationCenter+Promise.swift */; };
-		F7CC7F6E3C427297A03E95C8C0343590 /* Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99506D6230896D38FC8A1BC06F9058DA /* Connection.swift */; };
 		F7E534657B93B130C40A3503403ABD8D /* FixedFeeStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 284DC429B24C85EDB54B12C569296B27 /* FixedFeeStrategy.swift */; };
 		F7FDAC5D4874F61210C60048EA51BA26 /* yuv.c in Sources */ = {isa = PBXBuildFile; fileRef = F22C48A5FC7143F0A4566791CCF25369 /* yuv.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
 		F890E26D8D683AF52DB3340CC3A36655 /* StringStyle+Part.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60E23D1071ADC267693BC841BA270C6E /* StringStyle+Part.swift */; };
 		F8CF552293DD993C4083D46CDBF0EC84 /* AnyUnpackError.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB286352DEA4C55F1A0C0AE853CE0213 /* AnyUnpackError.swift */; };
-		F8DA7339D4B99A0BF391465F593977ED /* HTTP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FB2467FBAE6FF4058BB0F99FC2C910F /* HTTP.swift */; };
 		F8E2A0643CA05CD404C446602E342818 /* Ias.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E33E815C80B292A1284CC3BF7EE0ABE /* Ias.swift */; };
 		F908035873FB149544F39A6C4D3606CF /* VersionedCryptoBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E1193146113F3F01BD7EDE54BFA00E0 /* VersionedCryptoBox.swift */; };
 		F91327A0B9D6F130C702664CD175BEAB /* GroupPublicParams.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C2D67CD699B3D14904908199F969A8 /* GroupPublicParams.swift */; };
@@ -1420,7 +1420,6 @@
 		FA17AC05C4F46ACA78A54ACCF7A69782 /* ForeignKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781E4791BA1B6557B80C4A745775F8F3 /* ForeignKey.swift */; };
 		FA1C32B1F1595A368B5A069756B5BB03 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C28E11C4E765FA819AC297E000E1EC4 /* Color.swift */; };
 		FAA28921C261464A077BB1246DC90D4A /* ImmutableOnceReadLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 357962CDB9FDD9A76A001A7A77F3590A /* ImmutableOnceReadLock.swift */; };
-		FABEAD341DB374B10E20F9D225DA6655 /* SignalRingRTC.h in Headers */ = {isa = PBXBuildFile; fileRef = D621A949D935274E264BBECC87887565 /* SignalRingRTC.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		FB3CC54CC6C1C1A244AE17C83ECBD56E /* DatabaseError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83DCCA0375B8F3987F55B288FA311E59 /* DatabaseError.swift */; };
 		FB40AB51548CBE94F9ADD5FB8EF395A2 /* SharedValueObservation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0200AF2446E3645CC5EF1D926263EC77 /* SharedValueObservation.swift */; };
 		FB4BD42940254F98A8B8AAD93AAA61ED /* StringUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F532FC4E609572D975D6D0695EF1E32C /* StringUtils.swift */; };
@@ -1431,7 +1430,6 @@
 		FC23734609F3857471F619E624433546 /* NBNumberFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = 27412FB2C03F9A3CF6F5585E084E984B /* NBNumberFormat.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		FC27210E5CAD422F623594DD7EAC452E /* Data16.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF6405E178946A3E7D7B9BA5728050C /* Data16.swift */; };
 		FC45106EC961B543D0153A9116246DF7 /* RootAnimationLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4FA6654CF62C2FEDA775A300985990 /* RootAnimationLayer.swift */; };
-		FC5801C0A484436F22DAE8859CEF0A75 /* CallManagerUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86050C676D90AFB5076C49A2EB0143D5 /* CallManagerUtil.swift */; };
 		FC6D4947E5AFDD9E6EB604CB2824078D /* TransportProtocol+HTTPTimeout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2DC52760EEA3F83E684AFD8A72BA7FD /* TransportProtocol+HTTPTimeout.swift */; };
 		FC83A53AF4734362EB44D5319B9CC715 /* SQLCipher-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = FC9FE621DAAFF56C23E4A03A8D4A4B1C /* SQLCipher-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		FC9BF4AF6964012C5FBD401EDB5DDB92 /* Table.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C00FA566379F7CC2CE15FF1D9E3BFB5 /* Table.swift */; };
@@ -1443,11 +1441,13 @@
 		FE2B774D20A78CF7B1B5E0E7A432537E /* TextCompositionLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B04912535F9E71097701D8A49EBB6411 /* TextCompositionLayer.swift */; };
 		FE2CA08A014097E3CBB938416BB3F077 /* TextLayerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54CE007232BFF3F3AA10216D8FCFC7AE /* TextLayerModel.swift */; };
 		FE4438E9CDF7515C747FB63C029699A9 /* Data+withMcMutableBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F4ED8DAFCA7FB2B2EBBB482E4A4C5C9 /* Data+withMcMutableBuffer.swift */; };
+		FE4F51B15432D38621543B39B5466DCE /* FFI.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4E027CAFC530AA233E46DC90C740475 /* FFI.swift */; };
 		FE73138AC853F7B39471EBE221F71B1E /* ConnectionSession+HTTP.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB02E7A4FBCC8942E4E47301D16B571 /* ConnectionSession+HTTP.swift */; };
 		FF5C23AE50EDE5FD7309E9AA29CC17D3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03B2FAA7F7DE467181C0BC3C70177945 /* Foundation.framework */; };
 		FF7D6457318FD84FCA907DA8CC8BB7B7 /* SignalCoreKit-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = FD8C6A037C101FE0527D6DC44A5740AC /* SignalCoreKit-dummy.m */; };
 		FF9F56B726305A0C01542A6D3D48893E /* Catchable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B1EBB7FF3602188974B58439B43CFB9 /* Catchable.swift */; };
 		FFED5F67A2A61A13B1D3C4C958F90DD6 /* Star.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70A658695E674F08D38DBEF2606F75D2 /* Star.swift */; };
+		FFFF21AEA9FAD486625BCE968B6574AD /* CallManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0000D5CB426E8E730AA6328C52DC127 /* CallManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -2025,6 +2025,13 @@
 			remoteGlobalIDString = 06F5CDD6235E25837519792853B145A1;
 			remoteInfo = PureLayout;
 		};
+		85E07F22A9F77E8D8AEA54077EEBA9F8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 565B5AF44894619B799AA0D7B08B8331;
+			remoteInfo = SignalCoreKit;
+		};
 		877FAEF713D5E716399C0639B789F3B6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
@@ -2431,13 +2438,6 @@
 			remoteGlobalIDString = E95654B155D25890BE8E26081FCA8265;
 			remoteInfo = CocoaLumberjack;
 		};
-		D6F90C4FD59B700BADA30F8ACC328827 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 565B5AF44894619B799AA0D7B08B8331;
-			remoteInfo = SignalCoreKit;
-		};
 		D8FF2674D1F67CAE553A3B88A79D95CF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
@@ -2706,9 +2706,9 @@
 		0E1BD29D88D865BEBF7FD069F7C85DB4 /* SerialDispatchLock.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SerialDispatchLock.swift; path = Sources/Utils/Locks/SerialDispatchLock.swift; sourceTree = "<group>"; };
 		0E33E815C80B292A1284CC3BF7EE0ABE /* Ias.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Ias.swift; path = swift/Sources/LibSignalClient/Ias.swift; sourceTree = "<group>"; };
 		0E34AFAB6E0CB765F5253ABF8AC2C2B6 /* fe_isnegative.c */ = {isa = PBXFileReference; includeInIndex = 1; name = fe_isnegative.c; path = Sources/ed25519/fe_isnegative.c; sourceTree = "<group>"; };
-		0E43051A1A7431F68275B3C1F718B468 /* FFI.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FFI.swift; path = src/ios/SignalRingRTC/SignalRingRTC/FFI.swift; sourceTree = "<group>"; };
 		0E756FDCEA22AF5A0B38938496F4A41D /* OWSLogs.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = OWSLogs.m; path = SignalCoreKit/src/OWSLogs.m; sourceTree = "<group>"; };
 		0E77A0DD5C68A1AF6B58734247AD5CD1 /* Statement.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Statement.swift; path = GRDB/Core/Statement.swift; sourceTree = "<group>"; };
+		0E9BAB4C16E2EEBD6362C5419A3CD80E /* GroupCall.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = GroupCall.swift; path = src/ios/SignalRingRTC/SignalRingRTC/GroupCall.swift; sourceTree = "<group>"; };
 		0EAB5567C2DDE89C700872F81AC080A0 /* NBRegularExpressionCache.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = NBRegularExpressionCache.h; path = libPhoneNumber/Internal/NBRegularExpressionCache.h; sourceTree = "<group>"; };
 		0EDBD153327C34318EFD478373A69B7E /* vp8li_dec.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = vp8li_dec.h; path = src/dec/vp8li_dec.h; sourceTree = "<group>"; };
 		0F2E48C7D2B2608982B0C723BF574861 /* MobileCoinClient+Async.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "MobileCoinClient+Async.swift"; path = "Sources/MobileCoinClient+Async.swift"; sourceTree = "<group>"; };
@@ -2735,7 +2735,6 @@
 		12612F0F02ABEEA046C628E3289AF90F /* DDContextFilterLogFormatter.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = DDContextFilterLogFormatter.h; path = Sources/CocoaLumberjack/include/CocoaLumberjack/DDContextFilterLogFormatter.h; sourceTree = "<group>"; };
 		127FF868592778ACF2EA98321303B59C /* LibSignalClient.unit-tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "LibSignalClient.unit-tests.release.xcconfig"; sourceTree = "<group>"; };
 		12E2AA407DA1039FE55A96E9435D5375 /* animi.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = animi.h; path = src/mux/animi.h; sourceTree = "<group>"; };
-		1330C121D1F872FD08CEBE15E0115D53 /* SignalRingRTC-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "SignalRingRTC-dummy.m"; sourceTree = "<group>"; };
 		1341E63D4C27E5B545F05B9186359D37 /* SizeValueProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SizeValueProvider.swift; path = Sources/Public/DynamicProperties/ValueProviders/SizeValueProvider.swift; sourceTree = "<group>"; };
 		1378B137BA2975FDDB831CDD836C3D47 /* SQLCipher.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = SQLCipher.modulemap; sourceTree = "<group>"; };
 		139E9C5BA73D4691AD9210FF5D895916 /* SSZipArchive.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SSZipArchive.m; path = SSZipArchive/SSZipArchive.m; sourceTree = "<group>"; };
@@ -2800,6 +2799,7 @@
 		1B2F688869A2DC2FF271A09DE4091577 /* ge_double_scalarmult.c */ = {isa = PBXFileReference; includeInIndex = 1; name = ge_double_scalarmult.c; path = Sources/ed25519/ge_double_scalarmult.c; sourceTree = "<group>"; };
 		1B4055D8BC9E5717CA78182BA16E2B82 /* NativeHandleOwner.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = NativeHandleOwner.swift; path = swift/Sources/LibSignalClient/NativeHandleOwner.swift; sourceTree = "<group>"; };
 		1B647307625C8C345AF69B6BE8B2E592 /* HashVisitor.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = HashVisitor.swift; path = Sources/SwiftProtobuf/HashVisitor.swift; sourceTree = "<group>"; };
+		1BAAA1A5E7C8A4ADBEC4D7733EEB0A22 /* WebRTC.xcframework */ = {isa = PBXFileReference; includeInIndex = 1; name = WebRTC.xcframework; path = "../../../../../Library/Caches/org.signal.ringrtc/prebuild-2.28.0/release/WebRTC.xcframework"; sourceTree = "<group>"; };
 		1BACE56FF359D914183D4C25D4C1697C /* type.pb.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = type.pb.swift; path = Sources/SwiftProtobuf/type.pb.swift; sourceTree = "<group>"; };
 		1BE7D8A8BBEDA53EE776985FB0F7B86A /* Pods-Signal-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-Signal-frameworks.sh"; sourceTree = "<group>"; };
 		1BF797BE8429856832DFE035090DC5EC /* McTransactionBuilderRing.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = McTransactionBuilderRing.swift; path = Sources/Transaction/McTransactionBuilderRing.swift; sourceTree = "<group>"; };
@@ -2809,7 +2809,6 @@
 		1C2BAC0641376E977F87559F2A1AB394 /* common_sse2.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = common_sse2.h; path = src/dsp/common_sse2.h; sourceTree = "<group>"; };
 		1C647FB8C73854A45A5B1A90AED41480 /* Pool.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Pool.swift; path = GRDB/Utils/Pool.swift; sourceTree = "<group>"; };
 		1C73A694E1C0A0392B0C2265BC1A0882 /* MutableData.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MutableData.swift; path = Sources/Utils/Data/MutableData.swift; sourceTree = "<group>"; };
-		1C758391360F94E15E02C011B4A9FAF3 /* GroupCall.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = GroupCall.swift; path = src/ios/SignalRingRTC/SignalRingRTC/GroupCall.swift; sourceTree = "<group>"; };
 		1C81C7B7A4EF138288AF30882F5D63E9 /* SignalCoreKit-Unit-Tests */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = "SignalCoreKit-Unit-Tests"; path = "SignalCoreKit-Unit-Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1C9FE46FA6411AADA7755AA2D433245A /* vp8i_dec.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = vp8i_dec.h; path = src/dec/vp8i_dec.h; sourceTree = "<group>"; };
 		1CA8FC2EFFE8C04CFC5398057ADF6590 /* alpha_processing_sse41.c */ = {isa = PBXFileReference; includeInIndex = 1; name = alpha_processing_sse41.c; path = src/dsp/alpha_processing_sse41.c; sourceTree = "<group>"; };
@@ -2882,7 +2881,6 @@
 		2684CD3313819F97D71452ABE779958F /* dec.c */ = {isa = PBXFileReference; includeInIndex = 1; name = dec.c; path = src/dsp/dec.c; sourceTree = "<group>"; };
 		268BCDEDC90932F20ED3A67F203B20A1 /* SpendableTxOutsWithAmount.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SpendableTxOutsWithAmount.swift; path = Sources/Transaction/Inputs/SpendableTxOutsWithAmount.swift; sourceTree = "<group>"; };
 		26D5873D321DC7BBB3734C39713DFEF8 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS14.0.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
-		26D9AFBD50CC56538B1FBF035DCFE1BE /* CallManagerGlobal.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CallManagerGlobal.swift; path = src/ios/SignalRingRTC/SignalRingRTC/CallManagerGlobal.swift; sourceTree = "<group>"; };
 		2735FB923D4C8E942583FAF39DAD566A /* VirtualTableModule.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = VirtualTableModule.swift; path = GRDB/QueryInterface/Schema/VirtualTableModule.swift; sourceTree = "<group>"; };
 		273AAC1C471F93196EC8A718D0FDC27D /* StyleableUIElement.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = StyleableUIElement.swift; path = Sources/UIKit/StyleableUIElement.swift; sourceTree = "<group>"; };
 		27412FB2C03F9A3CF6F5585E084E984B /* NBNumberFormat.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = NBNumberFormat.h; path = libPhoneNumber/NBNumberFormat.h; sourceTree = "<group>"; };
@@ -2929,6 +2927,7 @@
 		2CF0A5C83A89D69FE825A38A6CC391AD /* SQLOperators.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SQLOperators.swift; path = GRDB/QueryInterface/SQL/SQLOperators.swift; sourceTree = "<group>"; };
 		2D0908A94121A1FC6A94AF72E30144EA /* Composable.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Composable.swift; path = Sources/Composable.swift; sourceTree = "<group>"; };
 		2D512871BDF3E6E3BFE974CEB6E7EF12 /* NSObject+MTLComparisonAdditions.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "NSObject+MTLComparisonAdditions.h"; path = "Mantle/NSObject+MTLComparisonAdditions.h"; sourceTree = "<group>"; };
+		2D821066FAAEB31F088B84DEF4DD8E8B /* Connection.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Connection.swift; path = src/ios/SignalRingRTC/SignalRingRTC/Connection.swift; sourceTree = "<group>"; };
 		2D89639C38A3D685E9A89567421C0F9D /* NetworkConfig.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = NetworkConfig.swift; path = Sources/Network/NetworkConfig.swift; sourceTree = "<group>"; };
 		2D8E6BC8F6544F819C31936126C1C614 /* OWSAsserts.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = OWSAsserts.h; path = SignalCoreKit/src/OWSAsserts.h; sourceTree = "<group>"; };
 		2DBF3F5F51B32B84F46F795F80D5AC40 /* Pods-SignalServiceKit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-SignalServiceKit.debug.xcconfig"; sourceTree = "<group>"; };
@@ -2939,7 +2938,6 @@
 		2E349015910DFE5E0B2F1E211542B3A5 /* NSDictionary+MTLManipulationAdditions.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "NSDictionary+MTLManipulationAdditions.h"; path = "Mantle/NSDictionary+MTLManipulationAdditions.h"; sourceTree = "<group>"; };
 		2E7874DAF4F431DC474C1BE37D25C27D /* DatabaseSchemaCache.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DatabaseSchemaCache.swift; path = GRDB/Core/DatabaseSchemaCache.swift; sourceTree = "<group>"; };
 		2EF484B3A4C2C117E1375CC2D9F69527 /* NBPhoneNumberDesc.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = NBPhoneNumberDesc.h; path = libPhoneNumber/NBPhoneNumberDesc.h; sourceTree = "<group>"; };
-		2F061CD7D0D7E12B5AA3EEDDDA5D010B /* SFU.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SFU.swift; path = src/ios/SignalRingRTC/SignalRingRTC/SFU.swift; sourceTree = "<group>"; };
 		2F4F0668D663691CE89A17C1960088D5 /* Pods-SignalUI.testable release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-SignalUI.testable release.xcconfig"; sourceTree = "<group>"; };
 		2F5E4390FED57A20B981F2F712101789 /* AdaptableTextContainer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AdaptableTextContainer.swift; path = Sources/UIKit/AdaptableTextContainer.swift; sourceTree = "<group>"; };
 		2F640687E42458551BCE864B1BBAC2B4 /* BinaryDelimited.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BinaryDelimited.swift; path = Sources/SwiftProtobuf/BinaryDelimited.swift; sourceTree = "<group>"; };
@@ -2968,7 +2966,6 @@
 		346126BD53947F80C609064F99CD57E7 /* Logger.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Logger.swift; path = SignalCoreKit/src/Logger.swift; sourceTree = "<group>"; };
 		34C1B56854A0A708D84371013BE70F53 /* Pods-SignalShareExtension-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-SignalShareExtension-dummy.m"; sourceTree = "<group>"; };
 		34E9A59AC0AD9DF827CDF332C5349CE5 /* Collection+IndicesSubscript.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "Collection+IndicesSubscript.swift"; path = "Sources/Utils/CollectionSubscripts/Collection+IndicesSubscript.swift"; sourceTree = "<group>"; };
-		34FAA0B2FB4EFA6F63961A8A28F1FD02 /* Logging.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Logging.swift; path = src/ios/SignalRingRTC/SignalRingRTC/Logging.swift; sourceTree = "<group>"; };
 		350A7FDF22237F47FF140EFBAF22471F /* asMcBuffer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = asMcBuffer.swift; path = Sources/LibMobileCoin/asMcBuffer.swift; sourceTree = "<group>"; };
 		353349624BD92477E78C422C2F26B0CA /* Column.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Column.swift; path = GRDB/QueryInterface/SQL/Column.swift; sourceTree = "<group>"; };
 		357962CDB9FDD9A76A001A7A77F3590A /* ImmutableOnceReadLock.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ImmutableOnceReadLock.swift; path = Sources/Utils/Locks/ImmutableOnceReadLock.swift; sourceTree = "<group>"; };
@@ -3025,7 +3022,9 @@
 		3D29E08C6F78FFACED604CBD086F1720 /* ArbitraryConnection.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ArbitraryConnection.swift; path = Sources/Network/Connection/ArbitraryConnection.swift; sourceTree = "<group>"; };
 		3D404A2D9FFAEC833DBCED09E9137E29 /* Pods-Signal */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = "Pods-Signal"; path = Pods_Signal.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3D8BD0C59E165638A1C86AFB95E768C9 /* Pods-SignalServiceKit-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-SignalServiceKit-dummy.m"; sourceTree = "<group>"; };
+		3D8DB8DB27DBC55D2829F7AAAFBBBBCE /* CallLinks.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CallLinks.swift; path = src/ios/SignalRingRTC/SignalRingRTC/CallLinks.swift; sourceTree = "<group>"; };
 		3DF0FA6738C1002EFB77BE1273A790ED /* FeeStrategy.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FeeStrategy.swift; path = Sources/Transaction/Fee/FeeStrategy.swift; sourceTree = "<group>"; };
+		3E0298A525D9D659BB8A05F637F15462 /* SignalRingRTC.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = SignalRingRTC.debug.xcconfig; sourceTree = "<group>"; };
 		3E0F375F3326BA928D62A26B6AE640B5 /* MobileCoinChaCha20Rng.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MobileCoinChaCha20Rng.swift; path = Sources/Utils/Rng/MobileCoinChaCha20Rng.swift; sourceTree = "<group>"; };
 		3E33B19E3122A18E7EC36D044B4618EA /* HasManyThroughAssociation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = HasManyThroughAssociation.swift; path = GRDB/QueryInterface/Request/Association/HasManyThroughAssociation.swift; sourceTree = "<group>"; };
 		3E4FF0AD6295A3D56145F605B36B57E5 /* ServiceProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ServiceProvider.swift; path = Sources/Network/Service/ServiceProvider.swift; sourceTree = "<group>"; };
@@ -3065,14 +3064,12 @@
 		4261B4661C83BD1F0C9439716ACD46B8 /* FTS4.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FTS4.swift; path = GRDB/FTS/FTS4.swift; sourceTree = "<group>"; };
 		426D126328A66AED213FAADE333CAFA9 /* SignalMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SignalMessage.swift; path = swift/Sources/LibSignalClient/messages/SignalMessage.swift; sourceTree = "<group>"; };
 		428D1EA07FC5D8C7474A17B32FB2CD34 /* cost_sse2.c */ = {isa = PBXFileReference; includeInIndex = 1; name = cost_sse2.c; path = src/dsp/cost_sse2.c; sourceTree = "<group>"; };
-		42E482491AD052C21522966AB242B889 /* CallManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CallManager.swift; path = src/ios/SignalRingRTC/SignalRingRTC/CallManager.swift; sourceTree = "<group>"; };
 		430248E70B8AD07B7712D1A224007BC6 /* Pods-SignalNSE-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-SignalNSE-dummy.m"; sourceTree = "<group>"; };
 		430D657D85DCD7ADCD1107FA6472C39E /* Pods-SignalUITests-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-SignalUITests-Info.plist"; sourceTree = "<group>"; };
 		4364A7C920326F59E9B266621C5FE75C /* AuthHttpCallableClient.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AuthHttpCallableClient.swift; path = Sources/Network/HTTPS/HttpConnection/HttpClient/AuthHttpCallableClient.swift; sourceTree = "<group>"; };
 		4373633DEC3A04A98D6A66AF1C4C2CBF /* Pods-SignalTests-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-SignalTests-Info.plist"; sourceTree = "<group>"; };
 		43D109E41647572072A4FC15D87343CC /* AnyInfiniteIterator.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AnyInfiniteIterator.swift; path = Sources/Utils/InfiniteIterator/AnyInfiniteIterator.swift; sourceTree = "<group>"; };
 		43DB6EF353E5330E3E708642D839DC58 /* MutableCopying.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MutableCopying.swift; path = Sources/MutableCopying.swift; sourceTree = "<group>"; };
-		43E36205EE75DA9B7F40B0691B7EA0B3 /* ringrtc.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ringrtc.h; path = out/release/libringrtc/ringrtc.h; sourceTree = "<group>"; };
 		43E9B91D241382DB4B58F65D3A6AD34B /* AccessibilityHeadingLevel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AccessibilityHeadingLevel.swift; path = Sources/AccessibilityHeadingLevel.swift; sourceTree = "<group>"; };
 		440C32B5BDEFC5040051D381066F5875 /* IdentityKey.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = IdentityKey.swift; path = swift/Sources/LibSignalClient/IdentityKey.swift; sourceTree = "<group>"; };
 		443424661CD73ECB11B5491CCFF7D40F /* Utils.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Utils.swift; path = GRDB/Utils/Utils.swift; sourceTree = "<group>"; };
@@ -3160,6 +3157,7 @@
 		505CFC39EF8AC356A1495443ACEE6F19 /* MobileCoinMinimal-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "MobileCoinMinimal-umbrella.h"; sourceTree = "<group>"; };
 		508F4DB891F4BE4CE341E3D0C7C88DE2 /* attest.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = attest.h; path = Artifacts/include/attest.h; sourceTree = "<group>"; };
 		50980D6171FEAB000803EA01CEAB2ED3 /* LibMobileCoin-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "LibMobileCoin-prefix.pch"; sourceTree = "<group>"; };
+		50D77D3B3131F13ABD7959EFBEECA73E /* HTTP.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = HTTP.swift; path = src/ios/SignalRingRTC/SignalRingRTC/HTTP.swift; sourceTree = "<group>"; };
 		513A026D02F656CA2838102704222EDE /* Data66+withMcMutableBuffer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "Data66+withMcMutableBuffer.swift"; path = "Sources/LibMobileCoin/Data66+withMcMutableBuffer.swift"; sourceTree = "<group>"; };
 		514553448B84B15DD15A1CFF355E0C3B /* zeroize.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = zeroize.h; path = Sources/ed25519/additions/zeroize.h; sourceTree = "<group>"; };
 		51698296A97CD6477F170F2937042D93 /* DeviceTransfer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DeviceTransfer.swift; path = swift/Sources/LibSignalClient/DeviceTransfer.swift; sourceTree = "<group>"; };
@@ -3209,7 +3207,9 @@
 		5728AD3EB3DEA8043A1E8CD1AE8B229C /* Logging-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Logging-umbrella.h"; sourceTree = "<group>"; };
 		573246C343661D868763747F89830F63 /* MobileCoin.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = MobileCoin.modulemap; sourceTree = "<group>"; };
 		573A9F76ECF06E7596D9C247CFCB3722 /* Pods-SignalShareExtension.app store release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-SignalShareExtension.app store release.xcconfig"; sourceTree = "<group>"; };
+		573F90254E4047050D928EED847A8B19 /* CallManagerInterface.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CallManagerInterface.swift; path = src/ios/SignalRingRTC/SignalRingRTC/CallManagerInterface.swift; sourceTree = "<group>"; };
 		575B55E2DE9B7328AC78ED24BB426B4B /* libwebp-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "libwebp-prefix.pch"; sourceTree = "<group>"; };
+		5781FF30E2EFC9562DB5C623B0E5BC68 /* VideoCaptureController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = VideoCaptureController.swift; path = src/ios/SignalRingRTC/SignalRingRTC/VideoCaptureController.swift; sourceTree = "<group>"; };
 		5784748DA7F2CC86D1BEA51EFC964020 /* fe_neg.c */ = {isa = PBXFileReference; includeInIndex = 1; name = fe_neg.c; path = Sources/ed25519/fe_neg.c; sourceTree = "<group>"; };
 		5786E36B4A3A663CF75022DAC015AE08 /* PublicKey.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PublicKey.swift; path = swift/Sources/LibSignalClient/PublicKey.swift; sourceTree = "<group>"; };
 		579C8A96C8E67C2E95AEE7C66754BCEB /* bit_reader_utils.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = bit_reader_utils.h; path = src/utils/bit_reader_utils.h; sourceTree = "<group>"; };
@@ -3246,6 +3246,7 @@
 		5BE9D91E74D5F36DCE1FB441E3B7C3A1 /* MobileCoinUpstreamInterop.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MobileCoinUpstreamInterop.swift; path = Sources/LibMobileCoin/MobileCoinUpstreamInterop.swift; sourceTree = "<group>"; };
 		5BEA44323DC47DAF2E2202EAEEAD6B83 /* Pods-SignalMessaging-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-SignalMessaging-acknowledgements.markdown"; sourceTree = "<group>"; };
 		5C1A7DC144E3EB3F1ADBA804DBA142D7 /* mz_crypt.c */ = {isa = PBXFileReference; includeInIndex = 1; name = mz_crypt.c; path = SSZipArchive/minizip/mz_crypt.c; sourceTree = "<group>"; };
+		5C21C119B8F86E2DB2EC6E89AA561233 /* SignalRingRTC-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "SignalRingRTC-prefix.pch"; sourceTree = "<group>"; };
 		5C31E017C72330E8F2E89D974C56D021 /* RistrettoPrivate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RistrettoPrivate.swift; path = Sources/Crypto/RistrettoPrivate.swift; sourceTree = "<group>"; };
 		5C32F4141D7EFED6FA966544B11EA912 /* FetchableRecord+TableRecord.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "FetchableRecord+TableRecord.swift"; path = "GRDB/Record/FetchableRecord+TableRecord.swift"; sourceTree = "<group>"; };
 		5C63EC9A4126CAAEDD87C22FB647FA8A /* mz_crypt.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = mz_crypt.h; path = SSZipArchive/minizip/mz_crypt.h; sourceTree = "<group>"; };
@@ -3256,6 +3257,7 @@
 		5CC8BBB5C3CB7B0543DB06A299E1E108 /* Data32.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Data32.swift; path = Sources/Utils/Data/Data32.swift; sourceTree = "<group>"; };
 		5CEC919812AE55C9B7F630C44EA776F5 /* Cds2.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Cds2.swift; path = swift/Sources/LibSignalClient/Cds2.swift; sourceTree = "<group>"; };
 		5D0A7841D51286E5699B5AE1016CE1DE /* Data.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Data.swift; path = GRDB/Core/Support/Foundation/Data.swift; sourceTree = "<group>"; };
+		5D1D1AF437530648E65A481626469FC6 /* CallManagerUtil.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CallManagerUtil.swift; path = src/ios/SignalRingRTC/SignalRingRTC/CallManagerUtil.swift; sourceTree = "<group>"; };
 		5D38A0C03D7627B2A0A52B3EFD29C276 /* AuthCredentialWithPniResponse.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AuthCredentialWithPniResponse.swift; path = swift/Sources/LibSignalClient/zkgroup/AuthCredentialWithPniResponse.swift; sourceTree = "<group>"; };
 		5D690557F5CD3D1B816C69952BE0D16E /* Enum.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Enum.swift; path = Sources/SwiftProtobuf/Enum.swift; sourceTree = "<group>"; };
 		5D7E31662AF0821DAB78543AA5CD80A7 /* rescaler_msa.c */ = {isa = PBXFileReference; includeInIndex = 1; name = rescaler_msa.c; path = src/dsp/rescaler_msa.c; sourceTree = "<group>"; };
@@ -3352,7 +3354,6 @@
 		6CDC86241F9B54D91A6E216532F8658D /* sharpyuv_sse2.c */ = {isa = PBXFileReference; includeInIndex = 1; name = sharpyuv_sse2.c; path = sharpyuv/sharpyuv_sse2.c; sourceTree = "<group>"; };
 		6CE8884427B9150D25975F2067BA31B1 /* field_mask.pb.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = field_mask.pb.swift; path = Sources/SwiftProtobuf/field_mask.pb.swift; sourceTree = "<group>"; };
 		6D2C7BA8391F6DC29BD1DFFEBC5D9BD2 /* StarAnimation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = StarAnimation.swift; path = Sources/Private/CoreAnimation/Animations/StarAnimation.swift; sourceTree = "<group>"; };
-		6D7ACA4B0F9D1752527A157552040E0F /* CallManagerInterface.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CallManagerInterface.swift; path = src/ios/SignalRingRTC/SignalRingRTC/CallManagerInterface.swift; sourceTree = "<group>"; };
 		6DA4F901A5AB2883445683D1290BF18C /* PassThroughOutputNode.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PassThroughOutputNode.swift; path = Sources/Private/MainThread/NodeRenderSystem/Nodes/OutputNodes/PassThroughOutputNode.swift; sourceTree = "<group>"; };
 		6DABCC1D656CD61CA0E98E270D518D11 /* DictionaryInitializable.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DictionaryInitializable.swift; path = Sources/Private/Model/DictionaryInitializable.swift; sourceTree = "<group>"; };
 		6DBFEA46F2DFE3164A7D13E242AA976A /* GroupOutputNode.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = GroupOutputNode.swift; path = Sources/Private/MainThread/NodeRenderSystem/Nodes/OutputNodes/GroupOutputNode.swift; sourceTree = "<group>"; };
@@ -3408,7 +3409,6 @@
 		75B428E274F5C2745EF8AEA2907F2932 /* TxOutSelectionStrategy.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TxOutSelectionStrategy.swift; path = Sources/Transaction/Inputs/TxOutSelectionStrategy.swift; sourceTree = "<group>"; };
 		75DBA85FC08A168CA346F6DDDFC869F2 /* FillRenderer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FillRenderer.swift; path = Sources/Private/MainThread/NodeRenderSystem/Nodes/OutputNodes/Renderables/FillRenderer.swift; sourceTree = "<group>"; };
 		75F3B46535AD4E994EB96C8160E882BC /* Pods-SignalServiceKit */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = "Pods-SignalServiceKit"; path = Pods_SignalServiceKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		760D7476634FD2CE63469629808A7F5D /* SignalRingRTC.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = SignalRingRTC.modulemap; sourceTree = "<group>"; };
 		7639C2A68F13F8D088249E21EF94203B /* BundleImageProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BundleImageProvider.swift; path = Sources/Public/iOS/BundleImageProvider.swift; sourceTree = "<group>"; };
 		763D01BA6D38F790FC399827978506EF /* enc_sse2.c */ = {isa = PBXFileReference; includeInIndex = 1; name = enc_sse2.c; path = src/dsp/enc_sse2.c; sourceTree = "<group>"; };
 		767AA77D6C96CDACE303601B8A2BC8CE /* anim_decode.c */ = {isa = PBXFileReference; includeInIndex = 1; name = anim_decode.c; path = src/demux/anim_decode.c; sourceTree = "<group>"; };
@@ -3465,12 +3465,12 @@
 		7F43D7E6E15D8F3B1F31B15802448830 /* DatabaseWriter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DatabaseWriter.swift; path = GRDB/Core/DatabaseWriter.swift; sourceTree = "<group>"; };
 		7F5BA1C4C4AED699FD3DF91885B3EBFC /* GroupNode.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = GroupNode.swift; path = Sources/Private/MainThread/NodeRenderSystem/Nodes/RenderContainers/GroupNode.swift; sourceTree = "<group>"; };
 		7F8979571DB165FA17FDEAF1D81D16CA /* consensus_common.http.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = consensus_common.http.swift; path = Sources/Network/HTTPS/HttpConnection/HttpConnections/HttpProtoGenerated/consensus_common.http.swift; sourceTree = "<group>"; };
-		7FB2467FBAE6FF4058BB0F99FC2C910F /* HTTP.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = HTTP.swift; path = src/ios/SignalRingRTC/SignalRingRTC/HTTP.swift; sourceTree = "<group>"; };
 		7FB84A4DA985C40DE91983920BC042FE /* BasicCredentials.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BasicCredentials.swift; path = Sources/Network/Authorization/BasicCredentials.swift; sourceTree = "<group>"; };
 		7FDD358795D399B9120E9D633A503570 /* SQLAssociation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SQLAssociation.swift; path = GRDB/QueryInterface/SQL/SQLAssociation.swift; sourceTree = "<group>"; };
 		8010CA76E3D3E6E5BF80AC45CBF20E93 /* BlurHashDecode.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BlurHashDecode.swift; path = Swift/BlurHashDecode.swift; sourceTree = "<group>"; };
 		801B372AF2CF7C5AA8D9F8749D903355 /* GradientValueProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = GradientValueProvider.swift; path = Sources/Public/DynamicProperties/ValueProviders/GradientValueProvider.swift; sourceTree = "<group>"; };
 		801B8A97CE92FB59672C62EECCDAAB40 /* OWSDataParserTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = OWSDataParserTests.swift; path = SignalCoreKitTests/src/OWSDataParserTests.swift; sourceTree = "<group>"; };
+		80268567ACE4D2FF0831C9FE1DCDB9FC /* ConnectionMediaStream.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ConnectionMediaStream.swift; path = src/ios/SignalRingRTC/SignalRingRTC/ConnectionMediaStream.swift; sourceTree = "<group>"; };
 		806341EB6289CBB827872A8C1EABDB8C /* RecoverableMemo.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RecoverableMemo.swift; path = Sources/Transaction/Memos/RecoverableMemo.swift; sourceTree = "<group>"; };
 		8098651BFB258B9D47BC3FCDEC756521 /* LayerModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = LayerModel.swift; path = Sources/Private/Model/Layers/LayerModel.swift; sourceTree = "<group>"; };
 		80AFD9AAF193C23C412062760B48B2F8 /* AuthCredential.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AuthCredential.swift; path = swift/Sources/LibSignalClient/zkgroup/AuthCredential.swift; sourceTree = "<group>"; };
@@ -3509,7 +3509,6 @@
 		854008886D340E437057FDA9EA047A6C /* ClientZkProfileOperations.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ClientZkProfileOperations.swift; path = swift/Sources/LibSignalClient/zkgroup/ClientZkProfileOperations.swift; sourceTree = "<group>"; };
 		85A352DB5B22CBDBE2ED188C37A4155C /* cost_mips_dsp_r2.c */ = {isa = PBXFileReference; includeInIndex = 1; name = cost_mips_dsp_r2.c; path = src/dsp/cost_mips_dsp_r2.c; sourceTree = "<group>"; };
 		85DEBFF71DEDE06D082179A3903D759C /* ReceiptCredentialPresentation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ReceiptCredentialPresentation.swift; path = swift/Sources/LibSignalClient/zkgroup/ReceiptCredentialPresentation.swift; sourceTree = "<group>"; };
-		86050C676D90AFB5076C49A2EB0143D5 /* CallManagerUtil.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CallManagerUtil.swift; path = src/ios/SignalRingRTC/SignalRingRTC/CallManagerUtil.swift; sourceTree = "<group>"; };
 		86194495E804B8F88A63030909D5133D /* FogView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FogView.swift; path = Sources/Fog/View/FogView.swift; sourceTree = "<group>"; };
 		8674A6D1C765C11002F6A22BAEAD3D00 /* FogMerkleProofFetcher.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FogMerkleProofFetcher.swift; path = Sources/Fog/FogMerkleProofFetcher.swift; sourceTree = "<group>"; };
 		86EB07F44A2839BA24C4137F3E751CA2 /* RectangleAnimation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RectangleAnimation.swift; path = Sources/Private/CoreAnimation/Animations/RectangleAnimation.swift; sourceTree = "<group>"; };
@@ -3528,6 +3527,7 @@
 		885D215CE19FA62201B063C19A3B9FED /* base.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = base.h; path = Sources/ed25519/base.h; sourceTree = "<group>"; };
 		886AC1142CF846826B7056B45D321E4E /* NBPhoneNumberDefines.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = NBPhoneNumberDefines.h; path = libPhoneNumber/NBPhoneNumberDefines.h; sourceTree = "<group>"; };
 		88F8A91FB5106EC2574089ABEDA8B347 /* AttestationVerifier.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AttestationVerifier.swift; path = Sources/Network/Attestation/AttestationVerifier.swift; sourceTree = "<group>"; };
+		8915835249632674954DC60B53E484D9 /* SignalRingRTC.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = SignalRingRTC.release.xcconfig; sourceTree = "<group>"; };
 		891B2270823847ED23F2ECFC28F935EC /* Starscream */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Starscream; path = Starscream.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8925C45E74576B7ED0C5AF1CFCFE5F81 /* lossless_enc.c */ = {isa = PBXFileReference; includeInIndex = 1; name = lossless_enc.c; path = src/dsp/lossless_enc.c; sourceTree = "<group>"; };
 		8949A9D91459F56276387277DD42FAF6 /* SenderWithPaymentIntentMemo.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SenderWithPaymentIntentMemo.swift; path = Sources/Transaction/Memos/SenderWithPaymentIntentMemo.swift; sourceTree = "<group>"; };
@@ -3538,7 +3538,6 @@
 		8973A564E1A3B9099199CF7EAA284047 /* UnsignedInteger+SafeComparison.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "UnsignedInteger+SafeComparison.swift"; path = "Sources/Utils/SafeArithmetic/UnsignedInteger+SafeComparison.swift"; sourceTree = "<group>"; };
 		89874F2D881843B20BDC557D0AFF65C7 /* lossless_sse41.c */ = {isa = PBXFileReference; includeInIndex = 1; name = lossless_sse41.c; path = src/dsp/lossless_sse41.c; sourceTree = "<group>"; };
 		89B7363E9C47543BAE9E61DB740387E5 /* MTLModel+NSCoding.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "MTLModel+NSCoding.h"; path = "Mantle/MTLModel+NSCoding.h"; sourceTree = "<group>"; };
-		89DC2205D4F835D14B9F6E35977A4A4A /* SignalRingRTC.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = SignalRingRTC.release.xcconfig; sourceTree = "<group>"; };
 		89F3CB04C7807C7C4DFFDCF559733EB4 /* Pods-SignalUITests-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-SignalUITests-acknowledgements.plist"; sourceTree = "<group>"; };
 		8A25063DA4E401E84792187569E61B4C /* Curve25519Kit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = Curve25519Kit.debug.xcconfig; sourceTree = "<group>"; };
 		8A311687F7393088B1BC33547EF99202 /* Data16+withMcMutableBuffer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "Data16+withMcMutableBuffer.swift"; path = "Sources/LibMobileCoin/Data16+withMcMutableBuffer.swift"; sourceTree = "<group>"; };
@@ -3600,8 +3599,6 @@
 		93172495A0043346E79DBB773DC47410 /* DatabaseValue.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DatabaseValue.swift; path = GRDB/Core/DatabaseValue.swift; sourceTree = "<group>"; };
 		9376E81F2C3BB37CA2C17E3CA108394F /* anim_encode.c */ = {isa = PBXFileReference; includeInIndex = 1; name = anim_encode.c; path = src/mux/anim_encode.c; sourceTree = "<group>"; };
 		93A0D45E393C26989BFE1FB3ED19FB0F /* HasOneAssociation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = HasOneAssociation.swift; path = GRDB/QueryInterface/Request/Association/HasOneAssociation.swift; sourceTree = "<group>"; };
-		93C597B7DC2417C015F7713A6861AC50 /* SignalRingRTC-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "SignalRingRTC-Info.plist"; sourceTree = "<group>"; };
-		940375A29FB8F1D5260C70ADFDDCEB06 /* ConnectionMediaStream.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ConnectionMediaStream.swift; path = src/ios/SignalRingRTC/SignalRingRTC/ConnectionMediaStream.swift; sourceTree = "<group>"; };
 		940633CB86D8213A807D17C5AB6F3D83 /* mz_zip_rw.c */ = {isa = PBXFileReference; includeInIndex = 1; name = mz_zip_rw.c; path = SSZipArchive/minizip/mz_zip_rw.c; sourceTree = "<group>"; };
 		940BF1EF92E5F1BDD6450A7480026C4F /* PositiveInt.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PositiveInt.swift; path = Sources/Utils/TypeConstraints/PositiveInt.swift; sourceTree = "<group>"; };
 		943D347E61A2E181A4FA2CA894307B6E /* SwiftProtobuf */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = SwiftProtobuf; path = SwiftProtobuf.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3640,7 +3637,6 @@
 		990B1E3FC09DD410D428F5416E621698 /* NBPhoneNumberUtil.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = NBPhoneNumberUtil.m; path = libPhoneNumber/NBPhoneNumberUtil.m; sourceTree = "<group>"; };
 		990FF373D2FFAD5B225FA515FE3286A0 /* PrecompAsset.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PrecompAsset.swift; path = Sources/Private/Model/Assets/PrecompAsset.swift; sourceTree = "<group>"; };
 		9913165B6F6204845BF10DD0185E5BE5 /* IoProtocols.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = IoProtocols.swift; path = swift/Sources/LibSignalClient/IoProtocols.swift; sourceTree = "<group>"; };
-		99506D6230896D38FC8A1BC06F9058DA /* Connection.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Connection.swift; path = src/ios/SignalRingRTC/SignalRingRTC/Connection.swift; sourceTree = "<group>"; };
 		99BEEF4DE51CC272315D5C51B2D9C388 /* DatabaseMigrator.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DatabaseMigrator.swift; path = GRDB/Migration/DatabaseMigrator.swift; sourceTree = "<group>"; };
 		9A1DC7F4B3479C21F5D07AA9CB278E3F /* FogUntrustedTxOutFetcher.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FogUntrustedTxOutFetcher.swift; path = Sources/Fog/FogUntrustedTxOutFetcher.swift; sourceTree = "<group>"; };
 		9A3730943197AE00C3174601D190D28C /* FogKeyImageHttpConnection.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FogKeyImageHttpConnection.swift; path = Sources/Network/HTTPS/HttpConnection/HttpConnections/FogKeyImageHttpConnection.swift; sourceTree = "<group>"; };
@@ -3657,6 +3653,7 @@
 		9C215D504F7F7870B655E3AE80138157 /* curve_sigs.c */ = {isa = PBXFileReference; includeInIndex = 1; name = curve_sigs.c; path = Sources/ed25519/additions/curve_sigs.c; sourceTree = "<group>"; };
 		9C28E11C4E765FA819AC297E000E1EC4 /* Color.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Color.swift; path = Sources/Public/Primitives/Color.swift; sourceTree = "<group>"; };
 		9C30D8A516A5CEDBAF8DE8FF40166D6B /* Stroke.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Stroke.swift; path = Sources/Private/Model/ShapeItems/Stroke.swift; sourceTree = "<group>"; };
+		9C66F0C354C500AF0D2213DD4516C76E /* SignalRingRTC-xcframeworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "SignalRingRTC-xcframeworks.sh"; sourceTree = "<group>"; };
 		9C9E929BD3EC05582E7114F5F07A65E9 /* NullCompositionLayer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = NullCompositionLayer.swift; path = Sources/Private/MainThread/LayerContainers/CompLayers/NullCompositionLayer.swift; sourceTree = "<group>"; };
 		9C9EBF4BA4BF7F71D339B2DB59D6C820 /* RowDecodingError.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RowDecodingError.swift; path = GRDB/Core/RowDecodingError.swift; sourceTree = "<group>"; };
 		9D5AB33B49BB19E4FE9A32B86278AEB1 /* GroupInterpolator.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = GroupInterpolator.swift; path = Sources/Private/MainThread/NodeRenderSystem/NodeProperties/ValueProviders/GroupInterpolator.swift; sourceTree = "<group>"; };
@@ -3713,6 +3710,7 @@
 		A50952D34E3D844175FA4C6CF7164CA1 /* GroupSecretParams.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = GroupSecretParams.swift; path = swift/Sources/LibSignalClient/zkgroup/GroupSecretParams.swift; sourceTree = "<group>"; };
 		A535513AAF77D5EF5228852C351FEC4B /* TrimPathNode.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TrimPathNode.swift; path = Sources/Private/MainThread/NodeRenderSystem/Nodes/ModifierNodes/TrimPathNode.swift; sourceTree = "<group>"; };
 		A55B2221CEACC0CC439D81625AE702D2 /* UIKit+AdaptableTextContainerSupport.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "UIKit+AdaptableTextContainerSupport.swift"; path = "Sources/UIKit/UIKit+AdaptableTextContainerSupport.swift"; sourceTree = "<group>"; };
+		A57043CE88B9D3CC57F75A5517F47791 /* Logging.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Logging.swift; path = src/ios/SignalRingRTC/SignalRingRTC/Logging.swift; sourceTree = "<group>"; };
 		A57E9AE3209AC78192CE25618E795C83 /* GradientFillNode.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = GradientFillNode.swift; path = Sources/Private/MainThread/NodeRenderSystem/Nodes/RenderNodes/GradientFillNode.swift; sourceTree = "<group>"; };
 		A5B09FC7365B8A0ABAFE14264996D146 /* lossless_enc_neon.c */ = {isa = PBXFileReference; includeInIndex = 1; name = lossless_enc_neon.c; path = src/dsp/lossless_enc_neon.c; sourceTree = "<group>"; };
 		A5E9FF07C2146C7953476F1EF1C6C250 /* rescaler_utils.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = rescaler_utils.h; path = src/utils/rescaler_utils.h; sourceTree = "<group>"; };
@@ -3735,7 +3733,6 @@
 		A7E4BB56CA2BF750D8C835ECC5817079 /* printable.pb.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = printable.pb.swift; path = Sources/Generated/Proto/printable.pb.swift; sourceTree = "<group>"; };
 		A7E7082DB911091F46BC7178A27EF8F3 /* histogram_enc.c */ = {isa = PBXFileReference; includeInIndex = 1; name = histogram_enc.c; path = src/enc/histogram_enc.c; sourceTree = "<group>"; };
 		A8515856E54E8B673DD15AE91E726229 /* Pin.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Pin.swift; path = swift/Sources/LibSignalClient/Pin.swift; sourceTree = "<group>"; };
-		A8515C4594E50FDA429D38460CCFC081 /* RingValidation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RingValidation.swift; path = src/ios/SignalRingRTC/SignalRingRTC/RingValidation.swift; sourceTree = "<group>"; };
 		A8D3D1156BC0D49B05BB2974D79FAAE2 /* Pods-Signal.profiling.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-Signal.profiling.xcconfig"; sourceTree = "<group>"; };
 		A909DDFE8D8A09A43DB121C11914A950 /* picture_rescale_enc.c */ = {isa = PBXFileReference; includeInIndex = 1; name = picture_rescale_enc.c; path = src/enc/picture_rescale_enc.c; sourceTree = "<group>"; };
 		A931499C5D069F1F8D50BDE4E11EBCB5 /* Decimal.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Decimal.swift; path = GRDB/Core/Support/Foundation/Decimal.swift; sourceTree = "<group>"; };
@@ -3750,7 +3747,6 @@
 		AA3F63DEB51F8CA7D95F6FDE0B439F17 /* SSZipArchive.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = SSZipArchive.debug.xcconfig; sourceTree = "<group>"; };
 		AA4B559739636CDEAF05BB724892E585 /* ECKeyPair.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ECKeyPair.swift; path = Classes/ECKeyPair.swift; sourceTree = "<group>"; };
 		AA5659D0DADDB8F6465C64F3F1D828C3 /* NSValueTransformer+MTLInversionAdditions.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "NSValueTransformer+MTLInversionAdditions.m"; path = "Mantle/NSValueTransformer+MTLInversionAdditions.m"; sourceTree = "<group>"; };
-		AA94F9CC85812AF767E568B498C07097 /* SignalRingRTC-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "SignalRingRTC-prefix.pch"; sourceTree = "<group>"; };
 		AAB4998CE50CE7EC90E2E5CF6CCB757C /* yuv_mips32.c */ = {isa = PBXFileReference; includeInIndex = 1; name = yuv_mips32.c; path = src/dsp/yuv_mips32.c; sourceTree = "<group>"; };
 		AB47B6480043BF3DCD9BA1D57CD6044A /* Pods-SignalPerformanceTests.testable release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-SignalPerformanceTests.testable release.xcconfig"; sourceTree = "<group>"; };
 		AB69174E618F7D30BD389A3A37B817AE /* NSObject+OWS.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "NSObject+OWS.h"; path = "SignalCoreKit/src/NSObject+OWS.h"; sourceTree = "<group>"; };
@@ -3833,6 +3829,7 @@
 		B72522E8A01BDA0D988EF1910B81361E /* SQLRequest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SQLRequest.swift; path = GRDB/Core/SQLRequest.swift; sourceTree = "<group>"; };
 		B754DF49F316E59668E60EEE38344671 /* enc_msa.c */ = {isa = PBXFileReference; includeInIndex = 1; name = enc_msa.c; path = src/dsp/enc_msa.c; sourceTree = "<group>"; };
 		B76146A3067C0700FB7699AE24CA72F8 /* DatabasePromise.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DatabasePromise.swift; path = GRDB/QueryInterface/SQL/DatabasePromise.swift; sourceTree = "<group>"; };
+		B78110BCC8F1CA27622FC1FA2CF52DA3 /* SignalRingRTC-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "SignalRingRTC-dummy.m"; sourceTree = "<group>"; };
 		B782523A869248FCEFD86FFF455D7B42 /* RootEntropyUtils.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RootEntropyUtils.swift; path = Sources/Account/RootEntropyUtils.swift; sourceTree = "<group>"; };
 		B7A0CCC473B441A5BA5B8513377EE278 /* Shape.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Shape.swift; path = Sources/Private/Model/ShapeItems/Shape.swift; sourceTree = "<group>"; };
 		B866E5F6227BA40DBE16A7009413B55A /* demux.c */ = {isa = PBXFileReference; includeInIndex = 1; name = demux.c; path = src/demux/demux.c; sourceTree = "<group>"; };
@@ -3849,6 +3846,7 @@
 		B9E8397893C3FD9D6E5920DC3F61B83B /* MobileCoin-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "MobileCoin-Info.plist"; sourceTree = "<group>"; };
 		BA0134573FEDB4299EFECA0674FED7C0 /* DatabaseValueConvertible+ReferenceConvertible.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "DatabaseValueConvertible+ReferenceConvertible.swift"; path = "GRDB/Core/Support/Foundation/DatabaseValueConvertible+ReferenceConvertible.swift"; sourceTree = "<group>"; };
 		BA1E3FB00E34E6791EE50BCD16FE1D5A /* LockedBox.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = LockedBox.swift; path = GRDB/Utils/LockedBox.swift; sourceTree = "<group>"; };
+		BA52AD1B8FE2ED90333AA8420E8BC4BB /* RingValidation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RingValidation.swift; path = src/ios/SignalRingRTC/SignalRingRTC/RingValidation.swift; sourceTree = "<group>"; };
 		BAA7C0E950FD51A9BCB29B3A3C673CBD /* Pods-Signal-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-Signal-umbrella.h"; sourceTree = "<group>"; };
 		BAF5ABEE2D7ED34DBD892799EB9F3B11 /* DatabaseSnapshot.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DatabaseSnapshot.swift; path = GRDB/Core/DatabaseSnapshot.swift; sourceTree = "<group>"; };
 		BB286352DEA4C55F1A0C0AE853CE0213 /* AnyUnpackError.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AnyUnpackError.swift; path = Sources/SwiftProtobuf/AnyUnpackError.swift; sourceTree = "<group>"; };
@@ -3867,7 +3865,6 @@
 		BC8C22FA71B8387BD22D922F4C4DEC8D /* NSLayoutConstraint+PureLayout.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "NSLayoutConstraint+PureLayout.m"; path = "PureLayout/PureLayout/NSLayoutConstraint+PureLayout.m"; sourceTree = "<group>"; };
 		BC936BA92635FB5E2104DDD00DB56C8B /* BlurHashEncode.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BlurHashEncode.swift; path = Swift/BlurHashEncode.swift; sourceTree = "<group>"; };
 		BC9CEDE72F591816C9F47FBDBE2212E7 /* crypto_int32.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = crypto_int32.h; path = Sources/ed25519/nacl_includes/crypto_int32.h; sourceTree = "<group>"; };
-		BCFEE6F2AD6C5E52906A7E7304039AAF /* SignalRingRTC-xcframeworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "SignalRingRTC-xcframeworks.sh"; sourceTree = "<group>"; };
 		BD0740AA03A76AB8BDE9FF6A96D74D8B /* types.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = types.h; path = src/webp/types.h; sourceTree = "<group>"; };
 		BD100674313A3C00FFA1EBF05F90968A /* NSString+OWS.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "NSString+OWS.h"; path = "SignalCoreKit/src/NSString+OWS.h"; sourceTree = "<group>"; };
 		BDADCA34019AE9EB1A6833D8B42B5D30 /* HasManyAssociation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = HasManyAssociation.swift; path = GRDB/QueryInterface/Request/Association/HasManyAssociation.swift; sourceTree = "<group>"; };
@@ -3909,6 +3906,7 @@
 		C49FE921072E68B0157D399CB315D20A /* InterpolatableExtensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = InterpolatableExtensions.swift; path = Sources/Private/Utility/Interpolatable/InterpolatableExtensions.swift; sourceTree = "<group>"; };
 		C4A675DF0185DC2A801222AF1423AFDD /* Pods-SignalUITests-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-SignalUITests-acknowledgements.markdown"; sourceTree = "<group>"; };
 		C4D38D3603D664B3C5491D69866EDCE5 /* frame_dec.c */ = {isa = PBXFileReference; includeInIndex = 1; name = frame_dec.c; path = src/dec/frame_dec.c; sourceTree = "<group>"; };
+		C4E027CAFC530AA233E46DC90C740475 /* FFI.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FFI.swift; path = src/ios/SignalRingRTC/SignalRingRTC/FFI.swift; sourceTree = "<group>"; };
 		C4EDC62F56625DAEF6E408CA98C02F13 /* ConsensusHttpConnection.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ConsensusHttpConnection.swift; path = Sources/Network/HTTPS/HttpConnection/HttpConnections/ConsensusHttpConnection.swift; sourceTree = "<group>"; };
 		C4F46E8785086CB91106D07F6537DA0C /* lossless_enc_mips_dsp_r2.c */ = {isa = PBXFileReference; includeInIndex = 1; name = lossless_enc_mips_dsp_r2.c; path = src/dsp/lossless_enc_mips_dsp_r2.c; sourceTree = "<group>"; };
 		C5058B8477D13C6A31B1175DE33BDD93 /* ExtensionFieldValueSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExtensionFieldValueSet.swift; path = Sources/SwiftProtobuf/ExtensionFieldValueSet.swift; sourceTree = "<group>"; };
@@ -3937,7 +3935,7 @@
 		C7F602E772AB485D9BE60B3002794A2C /* webpi_dec.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = webpi_dec.h; path = src/dec/webpi_dec.h; sourceTree = "<group>"; };
 		C82D1CFB0701475B7BAEA28366169EB4 /* Logging-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Logging-prefix.pch"; sourceTree = "<group>"; };
 		C88FE4120B51B77721E6B13A83C4030F /* LayerTextProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = LayerTextProvider.swift; path = Sources/Private/MainThread/LayerContainers/Utility/LayerTextProvider.swift; sourceTree = "<group>"; };
-		C89E3F56FC25F1A24271F21DEB260D1B /* CallLinks.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CallLinks.swift; path = src/ios/SignalRingRTC/SignalRingRTC/CallLinks.swift; sourceTree = "<group>"; };
+		C8D43CD82C91BFCA8EF041887EA902B3 /* SignalRingRTC-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "SignalRingRTC-Info.plist"; sourceTree = "<group>"; };
 		C95B0F95C780392D1C0ABDF839CF0C0A /* upsampling_neon.c */ = {isa = PBXFileReference; includeInIndex = 1; name = upsampling_neon.c; path = src/dsp/upsampling_neon.c; sourceTree = "<group>"; };
 		C97222CED4FF5C120CECBCABB28C330F /* Pods-SignalUITests-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-SignalUITests-umbrella.h"; sourceTree = "<group>"; };
 		C9E8BB0BAD2CD4CC72AA07B737D8F10C /* Curve25519KitSwiftTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Curve25519KitSwiftTests.swift; path = BuildTests/BuildTestsTests/Curve25519KitSwiftTests.swift; sourceTree = "<group>"; };
@@ -3986,6 +3984,7 @@
 		D1C45909F2CFB9810CF8934FE2B95892 /* demux.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = demux.h; path = src/webp/demux.h; sourceTree = "<group>"; };
 		D1DE8263866F2D55711CB88EC452B722 /* enc_sse41.c */ = {isa = PBXFileReference; includeInIndex = 1; name = enc_sse41.c; path = src/dsp/enc_sse41.c; sourceTree = "<group>"; };
 		D1F826FF138C696209EF03927D47B5E6 /* AnimationImageProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AnimationImageProvider.swift; path = Sources/Public/ImageProvider/AnimationImageProvider.swift; sourceTree = "<group>"; };
+		D2004A6F23914481B750DC519F07879D /* CallManagerGlobal.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CallManagerGlobal.swift; path = src/ios/SignalRingRTC/SignalRingRTC/CallManagerGlobal.swift; sourceTree = "<group>"; };
 		D2175455A39C45D9E61CA186183C6E61 /* FogViewHttpConnection.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FogViewHttpConnection.swift; path = Sources/Network/HTTPS/HttpConnection/HttpConnections/FogViewHttpConnection.swift; sourceTree = "<group>"; };
 		D24962FDC56D6B9CF8F5364730C57DA2 /* DestinationWithPaymentIntentMemoUtils.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DestinationWithPaymentIntentMemoUtils.swift; path = Sources/Transaction/Memos/DestinationWithPaymentIntentMemoUtils.swift; sourceTree = "<group>"; };
 		D2783C8E915706A9116E9F7252A43DD5 /* watcher.pb.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = watcher.pb.swift; path = Sources/Generated/Proto/watcher.pb.swift; sourceTree = "<group>"; };
@@ -4015,11 +4014,11 @@
 		D5F03388A1D954DC38A490D5F8CFCFE2 /* Message+AnyAdditions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "Message+AnyAdditions.swift"; path = "Sources/SwiftProtobuf/Message+AnyAdditions.swift"; sourceTree = "<group>"; };
 		D5F054D68C2143E212D3DCD13F88AD7A /* yuv_sse41.c */ = {isa = PBXFileReference; includeInIndex = 1; name = yuv_sse41.c; path = src/dsp/yuv_sse41.c; sourceTree = "<group>"; };
 		D61F585E10862D56CFAD701E2037A90F /* AttestableHttpClient.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AttestableHttpClient.swift; path = Sources/Network/HTTPS/HttpConnection/HttpClient/AttestableHttpClient.swift; sourceTree = "<group>"; };
-		D621A949D935274E264BBECC87887565 /* SignalRingRTC.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SignalRingRTC.h; path = src/ios/SignalRingRTC/SignalRingRTC/SignalRingRTC.h; sourceTree = "<group>"; };
 		D634F7187E19F2C18A741502B80F9703 /* AnyNodeProperty.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AnyNodeProperty.swift; path = Sources/Private/MainThread/NodeRenderSystem/NodeProperties/Protocols/AnyNodeProperty.swift; sourceTree = "<group>"; };
 		D73EDB47890020460988D724CEF9DA2D /* DoubleParser.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DoubleParser.swift; path = Sources/SwiftProtobuf/DoubleParser.swift; sourceTree = "<group>"; };
 		D7418CB451B0B9CC9797F6398AC5FA20 /* ge_p3_0.c */ = {isa = PBXFileReference; includeInIndex = 1; name = ge_p3_0.c; path = Sources/ed25519/ge_p3_0.c; sourceTree = "<group>"; };
 		D74D20AA7F4C11E804D22F0E8B678622 /* MobileCoinMinimal-Unit-Tests-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "MobileCoinMinimal-Unit-Tests-frameworks.sh"; sourceTree = "<group>"; };
+		D7547EF329A5E726FF229CA1D1983876 /* SignalRingRTC.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SignalRingRTC.h; path = src/ios/SignalRingRTC/SignalRingRTC/SignalRingRTC.h; sourceTree = "<group>"; };
 		D760700D78954DC6CDEC9647B9C2AC04 /* KeyframeInterpolator.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = KeyframeInterpolator.swift; path = Sources/Private/MainThread/NodeRenderSystem/NodeProperties/ValueProviders/KeyframeInterpolator.swift; sourceTree = "<group>"; };
 		D77826F28D18355DBA7A0923A114F62B /* EmbeddedTransformation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = EmbeddedTransformation.swift; path = Sources/UIKit/EmbeddedTransformation.swift; sourceTree = "<group>"; };
 		D77D94734D459CA613347A2E047CC25D /* DDMultiFormatter.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = DDMultiFormatter.h; path = Sources/CocoaLumberjack/include/CocoaLumberjack/DDMultiFormatter.h; sourceTree = "<group>"; };
@@ -4028,7 +4027,6 @@
 		D7FDD25F51ABB67F5E3234BA389A1441 /* VectorsExtensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = VectorsExtensions.swift; path = Sources/Private/Utility/Primitives/VectorsExtensions.swift; sourceTree = "<group>"; };
 		D808BFBC2D4DA20DE10703C0264BED65 /* Kdf.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Kdf.swift; path = swift/Sources/LibSignalClient/Kdf.swift; sourceTree = "<group>"; };
 		D80A85AFADBC668F556E620C979DDA4E /* SQLSubquery.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SQLSubquery.swift; path = GRDB/QueryInterface/SQL/SQLSubquery.swift; sourceTree = "<group>"; };
-		D847E6A8A5605BA2A43226C92C437D50 /* SignalRingRTC.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = SignalRingRTC.debug.xcconfig; sourceTree = "<group>"; };
 		D84F45927B22953BC1003E5F0311F541 /* Pods-SignalUITests.app store release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-SignalUITests.app store release.xcconfig"; sourceTree = "<group>"; };
 		D865C0B1A5ED10C01B4B5C5FC2703186 /* AnimatedControl.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AnimatedControl.swift; path = Sources/Public/iOS/AnimatedControl.swift; sourceTree = "<group>"; };
 		D8B37FC2A7BDF756D924A0EAA849286F /* ProtocolConnectionFactory.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ProtocolConnectionFactory.swift; path = Sources/Network/Connection/ProtocolConnectionFactory.swift; sourceTree = "<group>"; };
@@ -4050,6 +4048,7 @@
 		DC21508088ED563C7480D99A2A06EC7C /* JSONEncodingOptions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = JSONEncodingOptions.swift; path = Sources/SwiftProtobuf/JSONEncodingOptions.swift; sourceTree = "<group>"; };
 		DC3559417E27763E3E8EB312A501CB8C /* ImageLayer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ImageLayer.swift; path = Sources/Private/CoreAnimation/Layers/ImageLayer.swift; sourceTree = "<group>"; };
 		DC414F0F6AEA2624EBD62FCF45FD9D8D /* chacha20_rng.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = chacha20_rng.h; path = Artifacts/include/chacha20_rng.h; sourceTree = "<group>"; };
+		DC882415C3D71BD254D32FCC03D9F36D /* SFU.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SFU.swift; path = src/ios/SignalRingRTC/SignalRingRTC/SFU.swift; sourceTree = "<group>"; };
 		DC91890303D4C690C4F2AF576AA75824 /* NBPhoneNumber.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = NBPhoneNumber.h; path = libPhoneNumber/NBPhoneNumber.h; sourceTree = "<group>"; };
 		DCB21E7BE8B68D11F151FFFEFF4EF7E4 /* ShapeTransform.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ShapeTransform.swift; path = Sources/Private/Model/ShapeItems/ShapeTransform.swift; sourceTree = "<group>"; };
 		DCFC046BEBF5D52F4421EB45B5F11FE4 /* Pods-SignalServiceKitTests-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-SignalServiceKitTests-Info.plist"; sourceTree = "<group>"; };
@@ -4130,7 +4129,6 @@
 		E7DCAFE0A8BFDAD4C95B1BA5316142C0 /* enc_neon.c */ = {isa = PBXFileReference; includeInIndex = 1; name = enc_neon.c; path = src/dsp/enc_neon.c; sourceTree = "<group>"; };
 		E8080A603D595275CBCD62CB89E857C2 /* webp_enc.c */ = {isa = PBXFileReference; includeInIndex = 1; name = webp_enc.c; path = src/enc/webp_enc.c; sourceTree = "<group>"; };
 		E81FECB52BCBCDACC907B2B6AB90DBD8 /* SignalCoreKit.unit-tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "SignalCoreKit.unit-tests.debug.xcconfig"; sourceTree = "<group>"; };
-		E82B60F12CC2B88A54494D0D58049495 /* WebRTC.xcframework */ = {isa = PBXFileReference; includeInIndex = 1; name = WebRTC.xcframework; path = "../../../../Library/Caches/org.signal.ringrtc/prebuild-2.27.0/release/WebRTC.xcframework"; sourceTree = "<group>"; };
 		E8343A6E89AFE6DDF1005155CA9D6BC0 /* Account+SCIOperations.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "Account+SCIOperations.swift"; path = "Sources/Account/Account+SCIOperations.swift"; sourceTree = "<group>"; };
 		E8737A95E81AED1A3296A362CE83C422 /* PrintableWrapper+Base58.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "PrintableWrapper+Base58.swift"; path = "Sources/Encodings/PrintableWrapper+Base58.swift"; sourceTree = "<group>"; };
 		E89C11CCBA9FDA9C4E5FD0BC0EF6E749 /* BonMot.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = BonMot.release.xcconfig; sourceTree = "<group>"; };
@@ -4153,7 +4151,6 @@
 		EA8BCB968BACEF9A38752F76FA116D9D /* Repeater.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Repeater.swift; path = Sources/Private/Model/ShapeItems/Repeater.swift; sourceTree = "<group>"; };
 		EAF262BA9169D3B098E93EFC11B76CE8 /* LibSignalClient.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = LibSignalClient.debug.xcconfig; sourceTree = "<group>"; };
 		EB3E7FF7519407388304DB927D14E67F /* TxOutConfirmationNumber.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TxOutConfirmationNumber.swift; path = Sources/Transaction/Outputs/TxOutConfirmationNumber.swift; sourceTree = "<group>"; };
-		EB4A48595C538A1C325A5FE71A55C5AC /* VideoCaptureController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = VideoCaptureController.swift; path = src/ios/SignalRingRTC/SignalRingRTC/VideoCaptureController.swift; sourceTree = "<group>"; };
 		EB4CC77F50B46F299D1EBD51824090C2 /* CAAnimation+TimingConfiguration.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "CAAnimation+TimingConfiguration.swift"; path = "Sources/Private/CoreAnimation/Animations/CAAnimation+TimingConfiguration.swift"; sourceTree = "<group>"; };
 		EB53215ACB578478CE0A164D8FFA5553 /* Logging-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Logging-Info.plist"; sourceTree = "<group>"; };
 		EB662E789E700715990679BF6E427E76 /* SignalCoreKit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = SignalCoreKit.release.xcconfig; sourceTree = "<group>"; };
@@ -4163,9 +4160,11 @@
 		EC0175530A19513BED306D3D6AC65AB0 /* TimeUtils.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TimeUtils.swift; path = Sources/SwiftProtobuf/TimeUtils.swift; sourceTree = "<group>"; };
 		EC088500DBABF3068C30FF797477759D /* AnimatorNodeDebugging.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AnimatorNodeDebugging.swift; path = Sources/Private/Utility/Debugging/AnimatorNodeDebugging.swift; sourceTree = "<group>"; };
 		EC0DF0093A65C8CBC54DDD628D301C37 /* Threading.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = Threading.h; path = SignalCoreKit/src/Threading.h; sourceTree = "<group>"; };
+		EC200CC65E1B231EB948EF89C685079F /* ringrtc.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ringrtc.h; path = out/release/libringrtc/ringrtc.h; sourceTree = "<group>"; };
 		EC5810A30ADA3D49B201DF2BA4D8BB2E /* LottieLogger.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = LottieLogger.swift; path = Sources/Public/Logging/LottieLogger.swift; sourceTree = "<group>"; };
 		EC62F4A63D2C4A9A8B39BCBBA0B13D88 /* PreCompLayer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PreCompLayer.swift; path = Sources/Private/CoreAnimation/Layers/PreCompLayer.swift; sourceTree = "<group>"; };
 		EC6DCE17ACAE642D5B13837CAA8BE00B /* NSDate+OWS.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "NSDate+OWS.h"; path = "SignalCoreKit/src/NSDate+OWS.h"; sourceTree = "<group>"; };
+		ECEED8641A74841D023EDC9DFC3852D6 /* CallContext.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CallContext.swift; path = src/ios/SignalRingRTC/SignalRingRTC/CallContext.swift; sourceTree = "<group>"; };
 		ECFD559CFC146691AC043AA5AE135F0F /* NBRegExMatcher.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = NBRegExMatcher.h; path = libPhoneNumber/Internal/NBRegExMatcher.h; sourceTree = "<group>"; };
 		ED2187C3A86B3902322847EB35EA19D3 /* NSDictionary+MTLJSONKeyPath.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "NSDictionary+MTLJSONKeyPath.m"; path = "Mantle/NSDictionary+MTLJSONKeyPath.m"; sourceTree = "<group>"; };
 		ED632D9FCE959BD7798861093E69BA98 /* libwebp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = libwebp.release.xcconfig; sourceTree = "<group>"; };
@@ -4186,6 +4185,7 @@
 		EF737002EC4424493509EC8984F63204 /* StringStyle.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = StringStyle.swift; path = Sources/StringStyle.swift; sourceTree = "<group>"; };
 		EFBCD15BD902D90EDF06400AD5A16396 /* URLRequest+ProtoHeaders.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "URLRequest+ProtoHeaders.swift"; path = "Sources/Network/HTTPS/Utils/URLRequest+ProtoHeaders.swift"; sourceTree = "<group>"; };
 		EFF76CC53A7CBA00A686BEC484781965 /* Google_Protobuf_Timestamp+Extensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "Google_Protobuf_Timestamp+Extensions.swift"; path = "Sources/SwiftProtobuf/Google_Protobuf_Timestamp+Extensions.swift"; sourceTree = "<group>"; };
+		F0000D5CB426E8E730AA6328C52DC127 /* CallManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CallManager.swift; path = src/ios/SignalRingRTC/SignalRingRTC/CallManager.swift; sourceTree = "<group>"; };
 		F001826453F08A9483435C3B649AE6C9 /* UIColorExtension.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = UIColorExtension.swift; path = Sources/Public/iOS/UIColorExtension.swift; sourceTree = "<group>"; };
 		F0166C4FC27B00955E8AA54C944C91B3 /* NSArray+MTLManipulationAdditions.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "NSArray+MTLManipulationAdditions.h"; path = "Mantle/NSArray+MTLManipulationAdditions.h"; sourceTree = "<group>"; };
 		F02D88065B0534AB23F65296FE460AB8 /* DatabaseFunction.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DatabaseFunction.swift; path = GRDB/Core/DatabaseFunction.swift; sourceTree = "<group>"; };
@@ -4199,7 +4199,6 @@
 		F189F07C20AA55A7D69FECB2CC0DCFBF /* DDLog.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = DDLog.h; path = Sources/CocoaLumberjack/include/CocoaLumberjack/DDLog.h; sourceTree = "<group>"; };
 		F1937C9B64A6B74F75477DD110FEA81E /* HTTPCallOptions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = HTTPCallOptions.swift; path = Sources/Network/HTTPS/HttpConnection/HTTPInterface/HTTPCallOptions.swift; sourceTree = "<group>"; };
 		F195583B369B9702BC2D59FD28363DBB /* enc_mips32.c */ = {isa = PBXFileReference; includeInIndex = 1; name = enc_mips32.c; path = src/dsp/enc_mips32.c; sourceTree = "<group>"; };
-		F1AF06BB5D944153461795D787B81EDD /* CallContext.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CallContext.swift; path = src/ios/SignalRingRTC/SignalRingRTC/CallContext.swift; sourceTree = "<group>"; };
 		F1CDF3B0839F9152E7750C95F2809C6F /* Curve25519Kit */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Curve25519Kit; path = Curve25519Kit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F1E6942E339FC060B5A02F74E771BDE2 /* PureLayout.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = PureLayout.debug.xcconfig; sourceTree = "<group>"; };
 		F1FBBE1F98106455EC7398E0D3429105 /* UnsignedInteger+SafeArithmetic.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "UnsignedInteger+SafeArithmetic.swift"; path = "Sources/Utils/SafeArithmetic/UnsignedInteger+SafeArithmetic.swift"; sourceTree = "<group>"; };
@@ -4207,6 +4206,7 @@
 		F22C48A5FC7143F0A4566791CCF25369 /* yuv.c */ = {isa = PBXFileReference; includeInIndex = 1; name = yuv.c; path = src/dsp/yuv.c; sourceTree = "<group>"; };
 		F249E67F8C971054A4AAA61FD6DECDDE /* DDAbstractDatabaseLogger.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = DDAbstractDatabaseLogger.m; path = Sources/CocoaLumberjack/DDAbstractDatabaseLogger.m; sourceTree = "<group>"; };
 		F2A51A9EF097545F09E083402711AE5B /* MessageExtension.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MessageExtension.swift; path = Sources/SwiftProtobuf/MessageExtension.swift; sourceTree = "<group>"; };
+		F2A7C1434E1D1EF5D1F3583993BB4132 /* SignalRingRTC.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = SignalRingRTC.modulemap; sourceTree = "<group>"; };
 		F3215FEAA224FE106EDCF78352D5E5A0 /* picture_tools_enc.c */ = {isa = PBXFileReference; includeInIndex = 1; name = picture_tools_enc.c; path = src/enc/picture_tools_enc.c; sourceTree = "<group>"; };
 		F34F960A7A01099B7BF90164400B6940 /* ECPrivateKey.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ECPrivateKey.swift; path = Classes/ECPrivateKey.swift; sourceTree = "<group>"; };
 		F3DD688FA4D6662F39CCD7CE223D55CF /* KeyframeGroup+exactlyOneKeyframe.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "KeyframeGroup+exactlyOneKeyframe.swift"; path = "Sources/Private/CoreAnimation/Extensions/KeyframeGroup+exactlyOneKeyframe.swift"; sourceTree = "<group>"; };
@@ -4582,11 +4582,11 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		EBF57E7A3FAEE44F7A0ED66C3A41A195 /* Frameworks */ = {
+		F49001EE20E0FCD6B07A5E7D6E257BCA /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8DCF696AE0FFD2C519695510DC34C4C1 /* Foundation.framework in Frameworks */,
+				9AA04707F24BEBD1A0BDBEF54E85E47A /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4634,31 +4634,12 @@
 			path = "../Target Support Files/LibSignalClient";
 			sourceTree = "<group>";
 		};
-		08D8E9CE4D5E3A42A22F731E7E49A4A3 /* SignalRingRTC */ = {
+		0800E5BC0185FA732F1D6B6882DA683D /* WebRTC */ = {
 			isa = PBXGroup;
 			children = (
-				F1AF06BB5D944153461795D787B81EDD /* CallContext.swift */,
-				C89E3F56FC25F1A24271F21DEB260D1B /* CallLinks.swift */,
-				42E482491AD052C21522966AB242B889 /* CallManager.swift */,
-				26D9AFBD50CC56538B1FBF035DCFE1BE /* CallManagerGlobal.swift */,
-				6D7ACA4B0F9D1752527A157552040E0F /* CallManagerInterface.swift */,
-				86050C676D90AFB5076C49A2EB0143D5 /* CallManagerUtil.swift */,
-				99506D6230896D38FC8A1BC06F9058DA /* Connection.swift */,
-				940375A29FB8F1D5260C70ADFDDCEB06 /* ConnectionMediaStream.swift */,
-				0E43051A1A7431F68275B3C1F718B468 /* FFI.swift */,
-				1C758391360F94E15E02C011B4A9FAF3 /* GroupCall.swift */,
-				7FB2467FBAE6FF4058BB0F99FC2C910F /* HTTP.swift */,
-				34FAA0B2FB4EFA6F63961A8A28F1FD02 /* Logging.swift */,
-				43E36205EE75DA9B7F40B0691B7EA0B3 /* ringrtc.h */,
-				A8515C4594E50FDA429D38460CCFC081 /* RingValidation.swift */,
-				2F061CD7D0D7E12B5AA3EEDDDA5D010B /* SFU.swift */,
-				D621A949D935274E264BBECC87887565 /* SignalRingRTC.h */,
-				EB4A48595C538A1C325A5FE71A55C5AC /* VideoCaptureController.swift */,
-				7671FCE63D07E0FEAF10E57050A7D0DE /* Support Files */,
-				D7E189BCD6ECC5B0694B2D6121742F43 /* WebRTC */,
+				15D6844E55DC02FD2D29DCF15808CF45 /* Frameworks */,
 			);
-			name = SignalRingRTC;
-			path = SignalRingRTC;
+			name = WebRTC;
 			sourceTree = "<group>";
 		};
 		09913600321C542B257697C926281F8E /* Pods-SignalTests */ = {
@@ -4747,6 +4728,41 @@
 				0210FFB1AA4CFCBDB98F01ECCD8B85E6 /* StringSanitizerTests.swift */,
 			);
 			name = Tests;
+			sourceTree = "<group>";
+		};
+		15D6844E55DC02FD2D29DCF15808CF45 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1BAAA1A5E7C8A4ADBEC4D7733EEB0A22 /* WebRTC.xcframework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		1680F1981178296508CA1190945A6328 /* SignalRingRTC */ = {
+			isa = PBXGroup;
+			children = (
+				ECEED8641A74841D023EDC9DFC3852D6 /* CallContext.swift */,
+				3D8DB8DB27DBC55D2829F7AAAFBBBBCE /* CallLinks.swift */,
+				F0000D5CB426E8E730AA6328C52DC127 /* CallManager.swift */,
+				D2004A6F23914481B750DC519F07879D /* CallManagerGlobal.swift */,
+				573F90254E4047050D928EED847A8B19 /* CallManagerInterface.swift */,
+				5D1D1AF437530648E65A481626469FC6 /* CallManagerUtil.swift */,
+				2D821066FAAEB31F088B84DEF4DD8E8B /* Connection.swift */,
+				80268567ACE4D2FF0831C9FE1DCDB9FC /* ConnectionMediaStream.swift */,
+				C4E027CAFC530AA233E46DC90C740475 /* FFI.swift */,
+				0E9BAB4C16E2EEBD6362C5419A3CD80E /* GroupCall.swift */,
+				50D77D3B3131F13ABD7959EFBEECA73E /* HTTP.swift */,
+				A57043CE88B9D3CC57F75A5517F47791 /* Logging.swift */,
+				EC200CC65E1B231EB948EF89C685079F /* ringrtc.h */,
+				BA52AD1B8FE2ED90333AA8420E8BC4BB /* RingValidation.swift */,
+				DC882415C3D71BD254D32FCC03D9F36D /* SFU.swift */,
+				D7547EF329A5E726FF229CA1D1983876 /* SignalRingRTC.h */,
+				5781FF30E2EFC9562DB5C623B0E5BC68 /* VideoCaptureController.swift */,
+				AD0A6046079632D8CA6B3E6B4EB6E765 /* Support Files */,
+				0800E5BC0185FA732F1D6B6882DA683D /* WebRTC */,
+			);
+			name = SignalRingRTC;
+			path = SignalRingRTC;
 			sourceTree = "<group>";
 		};
 		1843FB1D35017EB473604B75DE0DF592 /* Core */ = {
@@ -5294,7 +5310,7 @@
 				71C034EF51E07488F3253FAD7E9FCE36 /* Reachability */,
 				A24027C9F46733EE604D96CD1F893E7C /* SAMKeychain */,
 				FF7AE037B2908D7588E7480876396D86 /* SignalCoreKit */,
-				08D8E9CE4D5E3A42A22F731E7E49A4A3 /* SignalRingRTC */,
+				1680F1981178296508CA1190945A6328 /* SignalRingRTC */,
 				AE5F41BFE41DB8158C89A5041BAD4FAF /* SQLCipher */,
 				82FE296BE69F9AA37918485F8A9D950C /* SSZipArchive */,
 				590EFC8440C0FE495A0F24057FF244AD /* Starscream */,
@@ -5394,14 +5410,6 @@
 			path = "../Target Support Files/SignalCoreKit";
 			sourceTree = "<group>";
 		};
-		66803F766C47A31970C3E55695169E6B /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				E82B60F12CC2B88A54494D0D58049495 /* WebRTC.xcframework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 		6EAC9C699F1DC3CCDD2266BAE4AE1895 /* blurhash */ = {
 			isa = PBXGroup;
 			children = (
@@ -5452,21 +5460,6 @@
 			);
 			name = "Support Files";
 			path = "../Target Support Files/Reachability";
-			sourceTree = "<group>";
-		};
-		7671FCE63D07E0FEAF10E57050A7D0DE /* Support Files */ = {
-			isa = PBXGroup;
-			children = (
-				760D7476634FD2CE63469629808A7F5D /* SignalRingRTC.modulemap */,
-				1330C121D1F872FD08CEBE15E0115D53 /* SignalRingRTC-dummy.m */,
-				93C597B7DC2417C015F7713A6861AC50 /* SignalRingRTC-Info.plist */,
-				AA94F9CC85812AF767E568B498C07097 /* SignalRingRTC-prefix.pch */,
-				BCFEE6F2AD6C5E52906A7E7304039AAF /* SignalRingRTC-xcframeworks.sh */,
-				D847E6A8A5605BA2A43226C92C437D50 /* SignalRingRTC.debug.xcconfig */,
-				89DC2205D4F835D14B9F6E35977A4A4A /* SignalRingRTC.release.xcconfig */,
-			);
-			name = "Support Files";
-			path = "../Target Support Files/SignalRingRTC";
 			sourceTree = "<group>";
 		};
 		81FA4F3A01C773DB39265BD54E4F7A0E /* Resources */ = {
@@ -5821,6 +5814,21 @@
 				C0EF7EA1F6F3E3C017B8A6A7F0A2C95C /* WALSnapshot.swift */,
 			);
 			name = SQLCipher;
+			sourceTree = "<group>";
+		};
+		AD0A6046079632D8CA6B3E6B4EB6E765 /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				F2A7C1434E1D1EF5D1F3583993BB4132 /* SignalRingRTC.modulemap */,
+				B78110BCC8F1CA27622FC1FA2CF52DA3 /* SignalRingRTC-dummy.m */,
+				C8D43CD82C91BFCA8EF041887EA902B3 /* SignalRingRTC-Info.plist */,
+				5C21C119B8F86E2DB2EC6E89AA561233 /* SignalRingRTC-prefix.pch */,
+				9C66F0C354C500AF0D2213DD4516C76E /* SignalRingRTC-xcframeworks.sh */,
+				3E0298A525D9D659BB8A05F637F15462 /* SignalRingRTC.debug.xcconfig */,
+				8915835249632674954DC60B53E484D9 /* SignalRingRTC.release.xcconfig */,
+			);
+			name = "Support Files";
+			path = "../Target Support Files/SignalRingRTC";
 			sourceTree = "<group>";
 		};
 		AD4CC8F9318E7895B65A9CF6090D31A3 /* common */ = {
@@ -6606,14 +6614,6 @@
 			);
 			name = "Support Files";
 			path = "../Target Support Files/SSZipArchive";
-			sourceTree = "<group>";
-		};
-		D7E189BCD6ECC5B0694B2D6121742F43 /* WebRTC */ = {
-			isa = PBXGroup;
-			children = (
-				66803F766C47A31970C3E55695169E6B /* Frameworks */,
-			);
-			name = WebRTC;
 			sourceTree = "<group>";
 		};
 		D9A46EEB51E9413DCE19E3FEE5175ABA /* Support Files */ = {
@@ -7404,6 +7404,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		CBCF5499ED801B75F4C8CC5521F2047C /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8A657A4E910FDE72A0BABBD4C688C37C /* ringrtc.h in Headers */,
+				6D4EAFDD7C61CDD27C8DC305B24EF12A /* SignalRingRTC.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D1BC8AC4AE386DD8DF683EB92502949F /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -7439,15 +7448,6 @@
 				6BFD77D8E322A8102A33060A07C2AE1A /* PureLayout+Internal.h in Headers */,
 				2C8271CEF43279C7710D99F54BAE1787 /* PureLayout-umbrella.h in Headers */,
 				395676A7C752A5AE2FD86156458039EF /* PureLayoutDefines.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		FCF6E0E4460072D0A1E7AEEC9A9B7253 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				EE46B49F26BDED3B4C6211426B8F44C9 /* ringrtc.h in Headers */,
-				FABEAD341DB374B10E20F9D225DA6655 /* SignalRingRTC.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8081,19 +8081,19 @@
 		};
 		B4E755AAD7592CB63070BF1069DFAC8A /* SignalRingRTC */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 90FDD6CEBC08C4730A0BC4D35DD61FD9 /* Build configuration list for PBXNativeTarget "SignalRingRTC" */;
+			buildConfigurationList = 3EDF9C16A628E306DDEF807338A283C6 /* Build configuration list for PBXNativeTarget "SignalRingRTC" */;
 			buildPhases = (
-				FCF6E0E4460072D0A1E7AEEC9A9B7253 /* Headers */,
-				4DAD116EBCB857AFE2CA2AE21B3903F0 /* [CP] Copy XCFrameworks */,
-				25A6133DAE792BE2837A73812E4BEE34 /* [CP-User] Check prebuild */,
-				C87931A24B0EE36AD7FADBC361DA5B51 /* Sources */,
-				EBF57E7A3FAEE44F7A0ED66C3A41A195 /* Frameworks */,
-				353EA6EAE9579A17765CEADF5F579310 /* Resources */,
+				CBCF5499ED801B75F4C8CC5521F2047C /* Headers */,
+				373B9F0626131DCAEB9D425FC503609D /* [CP] Copy XCFrameworks */,
+				B3D23048C38FBECED4995240666D5C83 /* [CP-User] Check prebuild */,
+				6156FF5118255319EFA6463701D343F6 /* Sources */,
+				F49001EE20E0FCD6B07A5E7D6E257BCA /* Frameworks */,
+				4151C4FB86AC89662E4EDCACB4060199 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				2698EF6FA0870519F17DB734F4139C88 /* PBXTargetDependency */,
+				AAC358CF75FC6F3CC049E1A406C4F586 /* PBXTargetDependency */,
 			);
 			name = SignalRingRTC;
 			productName = SignalRingRTC;
@@ -8430,13 +8430,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		353EA6EAE9579A17765CEADF5F579310 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		358E3C0DFBF9081F28865FE4839871FF /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -8452,6 +8445,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		367410E7BA89BB9E458652D2EC773F55 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4151C4FB86AC89662E4EDCACB4060199 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -8677,24 +8677,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/MobileCoinMinimal/MobileCoinMinimal-Unit-Tests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		25A6133DAE792BE2837A73812E4BEE34 /* [CP-User] Check prebuild */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"$(PODS_TARGET_SRCROOT)/prebuild-checksum",
-				"$(RINGRTC_PREBUILD_DIR)/prebuild-checksum",
-			);
-			name = "[CP-User] Check prebuild";
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/prebuild-checksum",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\n        set -euo pipefail\n        if [[ ! -f \"${SCRIPT_INPUT_FILE_0}\" ]]; then\n          # Local development, ignore\n          exit\n        elif ! diff -q \"${SCRIPT_INPUT_FILE_0}\" \"${SCRIPT_INPUT_FILE_1}\"; then\n          # Why not run it now? Because Xcode may have already processed some of the files.\n          echo 'error: Please run Pods/SignalRingRTC/bin/set-up-for-cocoapods' >&2\n          echo 'note: If you are in the Signal iOS repo, you can use `make dependencies`' >&2\n          exit 1\n        fi\n        cp \"${SCRIPT_INPUT_FILE_0}\" \"${SCRIPT_OUTPUT_FILE_0}\"\n      ";
-		};
-		4DAD116EBCB857AFE2CA2AE21B3903F0 /* [CP] Copy XCFrameworks */ = {
+		373B9F0626131DCAEB9D425FC503609D /* [CP] Copy XCFrameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -8771,6 +8754,23 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/LibSignalClient/LibSignalClient-Unit-Tests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		B3D23048C38FBECED4995240666D5C83 /* [CP-User] Check prebuild */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(PODS_TARGET_SRCROOT)/prebuild-checksum",
+				"$(RINGRTC_PREBUILD_DIR)/prebuild-checksum",
+			);
+			name = "[CP-User] Check prebuild";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/prebuild-checksum",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\n        set -euo pipefail\n        if [[ ! -f \"${SCRIPT_INPUT_FILE_0}\" ]]; then\n          # Local development, ignore\n          exit\n        elif [[ ! -f \"${SCRIPT_INPUT_FILE_1}\" ]]; then\n          echo 'error: Cannot find prebuild directory' \"${RINGRTC_PREBUILD_DIR}\" >&2\n          echo 'note: If you are trying to use a local checkout of RingRTC, delete' \"${SCRIPT_INPUT_FILE_0}\" 'and try again' >&2\n          echo 'note: Otherwise, please run Pods/SignalRingRTC/bin/set-up-for-cocoapods' >&2\n          echo 'note: If you are in the Signal iOS repo, you can use `make dependencies`' >&2\n          exit 1\n        elif ! diff -q \"${SCRIPT_INPUT_FILE_0}\" \"${SCRIPT_INPUT_FILE_1}\"; then\n          # Why not run it now? Because Xcode may have already processed some of the files.\n          echo 'error: Please run Pods/SignalRingRTC/bin/set-up-for-cocoapods' >&2\n          echo 'note: If you are in the Signal iOS repo, you can use `make dependencies`' >&2\n          exit 1\n        fi\n        cp \"${SCRIPT_INPUT_FILE_0}\" \"${SCRIPT_OUTPUT_FILE_0}\"\n      ";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -9156,6 +9156,29 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		6156FF5118255319EFA6463701D343F6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B070D90FDE90645FCE6BAF0AA8776468 /* CallContext.swift in Sources */,
+				ED6054A812AC1244CADA1FE80DA2CCE4 /* CallLinks.swift in Sources */,
+				FFFF21AEA9FAD486625BCE968B6574AD /* CallManager.swift in Sources */,
+				40F33C99E0AFACBB4490E20A637BAEBA /* CallManagerGlobal.swift in Sources */,
+				D75C12A1D79482754BC286F216FAB3E4 /* CallManagerInterface.swift in Sources */,
+				7DD51B8051A8251EE3C1E7F30558BC06 /* CallManagerUtil.swift in Sources */,
+				F420C37B9050F59F7F13CB3EA450FAC9 /* Connection.swift in Sources */,
+				432454B2437964F3B92758A1BBDD5EB0 /* ConnectionMediaStream.swift in Sources */,
+				FE4F51B15432D38621543B39B5466DCE /* FFI.swift in Sources */,
+				DD0BFBABA0649DC6B81BC0AADC6658B5 /* GroupCall.swift in Sources */,
+				972E232651D940DD2F0D0B5784319000 /* HTTP.swift in Sources */,
+				BB533A0CD713849D5D34394923AA8860 /* Logging.swift in Sources */,
+				7F61DC793D2574A9BEEC2A6B92BE982D /* RingValidation.swift in Sources */,
+				042343B4ABC3065ED11941FD1D2465C1 /* SFU.swift in Sources */,
+				CAEF018CD76D04A3FA3DDB4577F92866 /* SignalRingRTC-dummy.m in Sources */,
+				DDEA6DE6EF80368BA13AE671A344D135 /* VideoCaptureController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		68FC118A09A3A8A620DA7FE3F5CCFCB2 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -9332,29 +9355,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				280FAD6EB0B469F0349BC260C0B69C33 /* Pods-SignalUI-dummy.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		C87931A24B0EE36AD7FADBC361DA5B51 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				243104274D333ECCEDCE55DC48598637 /* CallContext.swift in Sources */,
-				DE51E60B9E24A1B2F787A69527C59B51 /* CallLinks.swift in Sources */,
-				7E97123D0AF9AF78655BB0A3822F622E /* CallManager.swift in Sources */,
-				318FCA5FFF8267CA026115F03A9D98B2 /* CallManagerGlobal.swift in Sources */,
-				E9A703422AD53BF88137C280DA313038 /* CallManagerInterface.swift in Sources */,
-				FC5801C0A484436F22DAE8859CEF0A75 /* CallManagerUtil.swift in Sources */,
-				F7CC7F6E3C427297A03E95C8C0343590 /* Connection.swift in Sources */,
-				9AB06D02F004C016B13460646FBD40DB /* ConnectionMediaStream.swift in Sources */,
-				D19917D55629918AC5CC91227AE67985 /* FFI.swift in Sources */,
-				E0C1464548D4B7A2A6C6992C9947BAE5 /* GroupCall.swift in Sources */,
-				F8DA7339D4B99A0BF391465F593977ED /* HTTP.swift in Sources */,
-				8A347BCAC014E285E8B80AA7D34A5763 /* Logging.swift in Sources */,
-				BDABD2D785F660EC1F595A913D824A35 /* RingValidation.swift in Sources */,
-				83AA03F5E5E6DC2A7BC58893B01227F5 /* SFU.swift in Sources */,
-				5E906B1A7D0193999AB46C7D61F14466 /* SignalRingRTC-dummy.m in Sources */,
-				865B67EF57268737B0B611F7BF0F27BC /* VideoCaptureController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10395,12 +10395,6 @@
 			target = D21962D0DE148A440FADB55935BD4264 /* SQLCipher */;
 			targetProxy = D5D9D5DC633A71CF74D3F49CDDC1366A /* PBXContainerItemProxy */;
 		};
-		2698EF6FA0870519F17DB734F4139C88 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = SignalCoreKit;
-			target = 565B5AF44894619B799AA0D7B08B8331 /* SignalCoreKit */;
-			targetProxy = D6F90C4FD59B700BADA30F8ACC328827 /* PBXContainerItemProxy */;
-		};
 		28D62B3829921DEB9E6FA4315F21BB94 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = YYImage;
@@ -10856,6 +10850,12 @@
 			name = LibSignalClient;
 			target = D77A98059641D2A99D7DD3EBCA4606AE /* LibSignalClient */;
 			targetProxy = BD6B728FF77309AEA01A6E74F2223401 /* PBXContainerItemProxy */;
+		};
+		AAC358CF75FC6F3CC049E1A406C4F586 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = SignalCoreKit;
+			target = 565B5AF44894619B799AA0D7B08B8331 /* SignalCoreKit */;
+			targetProxy = 85E07F22A9F77E8D8AEA54077EEBA9F8 /* PBXContainerItemProxy */;
 		};
 		AD0ED220B96B45822DDEBE12B68148BA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -11406,6 +11406,64 @@
 				);
 			};
 			name = "App Store Release";
+		};
+		07FCF6A301A2290B05EFF3FAC925F277 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3E0298A525D9D659BB8A05F637F15462 /* SignalRingRTC.debug.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				ENABLE_TESTABILITY = YES;
+				EXCLUDED_ARCHS = armv7;
+				GCC_PREFIX_HEADER = "Target Support Files/SignalRingRTC/SignalRingRTC-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"TESTABLE_BUILD=1",
+				);
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				INFOPLIST_FILE = "Target Support Files/SignalRingRTC/SignalRingRTC-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/SignalRingRTC/SignalRingRTC.modulemap";
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-DTESTABLE_BUILD",
+				);
+				OTHER_SWIFT_FLAGS = "$(inherited) -DTESTABLE_BUILD -suppress-warnings";
+				PRODUCT_MODULE_NAME = SignalRingRTC;
+				PRODUCT_NAME = SignalRingRTC;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+				WARNING_CFLAGS = (
+					"$(inherited)",
+					"-Werror=incompatible-pointer-types",
+					"-Werror=protocol",
+					"-Werror=incomplete-implementation",
+					"-Werror=objc-literal-conversion",
+					"-Werror=objc-property-synthesis",
+					"-Werror=objc-protocol-property-synthesis",
+				);
+			};
+			name = Debug;
 		};
 		0831434C387B7D914C7E56F5EE1E35F5 /* App Store Release */ = {
 			isa = XCBuildConfiguration;
@@ -12151,6 +12209,64 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
 				SWIFT_VERSION = 5.2;
 				VALIDATE_PRODUCT = YES;
+				WARNING_CFLAGS = (
+					"$(inherited)",
+					"-Werror=incompatible-pointer-types",
+					"-Werror=protocol",
+					"-Werror=incomplete-implementation",
+					"-Werror=objc-literal-conversion",
+					"-Werror=objc-property-synthesis",
+					"-Werror=objc-protocol-property-synthesis",
+				);
+			};
+			name = Profiling;
+		};
+		1A21BE56B29D1819CA2ADAB85F391C05 /* Profiling */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8915835249632674954DC60B53E484D9 /* SignalRingRTC.release.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				ENABLE_TESTABILITY = YES;
+				EXCLUDED_ARCHS = armv7;
+				GCC_PREFIX_HEADER = "Target Support Files/SignalRingRTC/SignalRingRTC-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"TESTABLE_BUILD=1",
+				);
+				INFOPLIST_FILE = "Target Support Files/SignalRingRTC/SignalRingRTC-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/SignalRingRTC/SignalRingRTC.modulemap";
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-DTESTABLE_BUILD",
+				);
+				OTHER_SWIFT_FLAGS = "$(inherited) -DTESTABLE_BUILD";
+				PRODUCT_MODULE_NAME = SignalRingRTC;
+				PRODUCT_NAME = SignalRingRTC;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
 				WARNING_CFLAGS = (
 					"$(inherited)",
 					"-Werror=incompatible-pointer-types",
@@ -13654,53 +13770,6 @@
 			};
 			name = Profiling;
 		};
-		425A6E3214474293FEB50E3169F65587 /* App Store Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 89DC2205D4F835D14B9F6E35977A4A4A /* SignalRingRTC.release.xcconfig */;
-			buildSettings = {
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_BITCODE = NO;
-				EXCLUDED_ARCHS = armv7;
-				GCC_PREFIX_HEADER = "Target Support Files/SignalRingRTC/SignalRingRTC-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/SignalRingRTC/SignalRingRTC-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MODULEMAP_FILE = "Target Support Files/SignalRingRTC/SignalRingRTC.modulemap";
-				PRODUCT_MODULE_NAME = SignalRingRTC;
-				PRODUCT_NAME = SignalRingRTC;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-				WARNING_CFLAGS = (
-					"$(inherited)",
-					"-Werror=incompatible-pointer-types",
-					"-Werror=protocol",
-					"-Werror=incomplete-implementation",
-					"-Werror=objc-literal-conversion",
-					"-Werror=objc-property-synthesis",
-					"-Werror=objc-protocol-property-synthesis",
-				);
-			};
-			name = "App Store Release";
-		};
 		43607EFE27415A101480C3853C3E6956 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -14613,64 +14682,6 @@
 				);
 			};
 			name = "Testable Release";
-		};
-		52E18420C5910FC7C39D8BA7C39F3490 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = D847E6A8A5605BA2A43226C92C437D50 /* SignalRingRTC.debug.xcconfig */;
-			buildSettings = {
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_BITCODE = NO;
-				ENABLE_TESTABILITY = YES;
-				EXCLUDED_ARCHS = armv7;
-				GCC_PREFIX_HEADER = "Target Support Files/SignalRingRTC/SignalRingRTC-prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"TESTABLE_BUILD=1",
-				);
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				INFOPLIST_FILE = "Target Support Files/SignalRingRTC/SignalRingRTC-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MODULEMAP_FILE = "Target Support Files/SignalRingRTC/SignalRingRTC.modulemap";
-				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = (
-					"$(inherited)",
-					"-DTESTABLE_BUILD",
-				);
-				OTHER_SWIFT_FLAGS = "$(inherited) -DTESTABLE_BUILD -suppress-warnings";
-				PRODUCT_MODULE_NAME = SignalRingRTC;
-				PRODUCT_NAME = SignalRingRTC;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-				WARNING_CFLAGS = (
-					"$(inherited)",
-					"-Werror=incompatible-pointer-types",
-					"-Werror=protocol",
-					"-Werror=incomplete-implementation",
-					"-Werror=objc-literal-conversion",
-					"-Werror=objc-property-synthesis",
-					"-Werror=objc-protocol-property-synthesis",
-				);
-			};
-			name = Debug;
 		};
 		53AC6D3E21A8F35C063CD26A5E4ECE23 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -16042,6 +16053,64 @@
 			};
 			name = "Testable Release";
 		};
+		73995FFA6EAA16BD8B44787D65BEFC05 /* Testable Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8915835249632674954DC60B53E484D9 /* SignalRingRTC.release.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				ENABLE_TESTABILITY = YES;
+				EXCLUDED_ARCHS = armv7;
+				GCC_PREFIX_HEADER = "Target Support Files/SignalRingRTC/SignalRingRTC-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"TESTABLE_BUILD=1",
+				);
+				INFOPLIST_FILE = "Target Support Files/SignalRingRTC/SignalRingRTC-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/SignalRingRTC/SignalRingRTC.modulemap";
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-DTESTABLE_BUILD",
+				);
+				OTHER_SWIFT_FLAGS = "$(inherited) -DTESTABLE_BUILD";
+				PRODUCT_MODULE_NAME = SignalRingRTC;
+				PRODUCT_NAME = SignalRingRTC;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+				WARNING_CFLAGS = (
+					"$(inherited)",
+					"-Werror=incompatible-pointer-types",
+					"-Werror=protocol",
+					"-Werror=incomplete-implementation",
+					"-Werror=objc-literal-conversion",
+					"-Werror=objc-property-synthesis",
+					"-Werror=objc-protocol-property-synthesis",
+				);
+			};
+			name = "Testable Release";
+		};
 		73F369AF0C9C8D63A770E77A991CAC38 /* Testable Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 68D97DAC9FF8AC9ACA79A17FBB0ACFF7 /* blurhash.release.xcconfig */;
@@ -17122,6 +17191,53 @@
 			};
 			name = "App Store Release";
 		};
+		916003FDC5AF9498DAD569270D7C9D4E /* App Store Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8915835249632674954DC60B53E484D9 /* SignalRingRTC.release.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				EXCLUDED_ARCHS = armv7;
+				GCC_PREFIX_HEADER = "Target Support Files/SignalRingRTC/SignalRingRTC-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/SignalRingRTC/SignalRingRTC-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/SignalRingRTC/SignalRingRTC.modulemap";
+				PRODUCT_MODULE_NAME = SignalRingRTC;
+				PRODUCT_NAME = SignalRingRTC;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+				WARNING_CFLAGS = (
+					"$(inherited)",
+					"-Werror=incompatible-pointer-types",
+					"-Werror=protocol",
+					"-Werror=incomplete-implementation",
+					"-Werror=objc-literal-conversion",
+					"-Werror=objc-property-synthesis",
+					"-Werror=objc-protocol-property-synthesis",
+				);
+			};
+			name = "App Store Release";
+		};
 		917BB0C06C529BF8BD19971E0FB63C1F /* Profiling */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4C79699760F38DD0032B0DB0A4D69DBE /* Pods-SignalShareExtension.profiling.xcconfig */;
@@ -17495,6 +17611,53 @@
 				);
 			};
 			name = "Testable Release";
+		};
+		97B088765BE702D318B095ACECE1EE41 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8915835249632674954DC60B53E484D9 /* SignalRingRTC.release.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				EXCLUDED_ARCHS = armv7;
+				GCC_PREFIX_HEADER = "Target Support Files/SignalRingRTC/SignalRingRTC-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/SignalRingRTC/SignalRingRTC-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/SignalRingRTC/SignalRingRTC.modulemap";
+				PRODUCT_MODULE_NAME = SignalRingRTC;
+				PRODUCT_NAME = SignalRingRTC;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+				WARNING_CFLAGS = (
+					"$(inherited)",
+					"-Werror=incompatible-pointer-types",
+					"-Werror=protocol",
+					"-Werror=incomplete-implementation",
+					"-Werror=objc-literal-conversion",
+					"-Werror=objc-property-synthesis",
+					"-Werror=objc-protocol-property-synthesis",
+				);
+			};
+			name = Release;
 		};
 		98453EE19B4999FB1CF8AEC61CC4F17C /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -18543,64 +18706,6 @@
 			};
 			name = "App Store Release";
 		};
-		B5CFD31FEC8994C29C5D903074DF0514 /* Testable Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 89DC2205D4F835D14B9F6E35977A4A4A /* SignalRingRTC.release.xcconfig */;
-			buildSettings = {
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_BITCODE = NO;
-				ENABLE_TESTABILITY = YES;
-				EXCLUDED_ARCHS = armv7;
-				GCC_PREFIX_HEADER = "Target Support Files/SignalRingRTC/SignalRingRTC-prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"TESTABLE_BUILD=1",
-				);
-				INFOPLIST_FILE = "Target Support Files/SignalRingRTC/SignalRingRTC-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MODULEMAP_FILE = "Target Support Files/SignalRingRTC/SignalRingRTC.modulemap";
-				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = (
-					"$(inherited)",
-					"-DTESTABLE_BUILD",
-				);
-				OTHER_SWIFT_FLAGS = "$(inherited) -DTESTABLE_BUILD";
-				PRODUCT_MODULE_NAME = SignalRingRTC;
-				PRODUCT_NAME = SignalRingRTC;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-				WARNING_CFLAGS = (
-					"$(inherited)",
-					"-Werror=incompatible-pointer-types",
-					"-Werror=protocol",
-					"-Werror=incomplete-implementation",
-					"-Werror=objc-literal-conversion",
-					"-Werror=objc-property-synthesis",
-					"-Werror=objc-protocol-property-synthesis",
-				);
-			};
-			name = "Testable Release";
-		};
 		B9D89298018D9DE43ECA45A5F8DEE2F1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F6F1308A93E6A1EE62BFFA477EA4B4E8 /* SSZipArchive.release.xcconfig */;
@@ -19613,64 +19718,6 @@
 			};
 			name = "Testable Release";
 		};
-		D2C418053F143120EF4165CF54BA37DF /* Profiling */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 89DC2205D4F835D14B9F6E35977A4A4A /* SignalRingRTC.release.xcconfig */;
-			buildSettings = {
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_BITCODE = NO;
-				ENABLE_TESTABILITY = YES;
-				EXCLUDED_ARCHS = armv7;
-				GCC_PREFIX_HEADER = "Target Support Files/SignalRingRTC/SignalRingRTC-prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"TESTABLE_BUILD=1",
-				);
-				INFOPLIST_FILE = "Target Support Files/SignalRingRTC/SignalRingRTC-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MODULEMAP_FILE = "Target Support Files/SignalRingRTC/SignalRingRTC.modulemap";
-				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = (
-					"$(inherited)",
-					"-DTESTABLE_BUILD",
-				);
-				OTHER_SWIFT_FLAGS = "$(inherited) -DTESTABLE_BUILD";
-				PRODUCT_MODULE_NAME = SignalRingRTC;
-				PRODUCT_NAME = SignalRingRTC;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-				WARNING_CFLAGS = (
-					"$(inherited)",
-					"-Werror=incompatible-pointer-types",
-					"-Werror=protocol",
-					"-Werror=incomplete-implementation",
-					"-Werror=objc-literal-conversion",
-					"-Werror=objc-property-synthesis",
-					"-Werror=objc-protocol-property-synthesis",
-				);
-			};
-			name = Profiling;
-		};
 		D41AA98466EAF81F6C4912959071831B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = EBFB6F272A3F41C94DB2520CD1662EB0 /* libwebp.debug.xcconfig */;
@@ -20270,53 +20317,6 @@
 				);
 			};
 			name = "Testable Release";
-		};
-		E7B67B02F06716233A317A8C25DD4462 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 89DC2205D4F835D14B9F6E35977A4A4A /* SignalRingRTC.release.xcconfig */;
-			buildSettings = {
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_BITCODE = NO;
-				EXCLUDED_ARCHS = armv7;
-				GCC_PREFIX_HEADER = "Target Support Files/SignalRingRTC/SignalRingRTC-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/SignalRingRTC/SignalRingRTC-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MODULEMAP_FILE = "Target Support Files/SignalRingRTC/SignalRingRTC.modulemap";
-				PRODUCT_MODULE_NAME = SignalRingRTC;
-				PRODUCT_NAME = SignalRingRTC;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-				WARNING_CFLAGS = (
-					"$(inherited)",
-					"-Werror=incompatible-pointer-types",
-					"-Werror=protocol",
-					"-Werror=incomplete-implementation",
-					"-Werror=objc-literal-conversion",
-					"-Werror=objc-property-synthesis",
-					"-Werror=objc-protocol-property-synthesis",
-				);
-			};
-			name = Release;
 		};
 		E82F0CD9EA27664C003330F5748EBDC8 /* App Store Release */ = {
 			isa = XCBuildConfiguration;
@@ -21580,6 +21580,18 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		3EDF9C16A628E306DDEF807338A283C6 /* Build configuration list for PBXNativeTarget "SignalRingRTC" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				916003FDC5AF9498DAD569270D7C9D4E /* App Store Release */,
+				07FCF6A301A2290B05EFF3FAC925F277 /* Debug */,
+				1A21BE56B29D1819CA2ADAB85F391C05 /* Profiling */,
+				97B088765BE702D318B095ACECE1EE41 /* Release */,
+				73995FFA6EAA16BD8B44787D65BEFC05 /* Testable Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		425B517FC03CEA640BCCACFF1C87B18F /* Build configuration list for PBXNativeTarget "Pods-SignalShareExtension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -21732,18 +21744,6 @@
 				71395BFB75CD281EE7BA64A199B7B1B1 /* Profiling */,
 				24CA86523F913D1ACA2BC135F6DB6D5F /* Release */,
 				81DF919EC265A2F9E6D84B11212A0CDA /* Testable Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		90FDD6CEBC08C4730A0BC4D35DD61FD9 /* Build configuration list for PBXNativeTarget "SignalRingRTC" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				425A6E3214474293FEB50E3169F65587 /* App Store Release */,
-				52E18420C5910FC7C39D8BA7C39F3490 /* Debug */,
-				D2C418053F143120EF4165CF54BA37DF /* Profiling */,
-				E7B67B02F06716233A317A8C25DD4462 /* Release */,
-				B5CFD31FEC8994C29C5D903074DF0514 /* Testable Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
