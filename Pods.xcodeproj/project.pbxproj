@@ -11547,6 +11547,74 @@
 			};
 			name = "App Store Release";
 		};
+		0A5FCB640FEBD3A8946B30BF497E6F9C /* App Store Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 52C1C6DE8477C0ADB7463BC61F8F894E /* SignalCoreKit.unit-tests.release.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGNING_ALLOWED = YES;
+				CODE_SIGNING_REQUIRED = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				ENABLE_BITCODE = NO;
+				EXCLUDED_ARCHS = armv7;
+				GCC_PREFIX_HEADER = "Target Support Files/SignalCoreKit/SignalCoreKit-Unit-Tests-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/SignalCoreKit/SignalCoreKit-Unit-Tests-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_NAME = "SignalCoreKit-Unit-Tests";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				VALIDATE_PRODUCT = YES;
+				WARNING_CFLAGS = (
+					"$(inherited)",
+					"-Werror=incompatible-pointer-types",
+					"-Werror=protocol",
+					"-Werror=incomplete-implementation",
+					"-Werror=objc-literal-conversion",
+					"-Werror=objc-property-synthesis",
+					"-Werror=objc-protocol-property-synthesis",
+				);
+			};
+			name = "App Store Release";
+		};
+		0D66E6B97D527CB1898B576C173807D0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 52C1C6DE8477C0ADB7463BC61F8F894E /* SignalCoreKit.unit-tests.release.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGNING_ALLOWED = YES;
+				CODE_SIGNING_REQUIRED = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				ENABLE_BITCODE = NO;
+				EXCLUDED_ARCHS = armv7;
+				GCC_PREFIX_HEADER = "Target Support Files/SignalCoreKit/SignalCoreKit-Unit-Tests-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/SignalCoreKit/SignalCoreKit-Unit-Tests-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_NAME = "SignalCoreKit-Unit-Tests";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				VALIDATE_PRODUCT = YES;
+				WARNING_CFLAGS = (
+					"$(inherited)",
+					"-Werror=incompatible-pointer-types",
+					"-Werror=protocol",
+					"-Werror=incomplete-implementation",
+					"-Werror=objc-literal-conversion",
+					"-Werror=objc-property-synthesis",
+					"-Werror=objc-protocol-property-synthesis",
+				);
+			};
+			name = Release;
+		};
 		0E568E87D516E25A9906DC1534FA0B75 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = AA3F63DEB51F8CA7D95F6FDE0B439F17 /* SSZipArchive.debug.xcconfig */;
@@ -11802,6 +11870,64 @@
 				);
 			};
 			name = "App Store Release";
+		};
+		13276CFDC87356CC3351020A1B691AEB /* Profiling */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = EB662E789E700715990679BF6E427E76 /* SignalCoreKit.release.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				ENABLE_TESTABILITY = YES;
+				EXCLUDED_ARCHS = armv7;
+				GCC_PREFIX_HEADER = "Target Support Files/SignalCoreKit/SignalCoreKit-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"TESTABLE_BUILD=1",
+				);
+				INFOPLIST_FILE = "Target Support Files/SignalCoreKit/SignalCoreKit-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/SignalCoreKit/SignalCoreKit.modulemap";
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-DTESTABLE_BUILD",
+				);
+				OTHER_SWIFT_FLAGS = "$(inherited) -DTESTABLE_BUILD";
+				PRODUCT_MODULE_NAME = SignalCoreKit;
+				PRODUCT_NAME = SignalCoreKit;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+				WARNING_CFLAGS = (
+					"$(inherited)",
+					"-Werror=incompatible-pointer-types",
+					"-Werror=protocol",
+					"-Werror=incomplete-implementation",
+					"-Werror=objc-literal-conversion",
+					"-Werror=objc-property-synthesis",
+					"-Werror=objc-protocol-property-synthesis",
+				);
+			};
+			name = Profiling;
 		};
 		13331F3052DAF5DFBDEE6895D168CDF5 /* App Store Release */ = {
 			isa = XCBuildConfiguration;
@@ -12102,6 +12228,51 @@
 			};
 			name = Profiling;
 		};
+		1A062FEFDFF23A7ED88BECE1F639852E /* Testable Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 52C1C6DE8477C0ADB7463BC61F8F894E /* SignalCoreKit.unit-tests.release.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGNING_ALLOWED = YES;
+				CODE_SIGNING_REQUIRED = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				ENABLE_BITCODE = NO;
+				ENABLE_TESTABILITY = YES;
+				EXCLUDED_ARCHS = armv7;
+				GCC_PREFIX_HEADER = "Target Support Files/SignalCoreKit/SignalCoreKit-Unit-Tests-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"TESTABLE_BUILD=1",
+				);
+				INFOPLIST_FILE = "Target Support Files/SignalCoreKit/SignalCoreKit-Unit-Tests-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-DTESTABLE_BUILD",
+				);
+				OTHER_SWIFT_FLAGS = "$(inherited) -DTESTABLE_BUILD";
+				PRODUCT_NAME = "SignalCoreKit-Unit-Tests";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				VALIDATE_PRODUCT = YES;
+				WARNING_CFLAGS = (
+					"$(inherited)",
+					"-Werror=incompatible-pointer-types",
+					"-Werror=protocol",
+					"-Werror=incomplete-implementation",
+					"-Werror=objc-literal-conversion",
+					"-Werror=objc-property-synthesis",
+					"-Werror=objc-protocol-property-synthesis",
+				);
+			};
+			name = "Testable Release";
+		};
 		1A21BE56B29D1819CA2ADAB85F391C05 /* Profiling */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 764AA229AC0E35E7D7C798A296982D73 /* SignalRingRTC.release.xcconfig */;
@@ -12196,40 +12367,6 @@
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
-				WARNING_CFLAGS = (
-					"$(inherited)",
-					"-Werror=incompatible-pointer-types",
-					"-Werror=protocol",
-					"-Werror=incomplete-implementation",
-					"-Werror=objc-literal-conversion",
-					"-Werror=objc-property-synthesis",
-					"-Werror=objc-protocol-property-synthesis",
-				);
-			};
-			name = Release;
-		};
-		1D396E4B13900FFF79130BA6FEAB3B5F /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 52C1C6DE8477C0ADB7463BC61F8F894E /* SignalCoreKit.unit-tests.release.xcconfig */;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				CODE_SIGNING_ALLOWED = YES;
-				CODE_SIGNING_REQUIRED = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				ENABLE_BITCODE = NO;
-				EXCLUDED_ARCHS = armv7;
-				GCC_PREFIX_HEADER = "Target Support Files/SignalCoreKit/SignalCoreKit-Unit-Tests-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/SignalCoreKit/SignalCoreKit-Unit-Tests-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				PRODUCT_NAME = "SignalCoreKit-Unit-Tests";
-				SDKROOT = iphoneos;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5.0;
-				VALIDATE_PRODUCT = YES;
 				WARNING_CFLAGS = (
 					"$(inherited)",
 					"-Werror=incompatible-pointer-types",
@@ -13199,6 +13336,51 @@
 			};
 			name = Debug;
 		};
+		313CC4E16A1370F287904F5337C70728 /* Profiling */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 52C1C6DE8477C0ADB7463BC61F8F894E /* SignalCoreKit.unit-tests.release.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGNING_ALLOWED = YES;
+				CODE_SIGNING_REQUIRED = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				ENABLE_BITCODE = NO;
+				ENABLE_TESTABILITY = YES;
+				EXCLUDED_ARCHS = armv7;
+				GCC_PREFIX_HEADER = "Target Support Files/SignalCoreKit/SignalCoreKit-Unit-Tests-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"TESTABLE_BUILD=1",
+				);
+				INFOPLIST_FILE = "Target Support Files/SignalCoreKit/SignalCoreKit-Unit-Tests-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-DTESTABLE_BUILD",
+				);
+				OTHER_SWIFT_FLAGS = "$(inherited) -DTESTABLE_BUILD";
+				PRODUCT_NAME = "SignalCoreKit-Unit-Tests";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				VALIDATE_PRODUCT = YES;
+				WARNING_CFLAGS = (
+					"$(inherited)",
+					"-Werror=incompatible-pointer-types",
+					"-Werror=protocol",
+					"-Werror=incomplete-implementation",
+					"-Werror=objc-literal-conversion",
+					"-Werror=objc-property-synthesis",
+					"-Werror=objc-protocol-property-synthesis",
+				);
+			};
+			name = Profiling;
+		};
 		326D3969177C4EF36FC03ACFE599D3C9 /* Profiling */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = C73CF8971B7542A5632096220D780BC6 /* MobileCoin.release.xcconfig */;
@@ -13721,51 +13903,6 @@
 			};
 			name = Debug;
 		};
-		3DA94908B6FEF83A1837E40A0492FFFE /* Testable Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 52C1C6DE8477C0ADB7463BC61F8F894E /* SignalCoreKit.unit-tests.release.xcconfig */;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				CODE_SIGNING_ALLOWED = YES;
-				CODE_SIGNING_REQUIRED = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				ENABLE_BITCODE = NO;
-				ENABLE_TESTABILITY = YES;
-				EXCLUDED_ARCHS = armv7;
-				GCC_PREFIX_HEADER = "Target Support Files/SignalCoreKit/SignalCoreKit-Unit-Tests-prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"TESTABLE_BUILD=1",
-				);
-				INFOPLIST_FILE = "Target Support Files/SignalCoreKit/SignalCoreKit-Unit-Tests-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = (
-					"$(inherited)",
-					"-DTESTABLE_BUILD",
-				);
-				OTHER_SWIFT_FLAGS = "$(inherited) -DTESTABLE_BUILD";
-				PRODUCT_NAME = "SignalCoreKit-Unit-Tests";
-				SDKROOT = iphoneos;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5.0;
-				VALIDATE_PRODUCT = YES;
-				WARNING_CFLAGS = (
-					"$(inherited)",
-					"-Werror=incompatible-pointer-types",
-					"-Werror=protocol",
-					"-Werror=incomplete-implementation",
-					"-Werror=objc-literal-conversion",
-					"-Werror=objc-property-synthesis",
-					"-Werror=objc-protocol-property-synthesis",
-				);
-			};
-			name = "Testable Release";
-		};
 		3E78351BB9425C548482DDD3968DB8D1 /* App Store Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 38FA6B186C5E37811E0B6A766F435D25 /* PureLayout.release.xcconfig */;
@@ -14034,51 +14171,6 @@
 			};
 			name = "Testable Release";
 		};
-		455A89D80B71D1DBC612DD1086A1C2B5 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = E81FECB52BCBCDACC907B2B6AB90DBD8 /* SignalCoreKit.unit-tests.debug.xcconfig */;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				CODE_SIGNING_ALLOWED = YES;
-				CODE_SIGNING_REQUIRED = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				ENABLE_BITCODE = NO;
-				ENABLE_TESTABILITY = YES;
-				EXCLUDED_ARCHS = armv7;
-				GCC_PREFIX_HEADER = "Target Support Files/SignalCoreKit/SignalCoreKit-Unit-Tests-prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"TESTABLE_BUILD=1",
-				);
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				INFOPLIST_FILE = "Target Support Files/SignalCoreKit/SignalCoreKit-Unit-Tests-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = (
-					"$(inherited)",
-					"-DTESTABLE_BUILD",
-				);
-				OTHER_SWIFT_FLAGS = "$(inherited) -DTESTABLE_BUILD -suppress-warnings";
-				PRODUCT_NAME = "SignalCoreKit-Unit-Tests";
-				SDKROOT = iphoneos;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5.0;
-				WARNING_CFLAGS = (
-					"$(inherited)",
-					"-Werror=incompatible-pointer-types",
-					"-Werror=protocol",
-					"-Werror=incomplete-implementation",
-					"-Werror=objc-literal-conversion",
-					"-Werror=objc-property-synthesis",
-					"-Werror=objc-protocol-property-synthesis",
-				);
-			};
-			name = Debug;
-		};
 		460BFA1991858883FC7FC8FF498F3C51 /* Testable Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 844910B67DF4EB149CF56C6F6FA7B885 /* Pods-SignalNSE.testable release.xcconfig */;
@@ -14184,51 +14276,6 @@
 				);
 			};
 			name = "App Store Release";
-		};
-		48DA5EEA97F5188A335BC719577EBCC9 /* Profiling */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 52C1C6DE8477C0ADB7463BC61F8F894E /* SignalCoreKit.unit-tests.release.xcconfig */;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				CODE_SIGNING_ALLOWED = YES;
-				CODE_SIGNING_REQUIRED = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				ENABLE_BITCODE = NO;
-				ENABLE_TESTABILITY = YES;
-				EXCLUDED_ARCHS = armv7;
-				GCC_PREFIX_HEADER = "Target Support Files/SignalCoreKit/SignalCoreKit-Unit-Tests-prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"TESTABLE_BUILD=1",
-				);
-				INFOPLIST_FILE = "Target Support Files/SignalCoreKit/SignalCoreKit-Unit-Tests-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = (
-					"$(inherited)",
-					"-DTESTABLE_BUILD",
-				);
-				OTHER_SWIFT_FLAGS = "$(inherited) -DTESTABLE_BUILD";
-				PRODUCT_NAME = "SignalCoreKit-Unit-Tests";
-				SDKROOT = iphoneos;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5.0;
-				VALIDATE_PRODUCT = YES;
-				WARNING_CFLAGS = (
-					"$(inherited)",
-					"-Werror=incompatible-pointer-types",
-					"-Werror=protocol",
-					"-Werror=incomplete-implementation",
-					"-Werror=objc-literal-conversion",
-					"-Werror=objc-property-synthesis",
-					"-Werror=objc-protocol-property-synthesis",
-				);
-			};
-			name = Profiling;
 		};
 		49939C2E69D23EFCD7D7183AC6F74E90 /* App Store Release */ = {
 			isa = XCBuildConfiguration;
@@ -14497,53 +14544,6 @@
 				);
 			};
 			name = Profiling;
-		};
-		4EBDA0503C9F79EFE6F020BFBDA834B2 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = EB662E789E700715990679BF6E427E76 /* SignalCoreKit.release.xcconfig */;
-			buildSettings = {
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_BITCODE = NO;
-				EXCLUDED_ARCHS = armv7;
-				GCC_PREFIX_HEADER = "Target Support Files/SignalCoreKit/SignalCoreKit-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/SignalCoreKit/SignalCoreKit-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MODULEMAP_FILE = "Target Support Files/SignalCoreKit/SignalCoreKit.modulemap";
-				PRODUCT_MODULE_NAME = SignalCoreKit;
-				PRODUCT_NAME = SignalCoreKit;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-				WARNING_CFLAGS = (
-					"$(inherited)",
-					"-Werror=incompatible-pointer-types",
-					"-Werror=protocol",
-					"-Werror=incomplete-implementation",
-					"-Werror=objc-literal-conversion",
-					"-Werror=objc-property-synthesis",
-					"-Werror=objc-protocol-property-synthesis",
-				);
-			};
-			name = Release;
 		};
 		503B4350F37027B81920C1F708D11371 /* App Store Release */ = {
 			isa = XCBuildConfiguration;
@@ -15055,64 +15055,6 @@
 				OTHER_SWIFT_FLAGS = "$(inherited) -DTESTABLE_BUILD";
 				PRODUCT_MODULE_NAME = Logging;
 				PRODUCT_NAME = Logging;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-				WARNING_CFLAGS = (
-					"$(inherited)",
-					"-Werror=incompatible-pointer-types",
-					"-Werror=protocol",
-					"-Werror=incomplete-implementation",
-					"-Werror=objc-literal-conversion",
-					"-Werror=objc-property-synthesis",
-					"-Werror=objc-protocol-property-synthesis",
-				);
-			};
-			name = "Testable Release";
-		};
-		5EE57D5FA1408C8C1AEE065874CF3EA8 /* Testable Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = EB662E789E700715990679BF6E427E76 /* SignalCoreKit.release.xcconfig */;
-			buildSettings = {
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_BITCODE = NO;
-				ENABLE_TESTABILITY = YES;
-				EXCLUDED_ARCHS = armv7;
-				GCC_PREFIX_HEADER = "Target Support Files/SignalCoreKit/SignalCoreKit-prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"TESTABLE_BUILD=1",
-				);
-				INFOPLIST_FILE = "Target Support Files/SignalCoreKit/SignalCoreKit-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MODULEMAP_FILE = "Target Support Files/SignalCoreKit/SignalCoreKit.modulemap";
-				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = (
-					"$(inherited)",
-					"-DTESTABLE_BUILD",
-				);
-				OTHER_SWIFT_FLAGS = "$(inherited) -DTESTABLE_BUILD";
-				PRODUCT_MODULE_NAME = SignalCoreKit;
-				PRODUCT_NAME = SignalCoreKit;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
@@ -15994,6 +15936,64 @@
 			};
 			name = Release;
 		};
+		7A2FC9B4D44E2327D50FCA7A83C4914D /* Testable Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = EB662E789E700715990679BF6E427E76 /* SignalCoreKit.release.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				ENABLE_TESTABILITY = YES;
+				EXCLUDED_ARCHS = armv7;
+				GCC_PREFIX_HEADER = "Target Support Files/SignalCoreKit/SignalCoreKit-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"TESTABLE_BUILD=1",
+				);
+				INFOPLIST_FILE = "Target Support Files/SignalCoreKit/SignalCoreKit-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/SignalCoreKit/SignalCoreKit.modulemap";
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-DTESTABLE_BUILD",
+				);
+				OTHER_SWIFT_FLAGS = "$(inherited) -DTESTABLE_BUILD";
+				PRODUCT_MODULE_NAME = SignalCoreKit;
+				PRODUCT_NAME = SignalCoreKit;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+				WARNING_CFLAGS = (
+					"$(inherited)",
+					"-Werror=incompatible-pointer-types",
+					"-Werror=protocol",
+					"-Werror=incomplete-implementation",
+					"-Werror=objc-literal-conversion",
+					"-Werror=objc-property-synthesis",
+					"-Werror=objc-protocol-property-synthesis",
+				);
+			};
+			name = "Testable Release";
+		};
 		7A3377A61C6E73635D17793AFE9C1A09 /* Profiling */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 06146D9AA4D45957F5017AC89B6B0CCB /* Pods-SignalMessaging.profiling.xcconfig */;
@@ -16785,64 +16785,6 @@
 				);
 			};
 			name = Profiling;
-		};
-		8CAC02EAA61143208E8BC80566272AF9 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = C68D7DB565CC554E43363CDDFD71F785 /* SignalCoreKit.debug.xcconfig */;
-			buildSettings = {
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_BITCODE = NO;
-				ENABLE_TESTABILITY = YES;
-				EXCLUDED_ARCHS = armv7;
-				GCC_PREFIX_HEADER = "Target Support Files/SignalCoreKit/SignalCoreKit-prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"TESTABLE_BUILD=1",
-				);
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				INFOPLIST_FILE = "Target Support Files/SignalCoreKit/SignalCoreKit-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MODULEMAP_FILE = "Target Support Files/SignalCoreKit/SignalCoreKit.modulemap";
-				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = (
-					"$(inherited)",
-					"-DTESTABLE_BUILD",
-				);
-				OTHER_SWIFT_FLAGS = "$(inherited) -DTESTABLE_BUILD -suppress-warnings";
-				PRODUCT_MODULE_NAME = SignalCoreKit;
-				PRODUCT_NAME = SignalCoreKit;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-				WARNING_CFLAGS = (
-					"$(inherited)",
-					"-Werror=incompatible-pointer-types",
-					"-Werror=protocol",
-					"-Werror=incomplete-implementation",
-					"-Werror=objc-literal-conversion",
-					"-Werror=objc-property-synthesis",
-					"-Werror=objc-protocol-property-synthesis",
-				);
-			};
-			name = Debug;
 		};
 		8DD3831ED35EE89E931D4F1EDF4153A1 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -18056,6 +17998,64 @@
 			};
 			name = Release;
 		};
+		9BC64E0B35A5C300777077CFDB413A84 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = C68D7DB565CC554E43363CDDFD71F785 /* SignalCoreKit.debug.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				ENABLE_TESTABILITY = YES;
+				EXCLUDED_ARCHS = armv7;
+				GCC_PREFIX_HEADER = "Target Support Files/SignalCoreKit/SignalCoreKit-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"TESTABLE_BUILD=1",
+				);
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				INFOPLIST_FILE = "Target Support Files/SignalCoreKit/SignalCoreKit-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/SignalCoreKit/SignalCoreKit.modulemap";
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-DTESTABLE_BUILD",
+				);
+				OTHER_SWIFT_FLAGS = "$(inherited) -DTESTABLE_BUILD -suppress-warnings";
+				PRODUCT_MODULE_NAME = SignalCoreKit;
+				PRODUCT_NAME = SignalCoreKit;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+				WARNING_CFLAGS = (
+					"$(inherited)",
+					"-Werror=incompatible-pointer-types",
+					"-Werror=protocol",
+					"-Werror=incomplete-implementation",
+					"-Werror=objc-literal-conversion",
+					"-Werror=objc-property-synthesis",
+					"-Werror=objc-protocol-property-synthesis",
+				);
+			};
+			name = Debug;
+		};
 		9C7019A8F220BEFCA66CC1821E98B255 /* Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = E23D782F01A50B03C56B7BC283E02064 /* YYImage.release.xcconfig */;
@@ -18909,6 +18909,98 @@
 			};
 			name = "App Store Release";
 		};
+		B6544A0B24CC1D29FE0C200DF4C46791 /* App Store Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = EB662E789E700715990679BF6E427E76 /* SignalCoreKit.release.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				EXCLUDED_ARCHS = armv7;
+				GCC_PREFIX_HEADER = "Target Support Files/SignalCoreKit/SignalCoreKit-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/SignalCoreKit/SignalCoreKit-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/SignalCoreKit/SignalCoreKit.modulemap";
+				PRODUCT_MODULE_NAME = SignalCoreKit;
+				PRODUCT_NAME = SignalCoreKit;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+				WARNING_CFLAGS = (
+					"$(inherited)",
+					"-Werror=incompatible-pointer-types",
+					"-Werror=protocol",
+					"-Werror=incomplete-implementation",
+					"-Werror=objc-literal-conversion",
+					"-Werror=objc-property-synthesis",
+					"-Werror=objc-protocol-property-synthesis",
+				);
+			};
+			name = "App Store Release";
+		};
+		B9187D36824D01BB9163D14DD8427F6D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = E81FECB52BCBCDACC907B2B6AB90DBD8 /* SignalCoreKit.unit-tests.debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGNING_ALLOWED = YES;
+				CODE_SIGNING_REQUIRED = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				ENABLE_BITCODE = NO;
+				ENABLE_TESTABILITY = YES;
+				EXCLUDED_ARCHS = armv7;
+				GCC_PREFIX_HEADER = "Target Support Files/SignalCoreKit/SignalCoreKit-Unit-Tests-prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"TESTABLE_BUILD=1",
+				);
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				INFOPLIST_FILE = "Target Support Files/SignalCoreKit/SignalCoreKit-Unit-Tests-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-DTESTABLE_BUILD",
+				);
+				OTHER_SWIFT_FLAGS = "$(inherited) -DTESTABLE_BUILD -suppress-warnings";
+				PRODUCT_NAME = "SignalCoreKit-Unit-Tests";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				WARNING_CFLAGS = (
+					"$(inherited)",
+					"-Werror=incompatible-pointer-types",
+					"-Werror=protocol",
+					"-Werror=incomplete-implementation",
+					"-Werror=objc-literal-conversion",
+					"-Werror=objc-property-synthesis",
+					"-Werror=objc-protocol-property-synthesis",
+				);
+			};
+			name = Debug;
+		};
 		B9D89298018D9DE43ECA45A5F8DEE2F1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F6F1308A93E6A1EE62BFFA477EA4B4E8 /* SSZipArchive.release.xcconfig */;
@@ -19176,53 +19268,6 @@
 			};
 			name = "Testable Release";
 		};
-		C3E15FE91EE0E4C9051FBF7E4E4C84E5 /* App Store Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = EB662E789E700715990679BF6E427E76 /* SignalCoreKit.release.xcconfig */;
-			buildSettings = {
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_BITCODE = NO;
-				EXCLUDED_ARCHS = armv7;
-				GCC_PREFIX_HEADER = "Target Support Files/SignalCoreKit/SignalCoreKit-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/SignalCoreKit/SignalCoreKit-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MODULEMAP_FILE = "Target Support Files/SignalCoreKit/SignalCoreKit.modulemap";
-				PRODUCT_MODULE_NAME = SignalCoreKit;
-				PRODUCT_NAME = SignalCoreKit;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-				WARNING_CFLAGS = (
-					"$(inherited)",
-					"-Werror=incompatible-pointer-types",
-					"-Werror=protocol",
-					"-Werror=incomplete-implementation",
-					"-Werror=objc-literal-conversion",
-					"-Werror=objc-property-synthesis",
-					"-Werror=objc-protocol-property-synthesis",
-				);
-			};
-			name = "App Store Release";
-		};
 		C462448722F428B1EA11F0D97D33A59C /* Testable Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = E89C11CCBA9FDA9C4E5FD0BC0EF6E749 /* BonMot.release.xcconfig */;
@@ -19445,6 +19490,53 @@
 				);
 			};
 			name = "Testable Release";
+		};
+		C662FEAC7B8CEB93A7531C2830DC0762 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = EB662E789E700715990679BF6E427E76 /* SignalCoreKit.release.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				EXCLUDED_ARCHS = armv7;
+				GCC_PREFIX_HEADER = "Target Support Files/SignalCoreKit/SignalCoreKit-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/SignalCoreKit/SignalCoreKit-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/SignalCoreKit/SignalCoreKit.modulemap";
+				PRODUCT_MODULE_NAME = SignalCoreKit;
+				PRODUCT_NAME = SignalCoreKit;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+				WARNING_CFLAGS = (
+					"$(inherited)",
+					"-Werror=incompatible-pointer-types",
+					"-Werror=protocol",
+					"-Werror=incomplete-implementation",
+					"-Werror=objc-literal-conversion",
+					"-Werror=objc-property-synthesis",
+					"-Werror=objc-protocol-property-synthesis",
+				);
+			};
+			name = Release;
 		};
 		C70733646B5C941FE7214D3438B37D72 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -21365,98 +21457,6 @@
 			};
 			name = "Testable Release";
 		};
-		FE5F1948B22F857B3F57422EEF5CF3E2 /* Profiling */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = EB662E789E700715990679BF6E427E76 /* SignalCoreKit.release.xcconfig */;
-			buildSettings = {
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_BITCODE = NO;
-				ENABLE_TESTABILITY = YES;
-				EXCLUDED_ARCHS = armv7;
-				GCC_PREFIX_HEADER = "Target Support Files/SignalCoreKit/SignalCoreKit-prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"TESTABLE_BUILD=1",
-				);
-				INFOPLIST_FILE = "Target Support Files/SignalCoreKit/SignalCoreKit-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MODULEMAP_FILE = "Target Support Files/SignalCoreKit/SignalCoreKit.modulemap";
-				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = (
-					"$(inherited)",
-					"-DTESTABLE_BUILD",
-				);
-				OTHER_SWIFT_FLAGS = "$(inherited) -DTESTABLE_BUILD";
-				PRODUCT_MODULE_NAME = SignalCoreKit;
-				PRODUCT_NAME = SignalCoreKit;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-				WARNING_CFLAGS = (
-					"$(inherited)",
-					"-Werror=incompatible-pointer-types",
-					"-Werror=protocol",
-					"-Werror=incomplete-implementation",
-					"-Werror=objc-literal-conversion",
-					"-Werror=objc-property-synthesis",
-					"-Werror=objc-protocol-property-synthesis",
-				);
-			};
-			name = Profiling;
-		};
-		FF4057E84F7E4FEFCE5F67474AF321C7 /* App Store Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 52C1C6DE8477C0ADB7463BC61F8F894E /* SignalCoreKit.unit-tests.release.xcconfig */;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				CODE_SIGNING_ALLOWED = YES;
-				CODE_SIGNING_REQUIRED = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				ENABLE_BITCODE = NO;
-				EXCLUDED_ARCHS = armv7;
-				GCC_PREFIX_HEADER = "Target Support Files/SignalCoreKit/SignalCoreKit-Unit-Tests-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/SignalCoreKit/SignalCoreKit-Unit-Tests-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				PRODUCT_NAME = "SignalCoreKit-Unit-Tests";
-				SDKROOT = iphoneos;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5.0;
-				VALIDATE_PRODUCT = YES;
-				WARNING_CFLAGS = (
-					"$(inherited)",
-					"-Werror=incompatible-pointer-types",
-					"-Werror=protocol",
-					"-Werror=incomplete-implementation",
-					"-Werror=objc-literal-conversion",
-					"-Werror=objc-property-synthesis",
-					"-Werror=objc-protocol-property-synthesis",
-				);
-			};
-			name = "App Store Release";
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -21703,11 +21703,11 @@
 		73642E386F9FB0028C030F9F6B171D81 /* Build configuration list for PBXNativeTarget "SignalCoreKit" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				C3E15FE91EE0E4C9051FBF7E4E4C84E5 /* App Store Release */,
-				8CAC02EAA61143208E8BC80566272AF9 /* Debug */,
-				FE5F1948B22F857B3F57422EEF5CF3E2 /* Profiling */,
-				4EBDA0503C9F79EFE6F020BFBDA834B2 /* Release */,
-				5EE57D5FA1408C8C1AEE065874CF3EA8 /* Testable Release */,
+				B6544A0B24CC1D29FE0C200DF4C46791 /* App Store Release */,
+				9BC64E0B35A5C300777077CFDB413A84 /* Debug */,
+				13276CFDC87356CC3351020A1B691AEB /* Profiling */,
+				C662FEAC7B8CEB93A7531C2830DC0762 /* Release */,
+				7A2FC9B4D44E2327D50FCA7A83C4914D /* Testable Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -21715,11 +21715,11 @@
 		82694518473933F22D2C75B25862A2DB /* Build configuration list for PBXNativeTarget "SignalCoreKit-Unit-Tests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				FF4057E84F7E4FEFCE5F67474AF321C7 /* App Store Release */,
-				455A89D80B71D1DBC612DD1086A1C2B5 /* Debug */,
-				48DA5EEA97F5188A335BC719577EBCC9 /* Profiling */,
-				1D396E4B13900FFF79130BA6FEAB3B5F /* Release */,
-				3DA94908B6FEF83A1837E40A0492FFFE /* Testable Release */,
+				0A5FCB640FEBD3A8946B30BF497E6F9C /* App Store Release */,
+				B9187D36824D01BB9163D14DD8427F6D /* Debug */,
+				313CC4E16A1370F287904F5337C70728 /* Profiling */,
+				0D66E6B97D527CB1898B576C173807D0 /* Release */,
+				1A062FEFDFF23A7ED88BECE1F639852E /* Testable Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
