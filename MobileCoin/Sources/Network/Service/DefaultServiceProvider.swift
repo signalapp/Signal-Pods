@@ -15,6 +15,7 @@ final class DefaultServiceProvider: ServiceProvider {
     private let keyImage: FogKeyImageConnection
     private let block: FogBlockConnection
     private let untrustedTxOut: FogUntrustedTxOutConnection
+    private let mistyswap: MistyswapConnection?
     private let grpcConnectionFactory: GrpcProtocolConnectionFactory
     private let httpConnectionFactory: HttpProtocolConnectionFactory
 
@@ -70,6 +71,16 @@ final class DefaultServiceProvider: ServiceProvider {
             grpcFactory: self.grpcConnectionFactory,
             config: networkConfig,
             targetQueue: targetQueue)
+
+        if networkConfig.mistyswapConfig() != nil {
+            self.mistyswap = MistyswapConnection(
+                httpFactory: self.httpConnectionFactory,
+                grpcFactory: self.grpcConnectionFactory,
+                config: networkConfig,
+                targetQueue: targetQueue)
+        } else {
+            self.mistyswap = nil
+        }
     }
 
     var consensusService: ConsensusService { consensus }
@@ -79,6 +90,7 @@ final class DefaultServiceProvider: ServiceProvider {
     var fogKeyImageService: FogKeyImageService { keyImage }
     var fogBlockService: FogBlockService { block }
     var fogUntrustedTxOutService: FogUntrustedTxOutService { untrustedTxOut }
+    var mistyswapService: MistyswapService? { mistyswap }
 
     func fogReportService(
         for fogReportUrl: FogUrl,
@@ -97,6 +109,7 @@ final class DefaultServiceProvider: ServiceProvider {
             self.keyImage.setTransportProtocolOption(transportProtocolOption)
             self.block.setTransportProtocolOption(transportProtocolOption)
             self.untrustedTxOut.setTransportProtocolOption(transportProtocolOption)
+            self.mistyswap?.setTransportProtocolOption(transportProtocolOption)
         }
     }
 
@@ -111,6 +124,10 @@ final class DefaultServiceProvider: ServiceProvider {
         keyImage.setAuthorization(credentials: credentials)
         block.setAuthorization(credentials: credentials)
         untrustedTxOut.setAuthorization(credentials: credentials)
+    }
+
+    func setMistyswapAuthorization(credentials: BasicCredentials) {
+        mistyswap?.setAuthorization(credentials: credentials)
     }
 }
 

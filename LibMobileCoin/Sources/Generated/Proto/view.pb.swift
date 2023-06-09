@@ -22,6 +22,65 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
   typealias Version = _2
 }
 
+//// The status associated with a MultiViewStoreQueryResponse
+public enum FogView_MultiViewStoreQueryResponseStatus: SwiftProtobuf.Enum {
+  public typealias RawValue = Int
+
+  //// Default status. Shouldn't be set explicitly.
+  case unknown // = 0
+
+  //// The Fog View Store successfully fulfilled the request.
+  case success // = 1
+
+  //// The Fog View Store is unable to decrypt a query within the MultiViewStoreQuery. It needs to be authenticated
+  //// by the router.
+  case authenticationError // = 2
+
+  //// The Fog View Store is not ready to service a MultiViewStoreQueryRequest. This might be because the store has
+  //// not loaded enough blocks yet.
+  case notReady // = 3
+  case UNRECOGNIZED(Int)
+
+  public init() {
+    self = .unknown
+  }
+
+  public init?(rawValue: Int) {
+    switch rawValue {
+    case 0: self = .unknown
+    case 1: self = .success
+    case 2: self = .authenticationError
+    case 3: self = .notReady
+    default: self = .UNRECOGNIZED(rawValue)
+    }
+  }
+
+  public var rawValue: Int {
+    switch self {
+    case .unknown: return 0
+    case .success: return 1
+    case .authenticationError: return 2
+    case .notReady: return 3
+    case .UNRECOGNIZED(let i): return i
+    }
+  }
+
+}
+
+#if swift(>=4.2)
+
+extension FogView_MultiViewStoreQueryResponseStatus: CaseIterable {
+  // The compiler won't synthesize support with the UNRECOGNIZED case.
+  public static var allCases: [FogView_MultiViewStoreQueryResponseStatus] = [
+    .unknown,
+    .success,
+    .authenticationError,
+    .notReady,
+  ]
+}
+
+#endif  // swift(>=4.2)
+
 //// Corresponds to and documents values of TxOutSearchResult.result_code
 //// If any values are added they must be synced with TxOutSearchResult used in recovery db
 public enum FogView_TxOutSearchResultCode: SwiftProtobuf.Enum {
@@ -90,6 +149,181 @@ extension FogView_TxOutSearchResultCode: CaseIterable {
 }
 
 #endif  // swift(>=4.2)
+
+public struct FogView_FogViewRouterRequest {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var requestData: FogView_FogViewRouterRequest.OneOf_RequestData? = nil
+
+  //// This is called to perform IX key exchange
+  //// with the enclave before making a query call.
+  public var auth: Attest_AuthMessage {
+    get {
+      if case .auth(let v)? = requestData {return v}
+      return Attest_AuthMessage()
+    }
+    set {requestData = .auth(newValue)}
+  }
+
+  //// Input should be an encrypted QueryRequest
+  public var query: Attest_Message {
+    get {
+      if case .query(let v)? = requestData {return v}
+      return Attest_Message()
+    }
+    set {requestData = .query(newValue)}
+  }
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public enum OneOf_RequestData: Equatable {
+    //// This is called to perform IX key exchange
+    //// with the enclave before making a query call.
+    case auth(Attest_AuthMessage)
+    //// Input should be an encrypted QueryRequest
+    case query(Attest_Message)
+
+  #if !swift(>=4.1)
+    public static func ==(lhs: FogView_FogViewRouterRequest.OneOf_RequestData, rhs: FogView_FogViewRouterRequest.OneOf_RequestData) -> Bool {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch (lhs, rhs) {
+      case (.auth, .auth): return {
+        guard case .auth(let l) = lhs, case .auth(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.query, .query): return {
+        guard case .query(let l) = lhs, case .query(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      default: return false
+      }
+    }
+  #endif
+  }
+
+  public init() {}
+}
+
+public struct FogView_FogViewRouterResponse {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var responseData: FogView_FogViewRouterResponse.OneOf_ResponseData? = nil
+
+  //// Returned for an auth request.
+  public var auth: Attest_AuthMessage {
+    get {
+      if case .auth(let v)? = responseData {return v}
+      return Attest_AuthMessage()
+    }
+    set {responseData = .auth(newValue)}
+  }
+
+  //// Returned for a query request.
+  //// The data is an encrypted QueryResponse.
+  public var query: Attest_Message {
+    get {
+      if case .query(let v)? = responseData {return v}
+      return Attest_Message()
+    }
+    set {responseData = .query(newValue)}
+  }
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public enum OneOf_ResponseData: Equatable {
+    //// Returned for an auth request.
+    case auth(Attest_AuthMessage)
+    //// Returned for a query request.
+    //// The data is an encrypted QueryResponse.
+    case query(Attest_Message)
+
+  #if !swift(>=4.1)
+    public static func ==(lhs: FogView_FogViewRouterResponse.OneOf_ResponseData, rhs: FogView_FogViewRouterResponse.OneOf_ResponseData) -> Bool {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch (lhs, rhs) {
+      case (.auth, .auth): return {
+        guard case .auth(let l) = lhs, case .auth(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.query, .query): return {
+        guard case .query(let l) = lhs, case .query(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      default: return false
+      }
+    }
+  #endif
+  }
+
+  public init() {}
+}
+
+public struct FogView_MultiViewStoreQueryRequest {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  //// A list of queries encrypted for Fog View Stores.
+  public var queries: [Attest_NonceMessage] = []
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
+public struct FogView_MultiViewStoreQueryResponse {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  //// Optional field that gets set when the Fog View Store is able to decrypt a query
+  //// included in the MultiViewStoreQueryRequest and create a query response for that
+  ///  query.
+  public var queryResponse: Attest_NonceMessage {
+    get {return _queryResponse ?? Attest_NonceMessage()}
+    set {_queryResponse = newValue}
+  }
+  /// Returns true if `queryResponse` has been explicitly set.
+  public var hasQueryResponse: Bool {return self._queryResponse != nil}
+  /// Clears the value of `queryResponse`. Subsequent reads from it will return its default value.
+  public mutating func clearQueryResponse() {self._queryResponse = nil}
+
+  //// The FogViewStoreUri for the specific Fog View Store that
+  //// tried to decrypt the MultiViewStoreQueryRequest and failed.
+  //// The client should subsequently authenticate with the machine
+  //// described by this URI.
+  public var storeUri: String = String()
+
+  //// Status that gets returned when the Fog View Store services a MultiViewStoreQueryRequest.
+  public var status: FogView_MultiViewStoreQueryResponseStatus = .unknown
+
+  //// The block range that this view store is responsible for based on the store's sharding strategy. Note that this
+  //// doesn't mean the block ranges that this store has processed. Rather, this is the range of blocks that this
+  //// store is configured to serve once they become available.
+  public var blockRange: FogCommon_BlockRange {
+    get {return _blockRange ?? FogCommon_BlockRange()}
+    set {_blockRange = newValue}
+  }
+  /// Returns true if `blockRange` has been explicitly set.
+  public var hasBlockRange: Bool {return self._blockRange != nil}
+  /// Clears the value of `blockRange`. Subsequent reads from it will return its default value.
+  public mutating func clearBlockRange() {self._blockRange = nil}
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+
+  fileprivate var _queryResponse: Attest_NonceMessage? = nil
+  fileprivate var _blockRange: FogCommon_BlockRange? = nil
+}
 
 //// There are several kinds of records returned by the fog view API
 //// - RngRecords, which a user can use with their private key to construct KexRng's
@@ -228,6 +462,8 @@ public struct FogView_QueryResponse {
   public var decommissionedIngestInvocations: [FogView_DecommissionedIngestInvocation] = []
 
   //// Any TxOutSearchResults from the get_txos in the request.
+  //// TODO: Deprecate this field once clients have been given enough time to upgrade to the new
+  //// fixed_tx_out_search_result field.
   public var txOutSearchResults: [FogView_TxOutSearchResult] = []
 
   //// Extra data: The index of the last known block.
@@ -239,6 +475,10 @@ public struct FogView_QueryResponse {
   //// This can be used by the client as a hint when choosing cryptonote mixin indices.
   //// This field doesn't have the same "cursor" semantics as the other fields.
   public var lastKnownBlockCumulativeTxoCount: UInt64 = 0
+
+  //// Any FixedTxOutSearchResults from the get_txos in the request. Will be filled alongside the tx_out_search_result
+  //// field and contains the same payload data, but in a different format.
+  public var fixedTxOutSearchResults: [FogView_FixedTxOutSearchResult] = []
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -314,6 +554,40 @@ public struct FogView_TxOutSearchResult {
   //// It is be zero-padding in the other cases.
   //// FIXME: MC-1491 ensure this happens either in enclave or db, or wait for ORAM
   public var ciphertext: Data = Data()
+
+  //// Unused padding that needs to be returned to maintain internal obliviousness.
+  public var padding: Data = Data()
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
+//// Contains the same payload data as a TxOutSearchResult, but the payload is contained within a ciphertext of fixed
+/// length.
+public struct FogView_FixedTxOutSearchResult {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  //// The search key associated to this result
+  public var searchKey: Data = Data()
+
+  //// The result code for the query.
+  //// This is logically an enum, but should not be an enum because protobuf
+  //// requires that enums are encoded using the "varint" encoding which is not fixed size.
+  //// We want that e.g. "Found" and "NotFound" have the same length on the wire to avoid leaking that.
+  //// So it is a fixed32 in protobuf, and the 0 (default) value is intentionally unused.
+  public var resultCode: UInt32 = 0
+
+  //// A ciphertext, which is a view-key encrypted TxOutRecord in case result_code == 1.
+  //// FIXME: MC-1491 ensure this happens either in enclave or db, or wait for ORAM
+  public var ciphertext: Data = Data()
+
+  //// The length of the payload that is encrypted in the ciphertext. Ciphertexts will always be of fixed length, but
+  //// the contained payload may be less than this length, so the rest of the ciphertext is zeroed out. These
+  //// zeroed bytes should not be interpreted by the client, and this value tells the client which bytes to interpret.
+  public var payloadLength: UInt32 = 0
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -452,13 +726,21 @@ public struct FogView_TxOutRecord {
 }
 
 #if swift(>=5.5) && canImport(_Concurrency)
+extension FogView_MultiViewStoreQueryResponseStatus: @unchecked Sendable {}
 extension FogView_TxOutSearchResultCode: @unchecked Sendable {}
+extension FogView_FogViewRouterRequest: @unchecked Sendable {}
+extension FogView_FogViewRouterRequest.OneOf_RequestData: @unchecked Sendable {}
+extension FogView_FogViewRouterResponse: @unchecked Sendable {}
+extension FogView_FogViewRouterResponse.OneOf_ResponseData: @unchecked Sendable {}
+extension FogView_MultiViewStoreQueryRequest: @unchecked Sendable {}
+extension FogView_MultiViewStoreQueryResponse: @unchecked Sendable {}
 extension FogView_QueryRequestAAD: @unchecked Sendable {}
 extension FogView_QueryRequest: @unchecked Sendable {}
 extension FogView_QueryResponse: @unchecked Sendable {}
 extension FogView_RngRecord: @unchecked Sendable {}
 extension FogView_DecommissionedIngestInvocation: @unchecked Sendable {}
 extension FogView_TxOutSearchResult: @unchecked Sendable {}
+extension FogView_FixedTxOutSearchResult: @unchecked Sendable {}
 extension FogView_TxOutRecord: @unchecked Sendable {}
 extension FogView_TxOutRecord.OneOf_TxOutAmountMaskedTokenID: @unchecked Sendable {}
 #endif  // swift(>=5.5) && canImport(_Concurrency)
@@ -466,6 +748,15 @@ extension FogView_TxOutRecord.OneOf_TxOutAmountMaskedTokenID: @unchecked Sendabl
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
 fileprivate let _protobuf_package = "fog_view"
+
+extension FogView_MultiViewStoreQueryResponseStatus: SwiftProtobuf._ProtoNameProviding {
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    0: .same(proto: "UNKNOWN"),
+    1: .same(proto: "SUCCESS"),
+    2: .same(proto: "AUTHENTICATION_ERROR"),
+    3: .same(proto: "NOT_READY"),
+  ]
+}
 
 extension FogView_TxOutSearchResultCode: SwiftProtobuf._ProtoNameProviding {
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
@@ -476,6 +767,232 @@ extension FogView_TxOutSearchResultCode: SwiftProtobuf._ProtoNameProviding {
     4: .same(proto: "InternalError"),
     5: .same(proto: "RateLimited"),
   ]
+}
+
+extension FogView_FogViewRouterRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".FogViewRouterRequest"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "auth"),
+    2: .same(proto: "query"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try {
+        var v: Attest_AuthMessage?
+        var hadOneofValue = false
+        if let current = self.requestData {
+          hadOneofValue = true
+          if case .auth(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {
+          if hadOneofValue {try decoder.handleConflictingOneOf()}
+          self.requestData = .auth(v)
+        }
+      }()
+      case 2: try {
+        var v: Attest_Message?
+        var hadOneofValue = false
+        if let current = self.requestData {
+          hadOneofValue = true
+          if case .query(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {
+          if hadOneofValue {try decoder.handleConflictingOneOf()}
+          self.requestData = .query(v)
+        }
+      }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    switch self.requestData {
+    case .auth?: try {
+      guard case .auth(let v)? = self.requestData else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
+    }()
+    case .query?: try {
+      guard case .query(let v)? = self.requestData else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
+    }()
+    case nil: break
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: FogView_FogViewRouterRequest, rhs: FogView_FogViewRouterRequest) -> Bool {
+    if lhs.requestData != rhs.requestData {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension FogView_FogViewRouterResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".FogViewRouterResponse"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "auth"),
+    2: .same(proto: "query"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try {
+        var v: Attest_AuthMessage?
+        var hadOneofValue = false
+        if let current = self.responseData {
+          hadOneofValue = true
+          if case .auth(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {
+          if hadOneofValue {try decoder.handleConflictingOneOf()}
+          self.responseData = .auth(v)
+        }
+      }()
+      case 2: try {
+        var v: Attest_Message?
+        var hadOneofValue = false
+        if let current = self.responseData {
+          hadOneofValue = true
+          if case .query(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {
+          if hadOneofValue {try decoder.handleConflictingOneOf()}
+          self.responseData = .query(v)
+        }
+      }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    switch self.responseData {
+    case .auth?: try {
+      guard case .auth(let v)? = self.responseData else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
+    }()
+    case .query?: try {
+      guard case .query(let v)? = self.responseData else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
+    }()
+    case nil: break
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: FogView_FogViewRouterResponse, rhs: FogView_FogViewRouterResponse) -> Bool {
+    if lhs.responseData != rhs.responseData {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension FogView_MultiViewStoreQueryRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".MultiViewStoreQueryRequest"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "queries"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeRepeatedMessageField(value: &self.queries) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.queries.isEmpty {
+      try visitor.visitRepeatedMessageField(value: self.queries, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: FogView_MultiViewStoreQueryRequest, rhs: FogView_MultiViewStoreQueryRequest) -> Bool {
+    if lhs.queries != rhs.queries {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension FogView_MultiViewStoreQueryResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".MultiViewStoreQueryResponse"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .standard(proto: "query_response"),
+    2: .standard(proto: "store_uri"),
+    3: .same(proto: "status"),
+    4: .standard(proto: "block_range"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularMessageField(value: &self._queryResponse) }()
+      case 2: try { try decoder.decodeSingularStringField(value: &self.storeUri) }()
+      case 3: try { try decoder.decodeSingularEnumField(value: &self.status) }()
+      case 4: try { try decoder.decodeSingularMessageField(value: &self._blockRange) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    try { if let v = self._queryResponse {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
+    } }()
+    if !self.storeUri.isEmpty {
+      try visitor.visitSingularStringField(value: self.storeUri, fieldNumber: 2)
+    }
+    if self.status != .unknown {
+      try visitor.visitSingularEnumField(value: self.status, fieldNumber: 3)
+    }
+    try { if let v = self._blockRange {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 4)
+    } }()
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: FogView_MultiViewStoreQueryResponse, rhs: FogView_MultiViewStoreQueryResponse) -> Bool {
+    if lhs._queryResponse != rhs._queryResponse {return false}
+    if lhs.storeUri != rhs.storeUri {return false}
+    if lhs.status != rhs.status {return false}
+    if lhs._blockRange != rhs._blockRange {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
 }
 
 extension FogView_QueryRequestAAD: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
@@ -560,6 +1077,7 @@ extension FogView_QueryResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     7: .standard(proto: "tx_out_search_results"),
     8: .standard(proto: "last_known_block_count"),
     9: .standard(proto: "last_known_block_cumulative_txo_count"),
+    10: .standard(proto: "fixed_tx_out_search_results"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -577,6 +1095,7 @@ extension FogView_QueryResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       case 7: try { try decoder.decodeRepeatedMessageField(value: &self.txOutSearchResults) }()
       case 8: try { try decoder.decodeSingularUInt64Field(value: &self.lastKnownBlockCount) }()
       case 9: try { try decoder.decodeSingularUInt64Field(value: &self.lastKnownBlockCumulativeTxoCount) }()
+      case 10: try { try decoder.decodeRepeatedMessageField(value: &self.fixedTxOutSearchResults) }()
       default: break
       }
     }
@@ -610,6 +1129,9 @@ extension FogView_QueryResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     if self.lastKnownBlockCumulativeTxoCount != 0 {
       try visitor.visitSingularUInt64Field(value: self.lastKnownBlockCumulativeTxoCount, fieldNumber: 9)
     }
+    if !self.fixedTxOutSearchResults.isEmpty {
+      try visitor.visitRepeatedMessageField(value: self.fixedTxOutSearchResults, fieldNumber: 10)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -623,6 +1145,7 @@ extension FogView_QueryResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     if lhs.txOutSearchResults != rhs.txOutSearchResults {return false}
     if lhs.lastKnownBlockCount != rhs.lastKnownBlockCount {return false}
     if lhs.lastKnownBlockCumulativeTxoCount != rhs.lastKnownBlockCumulativeTxoCount {return false}
+    if lhs.fixedTxOutSearchResults != rhs.fixedTxOutSearchResults {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -720,6 +1243,7 @@ extension FogView_TxOutSearchResult: SwiftProtobuf.Message, SwiftProtobuf._Messa
     1: .standard(proto: "search_key"),
     2: .standard(proto: "result_code"),
     3: .same(proto: "ciphertext"),
+    4: .same(proto: "padding"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -731,6 +1255,7 @@ extension FogView_TxOutSearchResult: SwiftProtobuf.Message, SwiftProtobuf._Messa
       case 1: try { try decoder.decodeSingularBytesField(value: &self.searchKey) }()
       case 2: try { try decoder.decodeSingularFixed32Field(value: &self.resultCode) }()
       case 3: try { try decoder.decodeSingularBytesField(value: &self.ciphertext) }()
+      case 4: try { try decoder.decodeSingularBytesField(value: &self.padding) }()
       default: break
       }
     }
@@ -746,6 +1271,9 @@ extension FogView_TxOutSearchResult: SwiftProtobuf.Message, SwiftProtobuf._Messa
     if !self.ciphertext.isEmpty {
       try visitor.visitSingularBytesField(value: self.ciphertext, fieldNumber: 3)
     }
+    if !self.padding.isEmpty {
+      try visitor.visitSingularBytesField(value: self.padding, fieldNumber: 4)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -753,6 +1281,57 @@ extension FogView_TxOutSearchResult: SwiftProtobuf.Message, SwiftProtobuf._Messa
     if lhs.searchKey != rhs.searchKey {return false}
     if lhs.resultCode != rhs.resultCode {return false}
     if lhs.ciphertext != rhs.ciphertext {return false}
+    if lhs.padding != rhs.padding {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension FogView_FixedTxOutSearchResult: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".FixedTxOutSearchResult"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .standard(proto: "search_key"),
+    2: .standard(proto: "result_code"),
+    3: .same(proto: "ciphertext"),
+    4: .standard(proto: "payload_length"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularBytesField(value: &self.searchKey) }()
+      case 2: try { try decoder.decodeSingularFixed32Field(value: &self.resultCode) }()
+      case 3: try { try decoder.decodeSingularBytesField(value: &self.ciphertext) }()
+      case 4: try { try decoder.decodeSingularFixed32Field(value: &self.payloadLength) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.searchKey.isEmpty {
+      try visitor.visitSingularBytesField(value: self.searchKey, fieldNumber: 1)
+    }
+    if self.resultCode != 0 {
+      try visitor.visitSingularFixed32Field(value: self.resultCode, fieldNumber: 2)
+    }
+    if !self.ciphertext.isEmpty {
+      try visitor.visitSingularBytesField(value: self.ciphertext, fieldNumber: 3)
+    }
+    if self.payloadLength != 0 {
+      try visitor.visitSingularFixed32Field(value: self.payloadLength, fieldNumber: 4)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: FogView_FixedTxOutSearchResult, rhs: FogView_FixedTxOutSearchResult) -> Bool {
+    if lhs.searchKey != rhs.searchKey {return false}
+    if lhs.resultCode != rhs.resultCode {return false}
+    if lhs.ciphertext != rhs.ciphertext {return false}
+    if lhs.payloadLength != rhs.payloadLength {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

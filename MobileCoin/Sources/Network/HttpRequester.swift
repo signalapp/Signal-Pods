@@ -6,6 +6,7 @@
 
 import Foundation
 import SwiftProtobuf
+import LibMobileCoin
 
 public protocol HttpRequester {
     func request(

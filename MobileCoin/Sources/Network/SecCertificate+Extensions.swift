@@ -70,6 +70,9 @@ extension Data {
 }
 
 extension SecTrust {
+    private typealias ChainOfTrustKeyMatch = (match: Bool, index: Int, key: SecKey)
+    private typealias ChainOfTrustKey = (index: Int, key: SecKey)
+
     public var certificateCount: Int {
         SecTrustGetCertificateCount(self)
     }
@@ -94,6 +97,45 @@ extension SecTrust {
             return .success(keys)
         } catch {
             return .failure(error)
+        }
+    }
+
+    /// Shared implementation of cert-pinning validation for HTTP and GRPC requesters.
+    ///
+    /// The `self` SecTrust object is the "server trust" certificate chain
+    /// The `pinnedKeys` are `[SecKey]`s we get from the pinned certificates stored on the client
+    func validateAgainst(
+        pinnedKeys: [SecKey],
+        completion: (Result<String, SSLTrustError>) -> Void
+    ) {
+        let matches: [ChainOfTrustKey]
+        let serverTrust = self
+        let trustChainEnumerated = serverTrust.publicKeyTrustChain.enumerated()
+        matches = trustChainEnumerated
+            .map { chain -> ChainOfTrustKeyMatch in
+                let serverCertificateKey = chain.element
+                let match = pinnedKeys.contains(serverCertificateKey)
+                return (match: match, index: chain.offset, key: serverCertificateKey)
+            }
+            .filter { $0.match }
+            .map { (index: $0.index, key: $0.key) }
+
+        switch matches.isNotEmpty {
+        case true:
+            let indexes = matches.map { "\($0.index)" }
+            let keys = matches.compactMap { $0.key.data }.map { "\($0.base64EncodedString() )" }
+            let message = """
+                    Success: pinned certificates matched with server's chain of trust
+                    at index(es): [\(indexes.joined(separator: ", "))] \
+                    with key(s): \(keys.joined(separator: ", \n"))
+                    """
+            completion(.success(message))
+        case false:
+            /// Failing here means that the public key of the server does not match the stored one.
+            /// This can either indicate a MITM attack, or that the backend certificate and the
+            /// private key changed, most likely due to expiration.
+            let message = "Failure: no pinned certificate matched in the server's chain of trust"
+            completion(.failure(SSLTrustError(message)))
         }
     }
 }

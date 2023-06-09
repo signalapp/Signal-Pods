@@ -107,4 +107,13 @@ class HttpProtocolConnectionFactory: ProtocolConnectionFactory {
             requester: RestApiRequester(requester: requester, baseUrl: url),
             targetQueue: targetQueue)
     }
+
+//    func makeMistyswapService(
+//        config: AttestedConnectionConfig<MistyswapUrl>,
+//        targetQueue: DispatchQueue?,
+//        rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)?,
+//        rngContext: Any?
+//    ) -> MistyswapHttpConnection {
+//        fatalError("HTTP Mistyswap connection not implemented")
+//    }
 }

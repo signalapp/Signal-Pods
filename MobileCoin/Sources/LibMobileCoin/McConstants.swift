@@ -118,6 +118,7 @@ extension McConstants {
     static let FOG_VIEW_PRODUCT_ID: UInt16 = 3
     static let FOG_LEDGER_PRODUCT_ID: UInt16 = 2
     static let FOG_REPORT_PRODUCT_ID: UInt16 = 4
+    static let MISTYSWAP_PRODUCT_ID: UInt16 = 2
 
     static let CONSENSUS_SECURITY_VERSION: UInt16 = 1
     static let DEV_CONSENSUS_MRSIGNER_HEX =
@@ -162,6 +163,7 @@ extension McConstants {
         121, 244, 252, 42, 166, 188, 185, 147, 1, 44, 60, 56, 108,
     ])
 
+    static let MISTYSWAP_SECURITY_VERSION: UInt16 = 6
 }
 
 // MARK: - Url
@@ -177,6 +179,14 @@ extension McConstants {
     /// Default port numbers
     static let CONSENSUS_DEFAULT_SECURE_PORT = 443
     static let CONSENSUS_DEFAULT_INSECURE_PORT = 3223
+
+    /// The part before the '://' of a URL.
+    static let MISTYSWAP_SCHEME_SECURE = "mistyswap"
+    static let MISTYSWAP_SCHEME_INSECURE = "insecure-mistyswap"
+
+    /// Default port numbers
+    static let MISTYSWAP_DEFAULT_SECURE_PORT = 443
+    static let MISTYSWAP_DEFAULT_INSECURE_PORT = 3223
 
     /// The part before the '://' of a URL.
     static let FOG_SCHEME_SECURE = "fog"

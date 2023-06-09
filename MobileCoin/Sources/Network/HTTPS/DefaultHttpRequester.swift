@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import LibMobileCoin
 
 public class DefaultHttpRequester: NSObject, HttpRequester {
     private var fogTrustRoots: SecSSLCertificates?
@@ -78,8 +79,6 @@ public class DefaultHttpRequester: NSObject, HttpRequester {
 }
 
 extension DefaultHttpRequester {
-    private typealias ChainOfTrustKeyMatch = (match: Bool, index: Int, key: SecKey)
-    private typealias ChainOfTrustKey = (index: Int, key: SecKey)
 
     public typealias URLAuthenticationChallengeCompletion = (
         URLSession.AuthChallengeDisposition,
@@ -104,35 +103,15 @@ extension DefaultHttpRequester {
             return
         }
 
-        /// Compare pinned & server public keys
-        let matches: [ChainOfTrustKey]
-        let trustChainEnumerated = trust.publicKeyTrustChain.enumerated()
-        matches = trustChainEnumerated
-            .map { chain -> ChainOfTrustKeyMatch in
-                let serverCertificateKey = chain.element
-                let match = pinnedKeys.contains(serverCertificateKey)
-                return (match: match, index: chain.offset, key: serverCertificateKey)
+        trust.validateAgainst(pinnedKeys: pinnedKeys) { result in
+            switch result {
+            case .success(let message):
+                logger.debug(message)
+                completionHandler(.useCredential, URLCredential(trust: trust))
+            case .failure(let error):
+                logger.error(error.localizedDescription)
+                completionHandler(.cancelAuthenticationChallenge, nil)
             }
-            .filter { $0.match }
-            .map { (index: $0.index, key: $0.key) }
-
-        switch matches.isNotEmpty {
-        case true:
-            let indexes = matches.map { "\($0.index)" }
-            let keys = matches.compactMap { $0.key.data }.map { "\($0.base64EncodedString() )" }
-            let message = """
-                    Success: pinned certificates matched with server's chain of trust
-                    at index(es): [\(indexes.joined(separator: ", "))] \
-                    with key(s): \(keys.joined(separator: ", \n"))
-                    """
-            logger.debug(message)
-            completionHandler(.useCredential, URLCredential(trust: trust))
-        case false:
-            /// Failing here means that the public key of the server does not match the stored one.
-            /// This can either indicate a MITM attack, or that the backend certificate and the 
-            /// private key changed, most likely due to expiration.
-            logger.error("Failure: no pinned certificate matched in the server's chain of trust")
-            completionHandler(.cancelAuthenticationChallenge, nil)
         }
     }
 

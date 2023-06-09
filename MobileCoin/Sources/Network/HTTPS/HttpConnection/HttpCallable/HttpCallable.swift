@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import LibMobileCoin
 
 public protocol HttpCallable {
     associatedtype Request

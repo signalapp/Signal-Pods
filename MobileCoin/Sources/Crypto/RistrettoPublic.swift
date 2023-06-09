@@ -45,3 +45,19 @@ extension External_CompressedRistretto {
         self.data = ristrettoPublic.data
     }
 }
+
+public struct WrappedRistrettoPublic: Hashable {
+    let ristretto: RistrettoPublic
+
+    public init?(_ data: Data) {
+        guard
+            let data32 = Data32(data.data),
+            let ristretto = RistrettoPublic(data32)
+        else {
+            return nil
+        }
+        self.ristretto = ristretto
+    }
+
+    public var data: Data { ristretto.data }
+}

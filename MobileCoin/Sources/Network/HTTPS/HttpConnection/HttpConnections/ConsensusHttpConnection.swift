@@ -62,4 +62,4 @@ extension ConsensusHttpConnection {
 }
 
 extension ConsensusHttpConnection: ConsensusServiceConnection {}
-extension Attest_AttestedApiRestClient: AuthHttpCallee, HTTPClient {}
+extension Attest_AttestedApiRestClient: AuthHttpCallee {}

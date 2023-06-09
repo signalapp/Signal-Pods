@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import LibMobileCoin
 
 public struct HttpCallResult<ResponsePayload> {
     let error: Error?

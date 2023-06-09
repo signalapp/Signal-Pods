@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import LibMobileCoin
 
 class HttpConnection: ConnectionProtocol {
     private let inner: SerialDispatchLock<Inner>

@@ -10,6 +10,7 @@ public struct PaymentRequest {
     public let value: UInt64?
     public let memo: String?
     public let tokenID: UInt64
+    public let paymentID: UInt64
 
     /// # Notes:
     /// * Providing a `value` of `0` is the same as passing `nil`, meaning no value is specified.
@@ -19,7 +20,8 @@ public struct PaymentRequest {
         publicAddress: PublicAddress,
         value: UInt64? = nil,
         memo: String? = nil,
-        tokenID: UInt64 = 0
+        tokenID: UInt64 = 0,
+        paymentID: UInt64 = 0
     ) {
         self.publicAddress = publicAddress
 
@@ -36,6 +38,7 @@ public struct PaymentRequest {
         }
 
         self.tokenID = tokenID
+        self.paymentID = paymentID
     }
 }
 
@@ -51,6 +54,7 @@ extension PaymentRequest {
         self.value = paymentRequest.value != 0 ? paymentRequest.value : nil
         self.memo = !paymentRequest.memo.isEmpty ? paymentRequest.memo : nil
         self.tokenID = paymentRequest.tokenID
+        self.paymentID = paymentRequest.paymentID
     }
 }
 
@@ -65,5 +69,6 @@ extension Printable_PaymentRequest {
             self.memo = memo
         }
         self.tokenID = paymentRequest.tokenID
+        self.paymentID = paymentRequest.paymentID
     }
 }

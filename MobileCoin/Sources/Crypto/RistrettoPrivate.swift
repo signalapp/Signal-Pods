@@ -45,3 +45,19 @@ extension External_RistrettoPrivate {
         self.data = ristrettoPrivate.data
     }
 }
+
+public struct WrappedRistrettoPrivate: Hashable {
+    let ristretto: RistrettoPrivate
+
+    public init?(_ data: Data) {
+        guard
+            let data32 = Data32(data.data),
+            let ristretto = RistrettoPrivate(data32)
+        else {
+            return nil
+        }
+        self.ristretto = ristretto
+    }
+
+    public var data: Data { ristretto.data }
+}

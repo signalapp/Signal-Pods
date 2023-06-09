@@ -1,5 +1,5 @@
 // swiftlint:disable:this file_name
-
+// swiftlint:disable file_length
 //
 //  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
@@ -473,6 +473,53 @@ extension TimedOutError: CustomStringConvertible {
 }
 
 extension TimedOutError: LocalizedError {
+    public var errorDescription: String? {
+        "\(self)"
+    }
+}
+
+public struct SSLTrustError: Error {
+    let reason: String
+
+    init(_ reason: String) {
+        self.reason = reason
+    }
+}
+
+extension SSLTrustError: CustomStringConvertible {
+    public var description: String {
+        "SSL Trust Error: \(reason)"
+    }
+}
+
+extension SSLTrustError: LocalizedError {
+    public var errorDescription: String? {
+        "\(self)"
+    }
+}
+
+public enum MistyswapError: Error {
+    case invalidInput(InvalidInputError)
+    case connectionError(ConnectionError)
+    case notInitialized(String)
+}
+
+extension MistyswapError: CustomStringConvertible {
+    public var description: String {
+        "Mistyswap error: " + {
+            switch self {
+            case .invalidInput(let reason):
+                return "Invalid input: \(reason)"
+            case .connectionError(let innerError):
+                return "\(innerError)"
+            case .notInitialized(let description):
+                return description
+            }
+        }()
+    }
+}
+
+extension MistyswapError: LocalizedError {
     public var errorDescription: String? {
         "\(self)"
     }

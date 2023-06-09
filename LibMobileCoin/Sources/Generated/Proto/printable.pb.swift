@@ -50,6 +50,9 @@ public struct Printable_PaymentRequest {
   //// Token id to transact in.
   public var tokenID: UInt64 = 0
 
+  //// Payment Id
+  public var paymentID: UInt64 = 0
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -235,6 +238,7 @@ extension Printable_PaymentRequest: SwiftProtobuf.Message, SwiftProtobuf._Messag
     2: .same(proto: "value"),
     3: .same(proto: "memo"),
     4: .standard(proto: "token_id"),
+    5: .standard(proto: "payment_id"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -247,6 +251,7 @@ extension Printable_PaymentRequest: SwiftProtobuf.Message, SwiftProtobuf._Messag
       case 2: try { try decoder.decodeSingularUInt64Field(value: &self.value) }()
       case 3: try { try decoder.decodeSingularStringField(value: &self.memo) }()
       case 4: try { try decoder.decodeSingularUInt64Field(value: &self.tokenID) }()
+      case 5: try { try decoder.decodeSingularUInt64Field(value: &self.paymentID) }()
       default: break
       }
     }
@@ -269,6 +274,9 @@ extension Printable_PaymentRequest: SwiftProtobuf.Message, SwiftProtobuf._Messag
     if self.tokenID != 0 {
       try visitor.visitSingularUInt64Field(value: self.tokenID, fieldNumber: 4)
     }
+    if self.paymentID != 0 {
+      try visitor.visitSingularUInt64Field(value: self.paymentID, fieldNumber: 5)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -277,6 +285,7 @@ extension Printable_PaymentRequest: SwiftProtobuf.Message, SwiftProtobuf._Messag
     if lhs.value != rhs.value {return false}
     if lhs.memo != rhs.memo {return false}
     if lhs.tokenID != rhs.tokenID {return false}
+    if lhs.paymentID != rhs.paymentID {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

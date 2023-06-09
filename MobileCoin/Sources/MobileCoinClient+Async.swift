@@ -113,6 +113,18 @@ extension MobileCoinClient {
         }
     }
 
+    public func amountTransferable(
+        tokenId: TokenId,
+        feeLevel: FeeLevel = .minimum
+    ) async throws -> UInt64 {
+        try await withCheckedThrowingContinuation { continuation in
+            amountTransferable(tokenId: tokenId,
+                               feeLevel: feeLevel) {
+                continuation.resume(with: $0)
+            }
+        }
+    }
+
     public func estimateTotalFee(
         toSendAmount amount: Amount,
         feeLevel: FeeLevel = .minimum

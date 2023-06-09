@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import LibMobileCoin
 
 public class RestApiRequester {
     let requester: HttpRequester

@@ -22,6 +22,71 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
   typealias Version = _2
 }
 
+//// The status associated with a MultiKeyImageStoreQueryResponse
+public enum FogLedger_MultiKeyImageStoreResponseStatus: SwiftProtobuf.Enum {
+  public typealias RawValue = Int
+
+  //// Ensure default value (unfilled status) doesn't falsely appear to be a success 
+  case unknown // = 0
+
+  //// The Fog Ledger Store successfully fulfilled the request.
+  case success // = 1
+
+  //// The Fog Ledger Store is unable to decrypt a query within the MultiKeyImageStoreRequest. It needs to be authenticated
+  //// by the router.
+  case authenticationError // = 2
+
+  //// The Fog Ledger Store is not ready to service a MultiLedgerStoreQueryRequest. This might be because the store has
+  //// not loaded enough blocks yet.
+  case notReady // = 3
+
+  //// The Fog Ledger Store could not decode the protobuf message.
+  case invalidArgument // = 4
+  case UNRECOGNIZED(Int)
+
+  public init() {
+    self = .unknown
+  }
+
+  public init?(rawValue: Int) {
+    switch rawValue {
+    case 0: self = .unknown
+    case 1: self = .success
+    case 2: self = .authenticationError
+    case 3: self = .notReady
+    case 4: self = .invalidArgument
+    default: self = .UNRECOGNIZED(rawValue)
+    }
+  }
+
+  public var rawValue: Int {
+    switch self {
+    case .unknown: return 0
+    case .success: return 1
+    case .authenticationError: return 2
+    case .notReady: return 3
+    case .invalidArgument: return 4
+    case .UNRECOGNIZED(let i): return i
+    }
+  }
+
+}
+
+#if swift(>=4.2)
+
+extension FogLedger_MultiKeyImageStoreResponseStatus: CaseIterable {
+  // The compiler won't synthesize support with the UNRECOGNIZED case.
+  public static var allCases: [FogLedger_MultiKeyImageStoreResponseStatus] = [
+    .unknown,
+    .success,
+    .authenticationError,
+    .notReady,
+    .invalidArgument,
+  ]
+}
+
+#endif  // swift(>=4.2)
+
 //// The logical result of an individual index in a GetOutputs request
 public enum FogLedger_OutputResultCode: SwiftProtobuf.Enum {
   public typealias RawValue = Int
@@ -183,6 +248,185 @@ extension FogLedger_TxOutResultCode: CaseIterable {
 }
 
 #endif  // swift(>=4.2)
+
+public struct FogLedger_LedgerRequest {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var requestData: FogLedger_LedgerRequest.OneOf_RequestData? = nil
+
+  public var auth: Attest_AuthMessage {
+    get {
+      if case .auth(let v)? = requestData {return v}
+      return Attest_AuthMessage()
+    }
+    set {requestData = .auth(newValue)}
+  }
+
+  /// TODO: Fill in block query service and merkle proof service.
+  /// Potentially untrusted_tx_out_service? To be decided.     
+  public var checkKeyImages: Attest_Message {
+    get {
+      if case .checkKeyImages(let v)? = requestData {return v}
+      return Attest_Message()
+    }
+    set {requestData = .checkKeyImages(newValue)}
+  }
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public enum OneOf_RequestData: Equatable {
+    case auth(Attest_AuthMessage)
+    /// TODO: Fill in block query service and merkle proof service.
+    /// Potentially untrusted_tx_out_service? To be decided.     
+    case checkKeyImages(Attest_Message)
+
+  #if !swift(>=4.1)
+    public static func ==(lhs: FogLedger_LedgerRequest.OneOf_RequestData, rhs: FogLedger_LedgerRequest.OneOf_RequestData) -> Bool {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch (lhs, rhs) {
+      case (.auth, .auth): return {
+        guard case .auth(let l) = lhs, case .auth(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.checkKeyImages, .checkKeyImages): return {
+        guard case .checkKeyImages(let l) = lhs, case .checkKeyImages(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      default: return false
+      }
+    }
+  #endif
+  }
+
+  public init() {}
+}
+
+public struct FogLedger_LedgerResponse {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var responseData: FogLedger_LedgerResponse.OneOf_ResponseData? = nil
+
+  public var auth: Attest_AuthMessage {
+    get {
+      if case .auth(let v)? = responseData {return v}
+      return Attest_AuthMessage()
+    }
+    set {responseData = .auth(newValue)}
+  }
+
+  /// TODO: Fill in block query service and merkle proof service.
+  /// Potentially untrusted_tx_out_service? To be decided.     
+  public var checkKeyImageResponse: Attest_Message {
+    get {
+      if case .checkKeyImageResponse(let v)? = responseData {return v}
+      return Attest_Message()
+    }
+    set {responseData = .checkKeyImageResponse(newValue)}
+  }
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public enum OneOf_ResponseData: Equatable {
+    case auth(Attest_AuthMessage)
+    /// TODO: Fill in block query service and merkle proof service.
+    /// Potentially untrusted_tx_out_service? To be decided.     
+    case checkKeyImageResponse(Attest_Message)
+
+  #if !swift(>=4.1)
+    public static func ==(lhs: FogLedger_LedgerResponse.OneOf_ResponseData, rhs: FogLedger_LedgerResponse.OneOf_ResponseData) -> Bool {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch (lhs, rhs) {
+      case (.auth, .auth): return {
+        guard case .auth(let l) = lhs, case .auth(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.checkKeyImageResponse, .checkKeyImageResponse): return {
+        guard case .checkKeyImageResponse(let l) = lhs, case .checkKeyImageResponse(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      default: return false
+      }
+    }
+  #endif
+  }
+
+  public init() {}
+}
+
+/// Identical to FogViewStoreDecryptionError
+public struct FogLedger_FogLedgerStoreDecryptionError {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  //// The FogLedgerStoreUri for the specific Fog Ledger Store that
+  //// tried to decrypt the MultiKeyImageStoreRequest and failed.
+  //// The client should subsequently authenticate with the machine
+  //// described by this URI.
+  public var storeUri: String = String()
+
+  //// An error message that describes the decryption error.
+  public var errorMessage: String = String()
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
+/// Identical to MultiViewStoreQueryRequest
+public struct FogLedger_MultiKeyImageStoreRequest {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  //// A list of queries encrypted for Fog Ledger Stores.
+  public var queries: [Attest_NonceMessage] = []
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
+public struct FogLedger_MultiKeyImageStoreResponse {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  //// Optional field that gets set when the Fog Ledger Store is able to decrypt a query
+  //// included in the MultiKeyImageStoreRequest and create a query response for that
+  ///  query. This is an encrypted CheckKeyImagesResponse.
+  public var queryResponse: Attest_NonceMessage {
+    get {return _queryResponse ?? Attest_NonceMessage()}
+    set {_queryResponse = newValue}
+  }
+  /// Returns true if `queryResponse` has been explicitly set.
+  public var hasQueryResponse: Bool {return self._queryResponse != nil}
+  /// Clears the value of `queryResponse`. Subsequent reads from it will return its default value.
+  public mutating func clearQueryResponse() {self._queryResponse = nil}
+
+  //// The FogLedgerStore for the specific Fog Ledger Store that
+  //// tried to decrypt the MultiLedgerStoreQueryRequest and failed.
+  //// The client should subsequently authenticate with the machine
+  //// described by this URI.
+  public var storeUri: String = String()
+
+  //// Status that gets returned when the Fog Ledger Store services a MultiKeyImageStoreRequest.
+  public var status: FogLedger_MultiKeyImageStoreResponseStatus = .unknown
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+
+  fileprivate var _queryResponse: Attest_NonceMessage? = nil
+}
 
 public struct FogLedger_GetOutputsRequest {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
@@ -565,9 +809,17 @@ public struct FogLedger_TxOutResult {
 }
 
 #if swift(>=5.5) && canImport(_Concurrency)
+extension FogLedger_MultiKeyImageStoreResponseStatus: @unchecked Sendable {}
 extension FogLedger_OutputResultCode: @unchecked Sendable {}
 extension FogLedger_KeyImageResultCode: @unchecked Sendable {}
 extension FogLedger_TxOutResultCode: @unchecked Sendable {}
+extension FogLedger_LedgerRequest: @unchecked Sendable {}
+extension FogLedger_LedgerRequest.OneOf_RequestData: @unchecked Sendable {}
+extension FogLedger_LedgerResponse: @unchecked Sendable {}
+extension FogLedger_LedgerResponse.OneOf_ResponseData: @unchecked Sendable {}
+extension FogLedger_FogLedgerStoreDecryptionError: @unchecked Sendable {}
+extension FogLedger_MultiKeyImageStoreRequest: @unchecked Sendable {}
+extension FogLedger_MultiKeyImageStoreResponse: @unchecked Sendable {}
 extension FogLedger_GetOutputsRequest: @unchecked Sendable {}
 extension FogLedger_GetOutputsResponse: @unchecked Sendable {}
 extension FogLedger_OutputResult: @unchecked Sendable {}
@@ -586,6 +838,16 @@ extension FogLedger_TxOutResult: @unchecked Sendable {}
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
 fileprivate let _protobuf_package = "fog_ledger"
+
+extension FogLedger_MultiKeyImageStoreResponseStatus: SwiftProtobuf._ProtoNameProviding {
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    0: .same(proto: "UNKNOWN"),
+    1: .same(proto: "SUCCESS"),
+    2: .same(proto: "AUTHENTICATION_ERROR"),
+    3: .same(proto: "NOT_READY"),
+    4: .same(proto: "INVALID_ARGUMENT"),
+  ]
+}
 
 extension FogLedger_OutputResultCode: SwiftProtobuf._ProtoNameProviding {
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
@@ -612,6 +874,264 @@ extension FogLedger_TxOutResultCode: SwiftProtobuf._ProtoNameProviding {
     2: .same(proto: "MalformedRequest"),
     3: .same(proto: "DatabaseError"),
   ]
+}
+
+extension FogLedger_LedgerRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".LedgerRequest"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "auth"),
+    2: .standard(proto: "check_key_images"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try {
+        var v: Attest_AuthMessage?
+        var hadOneofValue = false
+        if let current = self.requestData {
+          hadOneofValue = true
+          if case .auth(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {
+          if hadOneofValue {try decoder.handleConflictingOneOf()}
+          self.requestData = .auth(v)
+        }
+      }()
+      case 2: try {
+        var v: Attest_Message?
+        var hadOneofValue = false
+        if let current = self.requestData {
+          hadOneofValue = true
+          if case .checkKeyImages(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {
+          if hadOneofValue {try decoder.handleConflictingOneOf()}
+          self.requestData = .checkKeyImages(v)
+        }
+      }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    switch self.requestData {
+    case .auth?: try {
+      guard case .auth(let v)? = self.requestData else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
+    }()
+    case .checkKeyImages?: try {
+      guard case .checkKeyImages(let v)? = self.requestData else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
+    }()
+    case nil: break
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: FogLedger_LedgerRequest, rhs: FogLedger_LedgerRequest) -> Bool {
+    if lhs.requestData != rhs.requestData {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension FogLedger_LedgerResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".LedgerResponse"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "auth"),
+    2: .standard(proto: "check_key_image_response"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try {
+        var v: Attest_AuthMessage?
+        var hadOneofValue = false
+        if let current = self.responseData {
+          hadOneofValue = true
+          if case .auth(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {
+          if hadOneofValue {try decoder.handleConflictingOneOf()}
+          self.responseData = .auth(v)
+        }
+      }()
+      case 2: try {
+        var v: Attest_Message?
+        var hadOneofValue = false
+        if let current = self.responseData {
+          hadOneofValue = true
+          if case .checkKeyImageResponse(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {
+          if hadOneofValue {try decoder.handleConflictingOneOf()}
+          self.responseData = .checkKeyImageResponse(v)
+        }
+      }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    switch self.responseData {
+    case .auth?: try {
+      guard case .auth(let v)? = self.responseData else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
+    }()
+    case .checkKeyImageResponse?: try {
+      guard case .checkKeyImageResponse(let v)? = self.responseData else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
+    }()
+    case nil: break
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: FogLedger_LedgerResponse, rhs: FogLedger_LedgerResponse) -> Bool {
+    if lhs.responseData != rhs.responseData {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension FogLedger_FogLedgerStoreDecryptionError: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".FogLedgerStoreDecryptionError"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .standard(proto: "store_uri"),
+    2: .standard(proto: "error_message"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self.storeUri) }()
+      case 2: try { try decoder.decodeSingularStringField(value: &self.errorMessage) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.storeUri.isEmpty {
+      try visitor.visitSingularStringField(value: self.storeUri, fieldNumber: 1)
+    }
+    if !self.errorMessage.isEmpty {
+      try visitor.visitSingularStringField(value: self.errorMessage, fieldNumber: 2)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: FogLedger_FogLedgerStoreDecryptionError, rhs: FogLedger_FogLedgerStoreDecryptionError) -> Bool {
+    if lhs.storeUri != rhs.storeUri {return false}
+    if lhs.errorMessage != rhs.errorMessage {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension FogLedger_MultiKeyImageStoreRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".MultiKeyImageStoreRequest"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "queries"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeRepeatedMessageField(value: &self.queries) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.queries.isEmpty {
+      try visitor.visitRepeatedMessageField(value: self.queries, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: FogLedger_MultiKeyImageStoreRequest, rhs: FogLedger_MultiKeyImageStoreRequest) -> Bool {
+    if lhs.queries != rhs.queries {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension FogLedger_MultiKeyImageStoreResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".MultiKeyImageStoreResponse"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .standard(proto: "query_response"),
+    2: .standard(proto: "store_uri"),
+    3: .same(proto: "status"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularMessageField(value: &self._queryResponse) }()
+      case 2: try { try decoder.decodeSingularStringField(value: &self.storeUri) }()
+      case 3: try { try decoder.decodeSingularEnumField(value: &self.status) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    try { if let v = self._queryResponse {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
+    } }()
+    if !self.storeUri.isEmpty {
+      try visitor.visitSingularStringField(value: self.storeUri, fieldNumber: 2)
+    }
+    if self.status != .unknown {
+      try visitor.visitSingularEnumField(value: self.status, fieldNumber: 3)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: FogLedger_MultiKeyImageStoreResponse, rhs: FogLedger_MultiKeyImageStoreResponse) -> Bool {
+    if lhs._queryResponse != rhs._queryResponse {return false}
+    if lhs.storeUri != rhs.storeUri {return false}
+    if lhs.status != rhs.status {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
 }
 
 extension FogLedger_GetOutputsRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {

@@ -1,6 +1,6 @@
 {
   "name": "MobileCoin",
-  "version": "4.0.0",
+  "version": "5.0.0",
   "summary": "A library for communicating with MobileCoin network",
   "authors": "MobileCoin",
   "homepage": "https://www.mobilecoin.com/",
@@ -9,7 +9,7 @@
   },
   "source": {
     "git": "https://github.com/mobilecoinofficial/MobileCoin-Swift.git",
-    "tag": "v4.0.0",
+    "tag": "v5.0.0",
     "submodules": true
   },
   "platforms": {
@@ -28,16 +28,22 @@
     {
       "name": "Tests",
       "test_type": "unit",
-      "source_files": "Tests/{Unit,Common}/**/*.swift",
+      "source_files": "Tests/{Unit,Common,Fixtures,Mocks}/**/*.swift",
       "resources": [
         "Tests/Common/FixtureData/**/*",
         "Vendor/libmobilecoin-ios-artifacts/Vendor/mobilecoin/test-vectors/vectors/**/*"
       ]
     },
     {
-      "name": "IntegrationTests",
+      "name": "IntegrationTransactingTests",
       "test_type": "unit",
-      "source_files": "Tests/{Integration,Common}/**/*.swift",
+      "source_files": "Tests/{Common,Util,Integration/Common,Integration/Transacting}/**/*.swift",
+      "resources": "Tests/Common/FixtureData/**/*"
+    },
+    {
+      "name": "IntegrationNonTransactingTests",
+      "test_type": "unit",
+      "source_files": "Tests/{Common,Util,Integration/Common,Integration/NonTransacting}/**/*.swift",
       "resources": "Tests/Common/FixtureData/**/*"
     },
     {
@@ -53,7 +59,7 @@
       "source_files": [
         "Sources/*.{h,m,swift}",
         "Sources/{Account,Common,Crypto,Encodings,Fog,Ledger}/**/*.{h,m,swift}",
-        "Sources/{LibMobileCoin,Mnemonic,Storage,Transaction,Utils}/**/*.{h,m,swift}",
+        "Sources/{LibMobileCoin,Mistyswap,Mnemonic,Storage,Transaction,Utils}/**/*.{h,m,swift}",
         "Sources/Network/{Attestation,Authorization,Connection,Service,Url}/**/*.{h,m,swift}",
         "Sources/Network/{GRPC,HTTPS}/**/*.{h,m,swift}",
         "Sources/Network/ProtocolSpecific/Combined/**/*.{h,m,swift}",
@@ -61,7 +67,7 @@
       ],
       "dependencies": {
         "LibMobileCoin/Core": [
-          "~> 4.0.0-pre3"
+          "~> 5.0.0"
         ],
         "gRPC-Swift": [
           "1.0.0"
@@ -96,7 +102,7 @@
       "source_files": [
         "Sources/*.{h,m,swift}",
         "Sources/{Account,Common,Crypto,Encodings,Fog,Ledger}/**/*.{h,m,swift}",
-        "Sources/{LibMobileCoin,Mnemonic,Storage,Transaction,Utils}/**/*.{h,m,swift}",
+        "Sources/{LibMobileCoin,Mistyswap,Mnemonic,Storage,Transaction,Utils}/**/*.{h,m,swift}",
         "Sources/Network/{Attestation,Authorization,Connection,Service,Url}/**/*.{h,m,swift}",
         "Sources/Network/HTTPS/**/*.{h,m,swift}",
         "Sources/Network/ProtocolSpecific/HTTPOnly/**/*.{h,m,swift}",
@@ -104,7 +110,7 @@
       ],
       "dependencies": {
         "LibMobileCoin/CoreHTTP": [
-          "~> 4.0.0-pre3"
+          "~> 5.0.0"
         ],
         "Logging": [
           "~> 1.4"
