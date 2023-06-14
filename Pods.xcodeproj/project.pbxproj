@@ -26,7 +26,7 @@
 		03E8D459BF59EC9876563856EE4D480D /* SQLCipher-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 0AB3A069B3A8A4E59403263C4B658F4B /* SQLCipher-dummy.m */; };
 		03F642DEE3055916FB3FD5E6876B3381 /* Pods-SignalShareExtension-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = B03452354F0C63045A47E3DABF8DFD33 /* Pods-SignalShareExtension-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		041D07B67F20FD4FB9ADD91E5C353B56 /* SignalCoreKit-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 218F8ECF9BB99BF544B14E032FA3EB2A /* SignalCoreKit-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		042343B4ABC3065ED11941FD1D2465C1 /* SFU.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD12492B20EE7F625D34DF63B47C48D7 /* SFU.swift */; };
+		042343B4ABC3065ED11941FD1D2465C1 /* SFU.swift in Sources */ = {isa = PBXBuildFile; fileRef = 070978072B9BBA7D103EE3280D4355B3 /* SFU.swift */; };
 		0440E99349C4AA12D682EE6D48AE33F8 /* PersistableRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FD94BE8B50843178D6584A57073820 /* PersistableRecord.swift */; };
 		0456BCAAAEA6277BA86CAB17DC4B1322 /* DatabaseRegion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 215EB23DB37728E632E399753A8CFD6D /* DatabaseRegion.swift */; };
 		045B7C2374266CC9B069F288DFE2E1C1 /* AuthHttpCallableClientWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBDE74EB2943626E56895507DA8B29B0 /* AuthHttpCallableClientWrapper.swift */; };
@@ -78,7 +78,6 @@
 		0B9546649FB18AB0012A4792FD67AD10 /* StandardLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E6BE11055B3DBBB7BAE0DB9014D163C /* StandardLibrary.swift */; };
 		0BA511C8380C7D1B3E19EA1407C8F113 /* rescaler_sse2.c in Sources */ = {isa = PBXBuildFile; fileRef = 1C76EE43DA55AFD6C48E9994A4C30F88 /* rescaler_sse2.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
 		0C225DEC46E3092470448C2C8C025649 /* NBAsYouTypeFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 952AC13C01E1542878C623E575CD96AC /* NBAsYouTypeFormatter.m */; };
-		0C4ECC27514A64D9F8887331008B311D /* ringrtc.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DFF0C72CE4D3D1EB68A5D5AE8C85C8A /* ringrtc.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0C512172CBB7940E080DA3822BD94F9A /* SQLRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CABD50C7ADC77842DA13D1C22E6942 /* SQLRequest.swift */; };
 		0C76AFCE94FF6FD3E3E49EB594C0DC59 /* PassThroughOutputNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 255BAF68A06F9B2BB48BF44FBC53B809 /* PassThroughOutputNode.swift */; };
 		0CE3E7596C613A3B601EB90DD1BB02B4 /* bit_writer_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = C0F6626BFB2016437E1BEE1FB88FFA09 /* bit_writer_utils.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
@@ -372,7 +371,7 @@
 		3F7E010F177723522D3F9124599461B4 /* MobileCoinLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14998E99D9F28C312C95BBC4A5ADD0C9 /* MobileCoinLogging.swift */; };
 		3FE47AF8559230480B26301D714BD0F8 /* Account+TransactionOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79E801355D97FD4490428895964BE9C /* Account+TransactionOperations.swift */; };
 		4018901DC465FF1EF468C713069ECD7C /* ge_add.h in Headers */ = {isa = PBXBuildFile; fileRef = CA2A53167440C421F7E73CDD81DE257C /* ge_add.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		40F33C99E0AFACBB4490E20A637BAEBA /* CallManagerGlobal.swift in Sources */ = {isa = PBXBuildFile; fileRef = C57C026A8A60A3ED0A8BE107F5B5D939 /* CallManagerGlobal.swift */; };
+		40F33C99E0AFACBB4490E20A637BAEBA /* CallManagerGlobal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13048BDC0CF5A216DDD362232921D29B /* CallManagerGlobal.swift */; };
 		412094648202868EEE5B1B49D2EBB5A5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03B2FAA7F7DE467181C0BC3C70177945 /* Foundation.framework */; };
 		419B3AF6450BB7B3F7789F90DCEE62E5 /* MTLTransformerErrorHandling.m in Sources */ = {isa = PBXBuildFile; fileRef = F8965B61E25CD533F828B9D8E667C2B5 /* MTLTransformerErrorHandling.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		41ECDD2F6AFC21F7B2C15C659EF1351E /* SwiftProtobuf-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DB5E4C97B47C27D9105250A7D205385 /* SwiftProtobuf-dummy.m */; };
@@ -383,7 +382,7 @@
 		42C4EA9FF728B0D01AF319AC6A618576 /* UInt32+Crc32.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36D4AA122B906B1EE196FDD5BAAAD538 /* UInt32+Crc32.swift */; };
 		42F645016A777C1BBC63A17E95E93D1F /* kex_rng.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBD7727F6B2264B3E3E8586EBD92FD8 /* kex_rng.pb.swift */; };
 		4304F1F5DB2D2AF6179ABA53614C0F24 /* lossless_msa.c in Sources */ = {isa = PBXBuildFile; fileRef = 2B9433F4A079A739148CE9A7691C4F12 /* lossless_msa.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
-		432454B2437964F3B92758A1BBDD5EB0 /* ConnectionMediaStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3182ECE40795152DB4219376B2673224 /* ConnectionMediaStream.swift */; };
+		432454B2437964F3B92758A1BBDD5EB0 /* ConnectionMediaStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = D007401C61D881A436B43A806646F9AE /* ConnectionMediaStream.swift */; };
 		43A4FB3F29A911A8FCAE1210D8BB7487 /* Data32+withMcMutableBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF32560ECB03FD8F99BDBFB73CC8142C /* Data32+withMcMutableBuffer.swift */; };
 		446793DA1ADD6CF8F0FE00E8E87B3564 /* PinTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FACD80EC2D94FF7F50FA879C1525C33 /* PinTests.swift */; };
 		449E43A13A443E7FFF8EDA41682574F9 /* SCKSwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 921BDC363F0684DFF78C08FE8CBC43D5 /* SCKSwiftTests.swift */; };
@@ -621,7 +620,7 @@
 		6BF4447536C34B6B11D4F6C162E70343 /* Protocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00FDFBA3725EE542520FFF7EF60BE15 /* Protocol.swift */; };
 		6BFD77D8E322A8102A33060A07C2AE1A /* PureLayout+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CDC911FCE2E711005DBADFF379C6005 /* PureLayout+Internal.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6C6FB4830B487746D5BC7DBB5EFF1C50 /* fe_frombytes.c in Sources */ = {isa = PBXBuildFile; fileRef = 232362BDD30189A04885B0B0AB844498 /* fe_frombytes.c */; };
-		6D4EAFDD7C61CDD27C8DC305B24EF12A /* SignalRingRTC.h in Headers */ = {isa = PBXBuildFile; fileRef = FCBCF6FBF5F3734687C1BAE0A98E5794 /* SignalRingRTC.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6D4EAFDD7C61CDD27C8DC305B24EF12A /* SignalRingRTC.h in Headers */ = {isa = PBXBuildFile; fileRef = 24F4B59B0580F513BD5B28E8DF5B77CE /* SignalRingRTC.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6DA5B24E9D65E7C0CD4FD71EA14AB7D0 /* NBPhoneNumberMetaData.plist in Resources */ = {isa = PBXBuildFile; fileRef = 572736F53B313A6334DC6138C8685315 /* NBPhoneNumberMetaData.plist */; };
 		6DC7318C128F1F2088F6A9FEB36BB2E9 /* mz_strm_wzaes.h in Headers */ = {isa = PBXBuildFile; fileRef = 838021BF9183486F21D074CF3F46F8E1 /* mz_strm_wzaes.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		6DFA1C45A825C283B3D72EF86019DCE0 /* lossless_enc.c in Sources */ = {isa = PBXBuildFile; fileRef = AC9A6837B96FF8C7FAB9BA77B9EE34C2 /* lossless_enc.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
@@ -722,7 +721,7 @@
 		7CE510C40835D50B8C76C9392D8305AD /* SignedContingentInputBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C20E8811745E8883549DE49946A98C1 /* SignedContingentInputBuilder.swift */; };
 		7CF3C2B41E4FFE45BDCDA4F372D55008 /* ReceiptCredentialRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A24735F1051FA9D875008C23FF80F9C /* ReceiptCredentialRequest.swift */; };
 		7D753C28BA083DC5B5F3360E0E97DB1A /* Tracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EAE7D91ADBEB99808214921E5763C59 /* Tracking.swift */; };
-		7DD51B8051A8251EE3C1E7F30558BC06 /* CallManagerUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6DCA042CB30AC82977A174348B8F9A /* CallManagerUtil.swift */; };
+		7DD51B8051A8251EE3C1E7F30558BC06 /* CallManagerUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43447249E43614C04DAD2E1B0F4782CC /* CallManagerUtil.swift */; };
 		7DFD4F2F1491DE11D27016C952632DFD /* PartialTxOut.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15992C3DF33384D6D569169533BFC930 /* PartialTxOut.swift */; };
 		7E0CBF9C97AAED0706CC4686A425C9EC /* FogMerkleProofFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF7C1D6C9A6062F539868838D54FF59 /* FogMerkleProofFetcher.swift */; };
 		7E77DA9A4008247329C063688B0CD8CC /* AnimationViewBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D59693C5065EA6D236916CBEC88FC9B /* AnimationViewBase.swift */; };
@@ -733,7 +732,7 @@
 		7EE4187E22C761BFC478E750E4EBCF10 /* FieldTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BD025AD1609ED105A7C3860949541A7 /* FieldTypes.swift */; };
 		7F12F152E466806C18A900DFF16F1441 /* YYSpriteSheetImage.m in Sources */ = {isa = PBXBuildFile; fileRef = E97D16CB755D5105F0B2CE45BB374362 /* YYSpriteSheetImage.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		7F4E92E2A80372E27B0057B016E26F0E /* DefaultTxOutSelectionStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = D47066B7374DBD464E6B3F2C222115D8 /* DefaultTxOutSelectionStrategy.swift */; };
-		7F61DC793D2574A9BEEC2A6B92BE982D /* RingValidation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E82634B59550E4D92C66AD784B517FA /* RingValidation.swift */; };
+		7F61DC793D2574A9BEEC2A6B92BE982D /* RingValidation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D1BAF515E2539FE26E33CF61929BCAE /* RingValidation.swift */; };
 		7FC8510C8C9E973745351774172CE4CD /* Svr2.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3E1F7176615AD2531A4597848D5919D /* Svr2.swift */; };
 		7FC8753E46D8BF0D7D13E5841E5CA9AD /* LottieConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81647CF174A8DCF11F1D99212567628A /* LottieConfiguration.swift */; };
 		7FEF37BF025DEF80D19E377C0EF8A442 /* HttpProtocolConnectionFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA20CFB63CA0B304FA99A7E30BEC90F1 /* HttpProtocolConnectionFactory.swift */; };
@@ -855,7 +854,7 @@
 		96DB5CCC3625BA5E602EA67FB854DADE /* ImageAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8103FBE542545830B32D2D8FB08F02 /* ImageAsset.swift */; };
 		971AB0FC3E6B0C251BED94B8B4BD3AEE /* Pods-SignalTests-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = F5BB14640D787DE8ED282E2297E7DFD6 /* Pods-SignalTests-dummy.m */; };
 		971BCC9400131FA54F2DA74A8182C92B /* CryptographyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 838328B11112003E742E6B7355CE7922 /* CryptographyTests.swift */; };
-		972E232651D940DD2F0D0B5784319000 /* HTTP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6AD725D7B90E473ECECBE756B1336F /* HTTP.swift */; };
+		972E232651D940DD2F0D0B5784319000 /* HTTP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 727B991F19A0A072228ABF1C16A0784C /* HTTP.swift */; };
 		97913F7101A41526B5243C9444FED288 /* AssetLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2FB08E9B1D244B2CF65B137CFD7A512 /* AssetLibrary.swift */; };
 		97CD6A693306C54807C3EDC34EB827E5 /* SQLInterpolation+QueryInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5AC29D17B3997ACD486EA63CB350841 /* SQLInterpolation+QueryInterface.swift */; };
 		986CBF19A4C785945602E96A67F15AAB /* PathNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7940D97BA8B01BC9BD7D97A355F8588 /* PathNode.swift */; };
@@ -1012,11 +1011,12 @@
 		AFD34AF3CD9C6186A8C762F35009DC0E /* Data64.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A3D0F5F4CB8684C167C0B3D07E0E3B9 /* Data64.swift */; };
 		B0095F00EFC3E7C2BCDBCBFE22E6995A /* EXTRuntimeExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = BD76B3B121CD279BA45670581AD5DFEE /* EXTRuntimeExtensions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B04C415AFD05E8809A143DB9EF1BB019 /* AssociationAggregate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA57BC3320B61B10375AE8D7F407634F /* AssociationAggregate.swift */; };
-		B070D90FDE90645FCE6BAF0AA8776468 /* CallContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 038204BC717D4CB3224360809901CB59 /* CallContext.swift */; };
+		B070D90FDE90645FCE6BAF0AA8776468 /* CallContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B8BF3DB2F746F1F9DF41A23ACA145D2 /* CallContext.swift */; };
 		B09681608EC76BD5C32B90277B7489DD /* DDDispatchQueueLogFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 003111B0981C97318E691C9207A0ADB7 /* DDDispatchQueueLogFormatter.m */; };
 		B0DDF80A257A2FCBEBCB5AAA586B2C9C /* Column.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52AF7AC774C6081D2291C08E304B8865 /* Column.swift */; };
 		B0EEF65685AE321FCE813D06209BEEB4 /* libwebp-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 5342A64211C4D3ACF6978582DE221007 /* libwebp-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B0FAF97B3FC12BDB28A6430F1F3C5A25 /* ImageLayerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39B1A4AA6425CED9D57CDC8C1408B0BF /* ImageLayerModel.swift */; };
+		B11CD29046EA53F1F4BD8319BA869C0A /* ringrtc.h in Headers */ = {isa = PBXBuildFile; fileRef = 3064ABC95084524A3ADBC1C8B7477931 /* ringrtc.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B1777B429BCF09E77DFFFA18CD5F5485 /* GenericServerSecretParams.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEDF4BF7FBCACB4138A6E289FC359C46 /* GenericServerSecretParams.swift */; };
 		B1887E312B05EAFF427BB89654830DB7 /* UnsignedInteger+SafeComparison.swift in Sources */ = {isa = PBXBuildFile; fileRef = 606B217E75FB86D56AA9E17B82979402 /* UnsignedInteger+SafeComparison.swift */; };
 		B18C514B6E5F8FC674AE336F832CA519 /* Cryptography.swift in Sources */ = {isa = PBXBuildFile; fileRef = 674F763E296F8E42E63125208440ED58 /* Cryptography.swift */; };
@@ -1080,7 +1080,7 @@
 		BABE686A57B7A91AA005F4C1F41F1F15 /* NonRotatingUrlLoadBalancer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4F8E6C1A10204290B31E65CCFE10D90 /* NonRotatingUrlLoadBalancer.swift */; };
 		BAEC11C42E0F3DFFBE55D3625F1C6173 /* Google_Protobuf_Any+Registry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E69734C298841038758BC5F95056882 /* Google_Protobuf_Any+Registry.swift */; };
 		BB38310BDB586C7F0850036FF2B7592C /* DatabaseBackupProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = E695264B5DBF35799584D6209F66EBCD /* DatabaseBackupProgress.swift */; };
-		BB533A0CD713849D5D34394923AA8860 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2099EFBECED3811BE0C6E53F3921B0B8 /* Logging.swift */; };
+		BB533A0CD713849D5D34394923AA8860 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5150143261AE818452E5A612E1BDCD16 /* Logging.swift */; };
 		BC042E34D0869F526CAB38262FDC403F /* Record.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F6D6880EC1B1563FD8D5EA595F20FE4 /* Record.swift */; };
 		BC3453FB817AFE9AB299EF9F4ADD978D /* consensus_config.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B48B2AB10C58AC88908DEA17121ABC4 /* consensus_config.pb.swift */; };
 		BD1686767D1B04E7729708C02141968A /* LocalizedStringAccess.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4C106AA7ED18364BD9514AD460CCA0 /* LocalizedStringAccess.swift */; };
@@ -1164,7 +1164,7 @@
 		CAAB131069B1AFB57C163E567BC28ABF /* FogQueryScalingStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86A04920B06083F7CF73F85DEB8A8A9D /* FogQueryScalingStrategy.swift */; };
 		CACADC11FC10BFC46C1B631AF592EBDA /* YYImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 4E6426ACA7AF97E3A9B551924B3EBA94 /* YYImage.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		CADC7F9224BE92F0D953E57C6406148C /* McError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5872845A77BC0FFAF7B669E2F4DBAEA4 /* McError.swift */; };
-		CAEF018CD76D04A3FA3DDB4577F92866 /* SignalRingRTC-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 2482B2296C9E96D9F07A19C0391595C6 /* SignalRingRTC-dummy.m */; };
+		CAEF018CD76D04A3FA3DDB4577F92866 /* SignalRingRTC-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E667B40A8B2EE4FF249CCD5BEA8FB3 /* SignalRingRTC-dummy.m */; };
 		CAF887CE3FCC92C64275D644365228B3 /* TransactionStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC2BE18B2401A4FBE4415D1630E7A67 /* TransactionStatus.swift */; };
 		CBB2FA240C87BA5B9A61BA6E8E7EC9FC /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91835DF5C089F6A3BEA0A93DBB451275 /* QuartzCore.framework */; };
 		CBB852CC3DEF71D25BA42F051314214B /* fog.h in Headers */ = {isa = PBXBuildFile; fileRef = 4591D17F65B2F0302EEC81B74C2D1AB6 /* fog.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1226,7 +1226,7 @@
 		D677CA65B9CE3416071AA65D572E6F4B /* LibMobileCoinError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 584229BF00CBD797C52691B8B9D3E7A5 /* LibMobileCoinError.swift */; };
 		D6FBCD400FEE87FDEBF523272EB3F1F4 /* ClientZkGroupCipher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61D3661E6E195BF8FA04C47E2D1360BA /* ClientZkGroupCipher.swift */; };
 		D7083E9765742DF0EC62D4687C680596 /* source_context.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6645474215E0CA956978E4BA93B44469 /* source_context.pb.swift */; };
-		D75C12A1D79482754BC286F216FAB3E4 /* CallManagerInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D85BCE45186CE1826374411CC1D9902 /* CallManagerInterface.swift */; };
+		D75C12A1D79482754BC286F216FAB3E4 /* CallManagerInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D13C8B2EBD3FDA25964E077F09D21C /* CallManagerInterface.swift */; };
 		D775E5D782B2354516E7BF124C4992A4 /* MTLTransformerErrorHandling.h in Headers */ = {isa = PBXBuildFile; fileRef = 81C4DBA3583952B11A6380E96509B6CF /* MTLTransformerErrorHandling.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D776AE39F02E7A8887B4A74A4EA0B8C0 /* GradientValueProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD2534CE857CABA9398F716407EB5442 /* GradientValueProvider.swift */; };
 		D7D1105F355668F4001CEA917DD3F5A0 /* Mnemonic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 237E55B22351831605E5A7A20D6D94DB /* Mnemonic.swift */; };
@@ -1256,14 +1256,14 @@
 		DC8475471823441201E7687C9D234294 /* fe_cmov.c in Sources */ = {isa = PBXBuildFile; fileRef = 22A9C8D16C526BEC214A5078C89DA83C /* fe_cmov.c */; };
 		DCE46ABB9989510BCE7CEB137DDF6CDC /* DatabasePublishers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85E28565595D4310367DF7A9CB19CAEC /* DatabasePublishers.swift */; };
 		DCECB32F477228FEA8D9EF72DAD234E1 /* dec_sse41.c in Sources */ = {isa = PBXBuildFile; fileRef = E7D38C2EA874A65516FB76F17200F698 /* dec_sse41.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
-		DD0BFBABA0649DC6B81BC0AADC6658B5 /* GroupCall.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9C8BC03295130880804558A8C44C21C /* GroupCall.swift */; };
+		DD0BFBABA0649DC6B81BC0AADC6658B5 /* GroupCall.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FC27B3E344A63FB730FE5938F461FA3 /* GroupCall.swift */; };
 		DD1C5F943AD0D202927EAB5D7D065959 /* SelectiveVisitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205419646816D7A54E278E6729F737E8 /* SelectiveVisitor.swift */; };
 		DD2659E57A3C87745AA01382EE51B89C /* rescaler_msa.c in Sources */ = {isa = PBXBuildFile; fileRef = 59F2D2F24EC50C3F51B9520EC75E6D79 /* rescaler_msa.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
 		DD5FFCA9FBDF9C4A041210CE3893CE23 /* LibMobileCoin-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C7EB453F82895E6468CBC22535A45E3 /* LibMobileCoin-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DDAD9E301C460424B2C35377CEDE3A9A /* AsyncUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC543380E22392F48BBB41A81A28329B /* AsyncUtils.swift */; };
 		DDC66EFCEDA557996ECEF873343774CB /* SolidCompositionLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8332EC0010D232DB48C8252D0B55D577 /* SolidCompositionLayer.swift */; };
 		DDD19CADDD3D89E4CA89DECD03CF6C21 /* GrpcProtocolConnectionFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BC009EDFAA2BEBF586E73563B6BBF13 /* GrpcProtocolConnectionFactory.swift */; };
-		DDEA6DE6EF80368BA13AE671A344D135 /* VideoCaptureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9A8993D4FC3E2A256E12B1DE004AF5 /* VideoCaptureController.swift */; };
+		DDEA6DE6EF80368BA13AE671A344D135 /* VideoCaptureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85EE7C02525AA30334265E6984369A64 /* VideoCaptureController.swift */; };
 		DE228DBD2CA9E82636817B98FD5696EF /* ZipArchive.h in Headers */ = {isa = PBXBuildFile; fileRef = A49D19D5E3B528AE9878A374BCE8F8F7 /* ZipArchive.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		DE60F0DD0927CFCE8EEBC6C8E5EF5B28 /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = 270E1556516D44022FF09A975BC66C8A /* Version.swift */; };
 		DE635F512551C23F63D8D53F6B977C21 /* NBRegExMatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CABA4A557A3F4951C41F2F24F31C26A /* NBRegExMatcher.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1356,7 +1356,7 @@
 		ED38A54C42EE23F15655B9C4FD0E6E5D /* Kem.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFCE34BFFBC9AB001199A6FBCD7AACF9 /* Kem.swift */; };
 		ED4963C7C577047DC8F0F1ED63FCC670 /* ReceiptCredentialRequestContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1859CBFE70E21AF5DE22F43E0E2EC142 /* ReceiptCredentialRequestContext.swift */; };
 		ED4EA6787C99DD2FB663EA04B7777B0C /* GradientStrokeRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E93E4B5679236430EE2835E69280B1B /* GradientStrokeRenderer.swift */; };
-		ED6054A812AC1244CADA1FE80DA2CCE4 /* CallLinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C0365FC71F1DD46B5DD1F096ECBF361 /* CallLinks.swift */; };
+		ED6054A812AC1244CADA1FE80DA2CCE4 /* CallLinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13C3B0E83E4E38D100921390B20A81D3 /* CallLinks.swift */; };
 		EE29075ABB8F66F2CA4038FC6D7F8903 /* AnimationPublic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DBD8E7149E42BAC392E3D328807300A /* AnimationPublic.swift */; };
 		EE5CB3115FF22B2A6CD78CCCE6DCC738 /* GRDB.swift-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A772F40117AC10DBCEEC58C81209870 /* GRDB.swift-dummy.m */; };
 		EE8415C49A51F5030D910B164304834F /* rescaler.c in Sources */ = {isa = PBXBuildFile; fileRef = F07C8D1778176678A3A67BBF1A44DFA1 /* rescaler.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
@@ -1397,7 +1397,7 @@
 		F3F6CB0EA9FC75F4328CAFED7DF6DC96 /* HttpCallResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B02BB82D97BB98E492DDD4760DF2423 /* HttpCallResult.swift */; };
 		F3FA76320A48D5FBFDB2BDFF851D207D /* Association.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA5CBF16F49C89C146201B4F3916EE9 /* Association.swift */; };
 		F41613C0CB48D37DCDB64458745E34C4 /* libPhoneNumber-iOS-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 31A730F79EB40EE41B3C46D978CA1E4A /* libPhoneNumber-iOS-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F420C37B9050F59F7F13CB3EA450FAC9 /* Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D099041AFE87A8D5942CB3A1FDFF480 /* Connection.swift */; };
+		F420C37B9050F59F7F13CB3EA450FAC9 /* Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D5627F4670C59FAF76F2A3E625D8C9C /* Connection.swift */; };
 		F42920F32903C74599A57C8774705423 /* webp_enc.c in Sources */ = {isa = PBXBuildFile; fileRef = F281C707B05FC08759C971275B9DF448 /* webp_enc.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
 		F42A8B9FFF5E641BB7C6EB273B584B5E /* SessionRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = D526A83D444AE4B562622FC30DF677D0 /* SessionRecord.swift */; };
 		F4648738E5C8EE327ADC8346C0FEBE7D /* ServerZkAuthOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7560565E3D214BC0930CA4BA757CAD39 /* ServerZkAuthOperations.swift */; };
@@ -1458,7 +1458,7 @@
 		FDF1771421560B8B97EC518D15F20BE5 /* Row.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB359F8D06C8D40ECAF4FCC66AA15E91 /* Row.swift */; };
 		FE2B774D20A78CF7B1B5E0E7A432537E /* TextCompositionLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5D661B339D732C8CB15F8F592C514FA /* TextCompositionLayer.swift */; };
 		FE2CA08A014097E3CBB938416BB3F077 /* TextLayerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A306EEE73008E925D99DFD110F95F50E /* TextLayerModel.swift */; };
-		FE4F51B15432D38621543B39B5466DCE /* FFI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DDE1F71042800E2429153C306071191 /* FFI.swift */; };
+		FE4F51B15432D38621543B39B5466DCE /* FFI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DED4F5AF971A1FF636AEA1044CED112 /* FFI.swift */; };
 		FE75145147D252F5DEA648E24AE2799F /* ledger.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 765BDFFDFE2A442A157D20070A35BDC0 /* ledger.pb.swift */; };
 		FEFC8AAF5A26DDE81E80527D7C0EE729 /* OWSAsserts.m in Sources */ = {isa = PBXBuildFile; fileRef = B7EF09322A0DD084197C21E90D69F385 /* OWSAsserts.m */; };
 		FF05DA982C724144BB70A72645EB52B3 /* SenderKeyDistributionMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EA63AA63B010F00F4428757729C98E5 /* SenderKeyDistributionMessage.swift */; };
@@ -1466,7 +1466,7 @@
 		FF5C23AE50EDE5FD7309E9AA29CC17D3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03B2FAA7F7DE467181C0BC3C70177945 /* Foundation.framework */; };
 		FF7FC73EF654ACC29E1100E04FC3CCEE /* ProfileKeyCredentialRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ECC7AECDDA68FF59AE2C20927703E9A /* ProfileKeyCredentialRequest.swift */; };
 		FFED5F67A2A61A13B1D3C4C958F90DD6 /* Star.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EA46260A875772E02A1A58211272C70 /* Star.swift */; };
-		FFFF21AEA9FAD486625BCE968B6574AD /* CallManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD061B593E0763218373DDE98101175 /* CallManager.swift */; };
+		FFFF21AEA9FAD486625BCE968B6574AD /* CallManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90AA7208CD34AF74CC4269A12EF1AEA5 /* CallManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -2644,8 +2644,8 @@
 		030FD4152FD526653D69F4B276308040 /* Pods-SignalServiceKitTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-SignalServiceKitTests.debug.xcconfig"; sourceTree = "<group>"; };
 		0335CC64CA6C8E26EB0B3BC936B5A5E1 /* Utils.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Utils.swift; path = GRDB/Utils/Utils.swift; sourceTree = "<group>"; };
 		036E510F75B9921139D8C6E6B59C4933 /* NSAttributedString+Adaptive.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "NSAttributedString+Adaptive.swift"; path = "Sources/UIKit/NSAttributedString+Adaptive.swift"; sourceTree = "<group>"; };
-		038204BC717D4CB3224360809901CB59 /* CallContext.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CallContext.swift; path = src/ios/SignalRingRTC/SignalRingRTC/CallContext.swift; sourceTree = "<group>"; };
 		03B2FAA7F7DE467181C0BC3C70177945 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS14.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		03D13C8B2EBD3FDA25964E077F09D21C /* CallManagerInterface.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CallManagerInterface.swift; path = src/ios/SignalRingRTC/SignalRingRTC/CallManagerInterface.swift; sourceTree = "<group>"; };
 		03D88FB2DEE834E839A6057A7DF2AE07 /* any.pb.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = any.pb.swift; path = Sources/SwiftProtobuf/any.pb.swift; sourceTree = "<group>"; };
 		03E04EB8BE22DE1CBC389EEFE250E611 /* backward_references_cost_enc.c */ = {isa = PBXFileReference; includeInIndex = 1; name = backward_references_cost_enc.c; path = src/enc/backward_references_cost_enc.c; sourceTree = "<group>"; };
 		03F5EE5213CDD476C2A69E3E49470F0F /* Thenable+Timeout.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "Thenable+Timeout.swift"; path = "SignalCoreKit/src/Promises/Thenable+Timeout.swift"; sourceTree = "<group>"; };
@@ -2663,6 +2663,7 @@
 		058E01AB532FD4837BC643F8F99B3416 /* Stroke.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Stroke.swift; path = Sources/Private/Model/ShapeItems/Stroke.swift; sourceTree = "<group>"; };
 		05B0EA2B66D522A9C6F74C03CEC425AE /* FogKeyImageConnection.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FogKeyImageConnection.swift; path = Sources/Network/Connection/Connections/FogKeyImageConnection.swift; sourceTree = "<group>"; };
 		06146D9AA4D45957F5017AC89B6B0CCB /* Pods-SignalMessaging.profiling.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-SignalMessaging.profiling.xcconfig"; sourceTree = "<group>"; };
+		070978072B9BBA7D103EE3280D4355B3 /* SFU.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SFU.swift; path = src/ios/SignalRingRTC/SignalRingRTC/SFU.swift; sourceTree = "<group>"; };
 		071C915DC2D595EB8ADD6ACB0CBDFE33 /* Vectors.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Vectors.swift; path = Sources/Public/Primitives/Vectors.swift; sourceTree = "<group>"; };
 		0728823A37BA2F531CA9ED60C3D8C57D /* CustomJSONCodable.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CustomJSONCodable.swift; path = Sources/SwiftProtobuf/CustomJSONCodable.swift; sourceTree = "<group>"; };
 		074504B46401FA91E257C1A9E69BF462 /* GroupMasterKey.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = GroupMasterKey.swift; path = swift/Sources/LibSignalClient/zkgroup/GroupMasterKey.swift; sourceTree = "<group>"; };
@@ -2706,6 +2707,7 @@
 		0DC907CE5E23A936602224DB920A2B2F /* SealedSender.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SealedSender.swift; path = swift/Sources/LibSignalClient/SealedSender.swift; sourceTree = "<group>"; };
 		0DE24AC77BCB490E84D1CA374BD85D4B /* PublicKey.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PublicKey.swift; path = swift/Sources/LibSignalClient/PublicKey.swift; sourceTree = "<group>"; };
 		0DE8563C92247B437D74DBEADA060B73 /* picture_tools_enc.c */ = {isa = PBXFileReference; includeInIndex = 1; name = picture_tools_enc.c; path = src/enc/picture_tools_enc.c; sourceTree = "<group>"; };
+		0DED4F5AF971A1FF636AEA1044CED112 /* FFI.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FFI.swift; path = src/ios/SignalRingRTC/SignalRingRTC/FFI.swift; sourceTree = "<group>"; };
 		0E62C4618CF9F216B9EED282602CD7EA /* NSObject+MTLComparisonAdditions.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "NSObject+MTLComparisonAdditions.m"; path = "Mantle/NSObject+MTLComparisonAdditions.m"; sourceTree = "<group>"; };
 		0E7815D003C5E812EF8CE375575B24EF /* MobileCoinClient+RTH.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "MobileCoinClient+RTH.swift"; path = "Sources/MobileCoinClient+RTH.swift"; sourceTree = "<group>"; };
 		0E932A2233EC65BB772944FF8E92D915 /* TextAnimator.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TextAnimator.swift; path = Sources/Private/Model/Text/TextAnimator.swift; sourceTree = "<group>"; };
@@ -2716,6 +2718,7 @@
 		0F040098EA96D52F3458637C92BE0BC0 /* AnyPromise.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AnyPromise.swift; path = SignalCoreKit/src/Promises/AnyPromise.swift; sourceTree = "<group>"; };
 		0FB4AEBCB64263E43390EA916ADD21CE /* consensus_common.pb.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = consensus_common.pb.swift; path = Sources/Generated/Proto/consensus_common.pb.swift; sourceTree = "<group>"; };
 		0FC153A15D53F92E3F017684F4CC7BBC /* UIColorExtension.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = UIColorExtension.swift; path = Sources/Public/iOS/UIColorExtension.swift; sourceTree = "<group>"; };
+		0FC27B3E344A63FB730FE5938F461FA3 /* GroupCall.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = GroupCall.swift; path = src/ios/SignalRingRTC/SignalRingRTC/GroupCall.swift; sourceTree = "<group>"; };
 		0FCDE1A664B42115A3F3B8703EF86C11 /* McRngCallback.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = McRngCallback.swift; path = Sources/LibMobileCoin/McRngCallback.swift; sourceTree = "<group>"; };
 		0FD40EBDAEABEF12D8ECD4BA8D07C35D /* EXTScope.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = EXTScope.h; path = Mantle/extobjc/EXTScope.h; sourceTree = "<group>"; };
 		10313BA04574081D454AD68A9A86C876 /* DataConvertible.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DataConvertible.swift; path = Sources/Utils/Data/DataConvertible.swift; sourceTree = "<group>"; };
@@ -2731,6 +2734,7 @@
 		11F19EB6CE75351A33D5840F396E633E /* RestApiRequester.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RestApiRequester.swift; path = Sources/Network/HTTPS/RestApiRequester.swift; sourceTree = "<group>"; };
 		1226DF6519CF08FAF9ECC69540757F34 /* ExtensionMap.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExtensionMap.swift; path = Sources/SwiftProtobuf/ExtensionMap.swift; sourceTree = "<group>"; };
 		12B33B3C0EC1B390C80DF93AFABDDAB3 /* Mantle.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = Mantle.h; path = Mantle/Mantle.h; sourceTree = "<group>"; };
+		13048BDC0CF5A216DDD362232921D29B /* CallManagerGlobal.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CallManagerGlobal.swift; path = src/ios/SignalRingRTC/SignalRingRTC/CallManagerGlobal.swift; sourceTree = "<group>"; };
 		1336A3F153445DC87603FA8337711334 /* CGFloat.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CGFloat.swift; path = GRDB/Core/Support/CoreGraphics/CGFloat.swift; sourceTree = "<group>"; };
 		133AFBAB6CCD07E01C7C8192F1825B3F /* DefaultCryptoBox.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DefaultCryptoBox.swift; path = Sources/Crypto/DefaultCryptoBox.swift; sourceTree = "<group>"; };
 		1341780BA13A93DDB7944E189DD211EA /* UnknownStorage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = UnknownStorage.swift; path = Sources/SwiftProtobuf/UnknownStorage.swift; sourceTree = "<group>"; };
@@ -2738,6 +2742,7 @@
 		138D825C1B392629A4549AAE9CF4C5FE /* BlockchainMetaFetcher.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BlockchainMetaFetcher.swift; path = Sources/Transaction/Fee/BlockchainMetaFetcher.swift; sourceTree = "<group>"; };
 		13A00CCDC4004909495AF47D4B8BA958 /* DDTTYLogger.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = DDTTYLogger.m; path = Sources/CocoaLumberjack/DDTTYLogger.m; sourceTree = "<group>"; };
 		13BDB2685B56588C3F0AA86B108D8589 /* UnsafeRawPointer+Shims.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "UnsafeRawPointer+Shims.swift"; path = "Sources/SwiftProtobuf/UnsafeRawPointer+Shims.swift"; sourceTree = "<group>"; };
+		13C3B0E83E4E38D100921390B20A81D3 /* CallLinks.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CallLinks.swift; path = src/ios/SignalRingRTC/SignalRingRTC/CallLinks.swift; sourceTree = "<group>"; };
 		140287604A0D13AF92DBC80F8BF5D379 /* NSLayoutConstraint+PureLayout.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "NSLayoutConstraint+PureLayout.h"; path = "PureLayout/PureLayout/NSLayoutConstraint+PureLayout.h"; sourceTree = "<group>"; };
 		142D160931060D7BA0BC4B06C7CDE700 /* bit_reader_utils.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = bit_reader_utils.h; path = src/utils/bit_reader_utils.h; sourceTree = "<group>"; };
 		148F67362E0896F3CD325E463587AE2A /* ge_p3_tobytes.c */ = {isa = PBXFileReference; includeInIndex = 1; name = ge_p3_tobytes.c; path = Sources/ed25519/ge_p3_tobytes.c; sourceTree = "<group>"; };
@@ -2757,6 +2762,7 @@
 		15628D08AD42B8ECE8B5965D6D2E6799 /* FogView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FogView.swift; path = Sources/Fog/View/FogView.swift; sourceTree = "<group>"; };
 		15992C3DF33384D6D569169533BFC930 /* PartialTxOut.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PartialTxOut.swift; path = Sources/Ledger/PartialTxOut.swift; sourceTree = "<group>"; };
 		15DCE5AD7AD7F2FB2C1B363D72A1CAEE /* UuidCiphertext.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = UuidCiphertext.swift; path = swift/Sources/LibSignalClient/zkgroup/UuidCiphertext.swift; sourceTree = "<group>"; };
+		15E667B40A8B2EE4FF249CCD5BEA8FB3 /* SignalRingRTC-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "SignalRingRTC-dummy.m"; sourceTree = "<group>"; };
 		160E456AF48AB1418B01ABFBBF5CF378 /* tree_enc.c */ = {isa = PBXFileReference; includeInIndex = 1; name = tree_enc.c; path = src/enc/tree_enc.c; sourceTree = "<group>"; };
 		1612C41677B00646B128EC67E5D54EC5 /* ValueObservationScheduler.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ValueObservationScheduler.swift; path = GRDB/ValueObservation/ValueObservationScheduler.swift; sourceTree = "<group>"; };
 		16749DCAD2BBDD5F6B9B92BF6B0478AE /* MessageExtension.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MessageExtension.swift; path = Sources/SwiftProtobuf/MessageExtension.swift; sourceTree = "<group>"; };
@@ -2802,7 +2808,6 @@
 		1B9A9E04E43894DB7080579758B45D7A /* Logging.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Logging.swift; path = Sources/Logging/Logging.swift; sourceTree = "<group>"; };
 		1BCD920F0EFAABC5BA26C7B32F07F788 /* NSLayoutConstraint+PureLayout.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "NSLayoutConstraint+PureLayout.m"; path = "PureLayout/PureLayout/NSLayoutConstraint+PureLayout.m"; sourceTree = "<group>"; };
 		1BE7D8A8BBEDA53EE776985FB0F7B86A /* Pods-Signal-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-Signal-frameworks.sh"; sourceTree = "<group>"; };
-		1C0365FC71F1DD46B5DD1F096ECBF361 /* CallLinks.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CallLinks.swift; path = src/ios/SignalRingRTC/SignalRingRTC/CallLinks.swift; sourceTree = "<group>"; };
 		1C484028ED745BEB8C7C7D544CA7A308 /* McConstants.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = McConstants.swift; path = Sources/LibMobileCoin/McConstants.swift; sourceTree = "<group>"; };
 		1C76EE43DA55AFD6C48E9994A4C30F88 /* rescaler_sse2.c */ = {isa = PBXFileReference; includeInIndex = 1; name = rescaler_sse2.c; path = src/dsp/rescaler_sse2.c; sourceTree = "<group>"; };
 		1C81C7B7A4EF138288AF30882F5D63E9 /* SignalCoreKit-Unit-Tests */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = "SignalCoreKit-Unit-Tests"; path = "SignalCoreKit-Unit-Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2834,11 +2839,9 @@
 		1FFE3FC2BDD967BDF7688DFC13DCC46E /* BinaryDecodingError.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BinaryDecodingError.swift; path = Sources/SwiftProtobuf/BinaryDecodingError.swift; sourceTree = "<group>"; };
 		20281A00798FA7BA181045FBDC58B3F3 /* FeeStrategy.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FeeStrategy.swift; path = Sources/Transaction/Fee/FeeStrategy.swift; sourceTree = "<group>"; };
 		20344EC991A67A7193E3DBF508352DAD /* ServerZkReceiptOperations.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ServerZkReceiptOperations.swift; path = swift/Sources/LibSignalClient/zkgroup/ServerZkReceiptOperations.swift; sourceTree = "<group>"; };
-		204DE1F3F4D0A56FA28DF455C9DB2B97 /* WebRTC.xcframework */ = {isa = PBXFileReference; includeInIndex = 1; name = WebRTC.xcframework; path = "../../../../Library/Caches/org.signal.ringrtc/prebuild-2.28.0/release/WebRTC.xcframework"; sourceTree = "<group>"; };
 		205419646816D7A54E278E6729F737E8 /* SelectiveVisitor.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SelectiveVisitor.swift; path = Sources/SwiftProtobuf/SelectiveVisitor.swift; sourceTree = "<group>"; };
 		206F7F9691C10FD4BCA7B6F9E9A12062 /* SignedContingentInputBuilderUtils.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SignedContingentInputBuilderUtils.swift; path = Sources/Transaction/SignedContingentInputBuilderUtils.swift; sourceTree = "<group>"; };
 		207C535C900DA4950C732977AE467EED /* YYImage-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "YYImage-Info.plist"; sourceTree = "<group>"; };
-		2099EFBECED3811BE0C6E53F3921B0B8 /* Logging.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Logging.swift; path = src/ios/SignalRingRTC/SignalRingRTC/Logging.swift; sourceTree = "<group>"; };
 		20A95D64400151BF4D75268B4454719D /* StringSanitizerTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = StringSanitizerTests.swift; path = SignalCoreKitTests/src/StringSanitizerTests.swift; sourceTree = "<group>"; };
 		20D4F337D626346B25B04DDF0BBF0DAE /* analysis_enc.c */ = {isa = PBXFileReference; includeInIndex = 1; name = analysis_enc.c; path = src/enc/analysis_enc.c; sourceTree = "<group>"; };
 		20F3E06F63D2C3A531EC5653AFECAB65 /* ValueObservation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ValueObservation.swift; path = GRDB/ValueObservation/ValueObservation.swift; sourceTree = "<group>"; };
@@ -2876,8 +2879,8 @@
 		2450D4B08CAB73AFEC57DCFFDEAC23B4 /* sc_muladd.c */ = {isa = PBXFileReference; includeInIndex = 1; name = sc_muladd.c; path = Sources/ed25519/sc_muladd.c; sourceTree = "<group>"; };
 		245F64F64A280BE66B038D8869ED836D /* CreateCallLinkCredentialResponse.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CreateCallLinkCredentialResponse.swift; path = swift/Sources/LibSignalClient/zkgroup/CreateCallLinkCredentialResponse.swift; sourceTree = "<group>"; };
 		247932C19DC1077503CE6908D8D8991C /* FTS4.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FTS4.swift; path = GRDB/FTS/FTS4.swift; sourceTree = "<group>"; };
-		2482B2296C9E96D9F07A19C0391595C6 /* SignalRingRTC-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "SignalRingRTC-dummy.m"; sourceTree = "<group>"; };
 		24D8308BA54E96D1AC68BE3839D53D85 /* Mistyswap.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Mistyswap.swift; path = Sources/Mistyswap/Mistyswap.swift; sourceTree = "<group>"; };
+		24F4B59B0580F513BD5B28E8DF5B77CE /* SignalRingRTC.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SignalRingRTC.h; path = src/ios/SignalRingRTC/SignalRingRTC/SignalRingRTC.h; sourceTree = "<group>"; };
 		2507EEDB7E75C33AB8BE7C4D87BE07B1 /* Pods-SignalUI.app store release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-SignalUI.app store release.xcconfig"; sourceTree = "<group>"; };
 		251A8545EADBC8336E2E191E204410A6 /* rescaler_utils.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = rescaler_utils.h; path = src/utils/rescaler_utils.h; sourceTree = "<group>"; };
 		253CF5F47E3FBE965F57CC0F7A7B1749 /* PlaintextContent.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PlaintextContent.swift; path = swift/Sources/LibSignalClient/messages/PlaintextContent.swift; sourceTree = "<group>"; };
@@ -2929,12 +2932,13 @@
 		2C6BC8931CB334E0898B631E6D0D68BD /* CLIColor.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = CLIColor.h; path = Sources/CocoaLumberjack/include/CocoaLumberjack/CLIColor.h; sourceTree = "<group>"; };
 		2C6C4BDF2818D8C392AD2CF03DE9502A /* SenderWithPaymentRequestMemo.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SenderWithPaymentRequestMemo.swift; path = Sources/Transaction/Memos/SenderWithPaymentRequestMemo.swift; sourceTree = "<group>"; };
 		2C8F73338F95498026AA77D4CCC9A4E9 /* DoubleParser.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DoubleParser.swift; path = Sources/SwiftProtobuf/DoubleParser.swift; sourceTree = "<group>"; };
+		2C950514FC15078E8CB3967EC1BAB1BC /* SignalRingRTC-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "SignalRingRTC-Info.plist"; sourceTree = "<group>"; };
 		2CA4388388696E9625A60B0897940FC1 /* Pods-SignalPerformanceTests-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-SignalPerformanceTests-umbrella.h"; sourceTree = "<group>"; };
 		2CB556EB2E2E928041DDFDED6CBCC10D /* open.c */ = {isa = PBXFileReference; includeInIndex = 1; name = open.c; path = Sources/ed25519/open.c; sourceTree = "<group>"; };
 		2CC31DC97208059DF347B9D1D83D7BA5 /* MutableCopying.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MutableCopying.swift; path = Sources/MutableCopying.swift; sourceTree = "<group>"; };
 		2CCBF38CEEB6AD98EBD9E071C38FE33E /* TransactionObserver.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TransactionObserver.swift; path = GRDB/Core/TransactionObserver.swift; sourceTree = "<group>"; };
-		2CD061B593E0763218373DDE98101175 /* CallManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CallManager.swift; path = src/ios/SignalRingRTC/SignalRingRTC/CallManager.swift; sourceTree = "<group>"; };
 		2CF91BA2B0E0B7D4E21AC7739AC08D93 /* SSZipArchive.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = SSZipArchive.release.xcconfig; sourceTree = "<group>"; };
+		2D1BAF515E2539FE26E33CF61929BCAE /* RingValidation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RingValidation.swift; path = src/ios/SignalRingRTC/SignalRingRTC/RingValidation.swift; sourceTree = "<group>"; };
 		2D1CE7F3F1530AF949F0EB84D076E65C /* FogMerkleProofConnection.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FogMerkleProofConnection.swift; path = Sources/Network/Connection/Connections/FogMerkleProofConnection.swift; sourceTree = "<group>"; };
 		2D21D351206A78FB7BC1D1575F92830B /* TransportProtocol+HTTPSupportedProtocol.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "TransportProtocol+HTTPSupportedProtocol.swift"; path = "Sources/Network/ProtocolSpecific/HTTPOnly/TransportProtocol+HTTPSupportedProtocol.swift"; sourceTree = "<group>"; };
 		2D4632B42EA02E064259047418E628C1 /* JSONSerialization+Verification.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "JSONSerialization+Verification.swift"; path = "Sources/Utils/JSONSerialization+Verification.swift"; sourceTree = "<group>"; };
@@ -2951,12 +2955,12 @@
 		2F4F0668D663691CE89A17C1960088D5 /* Pods-SignalUI.testable release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-SignalUI.testable release.xcconfig"; sourceTree = "<group>"; };
 		303E2DF7B5668F2FEB77319485051748 /* DefaultMixinSelectionStrategy.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DefaultMixinSelectionStrategy.swift; path = Sources/Transaction/Inputs/DefaultMixinSelectionStrategy.swift; sourceTree = "<group>"; };
 		304BE23A0E8B66CF27E1EC2565444E50 /* lottie-ios-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "lottie-ios-umbrella.h"; sourceTree = "<group>"; };
+		3064ABC95084524A3ADBC1C8B7477931 /* ringrtc.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ringrtc.h; path = out/release/libringrtc/ringrtc.h; sourceTree = "<group>"; };
 		309E1EA9165D0982DEFA782CFCBA5C05 /* StatementAuthorizer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = StatementAuthorizer.swift; path = GRDB/Core/StatementAuthorizer.swift; sourceTree = "<group>"; };
 		30A514AC9E527616180D967E33501A8F /* types.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = types.h; path = src/webp/types.h; sourceTree = "<group>"; };
 		30D6CBDA98D16A0D370966ABB298D2F8 /* Pods-Signal-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-Signal-dummy.m"; sourceTree = "<group>"; };
 		30F9703EFF726BD52A4634B9B33E00FC /* FTS3TokenizerDescriptor.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FTS3TokenizerDescriptor.swift; path = GRDB/FTS/FTS3TokenizerDescriptor.swift; sourceTree = "<group>"; };
 		3158428DE80F51DFC0188D5D2EBD6144 /* GradientRenderLayer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = GradientRenderLayer.swift; path = Sources/Private/CoreAnimation/Layers/GradientRenderLayer.swift; sourceTree = "<group>"; };
-		3182ECE40795152DB4219376B2673224 /* ConnectionMediaStream.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ConnectionMediaStream.swift; path = src/ios/SignalRingRTC/SignalRingRTC/ConnectionMediaStream.swift; sourceTree = "<group>"; };
 		31A730F79EB40EE41B3C46D978CA1E4A /* libPhoneNumber-iOS-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "libPhoneNumber-iOS-umbrella.h"; sourceTree = "<group>"; };
 		31ABC7C6C1685BFC6FC84B2521EFE85D /* ValueConcurrentObserver.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ValueConcurrentObserver.swift; path = GRDB/ValueObservation/ValueConcurrentObserver.swift; sourceTree = "<group>"; };
 		31AD2E733405AAC9F6547AE03CEE3352 /* Pods-SignalNSE.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-SignalNSE.modulemap"; sourceTree = "<group>"; };
@@ -3036,7 +3040,6 @@
 		3BB9A69BB1BFEAF9B57BC5DE521BB2ED /* StatementColumnConvertible.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = StatementColumnConvertible.swift; path = GRDB/Core/StatementColumnConvertible.swift; sourceTree = "<group>"; };
 		3BD4667B39499967F93752EAD14C39CD /* Pods-SignalUI */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = "Pods-SignalUI"; path = Pods_SignalUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3C29D5C2B928AC98D55CEC863370CAF1 /* NBNumberFormat.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = NBNumberFormat.m; path = libPhoneNumber/NBNumberFormat.m; sourceTree = "<group>"; };
-		3C6DCA042CB30AC82977A174348B8F9A /* CallManagerUtil.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CallManagerUtil.swift; path = src/ios/SignalRingRTC/SignalRingRTC/CallManagerUtil.swift; sourceTree = "<group>"; };
 		3C8A1E173135866A106BB21D193B0905 /* Bip39Utils.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Bip39Utils.swift; path = Sources/Mnemonic/Bip39Utils.swift; sourceTree = "<group>"; };
 		3CA5CBF16F49C89C146201B4F3916EE9 /* Association.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Association.swift; path = GRDB/QueryInterface/Request/Association/Association.swift; sourceTree = "<group>"; };
 		3CE29373172F09BB622823FE71513F89 /* ProtobufMap.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ProtobufMap.swift; path = Sources/SwiftProtobuf/ProtobufMap.swift; sourceTree = "<group>"; };
@@ -3044,7 +3047,6 @@
 		3D404A2D9FFAEC833DBCED09E9137E29 /* Pods-Signal */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = "Pods-Signal"; path = Pods_Signal.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3D8BD0C59E165638A1C86AFB95E768C9 /* Pods-SignalServiceKit-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-SignalServiceKit-dummy.m"; sourceTree = "<group>"; };
 		3D9E46E4F5458D0D7F3EED2292219877 /* Errors.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Errors.swift; path = Sources/Common/Errors.swift; sourceTree = "<group>"; };
-		3DACAC68681D81A8B5DE1C96424DCF63 /* SignalRingRTC-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "SignalRingRTC-Info.plist"; sourceTree = "<group>"; };
 		3DB07BFD936616D591EC582BE6CB4797 /* MobileCoinMinimal.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = MobileCoinMinimal.debug.xcconfig; sourceTree = "<group>"; };
 		3DB67213B29DC4DD1926024AEDC667D0 /* SignedPreKeyRecord.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SignedPreKeyRecord.swift; path = swift/Sources/LibSignalClient/state/SignedPreKeyRecord.swift; sourceTree = "<group>"; };
 		3DBF8B009DFEEC8C91081B79BA19F9BC /* SignedContingentInputCreator.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SignedContingentInputCreator.swift; path = Sources/Transaction/SignedContingentInputCreator.swift; sourceTree = "<group>"; };
@@ -3087,6 +3089,7 @@
 		42C745BE39751732D4461D16521ABF68 /* TextFormatEncodingVisitor.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TextFormatEncodingVisitor.swift; path = Sources/SwiftProtobuf/TextFormatEncodingVisitor.swift; sourceTree = "<group>"; };
 		430248E70B8AD07B7712D1A224007BC6 /* Pods-SignalNSE-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-SignalNSE-dummy.m"; sourceTree = "<group>"; };
 		430D657D85DCD7ADCD1107FA6472C39E /* Pods-SignalUITests-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-SignalUITests-Info.plist"; sourceTree = "<group>"; };
+		43447249E43614C04DAD2E1B0F4782CC /* CallManagerUtil.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CallManagerUtil.swift; path = src/ios/SignalRingRTC/SignalRingRTC/CallManagerUtil.swift; sourceTree = "<group>"; };
 		436C5E6D4714131F7A1641A8A8D1F4DD /* StringSanitizer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = StringSanitizer.swift; path = SignalCoreKit/src/StringSanitizer.swift; sourceTree = "<group>"; };
 		4373633DEC3A04A98D6A66AF1C4C2CBF /* Pods-SignalTests-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-SignalTests-Info.plist"; sourceTree = "<group>"; };
 		43C8F0BF52F97BA598C2935878A692E3 /* DictionaryInitializable.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DictionaryInitializable.swift; path = Sources/Private/Model/DictionaryInitializable.swift; sourceTree = "<group>"; };
@@ -3151,6 +3154,7 @@
 		4D11C335EA49F32A9E1D143B9587BDFB /* SSZipArchive.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = SSZipArchive.modulemap; sourceTree = "<group>"; };
 		4D16248FE027079EE6075C1354BF0212 /* metamacros.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = metamacros.h; path = Mantle/extobjc/metamacros.h; sourceTree = "<group>"; };
 		4D49F2159D47B5DCFF57A4D8D8BACF64 /* DDLogMacros.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = DDLogMacros.h; path = Sources/CocoaLumberjack/include/CocoaLumberjack/DDLogMacros.h; sourceTree = "<group>"; };
+		4D5627F4670C59FAF76F2A3E625D8C9C /* Connection.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Connection.swift; path = src/ios/SignalRingRTC/SignalRingRTC/Connection.swift; sourceTree = "<group>"; };
 		4D6AF2D3312CE53FBDB2287939C1D26B /* decode.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = decode.h; path = src/webp/decode.h; sourceTree = "<group>"; };
 		4D73B4ED84755959B8B13786F7200974 /* Pods-SignalUITests-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-SignalUITests-dummy.m"; sourceTree = "<group>"; };
 		4D9A3872C3A9BF5B49789D18564A9B77 /* CoreTextRenderLayer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CoreTextRenderLayer.swift; path = Sources/Private/MainThread/LayerContainers/Utility/CoreTextRenderLayer.swift; sourceTree = "<group>"; };
@@ -3175,10 +3179,10 @@
 		50D9F708C9DE9785E7B9B1F90E804E44 /* idec_dec.c */ = {isa = PBXFileReference; includeInIndex = 1; name = idec_dec.c; path = src/dec/idec_dec.c; sourceTree = "<group>"; };
 		5111DE1C16185938A465F101F777D6D9 /* BaseAnimationLayer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BaseAnimationLayer.swift; path = Sources/Private/CoreAnimation/Layers/BaseAnimationLayer.swift; sourceTree = "<group>"; };
 		51135159A1AE882A3CB14DA02F360ABB /* buffer_dec.c */ = {isa = PBXFileReference; includeInIndex = 1; name = buffer_dec.c; path = src/dec/buffer_dec.c; sourceTree = "<group>"; };
+		5150143261AE818452E5A612E1BDCD16 /* Logging.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Logging.swift; path = src/ios/SignalRingRTC/SignalRingRTC/Logging.swift; sourceTree = "<group>"; };
 		51BA97E8B5085EFFB47BC9C0B785CEA7 /* lottie-ios */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = "lottie-ios"; path = Lottie.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		51FB3B577C440444AB32099AE2865BCA /* vp8i_dec.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = vp8i_dec.h; path = src/dec/vp8i_dec.h; sourceTree = "<group>"; };
 		52AF7AC774C6081D2291C08E304B8865 /* Column.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Column.swift; path = GRDB/QueryInterface/SQL/Column.swift; sourceTree = "<group>"; };
-		53384C511FA2FA868889D4D4C4386F66 /* SignalRingRTC.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = SignalRingRTC.modulemap; sourceTree = "<group>"; };
 		53395DB6C0F03C1D3A0EC675C91B6457 /* LibSignalClient-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "LibSignalClient-Info.plist"; sourceTree = "<group>"; };
 		5342A64211C4D3ACF6978582DE221007 /* libwebp-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "libwebp-umbrella.h"; sourceTree = "<group>"; };
 		5358DBBDC9E0999E8BB3637D91DAB81D /* AnimationLayer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AnimationLayer.swift; path = Sources/Private/CoreAnimation/Layers/AnimationLayer.swift; sourceTree = "<group>"; };
@@ -3234,6 +3238,7 @@
 		5AE2FF98F2E0506E41A1D0B632228D22 /* Pods-SignalUI-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-SignalUI-acknowledgements.plist"; sourceTree = "<group>"; };
 		5B084045D113FF187E7E56C4D34C6B27 /* ge_p3_to_p2.c */ = {isa = PBXFileReference; includeInIndex = 1; name = ge_p3_to_p2.c; path = Sources/ed25519/ge_p3_to_p2.c; sourceTree = "<group>"; };
 		5B7354F2743EEB26E6234A9F9ACDD092 /* NSArray+MTLManipulationAdditions.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "NSArray+MTLManipulationAdditions.h"; path = "Mantle/NSArray+MTLManipulationAdditions.h"; sourceTree = "<group>"; };
+		5B8BF3DB2F746F1F9DF41A23ACA145D2 /* CallContext.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CallContext.swift; path = src/ios/SignalRingRTC/SignalRingRTC/CallContext.swift; sourceTree = "<group>"; };
 		5B91FEFE7B8995BDDA275A8DB66BCB71 /* AnyValueProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AnyValueProvider.swift; path = Sources/Public/DynamicProperties/AnyValueProvider.swift; sourceTree = "<group>"; };
 		5B9CF5CB9DE36D5DCB46A6898B78AAAC /* SerialCallbackLock.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SerialCallbackLock.swift; path = Sources/Utils/Locks/SerialCallbackLock.swift; sourceTree = "<group>"; };
 		5BD025AD1609ED105A7C3860949541A7 /* FieldTypes.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FieldTypes.swift; path = Sources/SwiftProtobuf/FieldTypes.swift; sourceTree = "<group>"; };
@@ -3247,7 +3252,6 @@
 		5D20FDB4AC6524ED582B005063C64373 /* SenderKeyRecord.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SenderKeyRecord.swift; path = swift/Sources/LibSignalClient/state/SenderKeyRecord.swift; sourceTree = "<group>"; };
 		5D2B41061A970075B391A4234DA9A094 /* base.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = base.h; path = Sources/ed25519/base.h; sourceTree = "<group>"; };
 		5D4CE96C9301645ED8980B82A4A36A33 /* PureLayout-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "PureLayout-prefix.pch"; sourceTree = "<group>"; };
-		5D85BCE45186CE1826374411CC1D9902 /* CallManagerInterface.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CallManagerInterface.swift; path = src/ios/SignalRingRTC/SignalRingRTC/CallManagerInterface.swift; sourceTree = "<group>"; };
 		5D89FF3B9B7900D00BFABB835326BB77 /* FilepathImageProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FilepathImageProvider.swift; path = Sources/Public/iOS/FilepathImageProvider.swift; sourceTree = "<group>"; };
 		5D9FF1328986C2253BC931E511DFFDC0 /* fe_isnonzero.c */ = {isa = PBXFileReference; includeInIndex = 1; name = fe_isnonzero.c; path = Sources/ed25519/fe_isnonzero.c; sourceTree = "<group>"; };
 		5DAC7B69016B03D63B56675A2DA8CFD2 /* FetchableRecord+Decodable.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "FetchableRecord+Decodable.swift"; path = "GRDB/Record/FetchableRecord+Decodable.swift"; sourceTree = "<group>"; };
@@ -3255,12 +3259,10 @@
 		5DE11E35E4CD1480FD0F4124335B5B8E /* FogResolver.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FogResolver.swift; path = Sources/Fog/Report/FogResolver.swift; sourceTree = "<group>"; };
 		5DE575F6289B23292C348641AE4E09D4 /* Curve25519Kit-Unit-Tests-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Curve25519Kit-Unit-Tests-prefix.pch"; sourceTree = "<group>"; };
 		5DECD2DC6479CC47ED5CB4014753AD57 /* FogView+TxOutFetcher.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "FogView+TxOutFetcher.swift"; path = "Sources/Fog/View/FogView+TxOutFetcher.swift"; sourceTree = "<group>"; };
-		5DFF0C72CE4D3D1EB68A5D5AE8C85C8A /* ringrtc.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ringrtc.h; path = out/release/libringrtc/ringrtc.h; sourceTree = "<group>"; };
 		5E0EEDBA90C5B91F711C7A09F12A4A6C /* DatabaseValueConvertible.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DatabaseValueConvertible.swift; path = GRDB/Core/DatabaseValueConvertible.swift; sourceTree = "<group>"; };
 		5E1E2B09E0ECFF1B53D63A2E6C68FBBB /* NotificationCenter+Promise.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "NotificationCenter+Promise.swift"; path = "SignalCoreKit/src/Promises/NotificationCenter+Promise.swift"; sourceTree = "<group>"; };
 		5E3A739A927E9807ECE5BCD2E8AEE619 /* Google_Protobuf_Timestamp+Extensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "Google_Protobuf_Timestamp+Extensions.swift"; path = "Sources/SwiftProtobuf/Google_Protobuf_Timestamp+Extensions.swift"; sourceTree = "<group>"; };
 		5E4674603A5D5B9215FFA0F8E69F8B71 /* libwebp */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = libwebp; path = libwebp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		5E82634B59550E4D92C66AD784B517FA /* RingValidation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RingValidation.swift; path = src/ios/SignalRingRTC/SignalRingRTC/RingValidation.swift; sourceTree = "<group>"; };
 		5E9DBFBF7C3E061A7721E14B07707BA7 /* GroupIdentifier.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = GroupIdentifier.swift; path = swift/Sources/LibSignalClient/zkgroup/GroupIdentifier.swift; sourceTree = "<group>"; };
 		5EBE7E2555800357548CD797D2001F99 /* DDOSLogger.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = DDOSLogger.m; path = Sources/CocoaLumberjack/DDOSLogger.m; sourceTree = "<group>"; };
 		5EDD49931D55F869852C53B5493898E0 /* SAMKeychainQuery.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SAMKeychainQuery.m; path = Sources/SAMKeychainQuery.m; sourceTree = "<group>"; };
@@ -3300,6 +3302,7 @@
 		649C729478E1D5EE9E1400FA14C7CD00 /* blurhash-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "blurhash-Info.plist"; sourceTree = "<group>"; };
 		649DC8208D51A578F9C5FB244AC802DC /* vp8li_enc.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = vp8li_enc.h; path = src/enc/vp8li_enc.h; sourceTree = "<group>"; };
 		64B1BE9B6011D8E2FE5B57194A829B86 /* PreCompLayer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PreCompLayer.swift; path = Sources/Private/CoreAnimation/Layers/PreCompLayer.swift; sourceTree = "<group>"; };
+		64C16173C31E2B8555E6EC68BE65DC77 /* SignalRingRTC.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = SignalRingRTC.release.xcconfig; sourceTree = "<group>"; };
 		64CE9A140C54AA8CFD20B3A321DD2FEE /* MaskContainerLayer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MaskContainerLayer.swift; path = Sources/Private/MainThread/LayerContainers/CompLayers/MaskContainerLayer.swift; sourceTree = "<group>"; };
 		64D1F2820CCF6FCAD9454A9EADA9364E /* CallLinkSecretParams.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CallLinkSecretParams.swift; path = swift/Sources/LibSignalClient/zkgroup/CallLinkSecretParams.swift; sourceTree = "<group>"; };
 		64E864B257CF9ECDD8255EBD6D4ED6DB /* Aes256Ctr.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Aes256Ctr.swift; path = swift/Sources/LibSignalClient/Aes256Ctr.swift; sourceTree = "<group>"; };
@@ -3367,7 +3370,6 @@
 		6C4DC8A88A14AA4D49774F362C986045 /* libPhoneNumber-iOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "libPhoneNumber-iOS.release.xcconfig"; sourceTree = "<group>"; };
 		6C85BF6750302FA67E5391E3C09CE20F /* FixedFeeStrategy.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FixedFeeStrategy.swift; path = Sources/Transaction/Fee/FixedFeeStrategy.swift; sourceTree = "<group>"; };
 		6D069D15DE5D9FA5FBBDE926887CE036 /* NamedStyles.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = NamedStyles.swift; path = Sources/NamedStyles.swift; sourceTree = "<group>"; };
-		6D099041AFE87A8D5942CB3A1FDFF480 /* Connection.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Connection.swift; path = src/ios/SignalRingRTC/SignalRingRTC/Connection.swift; sourceTree = "<group>"; };
 		6D1001684644170E0DD591D52918C126 /* MTLReflection.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MTLReflection.h; path = Mantle/MTLReflection.h; sourceTree = "<group>"; };
 		6D49C02F9490B42101F2B6A88A2F93D5 /* neon.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = neon.h; path = src/dsp/neon.h; sourceTree = "<group>"; };
 		6D66A6543AA5143D9E5513A7D0843DAF /* FogViewHttpConnection.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FogViewHttpConnection.swift; path = Sources/Network/HTTPS/HttpConnection/HttpConnections/FogViewHttpConnection.swift; sourceTree = "<group>"; };
@@ -3377,9 +3379,7 @@
 		6EB009939E5843B536B18186244F0F2E /* CustomRedactingStringConvertible.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CustomRedactingStringConvertible.swift; path = Sources/Common/CustomRedactingStringConvertible.swift; sourceTree = "<group>"; };
 		6ECC7AECDDA68FF59AE2C20927703E9A /* ProfileKeyCredentialRequest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ProfileKeyCredentialRequest.swift; path = swift/Sources/LibSignalClient/zkgroup/ProfileKeyCredentialRequest.swift; sourceTree = "<group>"; };
 		6EEBB5BD401C734F42FD9E310A17B6E7 /* libwebp-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "libwebp-Info.plist"; sourceTree = "<group>"; };
-		6EED27F48C5EC83B2721827181D9D0D9 /* SignalRingRTC-xcframeworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "SignalRingRTC-xcframeworks.sh"; sourceTree = "<group>"; };
 		6F0CD86ED6320E1CB53F5B2EAF0974C3 /* config_enc.c */ = {isa = PBXFileReference; includeInIndex = 1; name = config_enc.c; path = src/enc/config_enc.c; sourceTree = "<group>"; };
-		6F53848EBE49FF21CD47216760B99482 /* SignalRingRTC-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "SignalRingRTC-prefix.pch"; sourceTree = "<group>"; };
 		6F6E74EB8B04B1D9DBBC9CB6F1981D58 /* MainThreadAnimationLayer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MainThreadAnimationLayer.swift; path = Sources/Private/MainThread/LayerContainers/MainThreadAnimationLayer.swift; sourceTree = "<group>"; };
 		6FB9692E1B3946213978434A5B40B64E /* lossless_enc_neon.c */ = {isa = PBXFileReference; includeInIndex = 1; name = lossless_enc_neon.c; path = src/dsp/lossless_enc_neon.c; sourceTree = "<group>"; };
 		70950E3533FB1038EBB61861E80BF033 /* Curve25519Kit.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = Curve25519Kit.h; path = Classes/Curve25519Kit.h; sourceTree = "<group>"; };
@@ -3397,6 +3397,7 @@
 		720339000FD0F932EB005FD73FD5BD6A /* demux.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = demux.h; path = src/webp/demux.h; sourceTree = "<group>"; };
 		72132A2135C7008F80AC2279E7A78457 /* Mask.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Mask.swift; path = Sources/Private/Model/Objects/Mask.swift; sourceTree = "<group>"; };
 		72290819AAAEDC99F11E3844F6CCC0E8 /* NSData.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = NSData.swift; path = GRDB/Core/Support/Foundation/NSData.swift; sourceTree = "<group>"; };
+		727B991F19A0A072228ABF1C16A0784C /* HTTP.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = HTTP.swift; path = src/ios/SignalRingRTC/SignalRingRTC/HTTP.swift; sourceTree = "<group>"; };
 		728476AAA8442B17A5585613457EF826 /* HasManyThroughAssociation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = HasManyThroughAssociation.swift; path = GRDB/QueryInterface/Request/Association/HasManyThroughAssociation.swift; sourceTree = "<group>"; };
 		729A2F97BCFAD971A58B302DD4A91375 /* Data16.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Data16.swift; path = Sources/Utils/Data/Data16.swift; sourceTree = "<group>"; };
 		7304132D1E34BF84D125DBE24E303FF5 /* TestHelpers.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TestHelpers.swift; path = Sources/Private/Utility/Debugging/TestHelpers.swift; sourceTree = "<group>"; };
@@ -3517,6 +3518,7 @@
 		849C73B537C529125D6DA56E5EEFECDD /* ShapeNode.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ShapeNode.swift; path = Sources/Private/MainThread/NodeRenderSystem/Nodes/PathNodes/ShapeNode.swift; sourceTree = "<group>"; };
 		85331B03E40353DAD8CECBC46743116B /* FogReportHttpConnection.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FogReportHttpConnection.swift; path = Sources/Network/HTTPS/HttpConnection/HttpConnections/FogReportHttpConnection.swift; sourceTree = "<group>"; };
 		85E28565595D4310367DF7A9CB19CAEC /* DatabasePublishers.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DatabasePublishers.swift; path = GRDB/Core/DatabasePublishers.swift; sourceTree = "<group>"; };
+		85EE7C02525AA30334265E6984369A64 /* VideoCaptureController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = VideoCaptureController.swift; path = src/ios/SignalRingRTC/SignalRingRTC/VideoCaptureController.swift; sourceTree = "<group>"; };
 		85F251CB9C6036A9068D8F8C47DCDB36 /* sharpyuv_gamma.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = sharpyuv_gamma.h; path = sharpyuv/sharpyuv_gamma.h; sourceTree = "<group>"; };
 		861F10744189C4E524774B052CDC6E9D /* ALView+PureLayout.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "ALView+PureLayout.h"; path = "PureLayout/PureLayout/ALView+PureLayout.h"; sourceTree = "<group>"; };
 		864FA77D28C9288573412200D0B06856 /* filters.c */ = {isa = PBXFileReference; includeInIndex = 1; name = filters.c; path = src/dsp/filters.c; sourceTree = "<group>"; };
@@ -3546,7 +3548,6 @@
 		8A66CBFA020A0BFE4238574247A7D730 /* signed_contingent_input.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = signed_contingent_input.h; path = Artifacts/include/signed_contingent_input.h; sourceTree = "<group>"; };
 		8A72C6D26D29F570A90BDDCEB04B7C83 /* huffman_utils.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = huffman_utils.h; path = src/utils/huffman_utils.h; sourceTree = "<group>"; };
 		8A8ABC2C496E4B3E0432948D831EB145 /* Decoder.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Decoder.swift; path = Sources/SwiftProtobuf/Decoder.swift; sourceTree = "<group>"; };
-		8A9A8993D4FC3E2A256E12B1DE004AF5 /* VideoCaptureController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = VideoCaptureController.swift; path = src/ios/SignalRingRTC/SignalRingRTC/VideoCaptureController.swift; sourceTree = "<group>"; };
 		8AAF255EA6D01599D7C6E6AC60AD31BF /* mz_crypt_apple.c */ = {isa = PBXFileReference; includeInIndex = 1; name = mz_crypt_apple.c; path = SSZipArchive/minizip/mz_crypt_apple.c; sourceTree = "<group>"; };
 		8AC560E5E680ECD983280C8167A14CA0 /* Pods-SignalServiceKitTests */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = "Pods-SignalServiceKitTests"; path = Pods_SignalServiceKitTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8AE73260ED1F2AE1CE094DA7C0D8C444 /* MaskCompositionLayer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MaskCompositionLayer.swift; path = Sources/Private/CoreAnimation/Layers/MaskCompositionLayer.swift; sourceTree = "<group>"; };
@@ -3599,6 +3600,7 @@
 		90399A364A7E66007F1B86775D9CA7D2 /* crypto_int64.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = crypto_int64.h; path = Sources/ed25519/nacl_includes/crypto_int64.h; sourceTree = "<group>"; };
 		904B95683B2C0A8A640A495A47FF89E5 /* mz_strm.c */ = {isa = PBXFileReference; includeInIndex = 1; name = mz_strm.c; path = SSZipArchive/minizip/mz_strm.c; sourceTree = "<group>"; };
 		909056CE82F9B0266A16B5C98637BB47 /* Configuration.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Configuration.swift; path = GRDB/Core/Configuration.swift; sourceTree = "<group>"; };
+		90AA7208CD34AF74CC4269A12EF1AEA5 /* CallManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CallManager.swift; path = src/ios/SignalRingRTC/SignalRingRTC/CallManager.swift; sourceTree = "<group>"; };
 		90E5BF71013085B2CDEFA7E779748BCD /* Google_Protobuf_Wrappers+Extensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "Google_Protobuf_Wrappers+Extensions.swift"; path = "Sources/SwiftProtobuf/Google_Protobuf_Wrappers+Extensions.swift"; sourceTree = "<group>"; };
 		912D1336E4A92928BCF88C46408F45E5 /* Starscream.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = Starscream.release.xcconfig; sourceTree = "<group>"; };
 		913361514BB7894800A49D82EE8DADD1 /* Mantle-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Mantle-Info.plist"; sourceTree = "<group>"; };
@@ -3617,6 +3619,7 @@
 		93DD57CFAA91C0A1301DACF89A3BB923 /* Error.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Error.swift; path = SignalCoreKit/src/Error.swift; sourceTree = "<group>"; };
 		943D347E61A2E181A4FA2CA894307B6E /* SwiftProtobuf */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = SwiftProtobuf; path = SwiftProtobuf.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		944BF3B55FCC8A17B7447909EAB6E195 /* muxi.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = muxi.h; path = src/mux/muxi.h; sourceTree = "<group>"; };
+		9485F213CAC17BF05398B86CA0A3FF11 /* SignalRingRTC.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = SignalRingRTC.debug.xcconfig; sourceTree = "<group>"; };
 		9498B7A9D8D3E5C63D51CCF4E04DEDE4 /* DataExtension.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DataExtension.swift; path = Sources/Private/Utility/Extensions/DataExtension.swift; sourceTree = "<group>"; };
 		94B1C1422B1875208D88FEEF318D3CFF /* NSValueTransformer+MTLInversionAdditions.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "NSValueTransformer+MTLInversionAdditions.h"; path = "Mantle/NSValueTransformer+MTLInversionAdditions.h"; sourceTree = "<group>"; };
 		952AC13C01E1542878C623E575CD96AC /* NBAsYouTypeFormatter.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = NBAsYouTypeFormatter.m; path = libPhoneNumber/NBAsYouTypeFormatter.m; sourceTree = "<group>"; };
@@ -3672,17 +3675,14 @@
 		9C8D725D3AE6A87B82B6C2D34D65BD07 /* YYAnimatedImageView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = YYAnimatedImageView.m; path = YYImage/YYAnimatedImageView.m; sourceTree = "<group>"; };
 		9CC1A59E9F9EA7413451E9042FEBC94E /* mistyswap_offramp.http.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = mistyswap_offramp.http.swift; path = Sources/Generated/Proto/mistyswap_offramp.http.swift; sourceTree = "<group>"; };
 		9D1814616540A6EA70F445A13AA53197 /* AttributedStringTransformation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AttributedStringTransformation.swift; path = Sources/UIKit/AttributedStringTransformation.swift; sourceTree = "<group>"; };
-		9D2FBFA13BF41761BC62ED2B6E7C0B04 /* SignalRingRTC.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = SignalRingRTC.debug.xcconfig; sourceTree = "<group>"; };
 		9D33EECC6D9D2F74F80F8F8E768CBD73 /* Cryptography.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = Cryptography.h; path = SignalCoreKit/src/Cryptography.h; sourceTree = "<group>"; };
 		9D8905918B65288D8558901E056D4C44 /* PromiseTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PromiseTests.swift; path = SignalCoreKitTests/src/PromiseTests.swift; sourceTree = "<group>"; };
 		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		9DA31AB686F373E6AAC54A67746FA3E0 /* Animation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Animation.swift; path = Sources/Private/Model/Animation.swift; sourceTree = "<group>"; };
 		9DD092B68B2248E717F30764C79006E2 /* view.pb.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = view.pb.swift; path = Sources/Generated/Proto/view.pb.swift; sourceTree = "<group>"; };
 		9DD3E6435A1171CB7B36A3C0DF5913CC /* DatabaseSnapshot.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DatabaseSnapshot.swift; path = GRDB/Core/DatabaseSnapshot.swift; sourceTree = "<group>"; };
-		9DDE1F71042800E2429153C306071191 /* FFI.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FFI.swift; path = src/ios/SignalRingRTC/SignalRingRTC/FFI.swift; sourceTree = "<group>"; };
 		9DEF70821BFA5195064D520E6C3E7A9B /* sharpyuv_csp.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = sharpyuv_csp.h; path = sharpyuv/sharpyuv_csp.h; sourceTree = "<group>"; };
 		9E57C676D28E49B47A077B9F50BFEAEE /* SenderMemo.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SenderMemo.swift; path = Sources/Transaction/Memos/SenderMemo.swift; sourceTree = "<group>"; };
-		9E6AD725D7B90E473ECECBE756B1336F /* HTTP.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = HTTP.swift; path = src/ios/SignalRingRTC/SignalRingRTC/HTTP.swift; sourceTree = "<group>"; };
 		9E93E4B5679236430EE2835E69280B1B /* GradientStrokeRenderer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = GradientStrokeRenderer.swift; path = Sources/Private/MainThread/NodeRenderSystem/Nodes/OutputNodes/Renderables/GradientStrokeRenderer.swift; sourceTree = "<group>"; };
 		9EA98F5067F3248AA129FF6109C56939 /* Pods-SignalShareExtension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-SignalShareExtension.debug.xcconfig"; sourceTree = "<group>"; };
 		9EE2C7F54C3A09350313B322CA01C040 /* ECPublicKey.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ECPublicKey.swift; path = Classes/ECPublicKey.swift; sourceTree = "<group>"; };
@@ -3742,6 +3742,7 @@
 		A580E7848B9DF220C75DF4D49DD92E8E /* struct.pb.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = struct.pb.swift; path = Sources/SwiftProtobuf/struct.pb.swift; sourceTree = "<group>"; };
 		A5AC29D17B3997ACD486EA63CB350841 /* SQLInterpolation+QueryInterface.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "SQLInterpolation+QueryInterface.swift"; path = "GRDB/QueryInterface/SQLInterpolation+QueryInterface.swift"; sourceTree = "<group>"; };
 		A5CC9B1861D3C5D530069F7E86C3D3B2 /* AnimationKeypathExtension.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AnimationKeypathExtension.swift; path = Sources/Private/Utility/Extensions/AnimationKeypathExtension.swift; sourceTree = "<group>"; };
+		A61B895423C05A8C00F70E187087E104 /* WebRTC.xcframework */ = {isa = PBXFileReference; includeInIndex = 1; name = WebRTC.xcframework; path = "../../../../../Library/Caches/org.signal.ringrtc/prebuild-2.28.1/release/WebRTC.xcframework"; sourceTree = "<group>"; };
 		A63577D9BB3E8A8B23CF24AB4E7719B1 /* AuthCredentialWithPni.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AuthCredentialWithPni.swift; path = swift/Sources/LibSignalClient/zkgroup/AuthCredentialWithPni.swift; sourceTree = "<group>"; };
 		A6435B17C761B59006A2EE98941E77CD /* Map.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Map.swift; path = GRDB/ValueObservation/ValueReducer/Map.swift; sourceTree = "<group>"; };
 		A6513E0A6CB60623515716E73996F0F5 /* Logging */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Logging; path = Logging.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3763,7 +3764,6 @@
 		A923C38C88740A055F7735DA063AB049 /* PureLayout.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = PureLayout.modulemap; sourceTree = "<group>"; };
 		A96B6475968F26AF1AF37AA35A9A03C9 /* Marker.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Marker.swift; path = Sources/Private/Model/Objects/Marker.swift; sourceTree = "<group>"; };
 		A990651E91BD2F3885EAAF4B2B12BF30 /* Pods-SignalPerformanceTests-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-SignalPerformanceTests-dummy.m"; sourceTree = "<group>"; };
-		A9C8BC03295130880804558A8C44C21C /* GroupCall.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = GroupCall.swift; path = src/ios/SignalRingRTC/SignalRingRTC/GroupCall.swift; sourceTree = "<group>"; };
 		A9E77FC4FABFA4B5A1319F4B33311FD7 /* LibSignalClient.unit-tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "LibSignalClient.unit-tests.release.xcconfig"; sourceTree = "<group>"; };
 		AA2B086E93E4ACA54DEC6C0BB257EBDB /* Pods-Signal-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-Signal-Info.plist"; sourceTree = "<group>"; };
 		AA57BC3320B61B10375AE8D7F407634F /* AssociationAggregate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AssociationAggregate.swift; path = GRDB/QueryInterface/Request/Association/AssociationAggregate.swift; sourceTree = "<group>"; };
@@ -3900,7 +3900,6 @@
 		BCB1859D86D3634CE1BD25F66B217344 /* TransactionPreparer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TransactionPreparer.swift; path = Sources/Transaction/TransactionPreparer.swift; sourceTree = "<group>"; };
 		BCBE7AD37788D03CA40E48ED5FA088CF /* ProfileKeyCredentialRequestContext.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ProfileKeyCredentialRequestContext.swift; path = swift/Sources/LibSignalClient/zkgroup/ProfileKeyCredentialRequestContext.swift; sourceTree = "<group>"; };
 		BCBF189556828BC5EE3E7879E922D7F8 /* ForeignKey.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ForeignKey.swift; path = GRDB/QueryInterface/ForeignKey.swift; sourceTree = "<group>"; };
-		BD12492B20EE7F625D34DF63B47C48D7 /* SFU.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SFU.swift; path = src/ios/SignalRingRTC/SignalRingRTC/SFU.swift; sourceTree = "<group>"; };
 		BD18C022D548E35D0113ED56487E947C /* Curve25519Kit-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Curve25519Kit-Info.plist"; sourceTree = "<group>"; };
 		BD2534CE857CABA9398F716407EB5442 /* GradientValueProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = GradientValueProvider.swift; path = Sources/Public/DynamicProperties/ValueProviders/GradientValueProvider.swift; sourceTree = "<group>"; };
 		BD6E7F6238DF224CD33FFF35661DDFC7 /* enc.c */ = {isa = PBXFileReference; includeInIndex = 1; name = enc.c; path = src/dsp/enc.c; sourceTree = "<group>"; };
@@ -3962,7 +3961,6 @@
 		C538AF778DF817451877EE90ECEF6B59 /* UnfairLock.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = UnfairLock.h; path = SignalCoreKit/src/Locking/UnfairLock.h; sourceTree = "<group>"; };
 		C539A0476D783E97CF9B4A930B103F81 /* HttpRequester.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = HttpRequester.swift; path = Sources/Network/HttpRequester.swift; sourceTree = "<group>"; };
 		C56F19C213A7A1AD21F84C742A8EA845 /* Data32+CommitmentCrc32.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "Data32+CommitmentCrc32.swift"; path = "Sources/Utils/Data/Data32+CommitmentCrc32.swift"; sourceTree = "<group>"; };
-		C57C026A8A60A3ED0A8BE107F5B5D939 /* CallManagerGlobal.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CallManagerGlobal.swift; path = src/ios/SignalRingRTC/SignalRingRTC/CallManagerGlobal.swift; sourceTree = "<group>"; };
 		C58FCA91057BBA05381855FDCEABCE46 /* Pods-SignalServiceKit-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-SignalServiceKit-acknowledgements.markdown"; sourceTree = "<group>"; };
 		C592BF6CE6942343411DD557B82FBA3F /* MTLModel+NSCoding.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "MTLModel+NSCoding.h"; path = "Mantle/MTLModel+NSCoding.h"; sourceTree = "<group>"; };
 		C5C6C5734BB66797138835893AC4DEFC /* GRDB.swift-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "GRDB.swift-prefix.pch"; sourceTree = "<group>"; };
@@ -4029,6 +4027,7 @@
 		CF11677DBFDFB0B56C0A04FEAC052A6C /* NSError+MTLModelException.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "NSError+MTLModelException.h"; path = "Mantle/NSError+MTLModelException.h"; sourceTree = "<group>"; };
 		CF8209801E48CC7E6A7DA8AB9ED5DDDB /* CocoaLumberjack.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = CocoaLumberjack.release.xcconfig; sourceTree = "<group>"; };
 		CF923332EDD9144ECFCAF8BB74D54E77 /* enc_mips_dsp_r2.c */ = {isa = PBXFileReference; includeInIndex = 1; name = enc_mips_dsp_r2.c; path = src/dsp/enc_mips_dsp_r2.c; sourceTree = "<group>"; };
+		D007401C61D881A436B43A806646F9AE /* ConnectionMediaStream.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ConnectionMediaStream.swift; path = src/ios/SignalRingRTC/SignalRingRTC/ConnectionMediaStream.swift; sourceTree = "<group>"; };
 		D02D4DD896E35ADF8286FDA9D7931D23 /* Reachability-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Reachability-prefix.pch"; sourceTree = "<group>"; };
 		D037A2BB12C403F6AC9057C7F9CCF766 /* lossless.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = lossless.h; path = src/dsp/lossless.h; sourceTree = "<group>"; };
 		D03DEE95D3EEDDF354FA4431A046298D /* BlendMode+Filter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "BlendMode+Filter.swift"; path = "Sources/Private/Utility/Extensions/BlendMode+Filter.swift"; sourceTree = "<group>"; };
@@ -4103,6 +4102,7 @@
 		DB712FFCF3F2873C9CB80954EB418795 /* KeyframeGroup+Extensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "KeyframeGroup+Extensions.swift"; path = "Sources/Private/Utility/Interpolatable/KeyframeGroup+Extensions.swift"; sourceTree = "<group>"; };
 		DBDE74EB2943626E56895507DA8B29B0 /* AuthHttpCallableClientWrapper.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AuthHttpCallableClientWrapper.swift; path = Sources/Network/HTTPS/HttpConnection/HttpCallable/AuthHttpCallableClientWrapper.swift; sourceTree = "<group>"; };
 		DC03550930729A5A5D1376153CCAF5D9 /* Pods-SignalTests.testable release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-SignalTests.testable release.xcconfig"; sourceTree = "<group>"; };
+		DC3AA74588F24DAC4545E6E17B1033E5 /* SignalRingRTC.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = SignalRingRTC.modulemap; sourceTree = "<group>"; };
 		DC67EC0C7B64771AF667CEC9B788B82D /* DDFileLogger+Buffering.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "DDFileLogger+Buffering.h"; path = "Sources/CocoaLumberjack/include/CocoaLumberjack/DDFileLogger+Buffering.h"; sourceTree = "<group>"; };
 		DC6C8B30CA97C3FDA931022702E1662A /* quorum_set.pb.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = quorum_set.pb.swift; path = Sources/Generated/Proto/quorum_set.pb.swift; sourceTree = "<group>"; };
 		DCA09BD6913FAF5772DC47308A4F5E40 /* Reachability.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = Reachability.modulemap; sourceTree = "<group>"; };
@@ -4135,6 +4135,7 @@
 		E2704A02157203D749B6BC6F1AB41478 /* fe_pow22523.c */ = {isa = PBXFileReference; includeInIndex = 1; name = fe_pow22523.c; path = Sources/ed25519/fe_pow22523.c; sourceTree = "<group>"; };
 		E2870C9CC10BDF649B158BCC83CFE5FD /* SQLCipher.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = SQLCipher.modulemap; sourceTree = "<group>"; };
 		E2AA6216B8952BCB0ECE2B6A75408CC2 /* slip10.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = slip10.h; path = Artifacts/include/slip10.h; sourceTree = "<group>"; };
+		E2DFF19EE0EE95E6CFAACC8EA8C6B642 /* SignalRingRTC-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "SignalRingRTC-prefix.pch"; sourceTree = "<group>"; };
 		E2E6F4D5045C30DD65287110B2A29260 /* OWSAsserts.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = OWSAsserts.h; path = SignalCoreKit/src/OWSAsserts.h; sourceTree = "<group>"; };
 		E34592A9D89B6E24C077370C61F79918 /* Platform.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Platform.swift; path = Sources/Platform.swift; sourceTree = "<group>"; };
 		E361486E6534E7CF266908FB2BF5E296 /* HashVisitor.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = HashVisitor.swift; path = Sources/SwiftProtobuf/HashVisitor.swift; sourceTree = "<group>"; };
@@ -4254,7 +4255,6 @@
 		F6FCD38A56E08442C1ECBFFBA419CAC9 /* BinaryEncodingVisitor.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BinaryEncodingVisitor.swift; path = Sources/SwiftProtobuf/BinaryEncodingVisitor.swift; sourceTree = "<group>"; };
 		F712C48AC73B6BD262AC148CA80809AD /* KeyImageSpentTracker.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = KeyImageSpentTracker.swift; path = Sources/Ledger/KeyImageSpentTracker.swift; sourceTree = "<group>"; };
 		F715376A76B8909F51A0BE102F263B9E /* CocoaLumberjack.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = CocoaLumberjack.debug.xcconfig; sourceTree = "<group>"; };
-		F734976972DB298504626A7BD21B72F2 /* SignalRingRTC.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = SignalRingRTC.release.xcconfig; sourceTree = "<group>"; };
 		F7417A8CAEDA954A48ADF9F7C404CFB6 /* mz_compat.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = mz_compat.h; path = SSZipArchive/minizip/mz_compat.h; sourceTree = "<group>"; };
 		F75E7B043F58A7A38E276F24C8C172CD /* blurhash-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "blurhash-dummy.m"; sourceTree = "<group>"; };
 		F774E608BE8DB3117B3C2F83C08F88B1 /* FontFeatures.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FontFeatures.swift; path = Sources/FontFeatures.swift; sourceTree = "<group>"; };
@@ -4284,6 +4284,7 @@
 		FAAFE9C41AC2D5BF30E9E92FD3EE07BA /* PathOutputNode.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PathOutputNode.swift; path = Sources/Private/MainThread/NodeRenderSystem/Nodes/OutputNodes/PathOutputNode.swift; sourceTree = "<group>"; };
 		FAB6DAF2DF850593F8D782AE0F4E9ACA /* NSDictionary+MTLMappingAdditions.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "NSDictionary+MTLMappingAdditions.m"; path = "Mantle/NSDictionary+MTLMappingAdditions.m"; sourceTree = "<group>"; };
 		FB035E7AEB0149675E60A680DA629E69 /* LibSignalClient-Unit-Tests-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "LibSignalClient-Unit-Tests-frameworks.sh"; sourceTree = "<group>"; };
+		FB499EC5B89F8BE69D5F16205E325416 /* SignalRingRTC-xcframeworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "SignalRingRTC-xcframeworks.sh"; sourceTree = "<group>"; };
 		FB64DB6D757ED41D0C47EC56AE151C44 /* Logging.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = Logging.release.xcconfig; sourceTree = "<group>"; };
 		FC04E939C9D120F481A71F6C394D3561 /* Keyframes+combinedIfPossible.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "Keyframes+combinedIfPossible.swift"; path = "Sources/Private/CoreAnimation/Extensions/Keyframes+combinedIfPossible.swift"; sourceTree = "<group>"; };
 		FC0A2F8A60D1C41EBAC483E0E42B4123 /* Ed25519.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = Ed25519.m; path = Classes/Ed25519.m; sourceTree = "<group>"; };
@@ -4291,7 +4292,6 @@
 		FC5BA44C87BE2521FAE761AF54032BCC /* enc_sse2.c */ = {isa = PBXFileReference; includeInIndex = 1; name = enc_sse2.c; path = src/dsp/enc_sse2.c; sourceTree = "<group>"; };
 		FC804F3F2E0F320398F3E889DB24A9DC /* CallLinkPublicParams.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CallLinkPublicParams.swift; path = swift/Sources/LibSignalClient/zkgroup/CallLinkPublicParams.swift; sourceTree = "<group>"; };
 		FC929994D845B9A99FB45D302E8B0755 /* lossless_enc_mips_dsp_r2.c */ = {isa = PBXFileReference; includeInIndex = 1; name = lossless_enc_mips_dsp_r2.c; path = src/dsp/lossless_enc_mips_dsp_r2.c; sourceTree = "<group>"; };
-		FCBCF6FBF5F3734687C1BAE0A98E5794 /* SignalRingRTC.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SignalRingRTC.h; path = src/ios/SignalRingRTC/SignalRingRTC/SignalRingRTC.h; sourceTree = "<group>"; };
 		FCC119AE9538A3069D85688DB103FB03 /* Pods-SignalServiceKitTests-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-SignalServiceKitTests-dummy.m"; sourceTree = "<group>"; };
 		FCDBB1DF419378336D59DB011C17405A /* PrecompAsset.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PrecompAsset.swift; path = Sources/Private/Model/Assets/PrecompAsset.swift; sourceTree = "<group>"; };
 		FD0AB3DB465D49DCDCFBC2AA5CCA0D43 /* NBPhoneNumber.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = NBPhoneNumber.m; path = libPhoneNumber/NBPhoneNumber.m; sourceTree = "<group>"; };
@@ -4930,29 +4930,6 @@
 			path = CocoaLumberjack;
 			sourceTree = "<group>";
 		};
-		18C2159FB354A0764C078A48766BCAE7 /* Support Files */ = {
-			isa = PBXGroup;
-			children = (
-				53384C511FA2FA868889D4D4C4386F66 /* SignalRingRTC.modulemap */,
-				2482B2296C9E96D9F07A19C0391595C6 /* SignalRingRTC-dummy.m */,
-				3DACAC68681D81A8B5DE1C96424DCF63 /* SignalRingRTC-Info.plist */,
-				6F53848EBE49FF21CD47216760B99482 /* SignalRingRTC-prefix.pch */,
-				6EED27F48C5EC83B2721827181D9D0D9 /* SignalRingRTC-xcframeworks.sh */,
-				9D2FBFA13BF41761BC62ED2B6E7C0B04 /* SignalRingRTC.debug.xcconfig */,
-				F734976972DB298504626A7BD21B72F2 /* SignalRingRTC.release.xcconfig */,
-			);
-			name = "Support Files";
-			path = "../Target Support Files/SignalRingRTC";
-			sourceTree = "<group>";
-		};
-		1D39C0DA7178EF214AD3A63202D13703 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				204DE1F3F4D0A56FA28DF455C9DB2B97 /* WebRTC.xcframework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 		28301706983909049B54FA83199172F0 /* lottie-ios */ = {
 			isa = PBXGroup;
 			children = (
@@ -5162,7 +5139,7 @@
 				3A5FFDB6156D6ED5B59DC411EAF82384 /* Reachability */,
 				94BB8A112E8A0D683F434F83C387C1B1 /* SAMKeychain */,
 				DB5FCF5C49149C7241E346DA882F4E03 /* SignalCoreKit */,
-				8E2921316AF920F98465BBC050F10895 /* SignalRingRTC */,
+				4FAE508B0373EA8243052A529F4614E2 /* SignalRingRTC */,
 				D8AAFDF0F51CF163D10E326E00A08D87 /* SQLCipher */,
 				8CE722702A986914F377B1F671F50767 /* SSZipArchive */,
 				35658C7BEC82453B030868A4729B1908 /* Starscream */,
@@ -5434,6 +5411,33 @@
 			name = extobjc;
 			sourceTree = "<group>";
 		};
+		4FAE508B0373EA8243052A529F4614E2 /* SignalRingRTC */ = {
+			isa = PBXGroup;
+			children = (
+				5B8BF3DB2F746F1F9DF41A23ACA145D2 /* CallContext.swift */,
+				13C3B0E83E4E38D100921390B20A81D3 /* CallLinks.swift */,
+				90AA7208CD34AF74CC4269A12EF1AEA5 /* CallManager.swift */,
+				13048BDC0CF5A216DDD362232921D29B /* CallManagerGlobal.swift */,
+				03D13C8B2EBD3FDA25964E077F09D21C /* CallManagerInterface.swift */,
+				43447249E43614C04DAD2E1B0F4782CC /* CallManagerUtil.swift */,
+				4D5627F4670C59FAF76F2A3E625D8C9C /* Connection.swift */,
+				D007401C61D881A436B43A806646F9AE /* ConnectionMediaStream.swift */,
+				0DED4F5AF971A1FF636AEA1044CED112 /* FFI.swift */,
+				0FC27B3E344A63FB730FE5938F461FA3 /* GroupCall.swift */,
+				727B991F19A0A072228ABF1C16A0784C /* HTTP.swift */,
+				5150143261AE818452E5A612E1BDCD16 /* Logging.swift */,
+				3064ABC95084524A3ADBC1C8B7477931 /* ringrtc.h */,
+				2D1BAF515E2539FE26E33CF61929BCAE /* RingValidation.swift */,
+				070978072B9BBA7D103EE3280D4355B3 /* SFU.swift */,
+				24F4B59B0580F513BD5B28E8DF5B77CE /* SignalRingRTC.h */,
+				85EE7C02525AA30334265E6984369A64 /* VideoCaptureController.swift */,
+				9318CC07B0FD6266761C8089E92F0164 /* Support Files */,
+				63D3B0AA067426ACE85963470E7A1468 /* WebRTC */,
+			);
+			name = SignalRingRTC;
+			path = SignalRingRTC;
+			sourceTree = "<group>";
+		};
 		5017D1E531A8069CCF64949638FA1DAD /* LibSignalClient */ = {
 			isa = PBXGroup;
 			children = (
@@ -5598,6 +5602,14 @@
 			);
 			name = LibMobileCoin;
 			path = LibMobileCoin;
+			sourceTree = "<group>";
+		};
+		63D3B0AA067426ACE85963470E7A1468 /* WebRTC */ = {
+			isa = PBXGroup;
+			children = (
+				D0F91E53A7E1D1B53646489D49A99B0F /* Frameworks */,
+			);
+			name = WebRTC;
 			sourceTree = "<group>";
 		};
 		63FB7CF756C06002CEA6DE965382B360 /* Targets Support Files */ = {
@@ -5965,33 +5977,6 @@
 			path = SSZipArchive;
 			sourceTree = "<group>";
 		};
-		8E2921316AF920F98465BBC050F10895 /* SignalRingRTC */ = {
-			isa = PBXGroup;
-			children = (
-				038204BC717D4CB3224360809901CB59 /* CallContext.swift */,
-				1C0365FC71F1DD46B5DD1F096ECBF361 /* CallLinks.swift */,
-				2CD061B593E0763218373DDE98101175 /* CallManager.swift */,
-				C57C026A8A60A3ED0A8BE107F5B5D939 /* CallManagerGlobal.swift */,
-				5D85BCE45186CE1826374411CC1D9902 /* CallManagerInterface.swift */,
-				3C6DCA042CB30AC82977A174348B8F9A /* CallManagerUtil.swift */,
-				6D099041AFE87A8D5942CB3A1FDFF480 /* Connection.swift */,
-				3182ECE40795152DB4219376B2673224 /* ConnectionMediaStream.swift */,
-				9DDE1F71042800E2429153C306071191 /* FFI.swift */,
-				A9C8BC03295130880804558A8C44C21C /* GroupCall.swift */,
-				9E6AD725D7B90E473ECECBE756B1336F /* HTTP.swift */,
-				2099EFBECED3811BE0C6E53F3921B0B8 /* Logging.swift */,
-				5DFF0C72CE4D3D1EB68A5D5AE8C85C8A /* ringrtc.h */,
-				5E82634B59550E4D92C66AD784B517FA /* RingValidation.swift */,
-				BD12492B20EE7F625D34DF63B47C48D7 /* SFU.swift */,
-				FCBCF6FBF5F3734687C1BAE0A98E5794 /* SignalRingRTC.h */,
-				8A9A8993D4FC3E2A256E12B1DE004AF5 /* VideoCaptureController.swift */,
-				18C2159FB354A0764C078A48766BCAE7 /* Support Files */,
-				D06EA208F9DA17CD02A124B63AC1860D /* WebRTC */,
-			);
-			name = SignalRingRTC;
-			path = SignalRingRTC;
-			sourceTree = "<group>";
-		};
 		910EC328ADB35EABE704C61C0FF46FEA /* Support Files */ = {
 			isa = PBXGroup;
 			children = (
@@ -6005,6 +5990,21 @@
 			);
 			name = "Support Files";
 			path = "../Target Support Files/MobileCoin";
+			sourceTree = "<group>";
+		};
+		9318CC07B0FD6266761C8089E92F0164 /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				DC3AA74588F24DAC4545E6E17B1033E5 /* SignalRingRTC.modulemap */,
+				15E667B40A8B2EE4FF249CCD5BEA8FB3 /* SignalRingRTC-dummy.m */,
+				2C950514FC15078E8CB3967EC1BAB1BC /* SignalRingRTC-Info.plist */,
+				E2DFF19EE0EE95E6CFAACC8EA8C6B642 /* SignalRingRTC-prefix.pch */,
+				FB499EC5B89F8BE69D5F16205E325416 /* SignalRingRTC-xcframeworks.sh */,
+				9485F213CAC17BF05398B86CA0A3FF11 /* SignalRingRTC.debug.xcconfig */,
+				64C16173C31E2B8555E6EC68BE65DC77 /* SignalRingRTC.release.xcconfig */,
+			);
+			name = "Support Files";
+			path = "../Target Support Files/SignalRingRTC";
 			sourceTree = "<group>";
 		};
 		94BB8A112E8A0D683F434F83C387C1B1 /* SAMKeychain */ = {
@@ -6729,12 +6729,12 @@
 			path = "libPhoneNumber-iOS";
 			sourceTree = "<group>";
 		};
-		D06EA208F9DA17CD02A124B63AC1860D /* WebRTC */ = {
+		D0F91E53A7E1D1B53646489D49A99B0F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				1D39C0DA7178EF214AD3A63202D13703 /* Frameworks */,
+				A61B895423C05A8C00F70E187087E104 /* WebRTC.xcframework */,
 			);
-			name = WebRTC;
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		D3501235314278654927A288428A8C9A /* Support Files */ = {
@@ -7457,7 +7457,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0C4ECC27514A64D9F8887331008B311D /* ringrtc.h in Headers */,
+				B11CD29046EA53F1F4BD8319BA869C0A /* ringrtc.h in Headers */,
 				6D4EAFDD7C61CDD27C8DC305B24EF12A /* SignalRingRTC.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -11575,7 +11575,7 @@
 		};
 		07FCF6A301A2290B05EFF3FAC925F277 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9D2FBFA13BF41761BC62ED2B6E7C0B04 /* SignalRingRTC.debug.xcconfig */;
+			baseConfigurationReference = 9485F213CAC17BF05398B86CA0A3FF11 /* SignalRingRTC.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
@@ -12534,7 +12534,7 @@
 		};
 		1A21BE56B29D1819CA2ADAB85F391C05 /* Profiling */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F734976972DB298504626A7BD21B72F2 /* SignalRingRTC.release.xcconfig */;
+			baseConfigurationReference = 64C16173C31E2B8555E6EC68BE65DC77 /* SignalRingRTC.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
@@ -15920,7 +15920,7 @@
 		};
 		73995FFA6EAA16BD8B44787D65BEFC05 /* Testable Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F734976972DB298504626A7BD21B72F2 /* SignalRingRTC.release.xcconfig */;
+			baseConfigurationReference = 64C16173C31E2B8555E6EC68BE65DC77 /* SignalRingRTC.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
@@ -17443,7 +17443,7 @@
 		};
 		916003FDC5AF9498DAD569270D7C9D4E /* App Store Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F734976972DB298504626A7BD21B72F2 /* SignalRingRTC.release.xcconfig */;
+			baseConfigurationReference = 64C16173C31E2B8555E6EC68BE65DC77 /* SignalRingRTC.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
@@ -17761,7 +17761,7 @@
 		};
 		97B088765BE702D318B095ACECE1EE41 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F734976972DB298504626A7BD21B72F2 /* SignalRingRTC.release.xcconfig */;
+			baseConfigurationReference = 64C16173C31E2B8555E6EC68BE65DC77 /* SignalRingRTC.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
