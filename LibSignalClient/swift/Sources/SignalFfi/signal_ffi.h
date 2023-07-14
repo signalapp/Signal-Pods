@@ -166,6 +166,8 @@ typedef enum {
   SignalErrorCodeUsernameBadCharacter = 124,
   SignalErrorCodeUsernameTooShort = 125,
   SignalErrorCodeUsernameTooLong = 126,
+  SignalErrorCodeUsernameLinkInvalidEntropyDataLength = 127,
+  SignalErrorCodeUsernameLinkInvalid = 128,
   SignalErrorCodeIoError = 130,
   SignalErrorCodeInvalidMediaInput = 131,
   SignalErrorCodeUnsupportedMediaInput = 132,
@@ -525,6 +527,16 @@ SignalFfiError *signal_kyber_secret_key_destroy(SignalKyberSecretKey *p);
 SignalFfiError *signal_kyber_secret_key_clone(SignalKyberSecretKey **new_obj, const SignalKyberSecretKey *obj);
 
 SignalFfiError *signal_hkdf_derive(SignalBorrowedMutableBuffer output, SignalBorrowedBuffer ikm, SignalBorrowedBuffer label, SignalBorrowedBuffer salt);
+
+SignalFfiError *signal_service_id_service_id_binary(SignalOwnedBuffer *out, const uint8_t (*value)[17]);
+
+SignalFfiError *signal_service_id_service_id_string(const char **out, const uint8_t (*value)[17]);
+
+SignalFfiError *signal_service_id_service_id_log(const char **out, const uint8_t (*value)[17]);
+
+SignalFfiError *signal_service_id_parse_from_service_id_binary(uint8_t (*out)[17], SignalBorrowedBuffer input);
+
+SignalFfiError *signal_service_id_parse_from_service_id_string(uint8_t (*out)[17], const char *input);
 
 SignalFfiError *signal_address_new(SignalProtocolAddress **out, const char *name, uint32_t device_id);
 
@@ -1121,6 +1133,10 @@ SignalFfiError *signal_username_proof(SignalOwnedBuffer *out, const char *userna
 SignalFfiError *signal_username_verify(SignalBorrowedBuffer proof, SignalBorrowedBuffer hash);
 
 SignalFfiError *signal_username_candidates_from(const char **out, const char *nickname, uint32_t min_len, uint32_t max_len);
+
+SignalFfiError *signal_username_link_create(SignalOwnedBuffer *out, const char *username);
+
+SignalFfiError *signal_username_link_decrypt_username(const char **out, SignalBorrowedBuffer entropy, SignalBorrowedBuffer encrypted_username);
 
 #if defined(SIGNAL_MEDIA_SUPPORTED)
 SignalFfiError *signal_signal_media_check_available(void);
