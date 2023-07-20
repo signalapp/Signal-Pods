@@ -16,6 +16,10 @@ extension DispatchQueue: Scheduler {
         return self.sync(execute: work)
     }
 
+    public func sync<T>(_ work: () throws -> T) rethrows -> T {
+        return try self.sync(execute: work)
+    }
+
     public func asyncAfter(deadline: DispatchTime, _ work: @escaping () -> Void) {
         self.asyncAfter(deadline: deadline, execute: work)
     }

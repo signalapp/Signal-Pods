@@ -13,9 +13,11 @@ public protocol Scheduler {
 
     func async(_ work: @escaping () -> Void)
 
-    func sync(_ work: @escaping () -> Void)
+    func sync(_ work: () -> Void)
 
-    func sync<T>(_ work: @escaping () -> T) -> T
+    func sync<T>(_ work: () -> T) -> T
+
+    func sync<T>(_ work: () throws -> T) rethrows -> T
 
     func asyncAfter(deadline: DispatchTime, _ work: @escaping () -> Void)
 
