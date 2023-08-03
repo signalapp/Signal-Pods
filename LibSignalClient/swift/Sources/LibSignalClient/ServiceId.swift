@@ -6,14 +6,9 @@
 import Foundation
 import SignalFfi
 
-// swiftlint:disable large_tuple
-public typealias ServiceIdStorage = (
-    UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
-    UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8
-)
-// swiftlint:enable large_tuple
+internal typealias ServiceIdStorage = SignalServiceIdFixedWidthBinaryBytes
 
-public func == (_ lhs: ServiceIdStorage, _ rhs: ServiceIdStorage) -> Bool {
+internal func == (_ lhs: ServiceIdStorage, _ rhs: ServiceIdStorage) -> Bool {
     return lhs.0 == rhs.0 &&
         lhs.1 == rhs.1 &&
         lhs.2 == rhs.2 &&
@@ -33,7 +28,7 @@ public func == (_ lhs: ServiceIdStorage, _ rhs: ServiceIdStorage) -> Bool {
         lhs.16 == rhs.16
 }
 
-public func != (_ lhs: ServiceIdStorage, _ rhs: ServiceIdStorage) -> Bool {
+internal func != (_ lhs: ServiceIdStorage, _ rhs: ServiceIdStorage) -> Bool {
     return !(lhs == rhs)
 }
 
@@ -44,6 +39,7 @@ public enum ServiceIdKind: UInt8 {
 
 public enum ServiceIdError: Error {
     case invalidServiceId
+    case wrongServiceIdKind
 }
 
 public class ServiceId {
@@ -105,39 +101,48 @@ public class ServiceId {
         }
     }
 
-    public static func parseFrom(serviceIdString s: String) throws -> ServiceId {
-        var bytes: ServiceIdStorage = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-        try s.withCString { sPtr in
-            return try checkError(
-                signal_service_id_parse_from_service_id_string(&bytes, sPtr)
-            )
+    private func downcast<SpecificId: ServiceId>(to subclass: SpecificId.Type) throws -> SpecificId {
+        guard let downcastResult = self as? SpecificId else {
+            throw ServiceIdError.wrongServiceIdKind
         }
-        return try parseFrom(fixedWidthBinary: bytes)
+        return downcastResult
+    }
+
+    public static func parseFrom(serviceIdString s: String) throws -> Self {
+        let result = try invokeFnReturningServiceId {
+            signal_service_id_parse_from_service_id_string($0, s)
+        }
+        return try result.downcast(to: Self.self)
     }
 
     public static func parseFrom<
         Bytes: ContiguousBytes
-    >(serviceIdBinary sourceBytes: Bytes) throws -> ServiceId {
-        var bytes: ServiceIdStorage = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-        try sourceBytes.withUnsafeBorrowedBuffer { buffer in
-            try checkError(
-                signal_service_id_parse_from_service_id_binary(&bytes, buffer)
-            )
+    >(serviceIdBinary sourceBytes: Bytes) throws -> Self {
+        let result = try sourceBytes.withUnsafeBorrowedBuffer { buffer in
+            try invokeFnReturningServiceId {
+                signal_service_id_parse_from_service_id_binary($0, buffer)
+            }
         }
-        return try parseFrom(fixedWidthBinary: bytes)
+        return try result.downcast(to: Self.self)
     }
 
-    private static func parseFrom(
+    internal static func parseFrom(
         fixedWidthBinary bytes: ServiceIdStorage
-    ) throws -> ServiceId {
+    ) throws -> Self {
+        let result: ServiceId
         switch bytes.0 {
         case ServiceIdKind.aci.rawValue:
-            return Aci(fromFixedWidthBinary: bytes)
+            result = Aci(fromFixedWidthBinary: bytes)
         case ServiceIdKind.pni.rawValue:
-            return Pni(fromFixedWidthBinary: bytes)
+            result = Pni(fromFixedWidthBinary: bytes)
         default:
             throw ServiceIdError.invalidServiceId
         }
+        return try result.downcast(to: Self.self)
+    }
+
+    internal func withPointerToFixedWidthBinary<R>(_ callback: (UnsafePointer<ServiceIdStorage>) throws -> R) rethrows -> R {
+        return try callback(&self.storage)
     }
 }
 
