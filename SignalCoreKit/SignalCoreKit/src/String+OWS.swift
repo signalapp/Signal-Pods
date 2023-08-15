@@ -91,24 +91,37 @@ public extension String {
         return String(safePrefix(upperBoundCharCount))
     }
 
-    func replaceCharacters(characterSet: CharacterSet, replacement: String) -> String {
-        guard var range = self.rangeOfCharacter(from: characterSet) else {
-            return self
+    func replaceCharacters(
+        characterSet: CharacterSet,
+        replacement: String
+    ) -> String {
+        let endIndex = self.endIndex
+        var startIndex = self.startIndex
+
+        // Build up a list of ranges that need to be replaced
+        var ranges = [Range<String.Index>]()
+        while startIndex < endIndex, let range = self.rangeOfCharacter(from: characterSet, options: [], range: startIndex..<endIndex) {
+            ranges.append(range)
+            startIndex = range.upperBound
         }
 
+        // Don't do any allocation for unchanged strings
+        guard ranges.count > 0 else { return self }
+
+        // Create the result string and set up a capacity close to the final string
         var result = ""
-        var remaining = self[...]
-        while true {
-            result += remaining[..<range.lowerBound]
-            result += replacement
-            remaining = remaining[range.upperBound...]
-            guard let nextRange = remaining.rangeOfCharacter(from: characterSet) else {
-                result += remaining
-                break
-            }
-            range = nextRange
-        }
+        result.reserveCapacity(self.count)
 
+        // Iterate through the ranges, appending the string between the last
+        // match and the next, and then appending the replacement string
+        var currentIndex = self.startIndex
+        for range in ranges {
+            result += self[currentIndex..<range.lowerBound]
+            result += replacement
+            currentIndex = range.upperBound
+        }
+        // Add the remainder of the string
+        result += self[currentIndex..<endIndex]
         return result
     }
 
