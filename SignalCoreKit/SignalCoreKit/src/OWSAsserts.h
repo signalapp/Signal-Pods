@@ -219,6 +219,4 @@ __attribute__((annotate("returns_localized_nsstring"))) static inline NSString *
         OWSAssert(!_didOverflow);                                                                                      \
     } while (NO)
 
-void LogStackTrace(void);
-
 NS_ASSUME_NONNULL_END

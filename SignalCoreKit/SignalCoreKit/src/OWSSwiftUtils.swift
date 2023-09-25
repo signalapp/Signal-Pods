@@ -49,7 +49,7 @@ public func owsFail(_ logMessage: String,
                     file: String = #file,
                     function: String = #function,
                     line: Int = #line) -> Never {
-    OWSSwiftUtils.logStackTrace()
+    logStackTrace()
     owsFailDebug(logMessage, file: file, function: function, line: line)
     let formattedMessage = owsFormatLogMessage(logMessage, file: file, function: function, line: line)
     fatalError(formattedMessage)
@@ -96,8 +96,8 @@ public class OWSSwiftUtils: NSObject {
         fatalError(formattedMessage)
     }
 
-    @objc
-    public class func logStackTrace() {
-        Thread.callStackSymbols.forEach { Logger.error($0) }
-    }
+}
+
+public func logStackTrace() {
+    Logger.error(Thread.callStackSymbols.joined(separator: "\n"))
 }

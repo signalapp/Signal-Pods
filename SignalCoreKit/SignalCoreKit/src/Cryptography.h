@@ -37,9 +37,7 @@ typedef NS_ENUM(NSInteger, TSMACType) {
 
 + (NSData *)generateRandomBytes:(NSUInteger)numberBytes;
 
-+ (uint32_t)randomUInt32;
 + (uint64_t)randomUInt64;
-+ (unsigned)randomUnsigned;
 
 #pragma mark -
 

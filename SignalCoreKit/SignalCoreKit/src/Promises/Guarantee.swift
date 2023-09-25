@@ -64,6 +64,34 @@ public extension Guarantee {
     func asVoid() -> Guarantee<Void> { map { _ in } }
 }
 
+extension Guarantee {
+    /// Wraps a Swift Concurrency async function in a Guarantee.
+    ///
+    /// The Task is created with the default arguments. To configure the task's
+    /// priority, the caller should create its own Guarantee instance.
+    public static func wrapAsync(_ block: @escaping () async -> Value) -> Self {
+        let guarantee = Self()
+        Task {
+            guarantee.future.resolve(await block())
+        }
+        return guarantee
+    }
+
+    /// Converts a Guarantee to a Swift Concurrency async function.
+    public func awaitable() async -> Value {
+        await withCheckedContinuation { continuation in
+            observe(on: SyncScheduler()) { result in
+                switch result {
+                case .success(let value):
+                    continuation.resume(returning: value)
+                case .failure(let error):
+                    owsFail("Unexpectedly received error result from unfailable promise \(error)")
+                }
+            }
+        }
+    }
+}
+
 public extension Guarantee {
     func map<T>(
         on scheduler: Scheduler? = nil,

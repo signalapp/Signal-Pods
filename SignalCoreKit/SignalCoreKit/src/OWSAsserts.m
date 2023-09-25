@@ -14,9 +14,4 @@ void SwiftExit(NSString *message, const char *file, const char *function, int li
     [OWSSwiftUtils owsFail:message file:_file function:_function line:line];
 }
 
-void LogStackTrace()
-{
-    [OWSSwiftUtils logStackTrace];
-}
-
 NS_ASSUME_NONNULL_END

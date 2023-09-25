@@ -302,4 +302,16 @@ class PromiseTests: XCTestCase {
         XCTAssert(doneCalled)
         XCTAssertEqual(try future.result?.get(), 10)
     }
+
+    func test_asyncAwait() async throws {
+        let v1 = try await Promise.wrapAsync { await self.arbitraryAsyncAction() }.awaitable()
+        XCTAssertEqual(v1, 42)
+        let v2 = await Guarantee.wrapAsync { await self.arbitraryAsyncAction() }.awaitable()
+        XCTAssertEqual(v2, 42)
+    }
+
+    private func arbitraryAsyncAction() async -> Int {
+        await Task.yield()
+        return 42
+    }
 }

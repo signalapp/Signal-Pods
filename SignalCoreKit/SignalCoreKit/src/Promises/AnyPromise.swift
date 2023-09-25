@@ -158,6 +158,10 @@ public class AnyPromise: NSObject {
         anyPromise.asVoid()
     }
 
+    public func asAny() -> Promise<Any> {
+        return anyPromise
+    }
+
     @objc
     @available(swift, obsoleted: 1.0)
     public class func when(fulfilled promises: [AnyPromise]) -> AnyPromise {

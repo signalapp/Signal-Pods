@@ -82,6 +82,33 @@ public extension Promise {
     }
 }
 
+extension Promise {
+    /// Wraps a Swift Concurrency async function in a Promise.
+    ///
+    /// The Task is created with the default arguments. To configure the task's
+    /// priority, the caller should create its own Promise instance.
+    public static func wrapAsync(_ block: @escaping () async throws -> Value) -> Self {
+        let promise = Self()
+        Task {
+            do {
+                promise.future.resolve(try await block())
+            } catch {
+                promise.future.reject(error)
+            }
+        }
+        return promise
+    }
+
+    /// Converts a Promise to a Swift Concurrency async function.
+    public func awaitable() async throws -> Value {
+        try await withCheckedThrowingContinuation { continuation in
+            self.observe(on: SyncScheduler()) { result in
+                continuation.resume(with: result)
+            }
+        }
+    }
+}
+
 public extension Promise {
     class func pending() -> (Promise<Value>, Future<Value>) {
         let promise = Promise<Value>()
