@@ -1,13 +1,13 @@
 {
   "name": "SignalRingRTC",
-  "version": "2.31.2",
+  "version": "2.32.0",
   "summary": "A Swift & Objective-C library used by the Signal iOS app for WebRTC interactions.",
   "description": "A Swift & Objective-C library used by the Signal iOS app for WebRTC interactions.\"",
   "license": "AGPLv3",
   "homepage": "https://github.com/signalapp/ringrtc",
   "source": {
     "git": "https://github.com/signalapp/ringrtc.git",
-    "tag": "v2.31.2"
+    "tag": "v2.32.0"
   },
   "authors": {
     "Calling Team": "callingteam@signal.org"
@@ -26,12 +26,14 @@
   "private_header_files": "out/release/libringrtc/*.h",
   "module_map": "src/ios/SignalRingRTC/SignalRingRTC/SignalRingRTC.modulemap",
   "preserve_paths": [
-    "out/release/libringrtc",
+    "acknowledgments/acknowledgments.plist",
     "bin/set-up-for-cocoapods",
     "bin/fetch-artifact.py",
     "config/version.sh",
     "config/version.properties",
-    "prebuild-checksum"
+    "prebuild-checksum",
+    "out/release/libringrtc",
+    "out/release/acknowledgments-webrtc-ios.plist"
   ],
   "dependencies": {
     "SignalCoreKit": [
@@ -41,16 +43,10 @@
   "pod_target_xcconfig": {
     "LIBRINGRTC_IF_NEEDED": "$(PODS_TARGET_SRCROOT)/out/release/libringrtc/$(CARGO_BUILD_TARGET)/libringrtc.a",
     "OTHER_LDFLAGS": "$(LIBRINGRTC_IF_NEEDED)",
-    "RINGRTC_PREBUILD_DIR": "$(USER_LIBRARY_DIR)/Caches/org.signal.ringrtc/prebuild-2.31.2",
+    "RINGRTC_PREBUILD_DIR": "$(USER_LIBRARY_DIR)/Caches/org.signal.ringrtc/prebuild-2.32.0",
     "CARGO_BUILD_TARGET[sdk=iphonesimulator*][arch=arm64]": "aarch64-apple-ios-sim",
     "CARGO_BUILD_TARGET[sdk=iphonesimulator*][arch=*]": "x86_64-apple-ios",
-    "CARGO_BUILD_TARGET[sdk=iphoneos*]": "aarch64-apple-ios",
-    "CARGO_BUILD_TARGET_MAC_CATALYST_ARM_": "aarch64-apple-darwin",
-    "CARGO_BUILD_TARGET_MAC_CATALYST_ARM_YES": "aarch64-apple-ios-macabi",
-    "CARGO_BUILD_TARGET[sdk=macosx*][arch=arm64]": "$(CARGO_BUILD_TARGET_MAC_CATALYST_ARM_$(IS_MACCATALYST))",
-    "CARGO_BUILD_TARGET_MAC_CATALYST_X86_": "x86_64-apple-darwin",
-    "CARGO_BUILD_TARGET_MAC_CATALYST_X86_YES": "x86_64-apple-ios-macabi",
-    "CARGO_BUILD_TARGET[sdk=macosx*][arch=*]": "$(CARGO_BUILD_TARGET_MAC_CATALYST_X86_$(IS_MACCATALYST))"
+    "CARGO_BUILD_TARGET[sdk=iphoneos*]": "aarch64-apple-ios"
   },
   "script_phases": [
     {
