@@ -736,7 +736,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 ## SQLCipher
 
-Copyright (c) 2008, ZETETIC LLC
+Copyright (c) 2008-2023, ZETETIC LLC
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
