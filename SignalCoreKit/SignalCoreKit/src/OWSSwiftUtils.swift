@@ -12,72 +12,80 @@ public func assertOnQueue(_ queue: DispatchQueue) {
 }
 
 @inlinable
-public func AssertIsOnMainThread(file: String = #file,
-                                 function: String = #function,
-                                 line: Int = #line) {
+public func AssertIsOnMainThread(
+    file: String = #fileID,
+    function: String = #function,
+    line: Int = #line
+) {
     if !Thread.isMainThread {
         owsFailDebug("Must be on main thread.", file: file, function: function, line: line)
     }
 }
 
 @inlinable
-public func AssertNotOnMainThread(file: String = #file,
-                                 function: String = #function,
-                                 line: Int = #line) {
+public func AssertNotOnMainThread(
+    file: String = #fileID,
+    function: String = #function,
+    line: Int = #line
+) {
     if Thread.isMainThread {
         owsFailDebug("Must be off main thread.", file: file, function: function, line: line)
     }
 }
 
 @inlinable
-public func owsFailDebug(_ logMessage: String,
-                         file: String = #file,
-                         function: String = #function,
-                         line: Int = #line) {
+public func owsFailDebug(
+    _ logMessage: String,
+    file: String = #fileID,
+    function: String = #function,
+    line: Int = #line
+) {
     Logger.error(logMessage, file: file, function: function, line: line)
-    Logger.flush()
-    let formattedMessage = owsFormatLogMessage(logMessage, file: file, function: function, line: line)
     if IsDebuggerAttached() {
         TrapDebugger()
     } else {
-        assertionFailure(formattedMessage)
+        assertionFailure(logMessage)
     }
 }
 
 @inlinable
-public func owsFail(_ logMessage: String,
-                    file: String = #file,
-                    function: String = #function,
-                    line: Int = #line) -> Never {
+public func owsFail(
+    _ logMessage: String,
+    file: String = #fileID,
+    function: String = #function,
+    line: Int = #line
+) -> Never {
     logStackTrace()
     owsFailDebug(logMessage, file: file, function: function, line: line)
-    let formattedMessage = owsFormatLogMessage(logMessage, file: file, function: function, line: line)
-    fatalError(formattedMessage)
+    Logger.flush()
+    fatalError(logMessage)
 }
 
 @inlinable
-public func owsAssertDebug(_ condition: Bool,
-                           _ message: @autoclosure () -> String = String(),
-                           file: String = #file,
-                           function: String = #function,
-                           line: Int = #line) {
+public func owsAssertDebug(
+    _ condition: Bool,
+    _ message: @autoclosure () -> String = String(),
+    file: String = #fileID,
+    function: String = #function,
+    line: Int = #line
+) {
     if !condition {
         let message: String = message()
-        owsFailDebug(message.isEmpty ? "Assertion failed." : message,
-                     file: file, function: function, line: line)
+        owsFailDebug(message.isEmpty ? "Assertion failed." : message, file: file, function: function, line: line)
     }
 }
 
 @inlinable
-public func owsAssert(_ condition: Bool,
-                      _ message: @autoclosure () -> String = String(),
-                      file: String = #file,
-                      function: String = #function,
-                      line: Int = #line) {
+public func owsAssert(
+    _ condition: Bool,
+    _ message: @autoclosure () -> String = String(),
+    file: String = #fileID,
+    function: String = #function,
+    line: Int = #line
+) {
     if !condition {
         let message: String = message()
-        owsFail(message.isEmpty ? "Assertion failed." : message,
-                file: file, function: function, line: line)
+        owsFail(message.isEmpty ? "Assertion failed." : message, file: file, function: function, line: line)
     }
 }
 
@@ -85,17 +93,14 @@ public func owsAssert(_ condition: Bool,
 public class OWSSwiftUtils: NSObject {
     // This method can be invoked from Obj-C to exit the app.
     @objc
-    public class func owsFail(_ logMessage: String,
-                              file: String = #file,
-                              function: String = #function,
-                              line: Int = #line) -> Never {
-
-        logStackTrace()
-        owsFailDebug(logMessage, file: file, function: function, line: line)
-        let formattedMessage = owsFormatLogMessage(logMessage, file: file, function: function, line: line)
-        fatalError(formattedMessage)
+    public class func owsFailObjC(
+        _ logMessage: String,
+        file: String = #fileID,
+        function: String = #function,
+        line: Int = #line
+    ) -> Never {
+        owsFail(logMessage, file: file, function: function, line: line)
     }
-
 }
 
 public func logStackTrace() {

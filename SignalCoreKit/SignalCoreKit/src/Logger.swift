@@ -2,75 +2,90 @@
 //  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
 //
 
+import CocoaLumberjack
 import Foundation
 
-@inlinable
-public func owsFormatLogMessage(_ logString: String,
-                                file: String = #file,
-                                function: String = #function,
-                                line: Int = #line) -> String {
-    let filename = (file as NSString).lastPathComponent
-    // We format the filename & line number in a format compatible
-    // with XCode's "Open Quickly..." feature.
-    return "[\(filename):\(line) \(function)]: \(logString)"
-}
-
-/**
- * A minimal DDLog wrapper for swift.
- */
-open class Logger: NSObject {
-
-    open class func verbose(_ logString: @autoclosure () -> String,
-                            file: String = #file,
-                            function: String = #function,
-                            line: Int = #line) {
-        guard ShouldLogVerbose() else {
+public enum Logger {
+    /// Logs `logString()` if the level represented by `flag` is enabled.
+    public static func log(
+        _ logString: @autoclosure () -> String,
+        flag: DDLogFlag,
+        file: String,
+        function: String,
+        line: Int
+    ) {
+        guard ShouldLogFlag(flag) else {
             return
         }
-        OWSLogger.verbose(owsFormatLogMessage(logString(), file: file, function: function, line: line))
+        DDLog.log(asynchronous: true, message: DDLogMessage(
+            message: logString(),
+            level: ddLogLevel,
+            flag: flag,
+            context: 0,
+            file: file,
+            function: function,
+            line: UInt(line),
+            tag: nil,
+            timestamp: nil
+        ))
     }
 
-    open class func debug(_ logString: @autoclosure () -> String,
-                          file: String = #file,
-                          function: String = #function,
-                          line: Int = #line) {
-        guard ShouldLogDebug() else {
-            return
-        }
-        OWSLogger.debug(owsFormatLogMessage(logString(), file: file, function: function, line: line))
+    private static func log(
+        _ logString: @autoclosure () -> String,
+        flag: DDLogFlag,
+        fileID: String,
+        function: String,
+        line: Int
+    ) {
+        log(logString(), flag: flag, file: (fileID as NSString).lastPathComponent, function: function, line: line)
     }
 
-    open class func info(_ logString: @autoclosure () -> String,
-                         file: String = #file,
-                         function: String = #function,
-                         line: Int = #line) {
-        guard ShouldLogInfo() else {
-            return
-        }
-        OWSLogger.info(owsFormatLogMessage(logString(), file: file, function: function, line: line))
+    public static func verbose(
+        _ logString: @autoclosure () -> String,
+        file: String = #fileID,
+        function: String = #function,
+        line: Int = #line
+    ) {
+        log(logString(), flag: .verbose, fileID: file, function: function, line: line)
     }
 
-    open class func warn(_ logString: @autoclosure () -> String,
-                         file: String = #file,
-                         function: String = #function,
-                         line: Int = #line) {
-        guard ShouldLogWarning() else {
-            return
-        }
-        OWSLogger.warn(owsFormatLogMessage(logString(), file: file, function: function, line: line))
+    public static func debug(
+        _ logString: @autoclosure () -> String,
+        file: String = #fileID,
+        function: String = #function,
+        line: Int = #line
+    ) {
+        log(logString(), flag: .debug, fileID: file, function: function, line: line)
     }
 
-    open class func error(_ logString: @autoclosure () -> String,
-                          file: String = #file,
-                          function: String = #function,
-                          line: Int = #line) {
-        guard ShouldLogError() else {
-            return
-        }
-        OWSLogger.error(owsFormatLogMessage(logString(), file: file, function: function, line: line))
+    public static func info(
+        _ logString: @autoclosure () -> String,
+        file: String = #fileID,
+        function: String = #function,
+        line: Int = #line
+    ) {
+        log(logString(), flag: .info, fileID: file, function: function, line: line)
     }
 
-    open class func flush() {
-        OWSLogger.flush()
+    public static func warn(
+        _ logString: @autoclosure () -> String,
+        file: String = #fileID,
+        function: String = #function,
+        line: Int = #line
+    ) {
+        log(logString(), flag: .warning, fileID: file, function: function, line: line)
+    }
+
+    public static func error(
+        _ logString: @autoclosure () -> String,
+        file: String = #fileID,
+        function: String = #function,
+        line: Int = #line
+    ) {
+        log(logString(), flag: .error, fileID: file, function: function, line: line)
+    }
+
+    public static func flush() {
+        DDLog.flushLog()
     }
 }

@@ -10,10 +10,12 @@ public struct OWSAssertionError: Error {
     #endif
 
     public let description: String
-    public init(_ description: String,
-                file: String = #file,
-                function: String = #function,
-                line: Int = #line) {
+    public init(
+        _ description: String,
+        file: String = #fileID,
+        function: String = #function,
+        line: Int = #line
+    ) {
         #if TESTABLE_BUILD
         if Self.test_skipAssertions {
             Logger.warn("assertionError: \(description)")

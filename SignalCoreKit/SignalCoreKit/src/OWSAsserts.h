@@ -110,14 +110,12 @@ NS_ASSUME_NONNULL_BEGIN
 #define OWSFailDebug(_messageFormat, ...)                                                                              \
     do {                                                                                                               \
         OWSLogError(_messageFormat, ##__VA_ARGS__);                                                                    \
-        OWSLogFlush();                                                                                                 \
         OWSFailWithoutLogging(_messageFormat, ##__VA_ARGS__);                                                          \
     } while (0)
 
 #define OWSCFailDebug(_messageFormat, ...)                                                                             \
     do {                                                                                                               \
         OWSLogError(_messageFormat, ##__VA_ARGS__);                                                                    \
-        OWSLogFlush();                                                                                                 \
         OWSCFailWithoutLogging(_messageFormat, ##__VA_ARGS__);                                                         \
     } while (NO)
 
@@ -139,65 +137,18 @@ void SwiftExit(NSString *message, const char *file, const char *function, int li
         SwiftExit(_message, __FILE__, __PRETTY_FUNCTION__, __LINE__);                                                  \
     } while (NO)
 
-// Avoids Clang analyzer warning:
-//   Value stored to 'x' during it's initialization is never read
-#define SUPPRESS_DEADSTORE_WARNING(x)                                                                                  \
-    do {                                                                                                               \
-        (void)x;                                                                                                       \
-    } while (0)
-
 __attribute__((annotate("returns_localized_nsstring"))) static inline NSString *LocalizationNotNeeded(NSString *s)
 {
     return s;
 }
 
-#define OWSGuardWithException(X, ExceptionName)                                                                        \
-    do {                                                                                                               \
-        if (!(X)) {                                                                                                    \
-            OWSRaiseException(ExceptionName, @"Guard failed: %s", CONVERT_EXPR_TO_STRING(X));                          \
-        }                                                                                                              \
-    } while (NO)
-
 #define OWSRaiseException(name, formatParam, ...)                                                                      \
     do {                                                                                                               \
         OWSLogWarn(@"Exception: %@ %@", name, [NSString stringWithFormat:formatParam, ##__VA_ARGS__]);                 \
-        OWSLogFlush();                                                                                                 \
         @throw [NSException exceptionWithName:name                                                                     \
                                        reason:[NSString stringWithFormat:formatParam, ##__VA_ARGS__]                   \
                                      userInfo:nil];                                                                    \
     } while (NO)
-
-#define OWSRaiseExceptionWithUserInfo(name, userInfoParam, formatParam, ...)                                           \
-    do {                                                                                                               \
-        OWSLogWarn(                                                                                                    \
-            @"Exception: %@ %@ %@", name, userInfoParam, [NSString stringWithFormat:formatParam, ##__VA_ARGS__]);      \
-        OWSLogFlush();                                                                                                 \
-        @throw [NSException exceptionWithName:name                                                                     \
-                                       reason:[NSString stringWithFormat:formatParam, ##__VA_ARGS__]                   \
-                                     userInfo:userInfoParam];                                                          \
-    } while (NO)
-
-
-// UI JANK
-//
-// In pursuit of smooth UI, we want to continue moving blocking operations off the main thread.
-// Add `OWSJanksUI` in code paths that shouldn't be called on the main thread.
-// Because we have pervasively broken this tenant, enabling it by default would be too disruptive
-// but it's helpful while unjanking and maybe someday we can have it enabled by default.
-//#define DEBUG_UI_JANK 1
-
-#ifdef DEBUG
-#ifdef DEBUG_UI_JANK
-#define OWSJanksUI()                                                                                                   \
-    do {                                                                                                               \
-        OWSAssertDebug(![NSThread isMainThread])                                                                       \
-    } while (NO)
-#endif
-#endif
-
-#ifndef OWSJanksUI
-#define OWSJanksUI()
-#endif
 
 #pragma mark - Overflow Math
 

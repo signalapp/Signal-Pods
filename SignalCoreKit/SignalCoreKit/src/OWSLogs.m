@@ -9,57 +9,63 @@ NS_ASSUME_NONNULL_BEGIN
 
 @implementation OWSLogger
 
+static void logUnconditionally(DDLogFlag flag, const char *file, BOOL shouldTrimFilePath, NSUInteger line, const char *function, NSString *message)
+{
+    OWSCAssert(ShouldLogFlag(flag));
+    NSString *fileObj = [NSString stringWithFormat:@"%s", file];
+    fileObj = shouldTrimFilePath ? fileObj.lastPathComponent : fileObj;
+    DDLogMessage *logMessage = [[DDLogMessage alloc] initWithMessage:message
+                                                               level:ddLogLevel
+                                                                flag:flag
+                                                             context:0
+                                                                file:fileObj
+                                                            function:[NSString stringWithFormat:@"%s", function]
+                                                                line:line
+                                                                 tag:nil
+                                                             options:0
+                                                           timestamp:nil];
+    [DDLog log:YES message:logMessage];
+}
+
+void OWSLogUnconditionally(DDLogFlag flag, const char *file, BOOL shouldTrimFilePath, NSUInteger line, const char *function, NSString *format, ...)
+{
+    va_list args;
+    va_start(args, format);
+    NSString *message = [[NSString alloc] initWithFormat:format arguments:args];
+    va_end(args);
+    logUnconditionally(flag, file, shouldTrimFilePath, line, function, message);
+}
+
+static void _logShim(DDLogFlag flag, NSString *logString) {
+    if (!ShouldLogFlag(flag)) {
+        return;
+    }
+    logUnconditionally(flag, "", NO, 0, "", logString);
+}
+
 + (void)verbose:(NSString *)logString
 {
-    DDLogVerbose(@"💙 %@", logString);
+    _logShim(DDLogFlagVerbose, logString);
 }
 
 + (void)debug:(NSString *)logString
 {
-    DDLogDebug(@"💚 %@", logString);
+    _logShim(DDLogFlagDebug, logString);
 }
 
 + (void)info:(NSString *)logString
 {
-    DDLogInfo(@"💛 %@", logString);
-    if (self.aggressiveFlushing) {
-        [self flush];
-    }
+    _logShim(DDLogFlagInfo, logString);
 }
 
 + (void)warn:(NSString *)logString
 {
-    DDLogWarn(@"🧡 %@", logString);
-    if (self.aggressiveFlushing) {
-        [self flush];
-    }
+    _logShim(DDLogFlagWarning, logString);
 }
 
 + (void)error:(NSString *)logString
 {
-    DDLogError(@"❤️ %@", logString);
-    if (self.aggressiveFlushing) {
-        [self flush];
-    }
-}
-
-+ (void)flush
-{
-    OWSLogFlush();
-}
-
-static _Atomic BOOL _aggressiveLogFlushingEnabled = ATOMIC_VAR_INIT(NO);
-
-+ (BOOL)aggressiveFlushing
-{
-    return atomic_load(&_aggressiveLogFlushingEnabled);
-}
-
-+ (void)setAggressiveFlushing:(BOOL)isEnabled
-{
-    if (atomic_exchange(&_aggressiveLogFlushingEnabled, isEnabled) != isEnabled) {
-        [self warn:[NSString stringWithFormat:@"%@ aggressive log flushing", isEnabled ? @"Enabled" : @"Disabled"]];
-    }
+    _logShim(DDLogFlagError, logString);
 }
 
 @end

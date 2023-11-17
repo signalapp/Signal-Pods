@@ -7,10 +7,15 @@
 NS_ASSUME_NONNULL_BEGIN
 
 #ifdef DEBUG
-static const NSUInteger ddLogLevel = DDLogLevelAll;
+static const DDLogLevel ddLogLevel = DDLogLevelAll;
 #else
-static const NSUInteger ddLogLevel = DDLogLevelInfo;
+static const DDLogLevel ddLogLevel = DDLogLevelInfo;
 #endif
+
+static inline BOOL ShouldLogFlag(DDLogFlag flag)
+{
+    return (ddLogLevel & flag) != 0;
+}
 
 static inline BOOL ShouldLogVerbose(void)
 {
@@ -37,13 +42,7 @@ static inline BOOL ShouldLogError(void)
     return ddLogLevel >= DDLogLevelError;
 }
 
-/**
- * A minimal DDLog wrapper for swift.
- */
 @interface OWSLogger : NSObject
-
-/// When toggled, all subsequent logs at info or higher will be immediately flushed
-@property (class, atomic, assign) BOOL aggressiveFlushing;
 
 + (void)verbose:(NSString *)logString;
 + (void)debug:(NSString *)logString;
@@ -51,53 +50,20 @@ static inline BOOL ShouldLogError(void)
 + (void)warn:(NSString *)logString;
 + (void)error:(NSString *)logString;
 
-+ (void)flush;
-
 @end
 
-#define OWSLogPrefix()                                                                                                 \
-    ([NSString stringWithFormat:@"[%@:%d %s]: ",                                                                       \
-               [[NSString stringWithUTF8String:__FILE__] lastPathComponent],                                           \
-               __LINE__,                                                                                               \
-               __PRETTY_FUNCTION__])
+/// A helper method for `OWSLogIfEnabled`, which checks if a level should be logged.
+void OWSLogUnconditionally(DDLogFlag flag, const char *file, BOOL shouldTrimFilePath, NSUInteger line, const char *function, NSString *format, ...) NS_FORMAT_FUNCTION(6,7);
 
-#define OWSLogVerbose(_messageFormat, ...)                                                                             \
-    do {                                                                                                               \
-        DDLogVerbose(@"💙 %@%@", OWSLogPrefix(), [NSString stringWithFormat:_messageFormat, ##__VA_ARGS__]);              \
-    } while (0)
+#define OWSLogIfEnabled(flg, fmt, ...) \
+    do { if (ShouldLogFlag(flg)) OWSLogUnconditionally(flg, __FILE__, YES, __LINE__, __PRETTY_FUNCTION__, (fmt), ## __VA_ARGS__); } while (0)
 
-#define OWSLogDebug(_messageFormat, ...)                                                                               \
-    do {                                                                                                               \
-        DDLogDebug(@"💚 %@%@", OWSLogPrefix(), [NSString stringWithFormat:_messageFormat, ##__VA_ARGS__]);                \
-    } while (0)
+#define OWSLogVerbose(fmt, ...) OWSLogIfEnabled(DDLogFlagVerbose, fmt, ##__VA_ARGS__)
+#define OWSLogDebug(fmt, ...) OWSLogIfEnabled(DDLogFlagDebug, fmt, ##__VA_ARGS__)
+#define OWSLogInfo(fmt, ...) OWSLogIfEnabled(DDLogFlagInfo, fmt, ##__VA_ARGS__)
+#define OWSLogWarn(fmt, ...) OWSLogIfEnabled(DDLogFlagWarning, fmt, ##__VA_ARGS__)
+#define OWSLogError(fmt, ...) OWSLogIfEnabled(DDLogFlagError, fmt, ##__VA_ARGS__)
 
-#define OWSLogInfo(_messageFormat, ...)                                                                                 \
-    do {                                                                                                                \
-        DDLogInfo(@"💛 %@%@", OWSLogPrefix(), [NSString stringWithFormat:_messageFormat, ##__VA_ARGS__]);               \
-        if (OWSLogger.aggressiveFlushing) {                                                                             \
-            OWSLogFlush();                                                                                              \
-        }                                                                                                               \
-    } while (0)
-
-#define OWSLogWarn(_messageFormat, ...)                                                                                 \
-    do {                                                                                                                \
-        DDLogWarn(@"🧡 %@%@", OWSLogPrefix(), [NSString stringWithFormat:_messageFormat, ##__VA_ARGS__]);               \
-        if (OWSLogger.aggressiveFlushing) {                                                                             \
-            OWSLogFlush();                                                                                              \
-        }                                                                                                               \
-    } while (0)
-
-#define OWSLogError(_messageFormat, ...)                                                                                \
-    do {                                                                                                                \
-        DDLogError(@"❤️ %@%@", OWSLogPrefix(), [NSString stringWithFormat:_messageFormat, ##__VA_ARGS__]);              \
-        if (OWSLogger.aggressiveFlushing) {                                                                             \
-            OWSLogFlush();                                                                                              \
-        }                                                                                                               \
-    } while (0)
-
-#define OWSLogFlush()                                                                                                  \
-    do {                                                                                                               \
-        [DDLog flushLog];                                                                                              \
-    } while (0)
+#define OWSLogFlush() do { [DDLog flushLog]; } while (0)
 
 NS_ASSUME_NONNULL_END

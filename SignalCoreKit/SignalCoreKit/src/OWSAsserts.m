@@ -11,7 +11,7 @@ void SwiftExit(NSString *message, const char *file, const char *function, int li
 {
     NSString *_file = [NSString stringWithFormat:@"%s", file];
     NSString *_function = [NSString stringWithFormat:@"%s", function];
-    [OWSSwiftUtils owsFail:message file:_file function:_function line:line];
+    [OWSSwiftUtils owsFailObjC:message file:_file function:_function line:line];
 }
 
 NS_ASSUME_NONNULL_END
