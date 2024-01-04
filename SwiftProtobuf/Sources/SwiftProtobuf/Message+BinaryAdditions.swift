@@ -22,20 +22,55 @@ extension Message {
   /// - Parameters:
   ///   - partial: If `false` (the default), this method will check
   ///     `Message.isInitialized` before encoding to verify that all required
-  ///     fields are present. If any are missing, this method throws
+  ///     fields are present. If any are missing, this method throws.
   ///     `BinaryEncodingError.missingRequiredFields`.
   /// - Returns: A `Data` value containing the binary serialization of the
   ///   message.
   /// - Throws: `BinaryEncodingError` if encoding fails.
   public func serializedData(partial: Bool = false) throws -> Data {
+    return try serializedData(partial: partial, options: BinaryEncodingOptions())
+  }
+
+  /// Returns a `Data` value containing the Protocol Buffer binary format
+  /// serialization of the message.
+  ///
+  /// - Parameters:
+  ///   - partial: If `false` (the default), this method will check
+  ///     `Message.isInitialized` before encoding to verify that all required
+  ///     fields are present. If any are missing, this method throws.
+  ///     `BinaryEncodingError.missingRequiredFields`.
+  ///   - options: The `BinaryEncodingOptions` to use.
+  /// - Returns: A `SwiftProtobufContiguousBytes` instance containing the binary serialization
+  /// of the message.
+  ///
+  /// - Throws: `BinaryEncodingError` if encoding fails.
+  public func serializedData(
+    partial: Bool = false,
+    options: BinaryEncodingOptions
+  ) throws -> Data {
     if !partial && !isInitialized {
       throw BinaryEncodingError.missingRequiredFields
     }
+
+    // Note that this assumes `options` will not change the required size.
     let requiredSize = try serializedDataSize()
+
+    // Messages have a 2GB limit in encoded size, the upstread C++ code
+    // (message_lite, etc.) does this enforcement also.
+    // https://protobuf.dev/programming-guides/encoding/#cheat-sheet
+    //
+    // Testing here enables the limit without adding extra conditionals to all
+    // the places that encode message fields (or strings/bytes fields), keeping
+    // the overhead of the check to a minimum.
+    guard requiredSize < 0x7fffffff else {
+      // Adding a new error is a breaking change.
+      throw BinaryEncodingError.missingRequiredFields
+    }
+
     var data = Data(count: requiredSize)
     try data.withUnsafeMutableBytes { (body: UnsafeMutableRawBufferPointer) in
       if let baseAddress = body.baseAddress, body.count > 0 {
-        var visitor = BinaryEncodingVisitor(forWritingInto: baseAddress)
+        var visitor = BinaryEncodingVisitor(forWritingInto: baseAddress, options: options)
         try traverse(visitor: &visitor)
         // Currently not exposing this from the api because it really would be
         // an internal error in the library and should never happen.
@@ -66,9 +101,9 @@ extension Message {
   ///     extensions in this message or messages nested within this message's
   ///     fields.
   ///   - partial: If `false` (the default), this method will check
-  ///     `Message.isInitialized` before encoding to verify that all required
+  ///     `Message.isInitialized` after decoding to verify that all required
   ///     fields are present. If any are missing, this method throws
-  ///     `BinaryEncodingError.missingRequiredFields`.
+  ///     `BinaryDecodingError.missingRequiredFields`.
   ///   - options: The BinaryDecodingOptions to use.
   /// - Throws: `BinaryDecodingError` if decoding fails.
   @inlinable
@@ -162,9 +197,9 @@ extension Message {
   ///     extensions in this message or messages nested within this message's
   ///     fields.
   ///   - partial: If `false` (the default), this method will check
-  ///     `Message.isInitialized` before encoding to verify that all required
+  ///     `Message.isInitialized` after decoding to verify that all required
   ///     fields are present. If any are missing, this method throws
-  ///     `BinaryEncodingError.missingRequiredFields`.
+  ///     `BinaryDecodingError.missingRequiredFields`.
   ///   - options: The BinaryDecodingOptions to use.
   /// - Throws: `BinaryDecodingError` if decoding fails.
   @inlinable
