@@ -1,6 +1,6 @@
 {
   "name": "LibMobileCoin",
-  "version": "5.0.0",
+  "version": "6.0.0-pre1",
   "summary": "A library for communicating with MobileCoin network",
   "authors": "MobileCoin",
   "homepage": "https://www.mobilecoin.com/",
@@ -9,7 +9,7 @@
   },
   "source": {
     "git": "https://github.com/mobilecoinofficial/libmobilecoin-ios-artifacts.git",
-    "tag": "v5.0.0",
+    "tag": "v6.0.0-pre1",
     "submodules": true
   },
   "platforms": {
@@ -47,23 +47,28 @@
   "subspecs": [
     {
       "name": "TestVectors",
-      "source_files": "Sources/TestVector/**/*.swift",
+      "source_files": [
+        "Sources/TestVector/Util/Bundle+TestVector.swift",
+        "Sources/TestVector/Util/TestVectorError.swift"
+      ],
       "preserve_paths": [
-        "Artifacts/**/libmobilecoin.a"
+        "Artifacts/target/**/libmobilecoin.a"
       ],
       "resources": [
-        "Vendor/mobilecoin/test-vectors/vectors/**/*.*"
+        "Sources/TestVector/vectors/*.*"
       ]
     },
     {
       "name": "Core",
       "preserve_paths": [
-        "Artifacts/**/libmobilecoin.a"
+        "Artifacts/target/**/libmobilecoin.a"
       ],
       "source_files": [
         "Artifacts/include/*.h",
-        "Sources/Generated/Proto/*.{grpc,pb,http}.swift",
-        "Sources/Interface/*.swift"
+        "Sources/HTTP/*.{http}.swift",
+        "Sources/HTTP/Interface/*.swift",
+        "Sources/GRPC/*.{grpc}.swift",
+        "Sources/Common/*.{pb}.swift"
       ],
       "dependencies": {
         "gRPC-Swift": [
@@ -77,14 +82,34 @@
     {
       "name": "CoreHTTP",
       "preserve_paths": [
-        "Artifacts/**/libmobilecoin.a"
+        "Artifacts/target/**/libmobilecoin.a"
       ],
       "source_files": [
         "Artifacts/include/*.h",
-        "Sources/Generated/Proto/*.{pb,http}.swift",
-        "Sources/Interface/*.swift"
+        "Sources/HTTP/*.{http}.swift",
+        "Sources/HTTP/Interface/*.swift",
+        "Sources/Common/*.{pb}.swift"
       ],
       "dependencies": {
+        "SwiftProtobuf": [
+          "~> 1.5"
+        ]
+      }
+    },
+    {
+      "name": "CoreGRPC",
+      "preserve_paths": [
+        "Artifacts/target/**/libmobilecoin.a"
+      ],
+      "source_files": [
+        "Artifacts/include/*.h",
+        "Sources/GRPC/*.{grpc}.swift",
+        "Sources/Common/*.{pb}.swift"
+      ],
+      "dependencies": {
+        "gRPC-Swift": [
+
+        ],
         "SwiftProtobuf": [
           "~> 1.5"
         ]

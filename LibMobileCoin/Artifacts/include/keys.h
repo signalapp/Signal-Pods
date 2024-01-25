@@ -107,6 +107,16 @@ bool mc_account_key_get_short_address_hash(
 )
 MC_ATTRIBUTE_NONNULL(1, 2, 3);
 
+/* ==== Burn Address ==== */
+
+/// # Preconditions
+///
+/// * `out_view_private_key` - length must be >= 32.
+bool mc_get_burn_address_view_private(
+  McMutableBuffer* MC_NONNULL out_view_private_key
+)
+MC_ATTRIBUTE_NONNULL(1);
+
 #ifdef __cplusplus
 }
 #endif

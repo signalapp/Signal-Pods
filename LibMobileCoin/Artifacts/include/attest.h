@@ -17,6 +17,10 @@ extern "C" {
 /// question has the given MrEnclave, and has no other IAS report status issues.
 typedef struct _McMrEnclaveVerifier McMrEnclaveVerifier;
 
+typedef struct _McTrustedMrEnclaveIdentity McTrustedMrEnclaveIdentity;
+
+typedef struct _McTrustedMrSignerIdentity McTrustedMrSignerIdentity;
+
 /// A `VerifyIasReportData` implementation that will check if the enclave in
 /// question has the given MrSigner value, and has no other IAS report status
 /// issues.
@@ -25,6 +29,10 @@ typedef struct _McMrSignerVerifier McMrSignerVerifier;
 /// A builder structure used to construct a report verifier based on the
 /// criteria specified.
 typedef struct _McVerifier McVerifier;
+
+typedef struct _McTrustedIdentity McTrustedIdentity;
+
+typedef struct _McAdvisories McAdvisories;
 
 typedef struct _McAttestAke McAttestAke;
 
@@ -41,37 +49,59 @@ McMrEnclaveVerifier* MC_NULLABLE mc_mr_enclave_verifier_create(
 )
 MC_ATTRIBUTE_NONNULL(1);
 
+McTrustedMrEnclaveIdentity* MC_NULLABLE mc_trusted_identity_mr_enclave_create(
+  const McBuffer* MC_NONNULL mr_enclave,
+  McAdvisories* MC_NONNULL config_advisories,
+  McAdvisories* MC_NONNULL hardening_advisories
+)
+MC_ATTRIBUTE_NONNULL(1, 2, 3);
+
+McTrustedMrSignerIdentity* MC_NULLABLE mc_trusted_identity_mr_signer_create(
+  const McBuffer* MC_NONNULL mr_signer,
+  McAdvisories* MC_NONNULL config_advisories,
+  McAdvisories* MC_NONNULL hardening_advisories,
+  uint16_t expected_product_id,
+  uint16_t minimum_security_version
+)
+MC_ATTRIBUTE_NONNULL(1, 2, 3);
+
 void mc_mr_enclave_verifier_free(
   McMrEnclaveVerifier* MC_NULLABLE mr_enclave_verifier
 );
 
-/// Assume an enclave with the specified measurement does not need
-/// BIOS configuration changes to address the provided advisory ID.
-///
-/// This method should only be used when advised by an enclave author.
-///
-/// # Preconditions
-///
-/// * `advisory_id` - must be a nul-terminated C string containing valid UTF-8.
-bool mc_mr_enclave_verifier_allow_config_advisory(
-  McMrEnclaveVerifier* MC_NONNULL mr_enclave_verifier,
-  const char* MC_NONNULL advisory_id
-)
-MC_ATTRIBUTE_NONNULL(1, 2);
+void mc_trusted_identity_mr_enclave_free(
+  McTrustedMrEnclaveIdentity* MC_NULLABLE mr_enclave_trusted_identity
+);
 
-/// Assume the given MrEnclave value has the appropriate software/build-time
-/// hardening for the given advisory ID.
-///
-/// This method should only be used when advised by an enclave author.
-///
-/// # Preconditions
-///
-/// * `advisory_id` - must be a nul-terminated C string containing valid UTF-8.
-bool mc_mr_enclave_verifier_allow_hardening_advisory(
-  McMrEnclaveVerifier* MC_NONNULL mr_enclave_verifier,
-  const char* MC_NONNULL advisory_id
+void mc_trusted_identity_mr_signer_free(
+  McTrustedMrSignerIdentity* MC_NULLABLE mr_signer_trusted_identity
+);
+
+// MrEnclave to string
+ssize_t  mc_trusted_mr_enclave_identity_advisories_to_string(
+  const McTrustedMrEnclaveIdentity* MC_NONNULL mr_enclave_trusted_identity,
+  McMutableBuffer* MC_NULLABLE out_advisories
 )
-MC_ATTRIBUTE_NONNULL(1, 2);
+MC_ATTRIBUTE_NONNULL(1);
+
+ssize_t  mc_trusted_mr_enclave_identity_to_string(
+  const McTrustedMrEnclaveIdentity* MC_NONNULL mr_enclave_trusted_identity,
+  McMutableBuffer* MC_NULLABLE out_enclave_measurement
+)
+MC_ATTRIBUTE_NONNULL(1);
+
+// MrSigner to string
+ssize_t  mc_trusted_mr_signer_identity_advisories_to_string(
+  const McTrustedMrSignerIdentity* MC_NONNULL mr_signer_trusted_identity,
+  McMutableBuffer* MC_NULLABLE out_advisories
+)
+MC_ATTRIBUTE_NONNULL(1);
+
+ssize_t  mc_trusted_mr_signer_identity_to_string(
+  const McTrustedMrSignerIdentity* MC_NONNULL mr_signer_trusted_identity,
+  McMutableBuffer* MC_NULLABLE out_enclave_measurement
+)
+MC_ATTRIBUTE_NONNULL(1);
 
 /* ==== McMrSignerVerifier ==== */
 
@@ -144,6 +174,44 @@ bool mc_verifier_add_mr_signer(
 )
 MC_ATTRIBUTE_NONNULL(1, 2);
 
+/* ==== McAdvisories ==== */
+
+/// Construct a new advisories vector to hold strings
+McAdvisories* MC_NULLABLE mc_advisories_create();
+
+bool mc_advisories_free(
+  McAdvisories* MC_NULLABLE advisories
+);
+
+bool mc_add_advisory(
+    McAdvisories* MC_NONNULL advisories,
+    const char* MC_NONNULL advisory_id
+)
+MC_ATTRIBUTE_NONNULL(1, 2);
+
+/* ==== McTrustedIdentities ==== */
+
+/// Construct a new trusted identities vector to hold TrustedIdentity structs
+McTrustedIdentities* MC_NULLABLE mc_trusted_identities_create();
+
+void mc_trusted_identities_free(
+  McTrustedIdentities* MC_NULLABLE verifier
+);
+
+/// Verify the given MrEnclave-based status verifier succeeds
+bool mc_trusted_identities_add_mr_enclave(
+  McTrustedIdentities* MC_NONNULL trusted_identities,
+  const McTrustedMrEnclaveIdentity* MC_NONNULL mr_enclave_trusted_identity
+)
+MC_ATTRIBUTE_NONNULL(1, 2);
+
+/// Verify the given MrSigner-based status trusted_identities succeeds
+bool mc_trusted_identities_add_mr_signer(
+  McTrustedIdentities* MC_NONNULL trusted_identities,
+  const McTrustedMrSignerIdentity* MC_NONNULL mr_signer_trusted_identity
+)
+MC_ATTRIBUTE_NONNULL(1, 2);
+
 /* ==== McAttestAke ==== */
 
 McAttestAke* MC_NULLABLE mc_attest_ake_create();
@@ -193,7 +261,7 @@ MC_ATTRIBUTE_NONNULL(1, 2);
 bool mc_attest_ake_process_auth_response(
   McAttestAke* MC_NONNULL attest_ake,
   const McBuffer* MC_NONNULL auth_response_data,
-  const McVerifier* MC_NONNULL verifier,
+  const McTrustedIdentities* MC_NONNULL trusted_identities,
   McError* MC_NULLABLE * MC_NULLABLE out_error
 )
 MC_ATTRIBUTE_NONNULL(1, 2, 3);

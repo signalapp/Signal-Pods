@@ -83,6 +83,10 @@ typedef struct {
   size_t len;
 } McMutableBuffer;
 
+/* ==== McTrustedIdentities ==== */
+
+typedef struct _McTrustedIdentities McTrustedIdentities;
+
 /* ==== McData ==== */
 
 typedef struct _McData McData;

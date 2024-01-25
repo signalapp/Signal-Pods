@@ -23,7 +23,7 @@ typedef struct _McFogRng McFogRng;
 /* ==== McFogResolver ==== */
 
 McFogResolver* MC_NULLABLE mc_fog_resolver_create(
-  const McVerifier* MC_NONNULL fog_report_verifier
+  const McTrustedIdentities* MC_NONNULL fog_report_trusted_identities
 )
 MC_ATTRIBUTE_NONNULL(1);
 

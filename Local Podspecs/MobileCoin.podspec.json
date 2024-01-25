@@ -1,6 +1,6 @@
 {
   "name": "MobileCoin",
-  "version": "5.0.0",
+  "version": "6.0.0",
   "summary": "A library for communicating with MobileCoin network",
   "authors": "MobileCoin",
   "homepage": "https://www.mobilecoin.com/",
@@ -9,7 +9,7 @@
   },
   "source": {
     "git": "https://github.com/mobilecoinofficial/MobileCoin-Swift.git",
-    "tag": "v5.0.0",
+    "tag": "v6.0.0",
     "submodules": true
   },
   "platforms": {
@@ -28,23 +28,29 @@
     {
       "name": "Tests",
       "test_type": "unit",
-      "source_files": "Tests/{Unit,Common,Fixtures,Mocks}/**/*.swift",
+      "source_files": "Tests/{Unit,Common}/**/*.swift",
       "resources": [
         "Tests/Common/FixtureData/**/*",
-        "Vendor/libmobilecoin-ios-artifacts/Vendor/mobilecoin/test-vectors/vectors/**/*"
+        "Vendor/libmobilecoin/Vendor/mobilecoin/test-vectors/vectors/**/*"
       ]
     },
     {
       "name": "IntegrationTransactingTests",
       "test_type": "unit",
-      "source_files": "Tests/{Common,Util,Integration/Common,Integration/Transacting}/**/*.swift",
-      "resources": "Tests/Common/FixtureData/**/*"
+      "source_files": "Tests/{Common,Integration/Common,Integration/Transacting}/**/*.swift",
+      "resources": [
+        "Tests/Common/FixtureData/**/*",
+        "Tests/Common/Secrets/process_info.json"
+      ]
     },
     {
       "name": "IntegrationNonTransactingTests",
       "test_type": "unit",
       "source_files": "Tests/{Common,Util,Integration/Common,Integration/NonTransacting}/**/*.swift",
-      "resources": "Tests/Common/FixtureData/**/*"
+      "resources": [
+        "Tests/Common/FixtureData/**/*",
+        "Tests/Common/Secrets/process_info.json"
+      ]
     },
     {
       "name": "PerformanceTests",
@@ -57,17 +63,12 @@
     {
       "name": "Core",
       "source_files": [
-        "Sources/*.{h,m,swift}",
-        "Sources/{Account,Common,Crypto,Encodings,Fog,Ledger}/**/*.{h,m,swift}",
-        "Sources/{LibMobileCoin,Mistyswap,Mnemonic,Storage,Transaction,Utils}/**/*.{h,m,swift}",
-        "Sources/Network/{Attestation,Authorization,Connection,Service,Url}/**/*.{h,m,swift}",
-        "Sources/Network/{GRPC,HTTPS}/**/*.{h,m,swift}",
-        "Sources/Network/ProtocolSpecific/Combined/**/*.{h,m,swift}",
-        "Sources/Network/*.{h,m,swift}"
+        "Sources/{Common,GRPC,HTTPS}/**/*.swift",
+        "CocoapodsOnly/*.{h,m,swift}"
       ],
       "dependencies": {
         "LibMobileCoin/Core": [
-          "~> 5.0.0"
+          "~> 6.0.0-pre1"
         ],
         "gRPC-Swift": [
           "1.0.0"
@@ -92,25 +93,21 @@
         {
           "name": "ProtocolUnitTests",
           "test_type": "unit",
-          "source_files": "Tests/{Http,Grpc}/**/*.swift",
-          "resources": "Tests/{Http,Grpc}/FixtureData/**/*"
+          "source_files": "Tests/{Common,ProtocolSpecific}/**/*.swift",
+          "resources": "Tests/{ProtocolSpecific/Http,ProtocolSpecific/Grpc}/FixtureData/**/*"
         }
       ]
     },
     {
       "name": "CoreHTTP",
       "source_files": [
-        "Sources/*.{h,m,swift}",
-        "Sources/{Account,Common,Crypto,Encodings,Fog,Ledger}/**/*.{h,m,swift}",
-        "Sources/{LibMobileCoin,Mistyswap,Mnemonic,Storage,Transaction,Utils}/**/*.{h,m,swift}",
-        "Sources/Network/{Attestation,Authorization,Connection,Service,Url}/**/*.{h,m,swift}",
-        "Sources/Network/HTTPS/**/*.{h,m,swift}",
-        "Sources/Network/ProtocolSpecific/HTTPOnly/**/*.{h,m,swift}",
-        "Sources/Network/*.{h,m,swift}"
+        "Sources/{Common,HTTPS}/**/*.swift",
+        "CocoapodsOnly/*.{h,m,swift}",
+        "HTTPOnly/WrappedNIOSSLCertificateValidator.swift"
       ],
       "dependencies": {
         "LibMobileCoin/CoreHTTP": [
-          "~> 5.0.0"
+          "~> 6.0.0-pre1"
         ],
         "Logging": [
           "~> 1.4"
@@ -120,8 +117,8 @@
         {
           "name": "HttpProtocolUnitTests",
           "test_type": "unit",
-          "source_files": "Tests/Http/**/*.swift",
-          "resources": "Tests/Http/FixtureData/**/*"
+          "source_files": "Tests/ProtocolSpecific/Http/**/*.swift",
+          "resources": "Tests/ProtocolSpecific/Http/FixtureData/**/*"
         }
       ]
     }

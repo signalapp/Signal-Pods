@@ -12,6 +12,7 @@
 
 #import "attest.h"
 #import "bip39.h"
+#import "blockchain_types.h"
 #import "chacha20_rng.h"
 #import "common.h"
 #import "crypto.h"
@@ -19,6 +20,7 @@
 #import "fog.h"
 #import "keys.h"
 #import "libmobilecoin.h"
+#import "light_client.h"
 #import "signed_contingent_input.h"
 #import "slip10.h"
 #import "transaction.h"

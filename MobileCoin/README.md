@@ -15,6 +15,15 @@ MobileCoin is a privacy-preserving payments network designed for use on mobile d
 * MobileCoin is a prototype. Expect substantial changes before the release.
 * Please see [*CONTRIBUTING.md*](./CONTRIBUTING.md) for notes on contributing bug reports and code.
 
+# `libmobilecoin` history rewrite
+
+We migrated `libmobilecoin`, our static library submodule, with `git lfs migrate`. It rewrites the commit history 
+so older submodule commit hashes will be broken.  We archived all those commits here:
+
+[`libmobilecoin-archive`](https://github.com/mobilecoinofficial/libmobilecoin-archive)
+
+which can be used in place of `libmobilecoin` for older commits. 
+
 # Table of Contents
 - [License](#license)
 - [Cryptography Notice](#cryptography-notice)
