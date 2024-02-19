@@ -465,7 +465,7 @@ Key files:
 There are many other source files.  Each has a succinct header comment that
 describes its purpose and role within the larger system.
 
-<a name="vauth"></a>
+<a name="isabelschoeps"></a>
 ## Verifying Code Authenticity
 
 The `manifest` file at the root directory of the source tree
