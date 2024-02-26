@@ -5,7 +5,7 @@ ENABLE_BITCODE = YES
 FRAMEWORK_SEARCH_PATHS = $(inherited) "${PODS_CONFIGURATION_BUILD_DIR}/CocoaLumberjack" "${PODS_CONFIGURATION_BUILD_DIR}/Logging" "${PODS_CONFIGURATION_BUILD_DIR}/SwiftProtobuf"
 GCC_OPTIMIZATION_LEVEL = z
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1
-LIBRARY_SEARCH_PATHS = $(inherited) "${DT_TOOLCHAIN_DIR}/usr/lib/swift/${PLATFORM_NAME}" /usr/lib/swift
+LIBRARY_SEARCH_PATHS = $(inherited) "${TOOLCHAIN_DIR}/usr/lib/swift/${PLATFORM_NAME}" /usr/lib/swift
 LLVM_LTO = YES
 OTHER_LDFLAGS = $(inherited) -framework "CocoaLumberjack" -framework "Logging" -framework "SwiftProtobuf"
 OTHER_SWIFT_FLAGS = $(inherited) -D COCOAPODS
