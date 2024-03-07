@@ -189,8 +189,6 @@ if [[ "$CONFIGURATION" == "App Store Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/blurhash/blurhash.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/libPhoneNumber-iOS/libPhoneNumber_iOS.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/libwebp/libwebp.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/Logging/Logging.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/MobileCoinMinimal/MobileCoinMinimal.framework"
   install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/SignalRingRTC/WebRTC/WebRTC.framework"
 fi
 if [[ "$CONFIGURATION" == "Debug" ]]; then
@@ -207,8 +205,6 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/blurhash/blurhash.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/libPhoneNumber-iOS/libPhoneNumber_iOS.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/libwebp/libwebp.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/Logging/Logging.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/MobileCoinMinimal/MobileCoinMinimal.framework"
   install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/SignalRingRTC/WebRTC/WebRTC.framework"
 fi
 if [[ "$CONFIGURATION" == "Profiling" ]]; then
@@ -225,8 +221,6 @@ if [[ "$CONFIGURATION" == "Profiling" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/blurhash/blurhash.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/libPhoneNumber-iOS/libPhoneNumber_iOS.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/libwebp/libwebp.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/Logging/Logging.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/MobileCoinMinimal/MobileCoinMinimal.framework"
   install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/SignalRingRTC/WebRTC/WebRTC.framework"
 fi
 if [[ "$CONFIGURATION" == "Testable Release" ]]; then
@@ -243,8 +237,6 @@ if [[ "$CONFIGURATION" == "Testable Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/blurhash/blurhash.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/libPhoneNumber-iOS/libPhoneNumber_iOS.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/libwebp/libwebp.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/Logging/Logging.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/MobileCoinMinimal/MobileCoinMinimal.framework"
   install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/SignalRingRTC/WebRTC/WebRTC.framework"
 fi
 if [ "${COCOAPODS_PARALLEL_CODE_SIGN}" == "true" ]; then
