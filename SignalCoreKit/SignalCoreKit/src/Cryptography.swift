@@ -439,19 +439,19 @@ extension FileHandle {
     }
 }
 
-struct SHA256DigestContext {
+public struct SHA256DigestContext {
     private var context = CC_SHA256_CTX()
     private var isFinal = false
 
-    init() {
+    public init() {
         CC_SHA256_Init(&context)
     }
 
-    mutating func update(_ data: Data) throws {
+    public mutating func update(_ data: Data) throws {
         try data.withUnsafeBytes { try update(bytes: $0) }
     }
 
-    mutating func update(bytes: UnsafeRawBufferPointer) throws {
+    public mutating func update(bytes: UnsafeRawBufferPointer) throws {
         guard !isFinal else {
             throw OWSAssertionError("Unexpectedly attempted update a finalized hmac digest")
         }
@@ -459,7 +459,7 @@ struct SHA256DigestContext {
         CC_SHA256_Update(&context, bytes.baseAddress, numericCast(bytes.count))
     }
 
-    mutating func finalize() throws -> Data {
+    public mutating func finalize() throws -> Data {
         guard !isFinal else {
             throw OWSAssertionError("Unexpectedly attempted to finalize a finalized hmac digest")
         }
@@ -474,21 +474,21 @@ struct SHA256DigestContext {
     }
 }
 
-struct HmacContext {
+public struct HmacContext {
     private var context = CCHmacContext()
     private var isFinal = false
 
-    init(key: Data) throws {
+    public init(key: Data) throws {
         key.withUnsafeBytes {
             CCHmacInit(&context, CCHmacAlgorithm(kCCHmacAlgSHA256), $0.baseAddress, $0.count)
         }
     }
 
-    mutating func update(_ data: Data) throws {
+    public mutating func update(_ data: Data) throws {
         try data.withUnsafeBytes { try update(bytes: $0) }
     }
 
-    mutating func update(bytes: UnsafeRawBufferPointer) throws {
+    public mutating func update(bytes: UnsafeRawBufferPointer) throws {
         guard !isFinal else {
             throw OWSAssertionError("Unexpectedly attempted to update a finalized hmac context")
         }
@@ -496,7 +496,7 @@ struct HmacContext {
         CCHmacUpdate(&context, bytes.baseAddress, bytes.count)
     }
 
-    mutating func finalize() throws -> Data {
+    public mutating func finalize() throws -> Data {
         guard !isFinal else {
             throw OWSAssertionError("Unexpectedly to finalize a finalized hmac context")
         }
@@ -511,8 +511,8 @@ struct HmacContext {
     }
 }
 
-struct CipherContext {
-    enum Operation {
+public struct CipherContext {
+    public enum Operation {
         case encrypt
         case decrypt
 
@@ -524,7 +524,7 @@ struct CipherContext {
         }
     }
 
-    enum Algorithm {
+    public enum Algorithm {
         case aes
         case des
         case threeDes
@@ -546,16 +546,20 @@ struct CipherContext {
         }
     }
 
-    struct Options: OptionSet {
-        let rawValue: Int
+    public struct Options: OptionSet {
+        public let rawValue: Int
 
-        static let pkcs7Padding = Options(rawValue: kCCOptionPKCS7Padding)
-        static let ecbMode = Options(rawValue: kCCOptionECBMode)
+        public init(rawValue: Int) {
+            self.rawValue = rawValue
+        }
+
+        public static let pkcs7Padding = Options(rawValue: kCCOptionPKCS7Padding)
+        public static let ecbMode = Options(rawValue: kCCOptionECBMode)
     }
 
     private var cryptor: CCCryptorRef?
 
-    init(operation: Operation, algorithm: Algorithm, options: Options, key: Data, iv: Data) throws {
+    public init(operation: Operation, algorithm: Algorithm, options: Options, key: Data, iv: Data) throws {
         let result = key.withUnsafeBytes { keyBytes in
             iv.withUnsafeBytes { ivBytes in
                 CCCryptorCreate(
@@ -574,11 +578,11 @@ struct CipherContext {
         }
     }
 
-    mutating func update(_ data: Data) throws -> Data {
+    public mutating func update(_ data: Data) throws -> Data {
         return try data.withUnsafeBytes { try update(bytes: $0) }
     }
 
-    mutating func update(bytes: UnsafeRawBufferPointer) throws -> Data {
+    public mutating func update(bytes: UnsafeRawBufferPointer) throws -> Data {
         guard let cryptor = cryptor else {
             throw OWSAssertionError("Unexpectedly attempted to update a finalized cipher")
         }
@@ -595,7 +599,7 @@ struct CipherContext {
         return outputBuffer
     }
 
-    mutating func finalize() throws -> Data {
+    public mutating func finalize() throws -> Data {
         guard let cryptor = cryptor else {
             throw OWSAssertionError("Unexpectedly attempted to finalize a finalized cipher")
         }
