@@ -82,57 +82,6 @@ class ZKGroupTests: TestCaseBase {
         0x33, 0x3C, 0x02, 0xFE, 0x4A, 0x33, 0x85, 0x80, 0x22, 0xFD, 0xD7, 0xA4, 0xAB, 0x36, 0x7B, 0x06,
     ]
 
-    func testAuthIntegration() throws {
-        let aci = Aci(fromUUID: TEST_ARRAY_16)
-        let redemptionTime: UInt32 = 123_456
-
-        // Generate keys (client's are per-group, server's are not)
-        // ---
-
-        // SERVER
-        let serverSecretParams = try ServerSecretParams.generate(randomness: self.TEST_ARRAY_32)
-        let serverPublicParams = try serverSecretParams.getPublicParams()
-        let serverZkAuth = ServerZkAuthOperations(serverSecretParams: serverSecretParams)
-
-        // CLIENT
-        let masterKey = try GroupMasterKey(contents: TEST_ARRAY_32_1)
-        let groupSecretParams = try GroupSecretParams.deriveFromMasterKey(groupMasterKey: masterKey)
-
-        XCTAssertEqual((try groupSecretParams.getMasterKey()).serialize(), masterKey.serialize())
-
-        let groupPublicParams = try groupSecretParams.getPublicParams()
-
-        // SERVER
-        // Issue credential
-        let authCredentialResponse = try serverZkAuth.issueAuthCredential(randomness: self.TEST_ARRAY_32_2, aci: aci, redemptionTime: redemptionTime)
-
-        // CLIENT
-        // Receive credential
-        let clientZkAuthCipher = ClientZkAuthOperations(serverPublicParams: serverPublicParams)
-        let clientZkGroupCipher = ClientZkGroupCipher(groupSecretParams: groupSecretParams)
-        let authCredential = try clientZkAuthCipher.receiveAuthCredential(aci: aci, redemptionTime: redemptionTime, authCredentialResponse: authCredentialResponse)
-
-        // Create and decrypt user entry
-        let uuidCiphertext = try clientZkGroupCipher.encrypt(aci)
-        let plaintext = try clientZkGroupCipher.decrypt(uuidCiphertext)
-        XCTAssertEqual(aci, plaintext)
-
-        // Create presentation
-        let presentation = try clientZkAuthCipher.createAuthCredentialPresentation(randomness: self.TEST_ARRAY_32_5, groupSecretParams: groupSecretParams, authCredential: authCredential)
-
-        // Verify presentation
-        let uuidCiphertextRecv = try presentation.getUuidCiphertext()
-        XCTAssertEqual(uuidCiphertext.serialize(), uuidCiphertextRecv.serialize())
-        XCTAssertNil(try presentation.getPniCiphertext())
-        XCTAssertEqual(
-            try presentation.getRedemptionTime(),
-            Date(timeIntervalSince1970: TimeInterval(redemptionTime) * TimeInterval(SECONDS_PER_DAY))
-        )
-        try serverZkAuth.verifyAuthCredentialPresentation(groupPublicParams: groupPublicParams, authCredentialPresentation: presentation, now: Date(timeIntervalSince1970: TimeInterval(redemptionTime) * TimeInterval(SECONDS_PER_DAY)))
-
-        XCTAssertEqual(presentation.serialize(), self.authPresentationResult)
-    }
-
     func testAuthWithPniIntegration() throws {
         let aci = Aci(fromUUID: TEST_ARRAY_16)
         let pni = Pni(fromUUID: TEST_ARRAY_16_1)
@@ -224,6 +173,56 @@ class ZKGroupTests: TestCaseBase {
         let pniCiphertext = try clientZkGroupCipher.encrypt(pniAsAci)
         let pniPlaintext = try clientZkGroupCipher.decrypt(pniCiphertext)
         XCTAssertEqual(pniAsAci, pniPlaintext)
+
+        // Create presentation
+        let presentation = try clientZkAuthCipher.createAuthCredentialPresentation(randomness: self.TEST_ARRAY_32_5, groupSecretParams: groupSecretParams, authCredential: authCredential)
+
+        // Verify presentation
+        let uuidCiphertextRecv = try presentation.getUuidCiphertext()
+        XCTAssertEqual(aciCiphertext.serialize(), uuidCiphertextRecv.serialize())
+        XCTAssertEqual(pniCiphertext.serialize(), try presentation.getPniCiphertext()?.serialize())
+        XCTAssertEqual(try presentation.getRedemptionTime(), Date(timeIntervalSince1970: TimeInterval(redemptionTime)))
+        try serverZkAuth.verifyAuthCredentialPresentation(groupPublicParams: groupPublicParams, authCredentialPresentation: presentation, now: Date(timeIntervalSince1970: TimeInterval(redemptionTime)))
+    }
+
+    func testAuthZkcIntegration() throws {
+        let aci = Aci(fromUUID: TEST_ARRAY_16)
+        let pni = Pni(fromUUID: TEST_ARRAY_16_1)
+        let redemptionTime: UInt64 = 123_456 * SECONDS_PER_DAY
+
+        // Generate keys (client's are per-group, server's are not)
+        // ---
+
+        // SERVER
+        let serverSecretParams = try ServerSecretParams.generate(randomness: self.TEST_ARRAY_32)
+        let serverPublicParams = try serverSecretParams.getPublicParams()
+        let serverZkAuth = ServerZkAuthOperations(serverSecretParams: serverSecretParams)
+
+        // CLIENT
+        let masterKey = try GroupMasterKey(contents: TEST_ARRAY_32_1)
+        let groupSecretParams = try GroupSecretParams.deriveFromMasterKey(groupMasterKey: masterKey)
+
+        XCTAssertEqual((try groupSecretParams.getMasterKey()).serialize(), masterKey.serialize())
+
+        let groupPublicParams = try groupSecretParams.getPublicParams()
+
+        // SERVER
+        // Issue credential
+        let authCredentialResponse = try serverZkAuth.issueAuthCredentialWithPniZkc(randomness: self.TEST_ARRAY_32_2, aci: aci, pni: pni, redemptionTime: redemptionTime)
+
+        // CLIENT
+        // Receive credential
+        let clientZkAuthCipher = ClientZkAuthOperations(serverPublicParams: serverPublicParams)
+        let clientZkGroupCipher = ClientZkGroupCipher(groupSecretParams: groupSecretParams)
+        let authCredential = try clientZkAuthCipher.receiveAuthCredentialWithPniAsServiceId(aci: aci, pni: pni, redemptionTime: redemptionTime, authCredentialResponse: authCredentialResponse)
+
+        // Create and decrypt user entry
+        let aciCiphertext = try clientZkGroupCipher.encrypt(aci)
+        let aciPlaintext = try clientZkGroupCipher.decrypt(aciCiphertext)
+        XCTAssertEqual(aci, aciPlaintext)
+        let pniCiphertext = try clientZkGroupCipher.encrypt(pni)
+        let pniPlaintext = try clientZkGroupCipher.decrypt(pniCiphertext)
+        XCTAssertEqual(pni, pniPlaintext)
 
         // Create presentation
         let presentation = try clientZkAuthCipher.createAuthCredentialPresentation(randomness: self.TEST_ARRAY_32_5, groupSecretParams: groupSecretParams, authCredential: authCredential)
@@ -522,7 +521,7 @@ class ZKGroupTests: TestCaseBase {
         XCTAssertThrowsError(try presentation.verify(now: Date(timeIntervalSince1970: TimeInterval(startOfDay - 1 - SECONDS_PER_DAY)), serverParams: serverSecretParams))
     }
 
-    func testGroupSendCredential() {
+    func testGroupSendIntegration() throws {
         let serverSecretParams = try! ServerSecretParams.generate(randomness: self.TEST_ARRAY_32)
         let serverPublicParams = try! serverSecretParams.getPublicParams()
 
@@ -539,51 +538,226 @@ class ZKGroupTests: TestCaseBase {
             try! ClientZkGroupCipher(groupSecretParams: groupSecretParams).encrypt($0)
         }
 
-        // Server
+        // SERVER
         let now = UInt64(Date().timeIntervalSince1970)
         let startOfDay = now - (now % SECONDS_PER_DAY)
-        let response = GroupSendCredentialResponse.issueCredential(groupMembers: groupCiphertexts, requestingMember: aliceCiphertext, params: serverSecretParams, randomness: self.TEST_ARRAY_32_2)
+        let expiration = Date(timeIntervalSince1970: TimeInterval(startOfDay + 2 * SECONDS_PER_DAY))
 
-        // Client
-        let credential = try! response.receive(groupMembers: [aliceAci, bobAci, eveAci, malloryAci], localUser: aliceAci, serverParams: serverPublicParams, groupParams: groupSecretParams)
-        XCTAssertThrowsError(try response.receive(groupMembers: [aliceAci, bobAci, eveAci, malloryAci], localUser: bobAci, serverParams: serverPublicParams, groupParams: groupSecretParams))
-        XCTAssertThrowsError(try response.receive(groupMembers: [bobAci, eveAci, malloryAci], localUser: aliceAci, serverParams: serverPublicParams, groupParams: groupSecretParams))
-        XCTAssertThrowsError(try response.receive(groupMembers: [aliceAci, eveAci, malloryAci], localUser: aliceAci, serverParams: serverPublicParams, groupParams: groupSecretParams))
+        // Issue endorsements
+        let keyPair = GroupSendDerivedKeyPair.forExpiration(expiration, params: serverSecretParams)
+        let response = GroupSendEndorsementsResponse.issue(groupMembers: groupCiphertexts, keyPair: keyPair)
 
-        // Try again with the alternate receive.
-        _ = try! response.receive(groupMembers: groupCiphertexts, localUser: aliceCiphertext, serverParams: serverPublicParams, groupParams: groupSecretParams)
-        XCTAssertThrowsError(try response.receive(groupMembers: groupCiphertexts, localUser: groupCiphertexts[1], serverParams: serverPublicParams, groupParams: groupSecretParams))
-        XCTAssertThrowsError(try response.receive(groupMembers: Array(groupCiphertexts.dropFirst()), localUser: aliceCiphertext, serverParams: serverPublicParams, groupParams: groupSecretParams))
-        XCTAssertThrowsError(try response.receive(groupMembers: Array(groupCiphertexts.dropLast()), localUser: aliceCiphertext, serverParams: serverPublicParams, groupParams: groupSecretParams))
+        // CLIENT
+        // Gets stored endorsements
+        let receivedEndorsements = try response.receive(
+            groupMembers: [aliceAci, bobAci, eveAci, malloryAci],
+            localUser: aliceAci,
+            groupParams: groupSecretParams,
+            serverParams: serverPublicParams
+        )
 
-        let presentation = credential.present(serverParams: serverPublicParams, randomness: self.TEST_ARRAY_32_3)
+        XCTAssertThrowsError(
+            try response.receive(
+                groupMembers: [bobAci, eveAci, malloryAci],
+                localUser: aliceAci,
+                groupParams: groupSecretParams,
+                serverParams: serverPublicParams
+            ),
+            "missing local user"
+        )
+        XCTAssertThrowsError(
+            try response.receive(
+                groupMembers: [aliceAci, eveAci, malloryAci],
+                localUser: aliceAci,
+                groupParams: groupSecretParams,
+                serverParams: serverPublicParams
+            ),
+            "missing another user"
+        )
 
-        // Server
-        try! presentation.verify(groupMembers: [bobAci, eveAci, malloryAci], serverParams: serverSecretParams)
-        try! presentation.verify(groupMembers: [bobAci, eveAci, malloryAci], now: Date().addingTimeInterval(60 * 60), serverParams: serverSecretParams)
+        // Try receive with ciphertexts instead.
+        do {
+            let repeatReceivedEndorsements = try response.receive(
+                groupMembers: groupCiphertexts,
+                localUser: aliceCiphertext,
+                serverParams: serverPublicParams
+            )
+            XCTAssertEqual(
+                receivedEndorsements.endorsements.map { $0.serialize() },
+                repeatReceivedEndorsements.endorsements.map { $0.serialize() }
+            )
+            XCTAssertEqual(
+                receivedEndorsements.combinedEndorsement.serialize(),
+                repeatReceivedEndorsements.combinedEndorsement.serialize()
+            )
 
-        XCTAssertThrowsError(try presentation.verify(groupMembers: [aliceAci, bobAci, eveAci, malloryAci], serverParams: serverSecretParams))
-        XCTAssertThrowsError(try presentation.verify(groupMembers: [eveAci, malloryAci], serverParams: serverSecretParams))
+            XCTAssertThrowsError(
+                try response.receive(
+                    groupMembers: groupCiphertexts[1...],
+                    localUser: aliceCiphertext,
+                    serverParams: serverPublicParams
+                ),
+                "missing local user"
+            )
+            XCTAssertThrowsError(
+                try response.receive(
+                    groupMembers: groupCiphertexts[..<3],
+                    localUser: aliceCiphertext,
+                    serverParams: serverPublicParams
+                ),
+                "missing another user"
+            )
+        }
 
-        // credential should definitely be expired after 2 days
-        XCTAssertThrowsError(try presentation.verify(groupMembers: [bobAci, eveAci, malloryAci], now: Date(timeIntervalSince1970: TimeInterval(startOfDay + SECONDS_PER_DAY * 2 + 1)), serverParams: serverSecretParams))
+        let combinedToken = receivedEndorsements.combinedEndorsement.toToken(groupParams: groupSecretParams)
+        let fullCombinedToken = combinedToken.toFullToken(expiration: response.expiration)
+
+        // SERVER
+        // Verify token
+        let verifyKey = GroupSendDerivedKeyPair.forExpiration(fullCombinedToken.expiration, params: serverSecretParams)
+
+        try fullCombinedToken.verify(
+            userIds: [bobAci, eveAci, malloryAci],
+            keyPair: verifyKey
+        )
+        try fullCombinedToken.verify(
+            userIds: [bobAci, eveAci, malloryAci],
+            now: Date(timeIntervalSinceNow: 60 * 60),
+            keyPair: verifyKey
+        )
+
+        XCTAssertThrowsError(
+            try fullCombinedToken.verify(
+                userIds: [aliceAci, bobAci, eveAci, malloryAci],
+                keyPair: verifyKey
+            ),
+            "included extra user"
+        )
+        XCTAssertThrowsError(
+            try fullCombinedToken.verify(
+                userIds: [eveAci, malloryAci],
+                keyPair: verifyKey
+            ),
+            "missing user"
+        )
+
+        XCTAssertThrowsError(
+            try fullCombinedToken.verify(
+                userIds: [bobAci, eveAci, malloryAci],
+                now: expiration.addingTimeInterval(1),
+                keyPair: verifyKey
+            ),
+            "expired"
+        )
+
+        // Excluding a user
+        do {
+            // CLIENT
+            let everybodyButMallory = receivedEndorsements
+                .combinedEndorsement
+                .byRemoving(receivedEndorsements.endorsements[3])
+            let fullEverybodyButMalloryToken = everybodyButMallory
+                .toFullToken(groupParams: groupSecretParams, expiration: response.expiration)
+
+            // SERVER
+            let everybodyButMalloryKey = GroupSendDerivedKeyPair.forExpiration(fullEverybodyButMalloryToken.expiration, params: serverSecretParams)
+
+            try fullEverybodyButMalloryToken.verify(
+                userIds: [bobAci, eveAci],
+                keyPair: everybodyButMalloryKey
+            )
+        }
+
+        // Custom combine
+        do {
+            // CLIENT
+            let bobAndEve = GroupSendEndorsement.combine(receivedEndorsements.endorsements[1...2])
+            let fullBobAndEveToken = bobAndEve.toFullToken(groupParams: groupSecretParams, expiration: response.expiration)
+
+            // SERVER
+            let bobAndEveKey = GroupSendDerivedKeyPair.forExpiration(fullBobAndEveToken.expiration, params: serverSecretParams)
+
+            try fullBobAndEveToken.verify(userIds: [bobAci, eveAci], keyPair: bobAndEveKey)
+        }
+
+        // Single-user
+        do {
+            // CLIENT
+            let bobEndorsement = receivedEndorsements.endorsements[1]
+            let fullBobToken = bobEndorsement.toFullToken(groupParams: groupSecretParams, expiration: response.expiration)
+
+            // SERVER
+            let bobKey = GroupSendDerivedKeyPair.forExpiration(fullBobToken.expiration, params: serverSecretParams)
+
+            try fullBobToken.verify(userIds: [bobAci], keyPair: bobKey)
+        }
     }
 
-    func testEmptyGroupSendCredential() {
-        let serverSecretParams = try! ServerSecretParams.generate(randomness: self.TEST_ARRAY_32)
-        let serverPublicParams = try! serverSecretParams.getPublicParams()
+    func test1000PersonGroup() throws {
+        // SERVER
+        // Generate keys
+        let serverSecretParams =
+            try ServerSecretParams.generate(randomness: self.TEST_ARRAY_32)
+        let serverPublicParams = try serverSecretParams.getPublicParams()
 
-        let aliceAci = try! Aci.parseFrom(serviceIdString: "9d0652a3-dcc3-4d11-975f-74d61598733f")
+        // CLIENT
+        // Generate keys
+        let masterKey = try GroupMasterKey(contents: TEST_ARRAY_32_1)
+        let groupSecretParams = try GroupSecretParams.deriveFromMasterKey(groupMasterKey: masterKey)
 
-        let masterKey = try! GroupMasterKey(contents: self.TEST_ARRAY_32_1)
-        let groupSecretParams = try! GroupSecretParams.deriveFromMasterKey(groupMasterKey: masterKey)
+        // Set up group state
+        let members = (0..<1000).map { _ in Aci(fromUUID: UUID()) }
 
-        let aliceCiphertext = try! ClientZkGroupCipher(groupSecretParams: groupSecretParams).encrypt(aliceAci)
+        let cipher = ClientZkGroupCipher(groupSecretParams: groupSecretParams)
+        let encryptedMembers = try members.map { try cipher.encrypt($0) }
 
-        // Server
-        let response = GroupSendCredentialResponse.issueCredential(groupMembers: [aliceCiphertext], requestingMember: aliceCiphertext, params: serverSecretParams, randomness: self.TEST_ARRAY_32_2)
+        // SERVER
+        // Issue endorsements
+        let now = UInt64(Date().timeIntervalSince1970)
+        let startOfDay = now - (now % SECONDS_PER_DAY)
+        let expiration = Date(timeIntervalSince1970: TimeInterval(startOfDay + 2 * SECONDS_PER_DAY))
 
-        // Client
-        _ = try! response.receive(groupMembers: [aliceAci], localUser: aliceAci, serverParams: serverPublicParams, groupParams: groupSecretParams)
+        let keyPair = GroupSendDerivedKeyPair.forExpiration(expiration, params: serverSecretParams)
+        let response = GroupSendEndorsementsResponse.issue(groupMembers: encryptedMembers, keyPair: keyPair)
+
+        // CLIENT
+        // Gets stored endorsements
+        // Just don't crash (this did crash on a lower-end Android phone once).
+        _ = try response.receive(groupMembers: members, localUser: members[0], groupParams: groupSecretParams, serverParams: serverPublicParams)
+        _ = try response.receive(groupMembers: encryptedMembers, localUser: encryptedMembers[0], serverParams: serverPublicParams)
+    }
+
+    func test1PersonGroup() throws {
+        // SERVER
+        // Generate keys
+        let serverSecretParams =
+            try ServerSecretParams.generate(randomness: self.TEST_ARRAY_32)
+        let serverPublicParams = try serverSecretParams.getPublicParams()
+
+        // CLIENT
+        // Generate keys
+        let masterKey = try GroupMasterKey(contents: TEST_ARRAY_32_1)
+        let groupSecretParams = try GroupSecretParams.deriveFromMasterKey(groupMasterKey: masterKey)
+
+        // Set up group state
+        let member = Aci(fromUUID: UUID())
+
+        let cipher = ClientZkGroupCipher(groupSecretParams: groupSecretParams)
+        let encryptedMember = try cipher.encrypt(member)
+
+        // SERVER
+        // Issue endorsements
+        let now = UInt64(Date().timeIntervalSince1970)
+        let startOfDay = now - (now % SECONDS_PER_DAY)
+        let expiration = Date(timeIntervalSince1970: TimeInterval(startOfDay + 2 * SECONDS_PER_DAY))
+
+        let keyPair = GroupSendDerivedKeyPair.forExpiration(expiration, params: serverSecretParams)
+        let response = GroupSendEndorsementsResponse.issue(groupMembers: [encryptedMember], keyPair: keyPair)
+
+        // CLIENT
+        // Gets stored endorsements
+        // Just don't crash.
+        _ = try response.receive(groupMembers: [member], localUser: member, groupParams: groupSecretParams, serverParams: serverPublicParams)
+        _ = try response.receive(groupMembers: [encryptedMember], localUser: encryptedMember, serverParams: serverPublicParams)
     }
 }
