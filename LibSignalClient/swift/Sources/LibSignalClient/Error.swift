@@ -53,12 +53,16 @@ public enum SignalError: Error {
     case invalidMediaInput(String)
     case unsupportedMediaInput(String)
     case callbackError(String)
-    case networkError(String)
+    case webSocketError(String)
+    case connectionTimeoutError(String)
     case networkProtocolError(String)
+    case cdsiInvalidToken(String)
     case rateLimitedError(retryAfter: TimeInterval, message: String)
-    case unknown(UInt32, String)
     case svrDataMissing(String)
     case svrRestoreFailed(String)
+    case chatServiceInactive(String)
+
+    case unknown(UInt32, String)
 }
 
 internal typealias SignalFfiErrorRef = OpaquePointer
@@ -164,10 +168,14 @@ internal func checkError(_ error: SignalFfiErrorRef?) throws {
         throw SignalError.unsupportedMediaInput(errStr)
     case SignalErrorCodeCallbackError:
         throw SignalError.callbackError(errStr)
-    case SignalErrorCodeNetwork:
-        throw SignalError.networkError(errStr)
+    case SignalErrorCodeWebSocket:
+        throw SignalError.webSocketError(errStr)
+    case SignalErrorCodeConnectionTimedOut:
+        throw SignalError.connectionTimeoutError(errStr)
     case SignalErrorCodeNetworkProtocol:
         throw SignalError.networkProtocolError(errStr)
+    case SignalErrorCodeCdsiInvalidToken:
+        throw SignalError.cdsiInvalidToken(errStr)
     case SignalErrorCodeRateLimited:
         let retryAfterSeconds = try invokeFnReturningInteger {
             signal_error_get_retry_after_seconds(error, $0)
@@ -177,6 +185,8 @@ internal func checkError(_ error: SignalFfiErrorRef?) throws {
         throw SignalError.svrDataMissing(errStr)
     case SignalErrorCodeSvrRestoreFailed:
         throw SignalError.svrRestoreFailed(errStr)
+    case SignalErrorCodeChatServiceInactive:
+        throw SignalError.chatServiceInactive(errStr)
     default:
         throw SignalError.unknown(errType, errStr)
     }

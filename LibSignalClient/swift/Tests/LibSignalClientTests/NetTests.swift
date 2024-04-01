@@ -42,12 +42,64 @@ final class NetTests: XCTestCase {
     }
 
     func testCdsiLookupErrorConversion() async throws {
-        do {
-            var ignoredOut = false
-            try checkError(signal_testing_cdsi_lookup_error_convert(&ignoredOut))
+        let failWithError = {
+            try checkError(signal_testing_cdsi_lookup_error_convert($0))
             XCTFail("should have failed")
-        } catch SignalError.networkProtocolError(_) {
-            // good
+        }
+        do {
+            try failWithError("Protocol")
+        } catch SignalError.networkProtocolError(let message) {
+            XCTAssertEqual(message, "Protocol error: protocol error after establishing a connection")
+        }
+        do {
+            try failWithError("AttestationDataError")
+        } catch SignalError.unknown(SignalErrorCodeInvalidAttestationData.rawValue, let message) {
+            XCTAssertEqual(message, "SGX operation failed: attestation data invalid: fake reason")
+        }
+        do {
+            try failWithError("InvalidResponse")
+        } catch SignalError.networkProtocolError(let message) {
+            XCTAssertEqual(message, "Protocol error: invalid response received from the server")
+        }
+        do {
+            try failWithError("RetryAfter42Seconds")
+        } catch SignalError.rateLimitedError(retryAfter: 42, let message) {
+            XCTAssertEqual(message, "Rate limited; try again after 42s")
+        }
+        do {
+            try failWithError("InvalidToken")
+        } catch SignalError.cdsiInvalidToken(let message) {
+            XCTAssertEqual(message, "CDSI request token was invalid")
+        }
+        do {
+            try failWithError("InvalidArgument")
+        } catch SignalError.invalidArgument(let message) {
+            XCTAssertEqual(message, "invalid argument: request was invalid: fake reason")
+        }
+        do {
+            try failWithError("Parse")
+        } catch SignalError.networkProtocolError(let message) {
+            XCTAssertEqual(message, "Protocol error: failed to parse the response from the server")
+        }
+        do {
+            try failWithError("ConnectDnsFailed")
+        } catch SignalError.ioError(let message) {
+            XCTAssertEqual(message, "IO error: DNS lookup failed")
+        }
+        do {
+            try failWithError("WebSocketIdleTooLong")
+        } catch SignalError.webSocketError(let message) {
+            XCTAssertEqual(message, "WebSocket error: channel was idle for too long")
+        }
+        do {
+            try failWithError("ConnectionTimedOut")
+        } catch SignalError.connectionTimeoutError(let message) {
+            XCTAssertEqual(message, "Connect timed out")
+        }
+        do {
+            try failWithError("ServerCrashed")
+        } catch SignalError.networkProtocolError(let message) {
+            XCTAssertEqual(message, "Protocol error: server error: crashed")
         }
     }
 
@@ -55,10 +107,16 @@ final class NetTests: XCTestCase {
         try throwSkipForCompileOnlyTest()
 
         let auth = Auth(username: "username", password: "password")
-        let request = try CdsiLookupRequest(e164s: [], prevE164s: [], acisAndAccessKeys: [], token: nil, returnAcisWithoutUaks: false)
+        let request = try CdsiLookupRequest(
+            e164s: [],
+            prevE164s: [],
+            acisAndAccessKeys: [],
+            token: nil,
+            returnAcisWithoutUaks: false
+        )
         let net = Net(env: .staging)
 
-        let lookup = try await net.cdsiLookup(auth: auth, request: request, timeout: TimeInterval(0))
+        let lookup = try await net.cdsiLookup(auth: auth, request: request)
         let response = try await lookup.complete()
         for entry in response.entries {
             _ = entry.aci
@@ -71,8 +129,6 @@ final class NetTests: XCTestCase {
 final class Svr3Tests: TestCaseBase {
     private let username = randomBytes(16).hexString
     private let storedSecret = randomBytes(32)
-
-    private let defaultTimeout = TimeInterval(10)
 
     func getEnclaveSecret() throws -> String {
         guard let enclaveSecret = ProcessInfo.processInfo.environment["ENCLAVE_SECRET"] else {
@@ -89,15 +145,13 @@ final class Svr3Tests: TestCaseBase {
             self.storedSecret,
             password: "password",
             maxTries: 10,
-            auth: auth,
-            timeout: self.defaultTimeout
+            auth: auth
         )
 
         let restoredSecret = try await net.svr3.restore(
             password: "password",
             shareSet: shareSet,
-            auth: auth,
-            timeout: self.defaultTimeout
+            auth: auth
         )
         XCTAssertEqual(restoredSecret, self.storedSecret)
     }
@@ -110,16 +164,14 @@ final class Svr3Tests: TestCaseBase {
             self.storedSecret,
             password: "password",
             maxTries: 10,
-            auth: auth,
-            timeout: self.defaultTimeout
+            auth: auth
         )
 
         do {
             _ = try await net.svr3.restore(
                 password: "invalid password",
                 shareSet: shareSet,
-                auth: auth,
-                timeout: self.defaultTimeout
+                auth: auth
             )
             XCTFail("Should have thrown")
         } catch SignalError.svrRestoreFailed(_) {
@@ -137,8 +189,7 @@ final class Svr3Tests: TestCaseBase {
             self.storedSecret,
             password: "password",
             maxTries: 10,
-            auth: auth,
-            timeout: self.defaultTimeout
+            auth: auth
         )
         // Invert a byte somewhere inside the share set
         shareSet[42] ^= 0xFF
@@ -147,8 +198,7 @@ final class Svr3Tests: TestCaseBase {
             _ = try await net.svr3.restore(
                 password: "password",
                 shareSet: shareSet,
-                auth: auth,
-                timeout: self.defaultTimeout
+                auth: auth
             )
             XCTFail("Should have thrown")
         } catch SignalError.svrRestoreFailed(_) {
@@ -166,23 +216,20 @@ final class Svr3Tests: TestCaseBase {
             self.storedSecret,
             password: "password",
             maxTries: 1,
-            auth: auth,
-            timeout: self.defaultTimeout
+            auth: auth
         )
         // First restore should succeed, but use up all the available tries
         _ = try await net.svr3.restore(
             password: "password",
             shareSet: shareSet,
-            auth: auth,
-            timeout: self.defaultTimeout
+            auth: auth
         )
 
         do {
             _ = try await net.svr3.restore(
                 password: "password",
                 shareSet: shareSet,
-                auth: auth,
-                timeout: self.defaultTimeout
+                auth: auth
             )
             XCTFail("Should have thrown")
         } catch SignalError.svrDataMissing(_) {
@@ -200,16 +247,14 @@ final class Svr3Tests: TestCaseBase {
             self.storedSecret,
             password: "password",
             maxTries: 1,
-            auth: auth,
-            timeout: self.defaultTimeout
+            auth: auth
         )
         // First restore fails **and** decrements the tries left counter
         do {
             _ = try await net.svr3.restore(
                 password: "invalid password",
                 shareSet: shareSet,
-                auth: auth,
-                timeout: self.defaultTimeout
+                auth: auth
             )
             XCTFail("Should have thrown")
         } catch SignalError.svrRestoreFailed(_) {
@@ -222,8 +267,7 @@ final class Svr3Tests: TestCaseBase {
             _ = try await net.svr3.restore(
                 password: "password",
                 shareSet: shareSet,
-                auth: auth,
-                timeout: self.defaultTimeout
+                auth: auth
             )
             XCTFail("Should have thrown")
         } catch SignalError.svrDataMissing(_) {
@@ -242,8 +286,7 @@ final class Svr3Tests: TestCaseBase {
                 self.storedSecret,
                 password: "password",
                 maxTries: 0,
-                auth: auth,
-                timeout: self.defaultTimeout
+                auth: auth
             )
             XCTFail("Should have thrown")
         } catch SignalError.invalidArgument(_) {
@@ -262,33 +305,11 @@ final class Svr3Tests: TestCaseBase {
                 randomBytes(42),
                 password: "password",
                 maxTries: 0,
-                auth: auth,
-                timeout: self.defaultTimeout
+                auth: auth
             )
             XCTFail("Should have thrown")
         } catch SignalError.invalidArgument(_) {
             // Success!
-        } catch {
-            XCTFail("Unexpected error: \(error)")
-        }
-    }
-
-    func testBackupTimeout() async throws {
-        let auth = try Auth(username: self.username, enclaveSecret: self.getEnclaveSecret())
-        let net = Net(env: .staging)
-
-        do {
-            _ = try await net.svr3.backup(
-                self.storedSecret,
-                password: "password",
-                maxTries: 1,
-                auth: auth,
-                timeout: TimeInterval(0.01)
-            )
-            XCTFail("Should have thrown")
-        } catch SignalError.networkError(let message) {
-            // Make sure the logged message will provide enough details
-            XCTAssertTrue(message.contains("Operation timed out"), "Unexpected message: '\(message)'")
         } catch {
             XCTFail("Unexpected error: \(error)")
         }
