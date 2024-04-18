@@ -35,7 +35,7 @@ platform.
 
 So far, we have created these implementations:
 
-* [C](C) - An encoder implemenation in portable C code.
+* [C](C) - An encoder implementation in portable C code.
 * [Swift](Swift) - Encoder and decoder implementations, and a larger library offering advanced features.
   There is also an example app to play around with the algorithm.
 * [Kotlin](Kotlin) - A decoder implementation for Android.
@@ -45,12 +45,36 @@ So far, we have created these implementations:
 These cover our use cases, but could probably use polishing, extending and improving. There are also these third party implementations that we know of:
 
 * [Pure Python](https://github.com/halcy/blurhash-python) - Implementation of both the encoder and decoder in pure Python.
-* [One version in Go](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=1&cad=rja&uact=8&ved=2ahUKEwjJ9ueT9pXjAhXRw6YKHfrGBNcQFjAAegQIABAB&url=https%3A%2F%2Fgithub.com%2Fbbrks%2Fgo-blurhash&usg=AOvVaw2alZSHvT7HbublYbpNn9fY), and [another version in Go](https://github.com/buckket/go-blurhash).
+* [One version in Go](https://github.com/bbrks/go-blurhash), and [another version in Go](https://github.com/buckket/go-blurhash).
 * [PHP](https://github.com/kornrunner/php-blurhash) - Encoder and decoder implementations in pure PHP.
 * [Java](https://github.com/hsch/blurhash-java) - Encoder implementation in Java.
 * [Clojure](https://github.com/siili-core/blurhash) - Encoder and decoder implementations in Clojure.
 * [Nim](https://github.com/SolitudeSF/blurhash) - Encoder and decoder implementation in pure Nim.
 * [Rust and WebAssembly](https://github.com/fpapado/blurhash-rust-wasm) - Encoder and decoder implementations in Rust. Distributed as both native Rust and WebAssembly packages.
+* [Ruby](https://github.com/Gargron/blurhash) - Encoder implementation in Ruby.
+* [Crystal](https://github.com/Sija/blurhash.cr) - Encoder implementation in pure Crystal.
+* [Elm](https://github.com/WhileTruu/elm-blurhash) - Encoder and decoder in Elm.
+* [Dart](https://github.com/folksable/blurhash_ffi) - Encoder and decoder implementation in C into Dart using dart-ffi.
+* [Pure Dart](https://github.com/justacid/blurhash-dart) - Encoder and decoder implementation in pure Dart.
+* [.NET](https://github.com/MarkusPalcer/blurhash.net) - Encoder and decoder in C#.
+* [JavaScript](https://github.com/Dens49/blurhash-js) - Encoder and decoder implementation in pure JavaScript.
+* [.NET](https://github.com/Bond-009/BlurHashSharp) - Encoder implementation in C#.
+* [Haskell](https://github.com/SamProtas/JuicyPixels-blurhash) - Encoder and decoder in pure Haskell.
+* [Scala](https://github.com/markussammallahti/blurhash-scala) - Encoder and decoder in Scala.
+* [Elixir](https://github.com/perzanko/blurhash-elixir) - Encoder implementation in pure Elixir.
+* [ReScript](https://github.com/armedi/rescript-blurhash) - Encoder and decoder implementation in ReScript (BuckleScript).
+* [JavaScript](https://github.com/mad-gooze/fast-blurhash) - Tiny optimized decoder implementation JS.
+* [Xojo](https://github.com/piradoiv/xojo-blurhash/) - Encoder and decoder implementation in pure Xojo.
+* [React Native](https://github.com/mrousavy/react-native-blurhash) - UI Component for React Native. (Decoder in Swift and Kotlin)
+* [Zig](https://github.com/mhoward540/blurhash-zig) - Encoder implementation in Zig.
+* [Titanium SDK](https://github.com/m1ga/ti.blurhash) - Decoder for Titanium SDK (Android)
+* [BQN](https://github.com/dancek/blurhash-bqn) - Encoder, decoder and terminal viewer in pure BQN.
+* [Jetpack Compose](https://github.com/wajahat-iqbal/BlurHashPainter) - Decoder Jetpack Compose implementation
+* [C++](https://github.com/Nheko-Reborn/blurhash) - Encoder and decoder in C++.
+* [Kotlin Multiplatform](https://github.com/vanniktech/blurhash) - Encoding & decoding for Android, iOS & JVM
+* [OCaml](https://github.com/ushitora-anqou/ocaml-blurhash) - Encoder implementation in OCaml.
+
+Can't find the language you're looking for? Try your luck with the GitHub search. For example, here are the search results for [repos which have "blurhash" in their name](https://github.com/search?q=blurhash+in%3Aname&type=repositories).
 
 Perhaps you'd like to help extend this list? Which brings us to...
 
@@ -73,6 +97,8 @@ Who uses BlurHash? Here are some projects we know about:
 
 * [Wolt](http://wolt.com/) - We are of course using it ourselves. BlurHashes are used in the mobile clients on iOS and Android, as well as on the web, as placeholders during image loading.
 * [Mastodon](https://github.com/tootsuite/mastodon) - The Mastodon decentralised social media network uses BlurHashes both as loading placeholders, as well as for hiding media marked as sensitive.
+* [Signal](https://signal.org/) - Signal Private Messenger uses Blurhashes as placeholders before photo & video messages are downloaded in chat conversations.
+* [Jellyfin](https://jellyfin.org/) - Jellyfin the free software media system uses Blurhashes as placeholders for images of movies and TV shows when they are being downloaded.
 
 ## Good Questions
 
@@ -124,7 +150,7 @@ characters.
 
 ### What about using the full Unicode character set to get a more efficient encoding?
 
-We haven't looked into how much overehead UTF-8 encoding would introduce versus base 83 in single-byte characters, but
+We haven't looked into how much overhead UTF-8 encoding would introduce versus base 83 in single-byte characters, but
 the encoding and decoding would probably be a lot more complicated, so in the spirit of minimalism BlurHash uses the simpler
 option. It might also be awkward to copy-paste, depending on OS capabilities.
 
@@ -152,28 +178,16 @@ to see what you can come up with!
 * [Hendrik Schnepel](https://github.com/hsch) - Java encoder implementation
 * [Tuomo Virolainen](https://github.com/tvirolai) - Clojure implementation
 * [Fotis Papadogeorgopoulos](https://github.com/fpapado) - Rust and WebAssembly implementation
+* [Sam Protas](https://github.com/SamProtas) - Pure Haskell implementation
+* [Markus Sammallahti](https://github.com/markussammallahti) - Scala implementation
+* [Kacper Perzankowski](https://github.com/perzanko) - Elixir encoder implementation
+* [Belvi Nosakhare](https://github.com/KingsMentor/BlurHashExt) - Kotlin extensions of Blurhash for ImageView, Glide, and Piccasso optimized for Android.
+* [Armedi](https://github.com/armedi) - ReScript (BuckleScript) implementation.
+* [Ricardo Cruz](https://github.com/piradoiv) - Xojo implementation.
+* [Marc Rousavy](https://github.com/mrousavy) - React Native UI Component
+* [Matt Howard](https://github.com/mhoward540) - Zig implementation
+* [Hannu Hartikainen](https://github.com/dancek) - BQN implementation
+* [Wajahat Iqbal](https://github.com/wajahat-iqbal) - Jetpack compose-based implementation optimized for using any component as a painter.
+
+
 * _Your name here?_
-
-## License
-
-All of these implemenations are licensed under the MIT license:
-
-Copyright (c) 2018 Wolt Enterprises
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
