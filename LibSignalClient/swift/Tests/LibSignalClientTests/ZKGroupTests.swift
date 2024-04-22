@@ -82,6 +82,16 @@ class ZKGroupTests: TestCaseBase {
         0x33, 0x3C, 0x02, 0xFE, 0x4A, 0x33, 0x85, 0x80, 0x22, 0xFD, 0xD7, 0xA4, 0xAB, 0x36, 0x7B, 0x06,
     ]
 
+    func testSerializeRoundTrip() throws {
+        let serverSecretParams = try ServerSecretParams.generate(randomness: self.TEST_ARRAY_32)
+        let serializedSecretParams = serverSecretParams.serialize()
+        XCTAssertEqual(serializedSecretParams, try ServerSecretParams(contents: serializedSecretParams).serialize())
+
+        let serverPublicParams = try serverSecretParams.getPublicParams()
+        let serializedPublicParams = serverPublicParams.serialize()
+        XCTAssertEqual(serializedPublicParams, try ServerPublicParams(contents: serializedPublicParams).serialize())
+    }
+
     func testAuthWithPniIntegration() throws {
         let aci = Aci(fromUUID: TEST_ARRAY_16)
         let pni = Pni(fromUUID: TEST_ARRAY_16_1)
@@ -112,7 +122,6 @@ class ZKGroupTests: TestCaseBase {
         let clientZkAuthCipher = ClientZkAuthOperations(serverPublicParams: serverPublicParams)
         let clientZkGroupCipher = ClientZkGroupCipher(groupSecretParams: groupSecretParams)
         let authCredential = try clientZkAuthCipher.receiveAuthCredentialWithPniAsServiceId(aci: aci, pni: pni, redemptionTime: redemptionTime, authCredentialResponse: authCredentialResponse)
-        XCTAssertThrowsError(try clientZkAuthCipher.receiveAuthCredentialWithPniAsAci(aci: aci, pni: pni, redemptionTime: redemptionTime, authCredentialResponse: authCredentialResponse))
 
         // Create and decrypt user entry
         let aciCiphertext = try clientZkGroupCipher.encrypt(aci)
@@ -121,58 +130,6 @@ class ZKGroupTests: TestCaseBase {
         let pniCiphertext = try clientZkGroupCipher.encrypt(pni)
         let pniPlaintext = try clientZkGroupCipher.decrypt(pniCiphertext)
         XCTAssertEqual(pni, pniPlaintext)
-
-        // Create presentation
-        let presentation = try clientZkAuthCipher.createAuthCredentialPresentation(randomness: self.TEST_ARRAY_32_5, groupSecretParams: groupSecretParams, authCredential: authCredential)
-
-        // Verify presentation
-        let uuidCiphertextRecv = try presentation.getUuidCiphertext()
-        XCTAssertEqual(aciCiphertext.serialize(), uuidCiphertextRecv.serialize())
-        XCTAssertEqual(pniCiphertext.serialize(), try presentation.getPniCiphertext()?.serialize())
-        XCTAssertEqual(try presentation.getRedemptionTime(), Date(timeIntervalSince1970: TimeInterval(redemptionTime)))
-        try serverZkAuth.verifyAuthCredentialPresentation(groupPublicParams: groupPublicParams, authCredentialPresentation: presentation, now: Date(timeIntervalSince1970: TimeInterval(redemptionTime)))
-    }
-
-    func testAuthWithPniAsAciIntegration() throws {
-        let aci = Aci(fromUUID: TEST_ARRAY_16)
-        let pni = Pni(fromUUID: TEST_ARRAY_16_1)
-        let redemptionTime: UInt64 = 123_456 * SECONDS_PER_DAY
-
-        // Generate keys (client's are per-group, server's are not)
-        // ---
-
-        // SERVER
-        let serverSecretParams = try ServerSecretParams.generate(randomness: self.TEST_ARRAY_32)
-        let serverPublicParams = try serverSecretParams.getPublicParams()
-        let serverZkAuth = ServerZkAuthOperations(serverSecretParams: serverSecretParams)
-
-        // CLIENT
-        let masterKey = try GroupMasterKey(contents: TEST_ARRAY_32_1)
-        let groupSecretParams = try GroupSecretParams.deriveFromMasterKey(groupMasterKey: masterKey)
-
-        XCTAssertEqual((try groupSecretParams.getMasterKey()).serialize(), masterKey.serialize())
-
-        let groupPublicParams = try groupSecretParams.getPublicParams()
-
-        // SERVER
-        // Issue credential
-        let authCredentialResponse = try serverZkAuth.issueAuthCredentialWithPniAsAci(randomness: self.TEST_ARRAY_32_2, aci: aci, pni: pni, redemptionTime: redemptionTime)
-
-        // CLIENT
-        // Receive credential
-        let clientZkAuthCipher = ClientZkAuthOperations(serverPublicParams: serverPublicParams)
-        let clientZkGroupCipher = ClientZkGroupCipher(groupSecretParams: groupSecretParams)
-        let authCredential = try clientZkAuthCipher.receiveAuthCredentialWithPniAsAci(aci: aci, pni: pni, redemptionTime: redemptionTime, authCredentialResponse: authCredentialResponse)
-        XCTAssertThrowsError(try clientZkAuthCipher.receiveAuthCredentialWithPniAsServiceId(aci: aci, pni: pni, redemptionTime: redemptionTime, authCredentialResponse: authCredentialResponse))
-
-        // Create and decrypt user entry
-        let aciCiphertext = try clientZkGroupCipher.encrypt(aci)
-        let aciPlaintext = try clientZkGroupCipher.decrypt(aciCiphertext)
-        XCTAssertEqual(aci, aciPlaintext)
-        let pniAsAci = Aci(fromUUID: pni.rawUUID)
-        let pniCiphertext = try clientZkGroupCipher.encrypt(pniAsAci)
-        let pniPlaintext = try clientZkGroupCipher.decrypt(pniCiphertext)
-        XCTAssertEqual(pniAsAci, pniPlaintext)
 
         // Create presentation
         let presentation = try clientZkAuthCipher.createAuthCredentialPresentation(randomness: self.TEST_ARRAY_32_5, groupSecretParams: groupSecretParams, authCredential: authCredential)
@@ -472,7 +429,7 @@ class ZKGroupTests: TestCaseBase {
         let aci = UUID(uuidString: "e74beed0-e70f-4cfd-abbb-7e3eb333bbac")!
         let serializedBackupID: [UInt8] = [0xE3, 0x92, 0x6F, 0x11, 0xDD, 0xD1, 0x43, 0xE6, 0xDD, 0x0F, 0x20, 0xBF, 0xCB, 0x08, 0x34, 0x9E]
         let serializedRequestCredential = Data(base64Encoded: "AISCxQa8OsFqphsQPxqtzJk5+jndpE3SJG6bfazQB3994Aersq2yNRgcARBoedBeoEfKIXdty6X7l6+TiPFAqDvojRSO8xaZOpKJOvWSDJIGn6EeMl2jOjx+IQg8d8M0AQ==")!
-        let receiptLevel: UInt64 = 1
+        let backupLevel = BackupLevel.messages
 
         let context = BackupAuthCredentialRequestContext.create(backupKey: backupKey, aci: aci)
         let request = context.getRequest()
@@ -482,13 +439,15 @@ class ZKGroupTests: TestCaseBase {
 
         let now = UInt64(Date().timeIntervalSince1970)
         let startOfDay = now - (now % SECONDS_PER_DAY)
-        let response = request.issueCredential(timestamp: Date(timeIntervalSince1970: TimeInterval(startOfDay)), receiptLevel: receiptLevel, params: serverSecretParams, randomness: self.TEST_ARRAY_32_2)
-        let credential = try context.receive(response, params: serverPublicParams, expectedReceiptLevel: receiptLevel)
+        let redemptionTime = Date(timeIntervalSince1970: TimeInterval(startOfDay))
+        let response = request.issueCredential(timestamp: redemptionTime, backupLevel: backupLevel, params: serverSecretParams, randomness: self.TEST_ARRAY_32_2)
+        let credential = try context.receive(response, timestamp: redemptionTime, params: serverPublicParams)
         XCTAssertEqual(credential.backupID, serializedBackupID)
+        XCTAssertEqual(credential.backupLevel, backupLevel)
     }
 
     func testBackupAuthCredential() throws {
-        let receiptLevel: UInt64 = 10
+        let backupLevel = BackupLevel.messages
 
         let serverSecretParams = GenericServerSecretParams.generate(randomness: self.TEST_ARRAY_32)
         let serverPublicParams = serverSecretParams.getPublicParams()
@@ -502,11 +461,12 @@ class ZKGroupTests: TestCaseBase {
         // Server
         let now = UInt64(Date().timeIntervalSince1970)
         let startOfDay = now - (now % SECONDS_PER_DAY)
-        let response = request.issueCredential(timestamp: Date(timeIntervalSince1970: TimeInterval(startOfDay)), receiptLevel: receiptLevel, params: serverSecretParams, randomness: self.TEST_ARRAY_32_2)
+        let redemptionTime = Date(timeIntervalSince1970: TimeInterval(startOfDay))
+        let response = request.issueCredential(timestamp: redemptionTime, backupLevel: backupLevel, params: serverSecretParams, randomness: self.TEST_ARRAY_32_2)
 
         // Client
-        let credential = try context.receive(response, params: serverPublicParams, expectedReceiptLevel: receiptLevel)
-        XCTAssertThrowsError(try context.receive(response, params: serverPublicParams, expectedReceiptLevel: receiptLevel + 1))
+        let credential = try context.receive(response, timestamp: redemptionTime, params: serverPublicParams)
+        XCTAssertEqual(backupLevel, credential.backupLevel)
 
         let presentation = credential.present(serverParams: serverPublicParams, randomness: self.TEST_ARRAY_32_3)
 

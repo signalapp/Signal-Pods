@@ -53,7 +53,7 @@ final class NetTests: XCTestCase {
         }
         do {
             try failWithError("AttestationDataError")
-        } catch SignalError.unknown(SignalErrorCodeInvalidAttestationData.rawValue, let message) {
+        } catch SignalError.invalidAttestationData(let message) {
             XCTAssertEqual(message, "SGX operation failed: attestation data invalid: fake reason")
         }
         do {
@@ -131,8 +131,8 @@ final class Svr3Tests: TestCaseBase {
     private let storedSecret = randomBytes(32)
 
     func getEnclaveSecret() throws -> String {
-        guard let enclaveSecret = ProcessInfo.processInfo.environment["ENCLAVE_SECRET"] else {
-            throw XCTSkip("requires ENCLAVE_SECRET")
+        guard let enclaveSecret = ProcessInfo.processInfo.environment["LIBSIGNAL_TESTING_ENCLAVE_SECRET"] else {
+            throw XCTSkip("requires LIBSIGNAL_TESTING_ENCLAVE_SECRET")
         }
         return enclaveSecret
     }
