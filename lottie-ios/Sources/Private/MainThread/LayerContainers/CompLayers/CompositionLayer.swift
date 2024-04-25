@@ -5,7 +5,6 @@
 //  Created by Brandon Withrow on 1/22/19.
 //
 
-import Foundation
 import QuartzCore
 
 // MARK: - CompositionLayer
@@ -17,7 +16,7 @@ class CompositionLayer: CALayer, KeypathSearchable {
 
   init(layer: LayerModel, size: CGSize) {
     transformNode = LayerTransformNode(transform: layer.transform)
-    if let masks = layer.masks {
+    if let masks = layer.masks?.filter({ $0.mode != .none }), !masks.isEmpty {
       maskLayer = MaskContainerLayer(masks: masks)
     } else {
       maskLayer = nil
@@ -52,7 +51,7 @@ class CompositionLayer: CALayer, KeypathSearchable {
     compositingFilter = layer.blendMode.filterName
     addSublayer(contentsLayer)
 
-    if let maskLayer = maskLayer {
+    if let maskLayer {
       contentsLayer.mask = maskLayer
     }
 

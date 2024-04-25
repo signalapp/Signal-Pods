@@ -5,7 +5,6 @@
 //  Created by Brandon Withrow on 1/25/19.
 //
 
-import Foundation
 import QuartzCore
 
 final class SolidCompositionLayer: CompositionLayer {
@@ -15,7 +14,7 @@ final class SolidCompositionLayer: CompositionLayer {
   init(solid: SolidLayerModel) {
     let components = solid.colorHex.hexColorComponents()
     colorProperty =
-      NodeProperty(provider: SingleValueProvider(Color(
+      NodeProperty(provider: SingleValueProvider(LottieColor(
         r: Double(components.red),
         g: Double(components.green),
         b: Double(components.blue),
@@ -41,16 +40,16 @@ final class SolidCompositionLayer: CompositionLayer {
 
   // MARK: Internal
 
-  let colorProperty: NodeProperty<Color>?
+  let colorProperty: NodeProperty<LottieColor>?
   let solidShape = CAShapeLayer()
 
   override var keypathProperties: [String: AnyNodeProperty] {
-    guard let colorProperty = colorProperty else { return super.keypathProperties }
+    guard let colorProperty else { return super.keypathProperties }
     return [PropertyName.color.rawValue : colorProperty]
   }
 
   override func displayContentsWithFrame(frame: CGFloat, forceUpdates _: Bool) {
-    guard let colorProperty = colorProperty else { return }
+    guard let colorProperty else { return }
     colorProperty.update(frame: frame)
     solidShape.fillColor = colorProperty.value.cgColorValue
   }

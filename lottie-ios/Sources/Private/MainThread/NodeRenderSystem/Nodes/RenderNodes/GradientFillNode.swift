@@ -22,11 +22,12 @@ final class GradientFillProperties: NodePropertyMap, KeypathSearchable {
     colors = NodeProperty(provider: KeyframeInterpolator(keyframes: gradientfill.colors.keyframes))
     gradientType = gradientfill.gradientType
     numberOfColors = gradientfill.numberOfColors
+    fillRule = gradientfill.fillRule
     keypathProperties = [
-      "Opacity" : opacity,
+      PropertyName.opacity.rawValue : opacity,
       "Start Point" : startPoint,
       "End Point" : endPoint,
-      "Colors" : colors,
+      PropertyName.gradientColors.rawValue : colors,
     ]
     properties = Array(keypathProperties.values)
   }
@@ -35,13 +36,14 @@ final class GradientFillProperties: NodePropertyMap, KeypathSearchable {
 
   var keypathName: String
 
-  let opacity: NodeProperty<Vector1D>
-  let startPoint: NodeProperty<Vector3D>
-  let endPoint: NodeProperty<Vector3D>
+  let opacity: NodeProperty<LottieVector1D>
+  let startPoint: NodeProperty<LottieVector3D>
+  let endPoint: NodeProperty<LottieVector3D>
   let colors: NodeProperty<[Double]>
 
   let gradientType: GradientType
   let numberOfColors: Int
+  let fillRule: FillRule
 
   let keypathProperties: [String: AnyNodeProperty]
   let properties: [AnyNodeProperty]
@@ -98,5 +100,6 @@ final class GradientFillNode: AnimatorNode, RenderNode {
     fillRender.colors = fillProperties.colors.value.map { CGFloat($0) }
     fillRender.type = fillProperties.gradientType
     fillRender.numberOfColors = fillProperties.numberOfColors
+    fillRender.fillRule = fillProperties.fillRule.caFillRule
   }
 }

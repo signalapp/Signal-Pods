@@ -1,14 +1,13 @@
 // Created by Cal Stephens on 12/20/21.
 // Copyright © 2021 Airbnb Inc. All rights reserved.
 
-import QuartzCore
-
 // MARK: - LayerContext
 
 /// Context available when constructing an `AnimationLayer`
 struct LayerContext {
-  let animation: Animation
+  let animation: LottieAnimation
   let imageProvider: AnimationImageProvider
+  let textProvider: AnimationKeypathTextProvider
   let fontProvider: AnimationFontProvider
   let compatibilityTracker: CompatibilityTracker
   var layerName: String
@@ -26,6 +25,10 @@ extension LayerModel {
   /// Constructs an `AnimationLayer` / `CALayer` that represents this `LayerModel`
   func makeAnimationLayer(context: LayerContext) throws -> BaseCompositionLayer? {
     let context = context.forLayer(self)
+
+    if hidden {
+      return TransformLayer(layerModel: self)
+    }
 
     switch (type, self) {
     case (.precomp, let preCompLayerModel as PreCompLayerModel):
@@ -48,11 +51,7 @@ extension LayerModel {
     case (.null, _):
       return TransformLayer(layerModel: self)
 
-    default:
-      try context.logCompatibilityIssue("""
-        Unexpected layer type combination ("\(type)" and "\(Swift.type(of: self))")
-        """)
-
+    case (.unknown, _), (.precomp, _), (.solid, _), (.image, _), (.shape, _), (.text, _):
       return nil
     }
   }

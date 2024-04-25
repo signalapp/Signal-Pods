@@ -5,7 +5,6 @@
 //  Created by Brandon Withrow on 1/30/19.
 //
 
-import Foundation
 import QuartzCore
 
 // MARK: - Renderer
@@ -17,7 +16,7 @@ final class GradientStrokeRenderer: PassThroughOutputNode, Renderable {
   override init(parent: NodeOutput?) {
     strokeRender = StrokeRenderer(parent: nil)
     gradientRender = LegacyGradientFillRenderer(parent: nil)
-    strokeRender.color = CGColor(colorSpace: CGColorSpaceCreateDeviceRGB(), components: [1, 1, 1, 1])
+    strokeRender.color = .rgb(1, 1, 1)
     super.init(parent: parent)
   }
 

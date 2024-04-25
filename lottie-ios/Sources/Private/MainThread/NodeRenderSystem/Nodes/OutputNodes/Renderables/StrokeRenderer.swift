@@ -5,7 +5,6 @@
 //  Created by Brandon Withrow on 1/30/19.
 //
 
-import Foundation
 import QuartzCore
 
 extension LineJoin {
@@ -132,7 +131,7 @@ final class StrokeRenderer: PassThroughOutputNode, Renderable {
     inContext.setMiterLimit(miterLimit)
     inContext.setLineCap(lineCap.cgLineCap)
     inContext.setLineJoin(lineJoin.cgLineJoin)
-    if let dashPhase = dashPhase, let lengths = dashLengths {
+    if let dashPhase, let lengths = dashLengths {
       inContext.setLineDash(phase: dashPhase, lengths: lengths)
     } else {
       inContext.setLineDash(phase: 0, lengths: [])
@@ -143,7 +142,7 @@ final class StrokeRenderer: PassThroughOutputNode, Renderable {
     guard inContext.path != nil, inContext.path!.isEmpty == false else {
       return
     }
-    guard let color = color else { return }
+    guard let color else { return }
     hasUpdate = false
     setupForStroke(inContext)
     inContext.setAlpha(opacity)
@@ -160,7 +159,7 @@ final class StrokeRenderer: PassThroughOutputNode, Renderable {
     layer.lineDashPhase = dashPhase ?? 0
     layer.fillColor = nil
     if let dashPattern = dashLengths {
-      layer.lineDashPattern = dashPattern.map({ NSNumber(value: Double($0)) })
+      layer.lineDashPattern = dashPattern.map { NSNumber(value: Double($0)) }
     }
   }
 }

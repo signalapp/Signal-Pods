@@ -5,8 +5,6 @@
 //  Created by Brandon Withrow on 1/8/19.
 //
 
-import Foundation
-
 /// A layer that holds text.
 final class TextLayerModel: LayerModel {
 
@@ -25,7 +23,7 @@ final class TextLayerModel: LayerModel {
     let textDictionary: [String: Any] = try containerDictionary.value(for: TextCodingKeys.text)
     text = try KeyframeGroup<TextDocument>(dictionary: textDictionary)
     let animatorDictionaries: [[String: Any]] = try containerDictionary.value(for: TextCodingKeys.animators)
-    animators = try animatorDictionaries.map({ try TextAnimator(dictionary: $0) })
+    animators = try animatorDictionaries.map { try TextAnimator(dictionary: $0) }
     try super.init(dictionary: dictionary)
   }
 

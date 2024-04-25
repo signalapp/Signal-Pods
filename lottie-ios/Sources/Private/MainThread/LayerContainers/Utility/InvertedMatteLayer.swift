@@ -5,7 +5,6 @@
 //  Created by Brandon Withrow on 1/28/19.
 //
 
-import Foundation
 import QuartzCore
 
 /// A layer that inverses the alpha output of its input layer.
@@ -39,17 +38,15 @@ final class InvertedMatteLayer: CALayer, CompositionLayerDelegate {
   // MARK: Internal
 
   let inputMatte: CompositionLayer?
-  let wrapperLayer = CALayer()
 
   func frameUpdated(frame _: CGFloat) {
+    setNeedsDisplay()
     displayIfNeeded()
   }
 
   override func draw(in ctx: CGContext) {
-    guard let inputMatte = inputMatte else { return }
-    guard let fillColor = CGColor(colorSpace: CGColorSpaceCreateDeviceRGB(), components: [0, 0, 0, 1])
-    else { return }
-    ctx.setFillColor(fillColor)
+    guard let inputMatte else { return }
+    ctx.setFillColor(.rgb(0, 0, 0))
     ctx.fill(bounds)
     ctx.setBlendMode(.destinationOut)
     inputMatte.render(in: ctx)

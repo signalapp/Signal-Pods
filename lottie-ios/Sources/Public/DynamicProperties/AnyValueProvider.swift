@@ -5,14 +5,13 @@
 //  Created by Brandon Withrow on 1/30/19.
 //
 
-import CoreGraphics
 import Foundation
 
 // MARK: - AnyValueProvider
 
 /// `AnyValueProvider` is a protocol that return animation data for a property at a
-/// given time. Every frame an `AnimationView` queries all of its properties and asks
-/// if their ValueProvider has an update. If it does the AnimationView will read the
+/// given time. Every frame a `LottieAnimationView` queries all of its properties and asks
+/// if their ValueProvider has an update. If it does the LottieAnimationView will read the
 /// property and update that portion of the animation.
 ///
 /// Value Providers can be used to dynamically set animation properties at run time.

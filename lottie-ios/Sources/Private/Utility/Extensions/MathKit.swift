@@ -272,12 +272,12 @@ extension CGPoint {
 
   /// Operator convenience to divide points with /
   static func / (lhs: CGPoint, rhs: CGFloat) -> CGPoint {
-    CGPoint(x: lhs.x / CGFloat(rhs), y: lhs.y / CGFloat(rhs))
+    CGPoint(x: lhs.x / rhs, y: lhs.y / rhs)
   }
 
   /// Operator convenience to multiply points with *
   static func * (lhs: CGPoint, rhs: CGFloat) -> CGPoint {
-    CGPoint(x: lhs.x * CGFloat(rhs), y: lhs.y * CGFloat(rhs))
+    CGPoint(x: lhs.x * rhs, y: lhs.y * rhs)
   }
 
   /// Operator convenience to add points with +
@@ -369,7 +369,7 @@ extension CGPoint {
     while foundPoint == false {
       refineIterations = refineIterations + 1
       /// First see if the next point is still less than the projected length.
-      let nextPoint = points[closestPoint + 1]
+      let nextPoint = points[min(closestPoint + 1, points.indices.last!)]
       if nextPoint.distance < accurateDistance {
         point = nextPoint
         closestPoint = closestPoint + 1
