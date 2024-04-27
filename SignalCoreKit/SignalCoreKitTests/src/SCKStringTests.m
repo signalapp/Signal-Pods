@@ -7,6 +7,15 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+#pragma mark - private interface in NSString+OWS.h
+
+@interface NSString (OWS_Test)
+- (NSString *)removeAllCharactersIn:(NSCharacterSet *)characterSet;
+- (NSString *)filterUnsafeFilenameCharacters;
+@end
+
+#pragma mark -
+
 @interface SCKStringTests : XCTestCase
 
 @end
@@ -104,6 +113,33 @@ NS_ASSUME_NONNULL_BEGIN
                              stringByPrependingCharacter:bidiLeftToRightEmbedding]
                             stringByPrependingCharacter:bidiLeftToRightEmbedding]
                            stringByPrependingCharacter:bidiLeftToRightEmbedding]);
+}
+
+- (void)testRemoveAllCharactersIn
+{
+    XCTAssert([[@"" removeAllCharactersIn:NSCharacterSet.letterCharacterSet] isEqual:@""]);
+    XCTAssert([[@"1" removeAllCharactersIn:NSCharacterSet.letterCharacterSet] isEqual:@"1"]);
+    XCTAssert([[@"a" removeAllCharactersIn:NSCharacterSet.letterCharacterSet] isEqual:@""]);
+    XCTAssert([[@"A" removeAllCharactersIn:NSCharacterSet.letterCharacterSet] isEqual:@""]);
+    XCTAssert([[@"abc123%^&" removeAllCharactersIn:NSCharacterSet.letterCharacterSet] isEqual:@"123%^&"]);
+
+    XCTAssert([[@"" removeAllCharactersIn:NSCharacterSet.decimalDigitCharacterSet] isEqual:@""]);
+    XCTAssert([[@"1" removeAllCharactersIn:NSCharacterSet.decimalDigitCharacterSet] isEqual:@""]);
+    XCTAssert([[@"a" removeAllCharactersIn:NSCharacterSet.decimalDigitCharacterSet] isEqual:@"a"]);
+    XCTAssert([[@"A" removeAllCharactersIn:NSCharacterSet.decimalDigitCharacterSet] isEqual:@"A"]);
+    XCTAssert([[@"abc123%^&" removeAllCharactersIn:NSCharacterSet.decimalDigitCharacterSet] isEqual:@"abc%^&"]);
+}
+
+- (void)testfilterUnsafeFilenameCharacters
+{
+    XCTAssertEqualObjects(@"1".filterUnsafeFilenameCharacters, @"1");
+    XCTAssertEqualObjects(@"alice\u202Dbob".filterUnsafeFilenameCharacters, @"alice\uFFFDbob");
+    XCTAssertEqualObjects(@"\u202Dalicebob".filterUnsafeFilenameCharacters, @"\uFFFDalicebob");
+    XCTAssertEqualObjects(@"alicebob\u202D".filterUnsafeFilenameCharacters, @"alicebob\uFFFD");
+    XCTAssertEqualObjects(@"alice\u202Ebob".filterUnsafeFilenameCharacters, @"alice\uFFFDbob");
+    XCTAssertEqualObjects(@"\u202Ealicebob".filterUnsafeFilenameCharacters, @"\uFFFDalicebob");
+    XCTAssertEqualObjects(@"alicebob\u202E".filterUnsafeFilenameCharacters, @"alicebob\uFFFD");
+    XCTAssertEqualObjects(@"alice\u202Dbobalice\u202Ebob".filterUnsafeFilenameCharacters, @"alice\uFFFDbobalice\uFFFDbob");
 }
 
 @end
