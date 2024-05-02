@@ -1,13 +1,13 @@
 {
   "name": "LibSignalClient",
-  "version": "0.45.1",
+  "version": "0.46.0",
   "summary": "A Swift wrapper library for communicating with the Signal messaging service.",
   "homepage": "https://github.com/signalapp/libsignal",
   "license": "AGPL-3.0-only",
   "authors": "Signal Messenger LLC",
   "source": {
     "git": "https://github.com/signalapp/libsignal.git",
-    "tag": "v0.45.1"
+    "tag": "v0.46.0"
   },
   "swift_versions": "5",
   "platforms": {
@@ -34,8 +34,8 @@
     "LIBSIGNAL_FFI_TEMP_DIR": "$(PROJECT_TEMP_DIR)/libsignal_ffi",
     "LIBSIGNAL_FFI_LIB_TO_LINK": "$(LIBSIGNAL_FFI_TEMP_DIR)/$(LIBSIGNAL_FFI_BUILD_PATH)/libsignal_ffi.a",
     "OTHER_LDFLAGS": "$(LIBSIGNAL_FFI_LIB_TO_LINK)",
-    "LIBSIGNAL_FFI_PREBUILD_ARCHIVE": "libsignal-client-ios-build-v0.45.1.tar.gz",
-    "LIBSIGNAL_FFI_PREBUILD_CHECKSUM": "d68676c0cd6cf2186f6b1ddcf421f45f8505c7437a26731cb99a4730789edf43",
+    "LIBSIGNAL_FFI_PREBUILD_ARCHIVE": "libsignal-client-ios-build-v0.46.0.tar.gz",
+    "LIBSIGNAL_FFI_PREBUILD_CHECKSUM": "84e2bd7a18bf4750fc3de589a7dfba14c11869b2e7f3349a6facf3923c3de4ea",
     "CARGO_BUILD_TARGET[sdk=iphonesimulator*][arch=arm64]": "aarch64-apple-ios-sim",
     "CARGO_BUILD_TARGET[sdk=iphonesimulator*][arch=*]": "x86_64-apple-ios",
     "CARGO_BUILD_TARGET[sdk=iphoneos*]": "aarch64-apple-ios",
@@ -64,7 +64,7 @@
       "output_files": [
         "$(LIBSIGNAL_FFI_LIB_TO_LINK)"
       ],
-      "script": "\n        set -euo pipefail\n        rm -rf \"${LIBSIGNAL_FFI_TEMP_DIR}\"\n        if [ -e \"${PODS_TARGET_SRCROOT}/swift/build_ffi.sh\" ]; then\n          # Local development\n          ln -fhs \"${PODS_TARGET_SRCROOT}\" \"${LIBSIGNAL_FFI_TEMP_DIR}\"\n        elif [ -e \"${SCRIPT_INPUT_FILE_0}\" ]; then\n          mkdir -p \"${LIBSIGNAL_FFI_TEMP_DIR}\"\n          cd \"${LIBSIGNAL_FFI_TEMP_DIR}\"\n          tar -m -x -f \"${SCRIPT_INPUT_FILE_0}\"\n        else\n          echo 'error: could not download libsignal_ffi.a; please provide LIBSIGNAL_FFI_PREBUILD_CHECKSUM' >&2\n          exit 1\n        fi\n      "
+      "script": "\n        set -euo pipefail\n        rm -rf \"${LIBSIGNAL_FFI_TEMP_DIR}\"\n        if [ -e \"${PODS_TARGET_SRCROOT}/swift/build_ffi.sh\" ]; then\n          # Local development\n          ln -fns \"${PODS_TARGET_SRCROOT}\" \"${LIBSIGNAL_FFI_TEMP_DIR}\"\n        elif [ -e \"${SCRIPT_INPUT_FILE_0}\" ]; then\n          mkdir -p \"${LIBSIGNAL_FFI_TEMP_DIR}\"\n          cd \"${LIBSIGNAL_FFI_TEMP_DIR}\"\n          tar -m -x -f \"${SCRIPT_INPUT_FILE_0}\"\n        else\n          echo 'error: could not download libsignal_ffi.a; please provide LIBSIGNAL_FFI_PREBUILD_CHECKSUM' >&2\n          exit 1\n        fi\n      "
     }
   ],
   "testspecs": [
