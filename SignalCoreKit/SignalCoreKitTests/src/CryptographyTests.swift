@@ -107,6 +107,32 @@ class CryptographyTestsSwift: XCTestCase {
         XCTAssertEqual(plaintextData, decryptedData)
     }
 
+    func test_attachmentEncryptionInMemoryAndDecryption() throws {
+        let temporaryDirectory = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
+        let encryptedFile = temporaryDirectory.appendingPathComponent(UUID().uuidString)
+
+        let plaintextData = Data.data(fromHex: "6E6F7261207761732068657265")!
+        let (encryptedData, metadata) = try Cryptography.encrypt(plaintextData)
+        try encryptedData.write(to: encryptedFile)
+
+        var decryptedData = try Cryptography.decryptFile(
+            at: encryptedFile,
+            // Only provide the key; verify that we can decrypt
+            // without digest or plaintext length
+            metadata: .init(key: metadata.key)
+        )
+
+        XCTAssertEqual(plaintextData, decryptedData)
+
+        // Attempt with the digest and plaintext length; that should work too.
+        decryptedData = try Cryptography.decryptAttachment(
+            at: encryptedFile,
+            metadata: metadata
+        )
+
+        XCTAssertEqual(plaintextData, decryptedData)
+    }
+
     func test_attachmentEncryptionAndDecryptionWithGarbageInFile() throws {
         let temporaryDirectory = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
         let plaintextFile = temporaryDirectory.appendingPathComponent(UUID().uuidString)
@@ -240,5 +266,164 @@ class CryptographyTestsSwift: XCTestCase {
 
         let decryptedData = try Data(contentsOf: plaintextFile)
         XCTAssertEqual(plaintextData, decryptedData)
+    }
+
+    func test_attachmentEncryptionAndDecryptionInMemory() throws {
+        let temporaryDirectory = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
+        let plaintextFile = temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let encryptedFile = temporaryDirectory.appendingPathComponent(UUID().uuidString)
+
+        let plaintextData = Data.data(fromHex: "6E6F7261207761732068657265")!
+        try plaintextData.write(to: plaintextFile)
+        let metadata = try Cryptography.encryptAttachment(at: plaintextFile, output: encryptedFile)
+
+        try FileManager.default.removeItem(at: plaintextFile)
+        let decryptedData = try Cryptography.decryptAttachment(
+            at: encryptedFile,
+            metadata: metadata
+        )
+
+        XCTAssertEqual(plaintextData, decryptedData)
+    }
+
+    func test_attachmentEncryptionAndDecryptionVariousSizes() throws {
+        let plaintextLengths: [UInt32] = [
+            1,
+            16,
+            1600, // multiple of 16 bytes
+            15, // 15 modulo 16
+            79, // 15 modulo 16
+            17, // 1 modulo 16
+            113, // 1 modulo 16
+            56, // 8 modulo 16
+        ]
+        for plaintextLength in plaintextLengths {
+            let temporaryDirectory = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
+            let plaintextFile = temporaryDirectory.appendingPathComponent(UUID().uuidString)
+            let encryptedFile = temporaryDirectory.appendingPathComponent(UUID().uuidString)
+
+            let plaintextData = Data(
+                (0..<plaintextLength).map { _ in UInt8.random(in: 0...UInt8.max) }
+            )
+            let paddedPlaintextData = plaintextData + (0..<10).map { _ in 0 }
+            try paddedPlaintextData.write(to: plaintextFile)
+            let metadata = try Cryptography.encryptAttachment(at: plaintextFile, output: encryptedFile)
+
+            try FileManager.default.removeItem(at: plaintextFile)
+            let decryptedData = try Cryptography.decryptAttachment(
+                at: encryptedFile,
+                metadata: .init(
+                    key: metadata.key,
+                    digest: metadata.digest,
+                    length: metadata.length,
+                    plaintextLength: Int(plaintextLength)
+                )
+            )
+
+            XCTAssertEqual(plaintextData, decryptedData)
+        }
+    }
+
+    func test_attachmentEncryptionAndDecryptionVariousSizes_noOutOfBandLength() throws {
+        let plaintextLengths: [UInt32] = [
+            1,
+            16,
+            1600, // multiple of 16 bytes
+            15, // 15 modulo 16
+            79, // 15 modulo 16
+            17, // 1 modulo 16
+            113, // 1 modulo 16
+            56, // 8 modulo 16
+        ]
+        for plaintextLength in plaintextLengths {
+            let temporaryDirectory = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
+            let plaintextFile = temporaryDirectory.appendingPathComponent(UUID().uuidString)
+            let encryptedFile = temporaryDirectory.appendingPathComponent(UUID().uuidString)
+
+            let plaintextData = Data(
+                (0..<plaintextLength).map { _ in UInt8.random(in: 0...UInt8.max) }
+            )
+            try plaintextData.write(to: plaintextFile)
+            let metadata = try Cryptography.encryptAttachment(at: plaintextFile, output: encryptedFile)
+
+            try FileManager.default.removeItem(at: plaintextFile)
+
+            // When we encrypt, we add custom padding 0s to a determined length.
+            // Normally these get truncated in the final output using the hint of plaintextLength;
+            // since we are omitting that we need to expect them in the final output.
+            let customPaddedLength = UInt32(Cryptography.paddedSize(unpaddedSize: UInt(plaintextLength)))
+            let customPaddingLength = customPaddedLength - plaintextLength
+            let expectedPlaintextOutput = plaintextData + Data(repeating: 0, count: Int(customPaddingLength))
+
+            let decryptedData = try Cryptography.decryptAttachment(
+                at: encryptedFile,
+                metadata: .init(
+                    key: metadata.key,
+                    digest: metadata.digest,
+                    plaintextLength: nil
+                )
+            )
+
+            XCTAssertEqual(expectedPlaintextOutput, decryptedData)
+        }
+    }
+
+    func test_attachmentEncryptionAndDecryptionFileHandle() throws {
+        let temporaryDirectory = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
+        let plaintextFile = temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let encryptedFile = temporaryDirectory.appendingPathComponent(UUID().uuidString)
+
+        // First 16 bytes are all 1's
+        let plaintextData1 = Data(repeating: 1, count: 16)
+        // Then do 24 bytes (intentionally not multiple of 16) of 2's
+        let plaintextData2 = Data(repeating: 2, count: 24)
+        // Then another 24 bytes of 3's
+        let plaintextData3 = Data(repeating: 3, count: 24)
+        // Then 13 (an odd number) bytes of 4's
+        let plaintextData4 = Data(repeating: 4, count: 13)
+        let plaintextData = plaintextData1 + plaintextData2 + plaintextData3 + plaintextData4
+
+        try plaintextData.write(to: plaintextFile)
+        let metadata = try Cryptography.encryptAttachment(at: plaintextFile, output: encryptedFile)
+
+        try FileManager.default.removeItem(at: plaintextFile)
+
+        let encryptedFileHandle = try Cryptography.encryptedAttachmentFileHandle(
+            at: encryptedFile,
+            plaintextLength: UInt32(plaintextData.count),
+            encryptionKey: metadata.key
+        )
+
+        // Ensure we can read the whole thing
+        var decryptedData = try encryptedFileHandle.read(upToCount: UInt32(plaintextData.count))
+        XCTAssertEqual(plaintextData, decryptedData)
+
+        // Now go back and read just the first chunk of bytes.
+        try encryptedFileHandle.seek(toOffset: 0)
+        decryptedData = try encryptedFileHandle.read(upToCount: UInt32(plaintextData1.count))
+        XCTAssertEqual(plaintextData1, decryptedData)
+
+        // Read the next three segments in sequence.
+        decryptedData = try encryptedFileHandle.read(upToCount: UInt32(plaintextData2.count))
+        XCTAssertEqual(plaintextData2, decryptedData)
+        decryptedData = try encryptedFileHandle.read(upToCount: UInt32(plaintextData3.count))
+        XCTAssertEqual(plaintextData3, decryptedData)
+        decryptedData = try encryptedFileHandle.read(upToCount: UInt32(plaintextData4.count))
+        XCTAssertEqual(plaintextData4, decryptedData)
+
+        // Seek back to the third segment and read it in isolation.
+        try encryptedFileHandle.seek(toOffset: UInt32(plaintextData1.count + plaintextData2.count))
+        decryptedData = try encryptedFileHandle.read(upToCount: UInt32(plaintextData3.count))
+        XCTAssertEqual(plaintextData3, decryptedData)
+
+        // Seek back to the second segment and read it in isolation.
+        try encryptedFileHandle.seek(toOffset: UInt32(plaintextData1.count))
+        decryptedData = try encryptedFileHandle.read(upToCount: UInt32(plaintextData2.count))
+        XCTAssertEqual(plaintextData2, decryptedData)
+
+        // Seek to the fourth segment and read it in isolation.
+        try encryptedFileHandle.seek(toOffset: UInt32(plaintextData1.count + plaintextData2.count + plaintextData3.count))
+        decryptedData = try encryptedFileHandle.read(upToCount: UInt32(plaintextData4.count))
+        XCTAssertEqual(plaintextData4, decryptedData)
     }
 }
