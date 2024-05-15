@@ -18,36 +18,50 @@ from typing import BinaryIO
 UNVERIFIED_DOWNLOAD_NAME = "unverified.tmp"
 
 PREBUILD_CHECKSUMS = {
-    'android': '69958caaefe350057cd2c77d001ee99afe646cb8e52a1f24873ef0db2a8f0aba',
-    'ios': 'd1bd0e604f60a1799c8453b4c1f374389d5a3572547cc41d7576db1c81482c15',
-    'linux-arm64': 'f67592faccf361c099b38e1de35ae2d1956e18e98160543f03f67df9d0418f7d',
-    'linux-x64': '48f7259397c3fc7d811087fa4cc649f49a78d9e53f1d2b23cae8c6f1e1c1b4cd',
-    'mac-arm64': 'd91539dcb73241702b7eacb4d4c4518d962432eafa2410b718af6c084ed667b4',
-    'mac-x64': '461a5aee558c3f7bd43fe4e85fe929bc9b87d8ad58af23c95f2f327603a9dbef',
-    'windows-arm64': '97a0190de3797c45f1b86348e139bef5ef910d1255decb4872569853bb53ec95',
-    'windows-x64': 'aa1c12170acce307e9d46253f241ec7f91bbb3709939d3c59a8b43f13ae91fcd',
+    'android': '3dd5d5f1987489aeba4f7048593914fbec6f7c726d3d75bfde9ac61a98d45575',
+    'ios': '4559bab546155bd6f128d893f7fb92351d154cbff23a615813be885e56db9317',
+    'linux-arm64': '21a7f0ce6947f42981876fb7cf5c3f1905ccd25b85b922468689d6c80cdc8062',
+    'linux-x64': '8259927f292e950ebe9ed2e274e23ca6ff7e279a887dbd02d6f6a165026731a2',
+    'mac-arm64': '7dba81c95d70562d9ce8e0968ecc352fd636596712df9cba3fab3475ee32cc70',
+    'mac-x64': 'd476e6d86c5b24995e08ff4c5d3a78f428a2fac57f124ebb8b553386fffbf783',
+    'windows-arm64': '30caf82f2e956f22317830fa183889bf8ddf2184c6ac32bbf901174c4ea7aa9d',
+    'windows-x64': '798405d6168b603be54aea7c329943f05356cc5184d618bda3ef805bedb88e6f',
 }
+
+
+def resolve_os(os_name: str) -> str:
+    if os_name in ['darwin', 'macos']:
+        return 'mac'
+    return os_name
+
+
+def resolve_arch(arch_name: str) -> str:
+    if arch_name in ['x86_64', 'amd64']:
+        return 'x64'
+    if arch_name in ['arm64', 'aarch64']:
+        return 'arm64'
+    return arch_name
 
 
 def resolve_platform(platform_name: str) -> str:
     if platform_name in PREBUILD_CHECKSUMS:
         return platform_name
-
-    if platform_name in ['windows', 'mac', 'linux']:
-        arch_name = platform.machine().lower()
-        if arch_name in ['x86_64', 'amd64']:
-            return resolve_platform(platform_name + '-x64')
-        if arch_name in ['arm64', 'aarch64']:
-            return resolve_platform(platform_name + '-arm64')
-        raise AssertionError('unsupported architecture: ' + arch_name)
-
     if platform_name == 'desktop':
-        os_name = platform.system().lower()
-        if os_name == 'darwin':
-            return resolve_platform('mac')
-        return resolve_platform(os_name)
+        return resolve_platform(platform.system().lower())
 
-    raise AssertionError('unsupported platform: ' + platform_name)
+    splits = platform_name.split('-')
+    os_name = resolve_os(splits[0])
+    if len(splits) > 2:
+        raise AssertionError('unsupported platform format: ' + platform_name)
+    elif len(splits) == 2:
+        arch_name = resolve_arch(splits[1])
+    else:
+        arch_name = resolve_arch(platform.machine().lower())
+
+    resolved_platform_name = "{}-{}".format(os_name, arch_name)
+    if resolved_platform_name not in PREBUILD_CHECKSUMS:
+        raise AssertionError('unsupported platform: ' + resolved_platform_name)
+    return resolved_platform_name
 
 
 def build_argument_parser() -> argparse.ArgumentParser:
@@ -128,11 +142,11 @@ def main() -> None:
     if not url:
         if not args.webrtc_version:
             parser.error(message='--platform requires --webrtc-version')
-        platform = resolve_platform(args.platform)
+        platform_name = resolve_platform(args.platform)
         build_mode = 'debug' if args.debug else 'release'
-        url = "https://build-artifacts.signal.org/libraries/webrtc-{}-{}-{}.tar.bz2".format(args.webrtc_version, platform, build_mode)
+        url = "https://build-artifacts.signal.org/libraries/webrtc-{}-{}-{}.tar.bz2".format(args.webrtc_version, platform_name, build_mode)
         if not checksum:
-            checksum = PREBUILD_CHECKSUMS[platform]
+            checksum = PREBUILD_CHECKSUMS[platform_name]
 
     if not checksum:
         parser.error(message='missing --checksum')
@@ -145,7 +159,7 @@ def main() -> None:
     if args.skip_extract:
         return
 
-    print("extracting {}...".format(archive_file), file=sys.stderr)
+    print("extracting {} to {}".format(archive_file, args.output_dir), file=sys.stderr)
     open_archive.seek(0)
     tarfile.open(fileobj=open_archive).extractall(path=args.output_dir)
 
