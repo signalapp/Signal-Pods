@@ -1393,13 +1393,9 @@ SignalFfiError *signal_group_send_full_token_verify(SignalBorrowedBuffer token, 
 
 SignalFfiError *signal_verify_signature(bool *out, SignalBorrowedBuffer cert_pem, SignalBorrowedBuffer body, SignalBorrowedBuffer signature, uint64_t current_timestamp);
 
-SignalFfiError *signal_tokio_async_context_new(SignalTokioAsyncContext **out);
-
-SignalFfiError *signal_tokio_async_context_destroy(SignalTokioAsyncContext *p);
-
 SignalFfiError *signal_connection_manager_new(SignalConnectionManager **out, uint8_t environment, const char *user_agent);
 
-SignalFfiError *signal_connection_manager_set_proxy(const SignalConnectionManager *connection_manager, const char *host, uint16_t port);
+SignalFfiError *signal_connection_manager_set_proxy(const SignalConnectionManager *connection_manager, const char *host, int32_t port);
 
 SignalFfiError *signal_connection_manager_clear_proxy(const SignalConnectionManager *connection_manager);
 
@@ -1435,6 +1431,10 @@ SignalFfiError *signal_chat_service_unauth_send(SignalCPromiseFfiChatResponse pr
 
 SignalFfiError *signal_chat_service_unauth_send_and_debug(SignalCPromiseFfiResponseAndDebugInfo promise, const void *promise_context, const SignalTokioAsyncContext *async_runtime, const SignalChat *chat, const SignalHttpRequest *http_request, uint32_t timeout_millis);
 
+SignalFfiError *signal_chat_service_auth_send(SignalCPromiseFfiChatResponse promise, const void *promise_context, const SignalTokioAsyncContext *async_runtime, const SignalChat *chat, const SignalHttpRequest *http_request, uint32_t timeout_millis);
+
+SignalFfiError *signal_chat_service_auth_send_and_debug(SignalCPromiseFfiResponseAndDebugInfo promise, const void *promise_context, const SignalTokioAsyncContext *async_runtime, const SignalChat *chat, const SignalHttpRequest *http_request, uint32_t timeout_millis);
+
 SignalFfiError *signal_lookup_request_new(SignalLookupRequest **out);
 
 SignalFfiError *signal_lookup_request_add_e164(const SignalLookupRequest *request, const char *e164);
@@ -1456,6 +1456,10 @@ SignalFfiError *signal_cdsi_lookup_new(SignalCPromiseCdsiLookup promise, const v
 SignalFfiError *signal_cdsi_lookup_token(SignalOwnedBuffer *out, const SignalCdsiLookup *lookup);
 
 SignalFfiError *signal_cdsi_lookup_complete(SignalCPromiseFfiCdsiLookupResponse promise, const void *promise_context, const SignalTokioAsyncContext *async_runtime, const SignalCdsiLookup *lookup);
+
+SignalFfiError *signal_tokio_async_context_destroy(SignalTokioAsyncContext *p);
+
+SignalFfiError *signal_tokio_async_context_new(SignalTokioAsyncContext **out);
 
 SignalFfiError *signal_pin_hash_destroy(SignalPinHash *p);
 
