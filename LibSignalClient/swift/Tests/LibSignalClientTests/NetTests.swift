@@ -23,10 +23,8 @@ final class NetTests: XCTestCase {
 
         let asyncContext = TokioAsyncContext()
 
-        let output: SignalFfiCdsiLookupResponse = try await invokeAsyncFunction { promise, context in
-            asyncContext.withNativeHandle { asyncContext in
-                signal_testing_cdsi_lookup_response_convert(promise, context, asyncContext)
-            }
+        let output: SignalFfiCdsiLookupResponse = try await asyncContext.invokeAsyncFunction { promise, asyncContext in
+            signal_testing_cdsi_lookup_response_convert(promise, asyncContext)
         }
         XCTAssertEqual(output.debug_permits_used, 123)
 
@@ -129,7 +127,13 @@ final class NetTests: XCTestCase {
 }
 
 final class Svr3Tests: TestCaseBase {
-    private let username = randomBytes(16).hexString
+    struct State {
+        var auth: Auth
+        var net: Net
+    }
+
+    private var state: State? = nil
+
     private let storedSecret = randomBytes(32)
 
     func getEnclaveSecret() throws -> String {
@@ -139,71 +143,113 @@ final class Svr3Tests: TestCaseBase {
         return enclaveSecret
     }
 
-    func testBackupAndRestore() async throws {
-        let auth = try Auth(username: self.username, enclaveSecret: self.getEnclaveSecret())
+    override func setUpWithError() throws {
+        let username = randomBytes(16).hexString
         let net = Net(env: .staging, userAgent: userAgent)
-
-        let shareSet = try await net.svr3.backup(
-            self.storedSecret,
-            password: "password",
-            maxTries: 10,
-            auth: auth
-        )
-
-        let restoredSecret = try await net.svr3.restore(
-            password: "password",
-            shareSet: shareSet,
-            auth: auth
-        )
-        XCTAssertEqual(restoredSecret, self.storedSecret)
+        let auth = try Auth(username: username, enclaveSecret: self.getEnclaveSecret())
+        self.state = State(auth: auth, net: net)
     }
 
-    func testInvalidPassword() async throws {
-        let auth = try Auth(username: self.username, enclaveSecret: self.getEnclaveSecret())
-        let net = Net(env: .staging, userAgent: userAgent)
+    override func tearDown() async throws {
+        guard self.state != nil else {
+            return
+        }
+        do {
+            try await self.state!.net.svr3.remove(auth: self.state!.auth)
+            self.state = nil
+        } catch {}
+    }
 
-        let shareSet = try await net.svr3.backup(
+    func testBackupAndRestore() async throws {
+        let tries = UInt32(10)
+
+        let shareSet = try await state!.net.svr3.backup(
             self.storedSecret,
             password: "password",
-            maxTries: 10,
-            auth: auth
+            maxTries: tries,
+            auth: self.state!.auth
         )
 
+        let restoredSecret = try await state!.net.svr3.restore(
+            password: "password",
+            shareSet: shareSet,
+            auth: self.state!.auth
+        )
+        XCTAssertEqual(restoredSecret.value, self.storedSecret)
+        XCTAssertEqual(restoredSecret.triesRemaining, tries - 1)
+    }
+
+    func testRestoreAfterRemove() async throws {
+        let tries = UInt32(10)
+
+        let shareSet = try await state!.net.svr3.backup(
+            self.storedSecret,
+            password: "password",
+            maxTries: tries,
+            auth: self.state!.auth
+        )
+        try await self.state!.net.svr3.remove(auth: self.state!.auth)
         do {
-            _ = try await net.svr3.restore(
-                password: "invalid password",
+            _ = try await self.state!.net.svr3.restore(
+                password: "password",
                 shareSet: shareSet,
-                auth: auth
+                auth: self.state!.auth
             )
             XCTFail("Should have thrown")
-        } catch SignalError.svrRestoreFailed(_) {
+        } catch SignalError.svrDataMissing(_) {
             // Success!
         } catch {
             XCTFail("Unexpected exception: '\(error)'")
         }
     }
 
-    func testCorruptedShareSet() async throws {
-        let auth = try Auth(username: self.username, enclaveSecret: self.getEnclaveSecret())
-        let net = Net(env: .staging, userAgent: userAgent)
+    func testRemoveSomethingThatNeverWas() async throws {
+        try await self.state!.net.svr3.remove(auth: self.state!.auth)
+    }
 
-        var shareSet = try await net.svr3.backup(
+    func testInvalidPassword() async throws {
+        let tries = UInt32(10)
+
+        let shareSet = try await state!.net.svr3.backup(
+            self.storedSecret,
+            password: "password",
+            maxTries: tries,
+            auth: self.state!.auth
+        )
+
+        do {
+            _ = try await self.state!.net.svr3.restore(
+                password: "invalid password",
+                shareSet: shareSet,
+                auth: self.state!.auth
+            )
+            XCTFail("Should have thrown")
+        } catch SignalError.svrRestoreFailed(let triesRemaining, _) {
+            // Success!
+            XCTAssertEqual(triesRemaining, tries - 1)
+        } catch {
+            XCTFail("Unexpected exception: '\(error)'")
+        }
+    }
+
+    func testCorruptedShareSet() async throws {
+        var shareSet = try await state!.net.svr3.backup(
             self.storedSecret,
             password: "password",
             maxTries: 10,
-            auth: auth
+            auth: self.state!.auth
         )
         // Invert a byte somewhere inside the share set
         shareSet[42] ^= 0xFF
 
         do {
-            _ = try await net.svr3.restore(
+            _ = try await self.state!.net.svr3.restore(
                 password: "password",
                 shareSet: shareSet,
-                auth: auth
+                auth: self.state!.auth
             )
             XCTFail("Should have thrown")
-        } catch SignalError.svrRestoreFailed(_) {
+        } catch SignalError.svrRestoreFailed(_, _) {
             // Success!
         } catch {
             XCTFail("Unexpected exception: '\(error)'")
@@ -211,27 +257,24 @@ final class Svr3Tests: TestCaseBase {
     }
 
     func testMaxRetries() async throws {
-        let auth = try Auth(username: self.username, enclaveSecret: self.getEnclaveSecret())
-        let net = Net(env: .staging, userAgent: userAgent)
-
-        let shareSet = try await net.svr3.backup(
+        let shareSet = try await state!.net.svr3.backup(
             self.storedSecret,
             password: "password",
             maxTries: 1,
-            auth: auth
+            auth: self.state!.auth
         )
         // First restore should succeed, but use up all the available tries
-        _ = try await net.svr3.restore(
+        _ = try await self.state!.net.svr3.restore(
             password: "password",
             shareSet: shareSet,
-            auth: auth
+            auth: self.state!.auth
         )
 
         do {
-            _ = try await net.svr3.restore(
+            _ = try await self.state!.net.svr3.restore(
                 password: "password",
                 shareSet: shareSet,
-                auth: auth
+                auth: self.state!.auth
             )
             XCTFail("Should have thrown")
         } catch SignalError.svrDataMissing(_) {
@@ -242,34 +285,31 @@ final class Svr3Tests: TestCaseBase {
     }
 
     func testMaxRetriesAfterFailure() async throws {
-        let auth = try Auth(username: self.username, enclaveSecret: self.getEnclaveSecret())
-        let net = Net(env: .staging, userAgent: userAgent)
-
-        let shareSet = try await net.svr3.backup(
+        let shareSet = try await state!.net.svr3.backup(
             self.storedSecret,
             password: "password",
             maxTries: 1,
-            auth: auth
+            auth: self.state!.auth
         )
         // First restore fails **and** decrements the tries left counter
         do {
-            _ = try await net.svr3.restore(
+            _ = try await self.state!.net.svr3.restore(
                 password: "invalid password",
                 shareSet: shareSet,
-                auth: auth
+                auth: self.state!.auth
             )
             XCTFail("Should have thrown")
-        } catch SignalError.svrRestoreFailed(_) {
+        } catch SignalError.svrRestoreFailed(_, _) {
             // Success!
         } catch {
             XCTFail("Unexpected exception: '\(error)'")
         }
 
         do {
-            _ = try await net.svr3.restore(
+            _ = try await self.state!.net.svr3.restore(
                 password: "password",
                 shareSet: shareSet,
-                auth: auth
+                auth: self.state!.auth
             )
             XCTFail("Should have thrown")
         } catch SignalError.svrDataMissing(_) {
@@ -280,15 +320,12 @@ final class Svr3Tests: TestCaseBase {
     }
 
     func testInvalidMaxTries() async throws {
-        let auth = try Auth(username: self.username, enclaveSecret: self.getEnclaveSecret())
-        let net = Net(env: .staging, userAgent: userAgent)
-
         do {
-            _ = try await net.svr3.backup(
+            _ = try await self.state!.net.svr3.backup(
                 self.storedSecret,
                 password: "password",
                 maxTries: 0,
-                auth: auth
+                auth: self.state!.auth
             )
             XCTFail("Should have thrown")
         } catch SignalError.invalidArgument(_) {
@@ -299,15 +336,12 @@ final class Svr3Tests: TestCaseBase {
     }
 
     func testInvalidSecretSize() async throws {
-        let auth = try Auth(username: self.username, enclaveSecret: self.getEnclaveSecret())
-        let net = Net(env: .staging, userAgent: userAgent)
-
         do {
-            _ = try await net.svr3.backup(
+            _ = try await self.state!.net.svr3.backup(
                 randomBytes(42),
                 password: "password",
                 maxTries: 0,
-                auth: auth
+                auth: self.state!.auth
             )
             XCTFail("Should have thrown")
         } catch SignalError.invalidArgument(_) {

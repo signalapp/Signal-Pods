@@ -79,8 +79,7 @@ public class Svr3Client {
     ///     connection protocol issue.
     ///
     /// ## Notes:
-    ///   - Error messages are expected to be log-safe and not contain any
-    ///     sensitive data.
+    ///   - Error messages are log-safe and do not contain any sensitive data.
     ///   - Failures caused by the network issues (including a connection
     ///     timeout) can, in general, be retried, although there is already a
     ///     retry-with-backoff mechanism inside libsignal used to connect to the
@@ -93,22 +92,19 @@ public class Svr3Client {
         maxTries: UInt32,
         auth: Auth
     ) async throws -> [UInt8] {
-        let output = try await invokeAsyncFunction(returning: SignalOwnedBuffer.self) { promise, context in
-            self.asyncContext.withNativeHandle { asyncContext in
-                self.connectionManager.withNativeHandle { connectionManager in
-                    secret.withUnsafeBorrowedBuffer { secretBuffer in
-                        signal_svr3_backup(
-                            promise,
-                            context,
-                            asyncContext,
-                            connectionManager,
-                            secretBuffer,
-                            password,
-                            maxTries,
-                            auth.username,
-                            auth.password
-                        )
-                    }
+        let output = try await self.asyncContext.invokeAsyncFunction { promise, asyncContext in
+            self.connectionManager.withNativeHandle { connectionManager in
+                secret.withUnsafeBorrowedBuffer { secretBuffer in
+                    signal_svr3_backup(
+                        promise,
+                        asyncContext,
+                        connectionManager,
+                        secretBuffer,
+                        password,
+                        maxTries,
+                        auth.username,
+                        auth.password
+                    )
                 }
             }
         }
@@ -132,7 +128,7 @@ public class Svr3Client {
     ///     far apart in time.
     ///
     /// - Returns:
-    ///   A byte array containing the restored secret.
+    ///   An instance of `RestoredSecret` containing the restored secret.
     ///
     /// - Throws:
     ///   On error, throws a ``SignalError``. Expected error cases are
@@ -147,8 +143,7 @@ public class Svr3Client {
     ///     combination of password and share set.
     ///
     /// ## Notes:
-    ///   - Error messages are expected to be log-safe and not contain any
-    ///     sensitive data.
+    ///   - Error messages are log-safe and do not contain any sensitive data.
     ///   - Failures caused by the network issues (including a connection
     ///     timeout) can, in general, be retried, although there is already a
     ///     retry-with-backoff mechanism inside libsignal used to connect to the
@@ -159,28 +154,82 @@ public class Svr3Client {
         password: String,
         shareSet: some ContiguousBytes,
         auth: Auth
-    ) async throws -> [UInt8] {
-        let output = try await invokeAsyncFunction(returning: SignalOwnedBuffer.self) { promise, context in
-            self.asyncContext.withNativeHandle { asyncContext in
-                self.connectionManager.withNativeHandle { connectionManager in
-                    shareSet.withUnsafeBorrowedBuffer { shareSetBuffer in
-                        signal_svr3_restore(
-                            promise,
-                            context,
-                            asyncContext,
-                            connectionManager,
-                            password,
-                            shareSetBuffer,
-                            auth.username,
-                            auth.password
-                        )
-                    }
+    ) async throws -> RestoredSecret {
+        let output = try await self.asyncContext.invokeAsyncFunction { promise, asyncContext in
+            self.connectionManager.withNativeHandle { connectionManager in
+                shareSet.withUnsafeBorrowedBuffer { shareSetBuffer in
+                    signal_svr3_restore(
+                        promise,
+                        asyncContext,
+                        connectionManager,
+                        password,
+                        shareSetBuffer,
+                        auth.username,
+                        auth.password
+                    )
                 }
             }
         }
         defer {
             signal_free_buffer(output.base, output.length)
         }
-        return Array(UnsafeBufferPointer(start: output.base, count: output.length))
+        let buffer = UnsafeBufferPointer(start: output.base, count: output.length)
+        return RestoredSecret(fromBytes: buffer)
+    }
+
+    /// Remove a secret stored in SVR3.
+    ///
+    /// - Parameters:
+    ///   - auth: An instance of ``Auth`` containing the username and password
+    ///     obtained from the Chat Server. The password is an OTP which is
+    ///     generally good for about 15 minutes, therefore it can be reused for
+    ///     the subsequent calls to either backup or restore that are not too
+    ///     far apart in time.
+    ///
+    /// - Throws:
+    ///   On error, throws a ``SignalError``. Expected error cases are
+    ///   - `SignalError.networkError` for a network-level connectivity issue,
+    ///     including connection timeouts.
+    ///   - `SignalError.networkProtocolError` for an SVR3 or attested
+    ///     connection protocol issue.
+    ///
+    /// ## Notes:
+    ///   - The method will succeed even if the data has never been backed up
+    ///     in the first place.
+    ///   - Error messages are log-safe and do not contain any sensitive data.
+    ///   - Failures caused by the network issues (including a connection
+    ///     timeout) can, in general, be retried, although there is already a
+    ///     retry-with-backoff mechanism inside libsignal used to connect to the
+    ///     SVR3 servers. Other exceptions are caused by the bad input or data
+    ///     missing on the server. They are therefore non-actionable and are
+    ///     guaranteed to be thrown again when retried.
+    public func remove(auth: Auth) async throws {
+        _ = try await self.asyncContext.invokeAsyncFunction { promise, asyncContext in
+            self.connectionManager.withNativeHandle { connectionManager in
+                signal_svr3_remove(promise, asyncContext, connectionManager, auth.username, auth.password)
+            }
+        }
+    }
+}
+
+public struct RestoredSecret {
+    public let value: [UInt8]
+    public let triesRemaining: UInt32
+
+    init(fromBytes bytes: UnsafeBufferPointer<UInt8>) {
+        let (prefix, suffix) = bytes.split(at: MemoryLayout<UInt32>.size)
+        self.triesRemaining = UInt32(bigEndian: prefix)
+        self.value = Array(suffix)
+    }
+}
+
+extension UInt32 {
+    internal init<Bytes: Collection>(bigEndian bytes: Bytes) where Bytes.Element == UInt8 {
+        precondition(bytes.count == MemoryLayout<Self>.size)
+        var value = Self()
+        for byte in bytes {
+            value = (value << 8) + UInt32(byte)
+        }
+        self = value
     }
 }
