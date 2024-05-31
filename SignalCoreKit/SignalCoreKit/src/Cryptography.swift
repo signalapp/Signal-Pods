@@ -173,6 +173,7 @@ public extension Cryptography {
     fileprivate static let hmac256OutputLength = 32
     fileprivate static let aescbcIVLength = 16
     fileprivate static let aesKeySize = 32
+    fileprivate static var concatenatedEncryptionKeyLength: Int { aesKeySize + hmac256KeyLength }
 
     static func paddedSize(unpaddedSize: UInt) -> UInt {
         // In order to obsfucate attachment size on the wire, we round up
@@ -182,7 +183,29 @@ public extension Cryptography {
         return UInt(max(541, floor(pow(1.05, ceil(log(Double(unpaddedSize)) / log(1.05))))))
     }
 
-    static func encryptAttachment(at unencryptedUrl: URL, output encryptedUrl: URL) throws -> EncryptionMetadata {
+    static func randomAttachmentEncryptionKey() -> Data {
+        // The metadata "key" is actually a concatentation of the
+        // encryption key and the hmac key.
+        return generateRandomBytes(UInt(concatenatedEncryptionKeyLength))
+    }
+
+    /// Encrypt an input file to a provided output file location.
+    /// The encrypted output is prefixed with the random iv and postfixed with the hmac. The ciphertext is padded
+    /// using standard pkcs7 padding but NOT with any custom padding applied to the plaintext prior to encryption.
+    ///
+    /// - parameter unencryptedUrl: The file to encrypt.
+    /// - parameter encryptedUrl: Where to write the encrypted output file.
+    /// - parameter encryptionKey: The key to encrypt with; the AES key and the hmac key concatenated together.
+    ///     (The same format as ``EncryptionMetadata/key``). A random key will be generated if none is provided.
+    static func encryptAttachment(
+        at unencryptedUrl: URL,
+        output encryptedUrl: URL,
+        encryptionKey inputKey: Data? = nil
+    ) throws -> EncryptionMetadata {
+        if let inputKey, inputKey.count != concatenatedEncryptionKeyLength {
+            throw OWSAssertionError("Invalid encryption key length")
+        }
+
         guard FileManager.default.fileExists(atPath: unencryptedUrl.path) else {
             throw OWSAssertionError("Missing attachment file.")
         }
@@ -198,8 +221,9 @@ public extension Cryptography {
         }
         let outputFile = try FileHandle(forWritingTo: encryptedUrl)
 
-        let encryptionKey = generateRandomBytes(UInt(aesKeySize))
-        let hmacKey = generateRandomBytes(UInt(hmac256KeyLength))
+        let inputKey = inputKey ?? randomAttachmentEncryptionKey()
+        let encryptionKey = inputKey.prefix(aesKeySize)
+        let hmacKey = inputKey.suffix(hmac256KeyLength)
 
         return try _encryptAttachment(
             enumerateInputInBlocks: { closure in
@@ -227,10 +251,13 @@ public extension Cryptography {
         _ input: Data,
         encryptionKey inputKey: Data? = nil
     ) throws -> (Data, EncryptionMetadata) {
-        // The metadata "key" is actually a concatentation of the
-        // encryption key and the hmac key.
-        let encryptionKey = inputKey?.prefix(aesKeySize) ?? generateRandomBytes(UInt(aesKeySize))
-        let hmacKey = inputKey?.suffix(hmac256KeyLength) ?? generateRandomBytes(UInt(hmac256KeyLength))
+        if let inputKey, inputKey.count != concatenatedEncryptionKeyLength {
+            throw OWSAssertionError("Invalid encryption key length")
+        }
+
+        let inputKey = inputKey ?? randomAttachmentEncryptionKey()
+        let encryptionKey = inputKey.prefix(aesKeySize)
+        let hmacKey = inputKey.suffix(hmac256KeyLength)
 
         var outputData = Data()
         let encryptionMetadata = try _encryptAttachment(
