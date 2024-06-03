@@ -197,10 +197,45 @@ public extension Cryptography {
     /// - parameter encryptedUrl: Where to write the encrypted output file.
     /// - parameter encryptionKey: The key to encrypt with; the AES key and the hmac key concatenated together.
     ///     (The same format as ``EncryptionMetadata/key``). A random key will be generated if none is provided.
+    static func encryptFile(
+        at unencryptedUrl: URL,
+        output encryptedUrl: URL,
+        encryptionKey inputKey: Data? = nil
+    ) throws -> EncryptionMetadata {
+        return try _encryptFile(
+            at: unencryptedUrl,
+            output: encryptedUrl,
+            encryptionKey: inputKey,
+            applyExtraPadding: false
+        )
+    }
+
+    /// Encrypt an input file to a provided output file location.
+    /// The encrypted output is prefixed with the random iv and postfixed with the hmac. The ciphertext is padded
+    /// using standard pkcs7 padding AND with custom bucketing padding applied to the plaintext prior to encryption.
+    ///
+    /// - parameter unencryptedUrl: The file to encrypt.
+    /// - parameter encryptedUrl: Where to write the encrypted output file.
+    /// - parameter encryptionKey: The key to encrypt with; the AES key and the hmac key concatenated together.
+    ///     (The same format as ``EncryptionMetadata/key``). A random key will be generated if none is provided.
     static func encryptAttachment(
         at unencryptedUrl: URL,
         output encryptedUrl: URL,
         encryptionKey inputKey: Data? = nil
+    ) throws -> EncryptionMetadata {
+        return try _encryptFile(
+            at: unencryptedUrl,
+            output: encryptedUrl,
+            encryptionKey: inputKey,
+            applyExtraPadding: true
+        )
+    }
+
+    static func _encryptFile(
+        at unencryptedUrl: URL,
+        output encryptedUrl: URL,
+        encryptionKey inputKey: Data?,
+        applyExtraPadding: Bool
     ) throws -> EncryptionMetadata {
         if let inputKey, inputKey.count != concatenatedEncryptionKeyLength {
             throw OWSAssertionError("Invalid encryption key length")
@@ -235,7 +270,7 @@ public extension Cryptography {
             },
             encryptionKey: encryptionKey,
             hmacKey: hmacKey,
-            applyExtraPadding: true
+            applyExtraPadding: applyExtraPadding
         )
     }
 
@@ -422,6 +457,17 @@ public extension Cryptography {
         return try EncryptedFileHandleImpl(
             encryptedUrl: encryptedUrl,
             paddingDecryptionStrategy: .customPadding(plaintextLength: plaintextLength),
+            encryptionKey: encryptionKey
+        )
+    }
+
+    static func encryptedFileHandle(
+        at encryptedUrl: URL,
+        encryptionKey: Data
+    ) throws -> EncryptedFileHandle {
+        return try EncryptedFileHandleImpl(
+            encryptedUrl: encryptedUrl,
+            paddingDecryptionStrategy: .pkcs7Only,
             encryptionKey: encryptionKey
         )
     }
