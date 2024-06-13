@@ -7,7 +7,6 @@
 // a Delegate implemented by the application.
 
 import SignalRingRTC.RingRTC
-import SignalCoreKit
 
 // Same as rust http::Method.
 public enum HTTPMethod: Int32 {
@@ -30,7 +29,7 @@ public struct HTTPRequest {
 
     static func fromRtc(_ rtcRequest: rtc_http_Request) -> Self? {
         guard let method = HTTPMethod.fromRtc(rtcRequest.method) else {
-            owsFailDebug("unexpected HTTP request method")
+            failDebug("unexpected HTTP request method")
             return nil
         }
 
@@ -93,7 +92,7 @@ public protocol HTTPDelegate: AnyObject {
     // An HTTP request should be sent to the given url.
     // The HTTP response should be returned by calling the HttpClient.receivedResponse(requestId, ...).
     // or HttpClient.requestFailed(requestId) if the request failed to get a response.
-    // Invoked on the main thread, asychronously.
+    // Invoked on the main thread, asynchronously.
     func sendRequest(requestId: UInt32, request: HTTPRequest)
 }
 
@@ -105,7 +104,7 @@ public class HTTPClient {
     public init(delegate: HTTPDelegate? = nil) {
         self.delegateWrapper = HTTPDelegateWrapper(delegate)
         guard let rtcClient = rtc_http_Client_create(self.delegateWrapper.asRtc()) else {
-            owsFail("unable to create RingRTC HttpClient")
+            fail("unable to create RingRTC HttpClient")
         }
 
         self.rtcClient = rtcClient
