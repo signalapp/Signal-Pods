@@ -575,7 +575,6 @@ typedef struct {
 } SignalCPromiseFfiCdsiLookupResponse;
 
 typedef struct {
-  uint32_t reconnect_count;
   uint8_t raw_ip_type;
   double duration_secs;
   const char *connection_info;
@@ -1583,7 +1582,9 @@ SignalFfiError *signal_chat_service_auth_send(SignalCPromiseFfiChatResponse *pro
 
 SignalFfiError *signal_chat_service_auth_send_and_debug(SignalCPromiseFfiResponseAndDebugInfo *promise, const SignalTokioAsyncContext *async_runtime, const SignalChat *chat, const SignalHttpRequest *http_request, uint32_t timeout_millis);
 
-SignalFfiError *signal_chat_server_set_listener(const SignalTokioAsyncContext *runtime, const SignalChat *chat, const SignalFfiMakeChatListenerStruct *make_listener);
+SignalFfiError *signal_chat_service_set_listener_auth(const SignalTokioAsyncContext *runtime, const SignalChat *chat, const SignalFfiMakeChatListenerStruct *make_listener);
+
+SignalFfiError *signal_chat_service_set_listener_unauth(const SignalTokioAsyncContext *runtime, const SignalChat *chat, const SignalFfiMakeChatListenerStruct *make_listener);
 
 SignalFfiError *signal_testing_chat_service_inject_raw_server_request(const SignalChat *chat, SignalBorrowedBuffer bytes);
 

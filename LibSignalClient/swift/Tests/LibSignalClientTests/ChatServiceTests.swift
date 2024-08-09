@@ -72,7 +72,6 @@ final class ChatServiceTests: TestCaseBase {
         var rawDebugInfo = SignalFfiChatServiceDebugInfo()
         try checkError(signal_testing_chat_service_debug_info_convert(&rawDebugInfo))
         let debugInfo = ChatService.DebugInfo(consuming: rawDebugInfo)
-        XCTAssertEqual(2, debugInfo.reconnectCount)
         XCTAssertEqual(.ipv4, debugInfo.ipType)
         XCTAssertEqual(0.2, debugInfo.duration)
         XCTAssertEqual("connection_info", debugInfo.connectionInfo)
@@ -89,7 +88,6 @@ final class ChatServiceTests: TestCaseBase {
         XCTAssertEqual(Self.expectedContent, response.body)
 
         let debugInfo = ChatService.DebugInfo(consuming: rawResponseAndDebugInfo.debug_info)
-        XCTAssertEqual(2, debugInfo.reconnectCount)
         XCTAssertEqual(.ipv4, debugInfo.ipType)
         XCTAssertEqual(0.2, debugInfo.duration)
         XCTAssertEqual("connection_info", debugInfo.connectionInfo)
@@ -199,7 +197,7 @@ final class ChatServiceTests: TestCaseBase {
                 self.queueEmpty.fulfill()
             }
 
-            func chatServiceConnectionWasInterrupted(_: AuthenticatedChatService) {
+            func connectionWasInterrupted(_: AuthenticatedChatService) {
                 XCTAssertEqual(self.stage, 3)
                 self.stage += 1
                 self.connectionInterrupted.fulfill()
@@ -293,6 +291,18 @@ final class ChatServiceTests: TestCaseBase {
         waitForExpectations(timeout: 2)
     }
 
+    final class ExpectDisconnectListener: ConnectionEventsListener {
+        let expectation: XCTestExpectation
+
+        init(_ expectation: XCTestExpectation) {
+            self.expectation = expectation
+        }
+
+        func connectionWasInterrupted(_: UnauthenticatedChatService) {
+            self.expectation.fulfill()
+        }
+    }
+
     func testConnectUnauth() async throws {
         // Use the presence of the proxy server environment setting to know whether we should make network requests in our tests.
         guard ProcessInfo.processInfo.environment["LIBSIGNAL_TESTING_PROXY_SERVER"] != nil else {
@@ -301,9 +311,14 @@ final class ChatServiceTests: TestCaseBase {
 
         let net = Net(env: .staging, userAgent: Self.userAgent)
         let chat = net.createUnauthenticatedChatService()
+        let listener = ExpectDisconnectListener(expectation(description: "disconnect"))
+        chat.setListener(listener)
+
         // Just make sure we can connect.
         try await chat.connect()
         try await chat.disconnect()
+
+        await self.fulfillment(of: [listener.expectation], timeout: 2)
     }
 
     func testConnectUnauthThroughProxy() async throws {
@@ -325,9 +340,14 @@ final class ChatServiceTests: TestCaseBase {
         try net.setProxy(host: String(host), port: port)
 
         let chat = net.createUnauthenticatedChatService()
+        let listener = ExpectDisconnectListener(expectation(description: "disconnect"))
+        chat.setListener(listener)
+
         // Just make sure we can connect.
         try await chat.connect()
         try await chat.disconnect()
+
+        await self.fulfillment(of: [listener.expectation], timeout: 2)
     }
 
     func testInvalidProxyRejected() async throws {
@@ -338,6 +358,22 @@ final class ChatServiceTests: TestCaseBase {
             XCTFail("should not allow setting invalid proxy")
         } catch SignalError.ioError {
             // Okay
+        }
+    }
+
+    // swiftlint:disable:next todo
+    // TODO: Remove this when we update our builder to have Xcode 14.3 or later.
+    // We're shadowing the real XCTestCase.fulfillment(of:timeout:enforceOrder:) with an ad-hoc implementation from
+    // https://github.com/swiftlang/swift-corelibs-xctest/issues/436#issuecomment-1703589930
+    func fulfillment(of expectations: [XCTestExpectation], timeout seconds: TimeInterval = .infinity) async {
+        return await withCheckedContinuation { continuation in
+            // This function operates by blocking a background thread instead of one owned by libdispatch or by the
+            // Swift runtime (as used by Swift concurrency.) To ensure we use a thread owned by neither subsystem, use
+            // Foundation's Thread.detachNewThread(_:).
+            Thread.detachNewThread { [self] in
+                wait(for: expectations, timeout: seconds)
+                continuation.resume()
+            }
         }
     }
 }

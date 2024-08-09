@@ -81,9 +81,9 @@ public class AuthenticatedChatService: NativeHandleOwner, ChatService {
             withNativeHandle { chatService in
                 if let listener {
                     var listenerStruct = ChatListenerBridge(chatService: self, chatListener: listener).makeListenerStruct()
-                    failOnError(signal_chat_server_set_listener(tokioAsyncContext, chatService, &listenerStruct))
+                    failOnError(signal_chat_service_set_listener_auth(tokioAsyncContext, chatService, &listenerStruct))
                 } else {
-                    failOnError(signal_chat_server_set_listener(tokioAsyncContext, chatService, nil))
+                    failOnError(signal_chat_service_set_listener_auth(tokioAsyncContext, chatService, nil))
                 }
             }
         }
@@ -188,6 +188,22 @@ public class UnauthenticatedChatService: NativeHandleOwner, ChatService {
 
     override internal class func destroyNativeHandle(_ handle: OpaquePointer) -> SignalFfiErrorRef? {
         return signal_chat_destroy(handle)
+    }
+
+    /// Sets (or clears) the listener for connection events.
+    ///
+    /// Takes ownership of the listener; be careful this doesn't lead to a reference cycle (unless the owner lives forever anyway).
+    public func setListener(_ listener: (any ConnectionEventsListener<UnauthenticatedChatService>)?) {
+        self.tokioAsyncContext.withNativeHandle { tokioAsyncContext in
+            withNativeHandle { chatService in
+                if let listener {
+                    var listenerStruct = UnauthConnectionEventsListenerBridge(chatService: self, listener: listener).makeListenerStruct()
+                    failOnError(signal_chat_service_set_listener_unauth(tokioAsyncContext, chatService, &listenerStruct))
+                } else {
+                    failOnError(signal_chat_service_set_listener_unauth(tokioAsyncContext, chatService, nil))
+                }
+            }
+        }
     }
 
     /// Initiates establishing of the underlying unauthenticated connection to the Chat Service. Once
