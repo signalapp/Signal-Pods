@@ -3,6 +3,7 @@
 //
 
 // swiftlint:disable function_parameter_count multiline_function_chains function_body_length
+// swiftlint:disable array_init
 
 import Foundation
 

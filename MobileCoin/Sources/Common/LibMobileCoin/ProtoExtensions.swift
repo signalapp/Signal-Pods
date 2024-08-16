@@ -1,5 +1,5 @@
 // swiftlint:disable:this file_name
-
+// swiftlint:disable implicit_getter
 //
 //  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //

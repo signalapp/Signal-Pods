@@ -1,6 +1,7 @@
 //
 //  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
+// swiftlint:disable implicit_getter
 
 import Foundation
 
