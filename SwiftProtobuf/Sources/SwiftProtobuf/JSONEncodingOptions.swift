@@ -13,7 +13,12 @@
 // -----------------------------------------------------------------------------
 
 /// Options for JSONEncoding.
-public struct JSONEncodingOptions {
+public struct JSONEncodingOptions: Sendable {
+
+  /// Always prints int64s values as numbers.
+  /// By default, they are printed as strings as per proto3 JSON mapping rules.
+  /// NB: When used as Map keys, int64s will be printed as strings as expected.
+  public var alwaysPrintInt64sAsNumbers: Bool = false
 
   /// Always print enums as ints. By default they are printed as strings.
   public var alwaysPrintEnumsAsInts: Bool = false
@@ -32,7 +37,7 @@ public struct JSONEncodingOptions {
   /// and implement their own serializer rather than relying on this API.
   ///
   /// If deterministic serialization is requested, map entries will be sorted
-  /// by keys in lexographical order. This is an implementation detail
+  /// by keys in lexicographical order. This is an implementation detail
   /// and subject to change.
   public var useDeterministicOrdering: Bool = false
 

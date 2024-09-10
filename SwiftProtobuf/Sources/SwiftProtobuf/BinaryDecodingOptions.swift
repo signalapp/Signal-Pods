@@ -13,7 +13,7 @@
 // -----------------------------------------------------------------------------
 
 /// Options for binary decoding.
-public struct BinaryDecodingOptions {
+public struct BinaryDecodingOptions: Sendable {
   /// The maximum nesting of message with messages.  The default is 100.
   ///
   /// To prevent corrupt or malicious messages from causing stack overflows,
@@ -26,7 +26,7 @@ public struct BinaryDecodingOptions {
   ///
   /// The Protobuf binary format allows unknown fields to be still parsed
   /// so the schema can be expanded without requiring all readers to be updated.
-  /// This works in part by haivng any unknown fields preserved so they can
+  /// This works in part by having any unknown fields preserved so they can
   /// be relayed on without loss. For a while the proto3 syntax definition
   /// called for unknown fields to be dropped, but that lead to problems in
   /// some case. The default is to follow the spec and keep them, but setting

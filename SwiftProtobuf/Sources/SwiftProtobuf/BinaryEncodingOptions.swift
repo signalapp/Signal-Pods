@@ -13,7 +13,7 @@
 // -----------------------------------------------------------------------------
 
 /// Options for binary encoding.
-public struct BinaryEncodingOptions {
+public struct BinaryEncodingOptions: Sendable {
     /// Whether to use deterministic ordering when serializing.
     ///
     /// Note that the deterministic serialization is NOT canonical across languages.
@@ -24,7 +24,7 @@ public struct BinaryEncodingOptions {
     /// and implement their own serializer rather than relying on this API.
     ///
     /// If deterministic serialization is requested, map entries will be sorted
-    /// by keys in lexographical order. This is an implementation detail
+    /// by keys in lexicographical order. This is an implementation detail
     /// and subject to change.
     public var useDeterministicOrdering: Bool = false
 
