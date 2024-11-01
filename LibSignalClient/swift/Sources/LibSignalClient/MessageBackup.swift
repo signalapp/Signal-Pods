@@ -6,17 +6,58 @@
 import Foundation
 import SignalFfi
 
-public class MessageBackupKey: NativeHandleOwner {
+/// Key used to encrypt and decrypt a message backup bundle.
+///
+/// - SeeAlso: ``BackupKey``
+public class MessageBackupKey: NativeHandleOwner, @unchecked Sendable {
+    @available(*, deprecated, message: "Use init(accountEntropy:aci:) instead")
     public convenience init(masterKey: [UInt8], aci: Aci) throws {
         let masterKey = try ByteArray(newContents: masterKey, expectedLength: 32)
         let handle = try masterKey.withUnsafePointerToSerialized { masterKey in
             try aci.withPointerToFixedWidthBinary { aci in
                 var outputHandle: OpaquePointer?
-                try checkError(signal_message_backup_key_new(&outputHandle, masterKey, aci))
+                try checkError(signal_message_backup_key_from_master_key(&outputHandle, masterKey, aci))
                 return outputHandle
             }
         }
         self.init(owned: handle!)
+    }
+
+    /// Derives a `MessageBackupKey` from the given account entropy pool.
+    ///
+    /// `accountEntropy` must be a **validated** account entropy pool;
+    /// passing an arbitrary String here is considered a programmer error.
+    public convenience init(accountEntropy: String, aci: Aci) throws {
+        let handle = try aci.withPointerToFixedWidthBinary { aci in
+            var outputHandle: OpaquePointer?
+            try checkError(signal_message_backup_key_from_account_entropy_pool(&outputHandle, accountEntropy, aci))
+            return outputHandle
+        }
+        self.init(owned: handle!)
+    }
+
+    /// Derives a `MessageBackupKey` from the given backup key and ID.
+    ///
+    /// Used when reading from a local backup, which may have been created with a different ACI.
+    ///
+    /// This uses AccountEntropyPool-based key derivation rules;
+    /// it cannot be used to read a backup created from a master key.
+    public convenience init(backupKey: BackupKey, backupId: [UInt8]) throws {
+        let backupId = try ByteArray(newContents: backupId, expectedLength: 16)
+        let handle = try backupKey.withUnsafePointerToSerialized { backupKey in
+            try backupId.withUnsafePointerToSerialized { backupId in
+                var outputHandle: OpaquePointer?
+                try checkError(signal_message_backup_key_from_backup_key_and_backup_id(&outputHandle, backupKey, backupId))
+                return outputHandle
+            }
+        }
+        self.init(owned: handle!)
+    }
+
+    @available(*, deprecated, message: "Use the overload that takes a strongly-typed BackupKey instead")
+    public convenience init(backupKey: [UInt8], backupId: [UInt8]) throws {
+        let backupKey = try BackupKey(contents: backupKey)
+        try self.init(backupKey: backupKey, backupId: backupId)
     }
 
     internal required init(owned handle: OpaquePointer) {
@@ -26,9 +67,31 @@ public class MessageBackupKey: NativeHandleOwner {
     override internal class func destroyNativeHandle(_ handle: OpaquePointer) -> SignalFfiErrorRef? {
         signal_message_backup_key_destroy(handle)
     }
+
+    /// An HMAC key used to sign a backup file.
+    public var hmacKey: [UInt8] {
+        failOnError {
+            try withNativeHandle { keyHandle in
+                try invokeFnReturningFixedLengthArray {
+                    signal_message_backup_key_get_hmac_key($0, keyHandle)
+                }
+            }
+        }
+    }
+
+    /// An AES-256-CBC key used to encrypt a backup file.
+    public var aesKey: [UInt8] {
+        failOnError {
+            try withNativeHandle { keyHandle in
+                try invokeFnReturningFixedLengthArray {
+                    signal_message_backup_key_get_aes_key($0, keyHandle)
+                }
+            }
+        }
+    }
 }
 
-public enum MessageBackupPurpose: UInt8 {
+public enum MessageBackupPurpose: UInt8, Sendable {
     // This needs to be kept in sync with the Rust version of the enum.
     case deviceTransfer = 0, remoteBackup = 1
 }
@@ -74,7 +137,7 @@ public struct MessageBackupValidationError: Error {
 }
 
 /// Unknown fields encountered while validating.
-public struct MessageBackupUnknownFields {
+public struct MessageBackupUnknownFields: Sendable {
     public let fields: [String]
 }
 

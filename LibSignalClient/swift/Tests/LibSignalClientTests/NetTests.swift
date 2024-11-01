@@ -49,7 +49,12 @@ final class NetTests: XCTestCase {
         do {
             try failWithError("Protocol")
         } catch SignalError.networkProtocolError(let message) {
-            XCTAssertEqual(message, "Protocol error: protocol error after establishing a connection")
+            XCTAssertEqual(message, "Protocol error: protocol error after establishing a connection: failed to decode frame as protobuf")
+        }
+        do {
+            try failWithError("CdsiProtocol")
+        } catch SignalError.networkProtocolError(let message) {
+            XCTAssertEqual(message, "Protocol error: CDS protocol: no token found in response")
         }
         do {
             try failWithError("AttestationDataError")
@@ -151,7 +156,7 @@ final class Svr3Tests: TestCaseBase {
 
     override func setUpWithError() throws {
         let username = randomBytes(16).hexString
-        let net = Net(env: .staging, userAgent: userAgent)
+        let net = Net(env: .production, userAgent: userAgent)
         let auth = try Auth(username: username, enclaveSecret: self.getEnclaveSecret())
         self.state = State(auth: auth, net: net)
     }

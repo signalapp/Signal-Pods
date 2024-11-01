@@ -6,7 +6,7 @@
 import Foundation
 import SignalFfi
 
-public class BackupAuthCredential: ByteArray {
+public class BackupAuthCredential: ByteArray, @unchecked Sendable {
     public required init(contents: [UInt8]) throws {
         try super.init(contents, checkValid: signal_backup_auth_credential_check_valid_contents)
     }
@@ -52,6 +52,20 @@ public class BackupAuthCredential: ByteArray {
                 throw SignalError.internalError("Invalid BackupLevel \(rawValue)")
             }
             return backupLevel
+        }
+    }
+
+    public var type: BackupCredentialType {
+        return failOnError {
+            let rawValue = try withUnsafeBorrowedBuffer { contents in
+                try invokeFnReturningInteger {
+                    signal_backup_auth_credential_get_type($0, contents)
+                }
+            }
+            guard let type = BackupCredentialType(rawValue: rawValue) else {
+                throw SignalError.internalError("Invalid BackupCredentialType \(rawValue)")
+            }
+            return type
         }
     }
 }

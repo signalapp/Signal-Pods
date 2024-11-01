@@ -420,6 +420,7 @@ class ZKGroupTests: TestCaseBase {
     }
 
     func testBackupAuthCredentialDeterministic() throws {
+        // Chosen randomly
         let backupKey: [UInt8] = [
             0xF9, 0xAB, 0xBB, 0xFF, 0xA7, 0xD4, 0x24, 0x92,
             0x97, 0x65, 0xAE, 0xCC, 0x84, 0xB6, 0x04, 0x63,
@@ -427,27 +428,38 @@ class ZKGroupTests: TestCaseBase {
             0x06, 0xB7, 0x9B, 0xC9, 0xA5, 0x62, 0x93, 0x38,
         ]
         let aci = UUID(uuidString: "e74beed0-e70f-4cfd-abbb-7e3eb333bbac")!
-        let serializedBackupID: [UInt8] = [0xE3, 0x92, 0x6F, 0x11, 0xDD, 0xD1, 0x43, 0xE6, 0xDD, 0x0F, 0x20, 0xBF, 0xCB, 0x08, 0x34, 0x9E]
-        let serializedRequestCredential = Data(base64Encoded: "AISCxQa8OsFqphsQPxqtzJk5+jndpE3SJG6bfazQB3994Aersq2yNRgcARBoedBeoEfKIXdty6X7l6+TiPFAqDvojRSO8xaZOpKJOvWSDJIGn6EeMl2jOjx+IQg8d8M0AQ==")!
-        let backupLevel = BackupLevel.messages
+
+        // These are expectations; if the contents of a credential or derivation of a backup ID
+        // changes, they will need to be updated.
+        let serializedBackupID: [UInt8] = [0xA2, 0x89, 0x62, 0xC7, 0xF9, 0xAC, 0x91, 0x0F, 0x66, 0xE4, 0xBC, 0xB3, 0x3F, 0x2C, 0xEF, 0x06]
+        let serializedRequestCredential = Data(base64Encoded: "AISCxQa8OsFqphsQPxqtzJk5+jndpE3SJG6bfazQB399rN6N8Dv5DAwvY4N36Uj0qGf0cV5a/8rf5nkxLeVNnF3ojRSO8xaZOpKJOvWSDJIGn6EeMl2jOjx+IQg8d8M0AQ==")!
+
+        let backupLevel = BackupLevel.free
+        let credentialType = BackupCredentialType.messages
 
         let context = BackupAuthCredentialRequestContext.create(backupKey: backupKey, aci: aci)
         let request = context.getRequest()
         let serverSecretParams = GenericServerSecretParams.generate(randomness: self.TEST_ARRAY_32)
         let serverPublicParams = serverSecretParams.getPublicParams()
-        XCTAssertEqual(request.serialize(), Array(serializedRequestCredential))
+        XCTAssertEqual(
+            request.serialize(),
+            Array(serializedRequestCredential),
+            Data(request.serialize()).base64EncodedString()
+        )
 
         let now = UInt64(Date().timeIntervalSince1970)
         let startOfDay = now - (now % SECONDS_PER_DAY)
         let redemptionTime = Date(timeIntervalSince1970: TimeInterval(startOfDay))
-        let response = request.issueCredential(timestamp: redemptionTime, backupLevel: backupLevel, params: serverSecretParams, randomness: self.TEST_ARRAY_32_2)
+        let response = request.issueCredential(timestamp: redemptionTime, backupLevel: backupLevel, type: credentialType, params: serverSecretParams, randomness: self.TEST_ARRAY_32_2)
         let credential = try context.receive(response, timestamp: redemptionTime, params: serverPublicParams)
-        XCTAssertEqual(credential.backupID, serializedBackupID)
+        XCTAssertEqual(credential.backupID, serializedBackupID, credential.backupID.hexString)
         XCTAssertEqual(credential.backupLevel, backupLevel)
+        XCTAssertEqual(credential.type, credentialType)
     }
 
     func testBackupAuthCredential() throws {
-        let backupLevel = BackupLevel.messages
+        let backupLevel = BackupLevel.free
+        let credentialType = BackupCredentialType.messages
 
         let serverSecretParams = GenericServerSecretParams.generate(randomness: self.TEST_ARRAY_32)
         let serverPublicParams = serverSecretParams.getPublicParams()
@@ -462,11 +474,12 @@ class ZKGroupTests: TestCaseBase {
         let now = UInt64(Date().timeIntervalSince1970)
         let startOfDay = now - (now % SECONDS_PER_DAY)
         let redemptionTime = Date(timeIntervalSince1970: TimeInterval(startOfDay))
-        let response = request.issueCredential(timestamp: redemptionTime, backupLevel: backupLevel, params: serverSecretParams, randomness: self.TEST_ARRAY_32_2)
+        let response = request.issueCredential(timestamp: redemptionTime, backupLevel: backupLevel, type: credentialType, params: serverSecretParams, randomness: self.TEST_ARRAY_32_2)
 
         // Client
         let credential = try context.receive(response, timestamp: redemptionTime, params: serverPublicParams)
         XCTAssertEqual(backupLevel, credential.backupLevel)
+        XCTAssertEqual(credentialType, credential.type)
 
         let presentation = credential.present(serverParams: serverPublicParams, randomness: self.TEST_ARRAY_32_3)
 
