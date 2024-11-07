@@ -1465,8 +1465,6 @@ SignalFfiError *signal_group_send_full_token_get_expiration(uint64_t *out, Signa
 
 SignalFfiError *signal_group_send_full_token_verify(SignalBorrowedBuffer token, SignalBorrowedBuffer user_ids, uint64_t now, SignalBorrowedBuffer key_pair);
 
-SignalFfiError *signal_verify_signature(bool *out, SignalBorrowedBuffer cert_pem, SignalBorrowedBuffer body, SignalBorrowedBuffer signature, uint64_t current_timestamp);
-
 SignalFfiError *signal_connection_manager_destroy(SignalConnectionManager *p);
 
 SignalFfiError *signal_connection_manager_new(SignalConnectionManager **out, uint8_t environment, const char *user_agent);
@@ -1474,6 +1472,8 @@ SignalFfiError *signal_connection_manager_new(SignalConnectionManager **out, uin
 SignalFfiError *signal_connection_manager_set_proxy(const SignalConnectionManager *connection_manager, const char *host, int32_t port);
 
 SignalFfiError *signal_connection_manager_clear_proxy(const SignalConnectionManager *connection_manager);
+
+SignalFfiError *signal_connection_manager_set_censorship_circumvention_enabled(const SignalConnectionManager *connection_manager, bool enabled);
 
 SignalFfiError *signal_connection_manager_on_network_change(const SignalConnectionManager *connection_manager);
 
