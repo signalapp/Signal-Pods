@@ -36,8 +36,8 @@ extension SignalCPromiseRawPointer: PromiseStruct {
     typealias Result = UnsafeRawPointer
 }
 
-extension SignalCPromiseCdsiLookup: PromiseStruct {
-    typealias Result = OpaquePointer
+extension SignalCPromiseMutPointerCdsiLookup: PromiseStruct {
+    typealias Result = SignalMutPointerCdsiLookup
 }
 
 extension SignalCPromiseFfiCdsiLookupResponse: PromiseStruct {
@@ -56,8 +56,12 @@ extension SignalCPromiseFfiResponseAndDebugInfo: PromiseStruct {
     typealias Result = SignalFfiResponseAndDebugInfo
 }
 
-extension SignalCPromiseOwnedBufferOfc_uchar: PromiseStruct {
-    typealias Result = SignalOwnedBuffer
+extension SignalCPromiseMutPointerAuthenticatedChatConnection: PromiseStruct {
+    typealias Result = SignalMutPointerAuthenticatedChatConnection
+}
+
+extension SignalCPromiseMutPointerUnauthenticatedChatConnection: PromiseStruct {
+    typealias Result = SignalMutPointerUnauthenticatedChatConnection
 }
 
 /// A type-erased version of ``Completer``.
