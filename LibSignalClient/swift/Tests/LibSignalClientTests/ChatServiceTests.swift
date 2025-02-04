@@ -30,8 +30,25 @@ extension AuthenticatedChatService {
         }
     }
 }
-
 #endif
+
+extension ConnectionManager {
+    func assertIsUsingProxyIs(_ value: Int32) {
+// The testing native function used to implement this isn't available on device
+// builds to save on code size. If it's present use it, otherwise this is a no-op.
+#if !os(iOS) || targetEnvironment(simulator)
+        let isUsingProxy =
+            withNativeHandle { handle in
+                failOnError {
+                    try invokeFnReturningInteger {
+                        signal_testing_connection_manager_is_using_proxy($0, handle.const())
+                    }
+                }
+            }
+        XCTAssertEqual(isUsingProxy, value)
+#endif
+    }
+}
 
 final class ChatServiceTests: TestCaseBase {
     private static let userAgent = "test"
@@ -339,15 +356,16 @@ final class ChatServiceTests: TestCaseBase {
         // The default TLS proxy config doesn't support staging, so we connect to production.
         let net = Net(env: .production, userAgent: Self.userAgent)
         let host: Substring
-        let port: UInt16
+        let port: UInt16?
         if let colonIndex = PROXY_SERVER.firstIndex(of: ":") {
             host = PROXY_SERVER[..<colonIndex]
             port = UInt16(PROXY_SERVER[colonIndex...].dropFirst())!
         } else {
             host = PROXY_SERVER[...]
-            port = 443
+            port = nil
         }
         try net.setProxy(host: String(host), port: port)
+        net.connectionManager.assertIsUsingProxyIs(1)
 
         let chat = net.createUnauthenticatedChatService()
         let listener = ExpectDisconnectListener(expectation(description: "disconnect"))
@@ -360,20 +378,172 @@ final class ChatServiceTests: TestCaseBase {
         await self.fulfillment(of: [listener.expectation], timeout: 2)
     }
 
-    func testInvalidProxyRejected() async throws {
+    func testConnectUnauthThroughProxyByParts() async throws {
+        guard let PROXY_SERVER = ProcessInfo.processInfo.environment["LIBSIGNAL_TESTING_PROXY_SERVER"] else {
+            throw XCTSkip()
+        }
+
         // The default TLS proxy config doesn't support staging, so we connect to production.
         let net = Net(env: .production, userAgent: Self.userAgent)
-        do {
+        let host: Substring
+        let port: UInt16?
+        if let colonIndex = PROXY_SERVER.firstIndex(of: ":") {
+            host = PROXY_SERVER[..<colonIndex]
+            port = UInt16(PROXY_SERVER[colonIndex...].dropFirst())!
+        } else {
+            host = PROXY_SERVER[...]
+            port = nil
+        }
+
+        let user: Substring?
+        let justTheHost: Substring
+        if let atIndex = host.firstIndex(of: "@") {
+            user = host[..<atIndex]
+            justTheHost = host[atIndex...].dropFirst()
+        } else {
+            user = nil
+            justTheHost = host
+        }
+
+        try net.setProxy(
+            scheme: Net.signalTlsProxyScheme,
+            host: String(justTheHost),
+            port: port,
+            username: user.map(String.init)
+        )
+        net.connectionManager.assertIsUsingProxyIs(1)
+
+        let chat = net.createUnauthenticatedChatService()
+        let listener = ExpectDisconnectListener(expectation(description: "disconnect"))
+        chat.setListener(listener)
+
+        // Just make sure we can connect.
+        try await chat.connect()
+        try await chat.disconnect()
+
+        await self.fulfillment(of: [listener.expectation], timeout: 2)
+    }
+
+    func testInvalidProxyRejected() {
+        let net = Net(env: .production, userAgent: Self.userAgent)
+
+        func check(callback: () throws -> Void) {
+            net.connectionManager.assertIsUsingProxyIs(0)
+            do {
+                try callback()
+                XCTFail("should not allow setting invalid proxy")
+            } catch SignalError.ioError {
+                // Okay
+                net.connectionManager.assertIsUsingProxyIs(-1)
+            } catch {
+                XCTFail("unexpected error: \(error)")
+            }
+            net.clearProxy()
+        }
+
+        check {
             try net.setProxy(host: "signalfoundation.org", port: 0)
-            XCTFail("should not allow setting invalid proxy")
-        } catch SignalError.ioError {
-            // Okay
+        }
+        check {
+            try net.setProxy(scheme: "socks+shoes", host: "signalfoundation.org")
+        }
+        check {
+            net.setInvalidProxy()
+            throw SignalError.ioError("to match all the other test cases")
         }
     }
 }
 
 final class ChatConnectionTests: TestCaseBase {
     private static let userAgent = "test"
+
+// These testing endpoints aren't generated in device builds, to save on code size.
+#if !os(iOS) || targetEnvironment(simulator)
+    func testListenerCallbacks() async throws {
+        class Listener: ChatConnectionListener {
+            let queueEmpty: XCTestExpectation
+            let firstMessageReceived: XCTestExpectation
+            let secondMessageReceived: XCTestExpectation
+            let connectionInterrupted: XCTestExpectation
+
+            var expectations: [XCTestExpectation] {
+                [self.firstMessageReceived, self.secondMessageReceived, self.queueEmpty, self.connectionInterrupted]
+            }
+
+            init(queueEmpty: XCTestExpectation, firstMessageReceived: XCTestExpectation, secondMessageReceived: XCTestExpectation, connectionInterrupted: XCTestExpectation) {
+                self.queueEmpty = queueEmpty
+                self.firstMessageReceived = firstMessageReceived
+                self.secondMessageReceived = secondMessageReceived
+                self.connectionInterrupted = connectionInterrupted
+            }
+
+            func chatConnection(_ chat: AuthenticatedChatConnection, didReceiveIncomingMessage envelope: Data, serverDeliveryTimestamp: UInt64, sendAck: () async throws -> Void) {
+                // This assumes a little-endian platform.
+                XCTAssertEqual(envelope, withUnsafeBytes(of: serverDeliveryTimestamp) { Data($0) })
+                switch serverDeliveryTimestamp {
+                case 1000:
+                    self.firstMessageReceived.fulfill()
+                case 2000:
+                    self.secondMessageReceived.fulfill()
+                default:
+                    XCTFail("unexpected message")
+                }
+            }
+
+            func chatConnectionDidReceiveQueueEmpty(_: AuthenticatedChatConnection) {
+                self.queueEmpty.fulfill()
+            }
+
+            func connectionWasInterrupted(_: AuthenticatedChatConnection, error: Error?) {
+                XCTAssertNotNil(error)
+                self.connectionInterrupted.fulfill()
+            }
+        }
+
+        let tokioAsyncContext = TokioAsyncContext()
+        let listener = Listener(
+            queueEmpty: expectation(description: "queue empty"),
+            firstMessageReceived: expectation(description: "first message received"),
+            secondMessageReceived: expectation(description: "second message received"),
+            connectionInterrupted: expectation(description: "connection interrupted")
+        )
+        let (chat, fakeRemote) = AuthenticatedChatConnection.fakeConnect(tokioAsyncContext: tokioAsyncContext, listener: listener)
+        // Make sure the chat object doesn't go away too soon.
+        defer { withExtendedLifetime(chat) {} }
+
+        // The following payloads were generated via protoscope.
+        // % protoscope -s | base64
+        // The fields are described by chat_websocket.proto in the libsignal-net crate.
+
+        // 1: {"PUT"}
+        // 2: {"/api/v1/message"}
+        // 3: {1000i64}
+        // 5: {"x-signal-timestamp:1000"}
+        // 4: 1
+        fakeRemote.injectServerRequest(base64: "CgNQVVQSDy9hcGkvdjEvbWVzc2FnZRoI6AMAAAAAAAAqF3gtc2lnbmFsLXRpbWVzdGFtcDoxMDAwIAE=")
+        // 1: {"PUT"}
+        // 2: {"/api/v1/message"}
+        // 3: {2000i64}
+        // 5: {"x-signal-timestamp:2000"}
+        // 4: 2
+        fakeRemote.injectServerRequest(base64: "CgNQVVQSDy9hcGkvdjEvbWVzc2FnZRoI0AcAAAAAAAAqF3gtc2lnbmFsLXRpbWVzdGFtcDoyMDAwIAI=")
+
+        // Sending an invalid message should not affect the listener at all, nor should it stop future requests.
+        // 1: {"PUT"}
+        // 2: {"/invalid"}
+        // 4: 10
+        fakeRemote.injectServerRequest(base64: "CgNQVVQSCC9pbnZhbGlkIAo=")
+
+        // 1: {"PUT"}
+        // 2: {"/api/v1/queue/empty"}
+        // 4: 99
+        fakeRemote.injectServerRequest(base64: "CgNQVVQSEy9hcGkvdjEvcXVldWUvZW1wdHkgYw==")
+
+        fakeRemote.injectConnectionInterrupted()
+
+        await self.fulfillment(of: listener.expectations, timeout: 2, enforceOrder: true)
+    }
+#endif
 
     func testListenerCleanup() async throws {
         // Use the presence of the environment setting to know whether we should make network requests in our tests.
