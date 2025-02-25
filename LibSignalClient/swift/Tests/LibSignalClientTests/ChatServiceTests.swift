@@ -73,7 +73,7 @@ final class ChatServiceTests: TestCaseBase {
             try failWithError("DeviceDeregistered")
         } catch SignalError.deviceDeregistered(_) {}
         do {
-            try failWithError("ServiceInactive")
+            try failWithError("Disconnected")
         } catch SignalError.chatServiceInactive(_) {}
 
         do {
@@ -89,15 +89,12 @@ final class ChatServiceTests: TestCaseBase {
             try failWithError("IncomingDataInvalid")
         } catch SignalError.networkProtocolError(_) {}
         do {
-            try failWithError("Timeout")
-        } catch SignalError.connectionTimeoutError(_) {}
+            try failWithError("RequestSendTimedOut")
+        } catch SignalError.requestTimeoutError(_) {}
         do {
             try failWithError("TimeoutEstablishingConnection")
         } catch SignalError.connectionTimeoutError(_) {}
 
-        do {
-            try failWithError("FailedToPassMessageToIncomingChannel")
-        } catch SignalError.internalError(_) {}
         do {
             try failWithError("RequestHasInvalidHeader")
         } catch SignalError.internalError(_) {}
@@ -187,7 +184,7 @@ final class ChatConnectionTests: TestCaseBase {
                 self.connectionInterrupted = connectionInterrupted
             }
 
-            func chatConnection(_ chat: AuthenticatedChatConnection, didReceiveIncomingMessage envelope: Data, serverDeliveryTimestamp: UInt64, sendAck: () async throws -> Void) {
+            func chatConnection(_ chat: AuthenticatedChatConnection, didReceiveIncomingMessage envelope: Data, serverDeliveryTimestamp: UInt64, sendAck: () throws -> Void) {
                 // This assumes a little-endian platform.
                 XCTAssertEqual(envelope, withUnsafeBytes(of: serverDeliveryTimestamp) { Data($0) })
                 switch serverDeliveryTimestamp {
@@ -256,7 +253,7 @@ final class ChatConnectionTests: TestCaseBase {
 
     func testSending() async throws {
         class NoOpListener: ChatConnectionListener {
-            func chatConnection(_ chat: AuthenticatedChatConnection, didReceiveIncomingMessage envelope: Data, serverDeliveryTimestamp: UInt64, sendAck: () async throws -> Void) {}
+            func chatConnection(_ chat: AuthenticatedChatConnection, didReceiveIncomingMessage envelope: Data, serverDeliveryTimestamp: UInt64, sendAck: () throws -> Void) {}
 
             func connectionWasInterrupted(_: AuthenticatedChatConnection, error: Error?) {}
         }
