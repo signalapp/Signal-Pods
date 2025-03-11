@@ -61,9 +61,9 @@ final class ChatServiceTests: TestCaseBase {
         }
     }
 
-    func testConvertError() throws {
+    func testConvertConnectError() throws {
         let failWithError = {
-            try checkError(signal_testing_chat_service_error_convert($0))
+            try checkError(signal_testing_chat_connect_error_convert($0))
             XCTFail("should have failed")
         }
         do {
@@ -72,37 +72,49 @@ final class ChatServiceTests: TestCaseBase {
         do {
             try failWithError("DeviceDeregistered")
         } catch SignalError.deviceDeregistered(_) {}
-        do {
-            try failWithError("Disconnected")
-        } catch SignalError.chatServiceInactive(_) {}
 
         do {
-            try failWithError("WebSocket")
+            try failWithError("WebSocketConnectionFailed")
         } catch SignalError.webSocketError(_) {}
         do {
-            try failWithError("UnexpectedFrameReceived")
-        } catch SignalError.networkProtocolError(_) {}
-        do {
-            try failWithError("ServerRequestMissingId")
-        } catch SignalError.networkProtocolError(_) {}
-        do {
-            try failWithError("IncomingDataInvalid")
-        } catch SignalError.networkProtocolError(_) {}
-        do {
-            try failWithError("RequestSendTimedOut")
-        } catch SignalError.requestTimeoutError(_) {}
-        do {
-            try failWithError("TimeoutEstablishingConnection")
+            try failWithError("Timeout")
         } catch SignalError.connectionTimeoutError(_) {}
-
         do {
-            try failWithError("RequestHasInvalidHeader")
-        } catch SignalError.internalError(_) {}
+            try failWithError("AllAttemptsFailed")
+        } catch SignalError.connectionFailed(_) {}
+        do {
+            try failWithError("InvalidConnectionConfiguration")
+        } catch SignalError.connectionFailed(_) {}
+
         do {
             try failWithError("RetryAfter42Seconds")
         } catch SignalError.rateLimitedError(retryAfter: 42, let message) {
             XCTAssertEqual(message, "Rate limited; try again after 42s")
         }
+    }
+
+    func testConvertSendError() throws {
+        let failWithError = {
+            try checkError(signal_testing_chat_send_error_convert($0))
+            XCTFail("should have failed")
+        }
+        do {
+            try failWithError("Disconnected")
+        } catch SignalError.chatServiceInactive(_) {}
+
+        do {
+            try failWithError("WebSocketConnectionReset")
+        } catch SignalError.webSocketError(_) {}
+        do {
+            try failWithError("IncomingDataInvalid")
+        } catch SignalError.networkProtocolError(_) {}
+        do {
+            try failWithError("RequestTimedOut")
+        } catch SignalError.requestTimeoutError(_) {}
+
+        do {
+            try failWithError("RequestHasInvalidHeader")
+        } catch SignalError.internalError(_) {}
     }
 
     func testConstructRequest() throws {
@@ -169,16 +181,24 @@ final class ChatConnectionTests: TestCaseBase {
     func testListenerCallbacks() async throws {
         class Listener: ChatConnectionListener {
             let queueEmpty: XCTestExpectation
+            let alertsReceived: XCTestExpectation
             let firstMessageReceived: XCTestExpectation
             let secondMessageReceived: XCTestExpectation
             let connectionInterrupted: XCTestExpectation
 
             var expectations: [XCTestExpectation] {
-                [self.firstMessageReceived, self.secondMessageReceived, self.queueEmpty, self.connectionInterrupted]
+                [self.alertsReceived, self.firstMessageReceived, self.secondMessageReceived, self.queueEmpty, self.connectionInterrupted]
             }
 
-            init(queueEmpty: XCTestExpectation, firstMessageReceived: XCTestExpectation, secondMessageReceived: XCTestExpectation, connectionInterrupted: XCTestExpectation) {
+            init(
+                queueEmpty: XCTestExpectation,
+                alertsReceived: XCTestExpectation,
+                firstMessageReceived: XCTestExpectation,
+                secondMessageReceived: XCTestExpectation,
+                connectionInterrupted: XCTestExpectation
+            ) {
                 self.queueEmpty = queueEmpty
+                self.alertsReceived = alertsReceived
                 self.firstMessageReceived = firstMessageReceived
                 self.secondMessageReceived = secondMessageReceived
                 self.connectionInterrupted = connectionInterrupted
@@ -201,6 +221,11 @@ final class ChatConnectionTests: TestCaseBase {
                 self.queueEmpty.fulfill()
             }
 
+            func chatConnection(_ chat: AuthenticatedChatConnection, didReceiveAlerts alerts: [String]) {
+                XCTAssertEqual(alerts, ["UPPERcase", "lowercase"])
+                self.alertsReceived.fulfill()
+            }
+
             func connectionWasInterrupted(_: AuthenticatedChatConnection, error: Error?) {
                 XCTAssertNotNil(error)
                 self.connectionInterrupted.fulfill()
@@ -210,11 +235,16 @@ final class ChatConnectionTests: TestCaseBase {
         let tokioAsyncContext = TokioAsyncContext()
         let listener = Listener(
             queueEmpty: expectation(description: "queue empty"),
+            alertsReceived: expectation(description: "alerts received"),
             firstMessageReceived: expectation(description: "first message received"),
             secondMessageReceived: expectation(description: "second message received"),
             connectionInterrupted: expectation(description: "connection interrupted")
         )
-        let (chat, fakeRemote) = AuthenticatedChatConnection.fakeConnect(tokioAsyncContext: tokioAsyncContext, listener: listener)
+        let (chat, fakeRemote) = AuthenticatedChatConnection.fakeConnect(
+            tokioAsyncContext: tokioAsyncContext,
+            listener: listener,
+            alerts: ["UPPERcase", "lowercase"]
+        )
         // Make sure the chat object doesn't go away too soon.
         defer { withExtendedLifetime(chat) {} }
 
@@ -360,6 +390,26 @@ final class ChatConnectionTests: TestCaseBase {
         try await chat.disconnect()
 
         await self.fulfillment(of: [listener.expectation], timeout: 2)
+    }
+
+    func testPreconnectAuth() async throws {
+        // Use the presence of the environment setting to know whether we should make network requests in our tests.
+        guard ProcessInfo.processInfo.environment["LIBSIGNAL_TESTING_RUN_NONHERMETIC_TESTS"] != nil else {
+            throw XCTSkip()
+        }
+
+        let net = Net(env: .staging, userAgent: Self.userAgent)
+        try await net.preconnectChat()
+        do {
+            // While we get no direct feedback here whether the preconnect was used,
+            // you can check the log lines for: "[authenticated] using preconnection".
+            // We have to use an authenticated connection because that's the only one that's allowed to
+            // use preconnects.
+            _ = try await net.connectAuthenticatedChat(username: "", password: "", receiveStories: false)
+            XCTFail("should not have managed to authenticate")
+        } catch SignalError.deviceDeregistered(_:) {
+            // expected error, okay
+        }
     }
 
     func testConnectUnauthThroughProxy() async throws {

@@ -905,6 +905,8 @@ typedef void (*SignalReceivedIncomingMessage)(void *ctx, SignalOwnedBuffer envel
 
 typedef void (*SignalReceivedQueueEmpty)(void *ctx);
 
+typedef void (*SignalReceivedAlerts)(void *ctx, SignalStringArray alerts);
+
 typedef void (*SignalConnectionInterrupted)(void *ctx, SignalFfiError *error);
 
 typedef void (*SignalDestroyChatListener)(void *ctx);
@@ -928,6 +930,7 @@ typedef struct {
   void *ctx;
   SignalReceivedIncomingMessage received_incoming_message;
   SignalReceivedQueueEmpty received_queue_empty;
+  SignalReceivedAlerts received_alerts;
   SignalConnectionInterrupted connection_interrupted;
   SignalDestroyChatListener destroy;
 } SignalFfiChatListenerStruct;
@@ -1925,6 +1928,8 @@ SignalFfiError *signal_unauthenticated_chat_connection_send(SignalCPromiseFfiCha
 SignalFfiError *signal_unauthenticated_chat_connection_disconnect(SignalCPromisebool *promise, SignalConstPointerTokioAsyncContext async_runtime, SignalConstPointerUnauthenticatedChatConnection chat);
 
 SignalFfiError *signal_unauthenticated_chat_connection_info(SignalMutPointerChatConnectionInfo *out, SignalConstPointerUnauthenticatedChatConnection chat);
+
+SignalFfiError *signal_authenticated_chat_connection_preconnect(SignalCPromisebool *promise, SignalConstPointerTokioAsyncContext async_runtime, SignalConstPointerConnectionManager connection_manager);
 
 SignalFfiError *signal_authenticated_chat_connection_connect(SignalCPromiseMutPointerAuthenticatedChatConnection *promise, SignalConstPointerTokioAsyncContext async_runtime, SignalConstPointerConnectionManager connection_manager, const char *username, const char *password, bool receive_stories);
 
