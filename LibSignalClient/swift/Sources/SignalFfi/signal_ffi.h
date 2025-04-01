@@ -29,11 +29,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 #define SignalBackupId_LEN 16
 
-/**
- * The encoded length of a [`FourCC`], in bytes.
- */
-#define SignalFourCC_ENCODED_LEN 4
-
 #define SignalNUM_AUTH_CRED_ATTRIBUTES 3
 
 #define SignalNUM_PROFILE_KEY_CRED_ATTRIBUTES 4
@@ -124,6 +119,11 @@ SPDX-License-Identifier: AGPL-3.0-only
  * Seconds in a 24-hour cycle (ignoring leap seconds).
  */
 #define SignalSECONDS_PER_DAY 86400
+
+/**
+ * The encoded length of a [`FourCC`], in bytes.
+ */
+#define SignalFourCC_ENCODED_LEN 4
 
 typedef enum {
   SignalCiphertextMessageTypeWhisper = 2,
@@ -1436,6 +1436,8 @@ SignalFfiError *signal_group_send_full_token_verify(SignalBorrowedBuffer token, 
 SignalFfiError *signal_group_send_token_check_valid_contents(SignalBorrowedBuffer bytes);
 
 SignalFfiError *signal_group_send_token_to_full_token(SignalOwnedBuffer *out, SignalBorrowedBuffer token, uint64_t expiration);
+
+SignalFfiError *signal_hex_encode(char *output, size_t output_len, const uint8_t *input, size_t input_len);
 
 SignalFfiError *signal_hkdf_derive(SignalBorrowedMutableBuffer output, SignalBorrowedBuffer ikm, SignalBorrowedBuffer label, SignalBorrowedBuffer salt);
 

@@ -226,3 +226,41 @@ extension Optional where Wrapped: StringProtocol {
         return try wrapped.withCString(body)
     }
 }
+
+extension Array where Element == UInt8 {
+    /// Converts these bytes to (lowercase) hexadecimal.
+    public func toHex() -> String {
+        var hex = [UInt8](repeating: 0, count: self.count * 2)
+        hex.withUnsafeMutableBytes { hex in
+            failOnError(
+                signal_hex_encode(
+                    hex.baseAddress?.assumingMemoryBound(to: CChar.self),
+                    hex.count,
+                    self,
+                    self.count
+                )
+            )
+        }
+        return String(decoding: hex, as: Unicode.UTF8.self)
+    }
+}
+
+extension Data {
+    /// Converts these bytes to (lowercase) hexadecimal.
+    public func toHex() -> String {
+        var hex = [UInt8](repeating: 0, count: self.count * 2)
+        hex.withUnsafeMutableBytes { hex in
+            self.withUnsafeBytes { input in
+                failOnError(
+                    signal_hex_encode(
+                        hex.baseAddress?.assumingMemoryBound(to: CChar.self),
+                        hex.count,
+                        input.baseAddress?.assumingMemoryBound(to: UInt8.self),
+                        input.count
+                    )
+                )
+            }
+        }
+        return String(decoding: hex, as: Unicode.UTF8.self)
+    }
+}
