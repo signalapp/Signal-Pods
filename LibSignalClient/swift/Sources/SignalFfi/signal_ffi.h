@@ -228,6 +228,8 @@ typedef struct SignalAes256GcmSiv SignalAes256GcmSiv;
 
 typedef struct SignalAuthenticatedChatConnection SignalAuthenticatedChatConnection;
 
+typedef struct SignalBridgedStringMap SignalBridgedStringMap;
+
 typedef struct SignalCdsiLookup SignalCdsiLookup;
 
 typedef struct SignalCiphertextMessage SignalCiphertextMessage;
@@ -543,6 +545,14 @@ typedef uint8_t SignalServiceIdFixedWidthBinaryBytes[17];
 typedef struct {
   SignalPrivateKey *raw;
 } SignalMutPointerPrivateKey;
+
+typedef struct {
+  SignalBridgedStringMap *raw;
+} SignalMutPointerBridgedStringMap;
+
+typedef struct {
+  const SignalBridgedStringMap *raw;
+} SignalConstPointerBridgedStringMap;
 
 typedef struct {
   SignalSgxClientState *raw;
@@ -1193,6 +1203,14 @@ SignalFfiError *signal_backup_key_derive_media_id(uint8_t (*out)[SignalMEDIA_ID_
 
 SignalFfiError *signal_backup_key_derive_thumbnail_transit_encryption_key(uint8_t (*out)[SignalMEDIA_ENCRYPTION_KEY_LEN], const uint8_t (*backup_key)[SignalBACKUP_KEY_LEN], const uint8_t (*media_id)[SignalMEDIA_ID_LEN]);
 
+SignalFfiError *signal_bridged_string_map_clone(SignalMutPointerBridgedStringMap *new_obj, SignalConstPointerBridgedStringMap obj);
+
+SignalFfiError *signal_bridged_string_map_destroy(SignalMutPointerBridgedStringMap p);
+
+SignalFfiError *signal_bridged_string_map_insert(SignalMutPointerBridgedStringMap map, const char *key, const char *value);
+
+SignalFfiError *signal_bridged_string_map_new(SignalMutPointerBridgedStringMap *out, uint32_t initial_capacity);
+
 SignalFfiError *signal_call_link_auth_credential_check_valid_contents(SignalBorrowedBuffer credential_bytes);
 
 SignalFfiError *signal_call_link_auth_credential_present_deterministic(SignalOwnedBuffer *out, SignalBorrowedBuffer credential_bytes, const SignalServiceIdFixedWidthBinaryBytes *user_id, uint64_t redemption_time, SignalBorrowedBuffer server_params_bytes, SignalBorrowedBuffer call_link_params_bytes, const uint8_t (*randomness)[SignalRANDOMNESS_LEN]);
@@ -1216,6 +1234,8 @@ SignalFfiError *signal_call_link_secret_params_check_valid_contents(SignalBorrow
 SignalFfiError *signal_call_link_secret_params_decrypt_user_id(SignalServiceIdFixedWidthBinaryBytes *out, SignalBorrowedBuffer params_bytes, const unsigned char (*user_id)[SignalUUID_CIPHERTEXT_LEN]);
 
 SignalFfiError *signal_call_link_secret_params_derive_from_root_key(SignalOwnedBuffer *out, SignalBorrowedBuffer root_key);
+
+SignalFfiError *signal_call_link_secret_params_encrypt_user_id(unsigned char (*out)[SignalUUID_CIPHERTEXT_LEN], SignalBorrowedBuffer params_bytes, const SignalServiceIdFixedWidthBinaryBytes *user_id);
 
 SignalFfiError *signal_call_link_secret_params_get_public_params(SignalOwnedBuffer *out, SignalBorrowedBuffer params_bytes);
 
@@ -1249,7 +1269,7 @@ SignalFfiError *signal_connection_manager_clear_proxy(SignalConstPointerConnecti
 
 SignalFfiError *signal_connection_manager_destroy(SignalMutPointerConnectionManager p);
 
-SignalFfiError *signal_connection_manager_new(SignalMutPointerConnectionManager *out, uint8_t environment, const char *user_agent);
+SignalFfiError *signal_connection_manager_new(SignalMutPointerConnectionManager *out, uint8_t environment, const char *user_agent, SignalMutPointerBridgedStringMap remote_config);
 
 SignalFfiError *signal_connection_manager_on_network_change(SignalConstPointerConnectionManager connection_manager);
 
@@ -1258,6 +1278,8 @@ SignalFfiError *signal_connection_manager_set_censorship_circumvention_enabled(S
 SignalFfiError *signal_connection_manager_set_invalid_proxy(SignalConstPointerConnectionManager connection_manager);
 
 SignalFfiError *signal_connection_manager_set_proxy(SignalConstPointerConnectionManager connection_manager, SignalConstPointerConnectionProxyConfig proxy);
+
+SignalFfiError *signal_connection_manager_set_remote_config(SignalConstPointerConnectionManager connection_manager, SignalMutPointerBridgedStringMap remote_config);
 
 SignalFfiError *signal_connection_proxy_config_clone(SignalMutPointerConnectionProxyConfig *new_obj, SignalConstPointerConnectionProxyConfig obj);
 
@@ -1408,6 +1430,8 @@ SignalFfiError *signal_group_secret_params_get_public_params(unsigned char (*out
 SignalFfiError *signal_group_send_derived_key_pair_check_valid_contents(SignalBorrowedBuffer bytes);
 
 SignalFfiError *signal_group_send_derived_key_pair_for_expiration(SignalOwnedBuffer *out, uint64_t expiration, SignalConstPointerServerSecretParams server_params);
+
+SignalFfiError *signal_group_send_endorsement_call_link_params_to_token(SignalOwnedBuffer *out, SignalBorrowedBuffer endorsement, SignalBorrowedBuffer call_link_secret_params_serialized);
 
 SignalFfiError *signal_group_send_endorsement_check_valid_contents(SignalBorrowedBuffer bytes);
 
