@@ -165,6 +165,12 @@ typedef enum {
   SignalLogLevelTrace,
 } SignalLogLevel;
 
+enum SignalRequestedInformation {
+  SignalRequestedInformationPushChallenge,
+  SignalRequestedInformationCaptcha,
+};
+typedef uint8_t SignalRequestedInformation;
+
 typedef enum {
   SignalErrorCodeUnknownError = 1,
   SignalErrorCodeInvalidState = 2,
@@ -227,7 +233,23 @@ typedef enum {
   SignalErrorCodeConnectionInvalidated = 172,
   SignalErrorCodeConnectedElsewhere = 173,
   SignalErrorCodeBackupValidation = 180,
+  SignalErrorCodeRegistrationInvalidSessionId = 190,
+  SignalErrorCodeRegistrationRequestNotValid,
+  SignalErrorCodeRegistrationUnknown,
+  SignalErrorCodeRegistrationSessionNotFound,
+  SignalErrorCodeRegistrationNotReadyForVerification,
+  SignalErrorCodeRegistrationSendVerificationCodeFailed,
+  SignalErrorCodeRegistrationCodeNotDeliverable,
+  SignalErrorCodeRegistrationSessionUpdateRejected,
+  SignalErrorCodeRegistrationCredentialsCouldNotBeParsed,
 } SignalErrorCode;
+
+enum SignalSvr2CredentialsResult {
+  SignalSvr2CredentialsResultMatch,
+  SignalSvr2CredentialsResultNoMatch,
+  SignalSvr2CredentialsResultInvalid,
+};
+typedef uint8_t SignalSvr2CredentialsResult;
 
 /**
  * A wrapper around [`ctr::Ctr32BE`] that uses a smaller nonce and supports an initial counter.
@@ -299,6 +321,12 @@ typedef struct SignalPrivateKey SignalPrivateKey;
 typedef struct SignalProtocolAddress SignalProtocolAddress;
 
 typedef struct SignalPublicKey SignalPublicKey;
+
+typedef struct SignalRegisterAccountResponse SignalRegisterAccountResponse;
+
+typedef struct SignalRegistrationService SignalRegistrationService;
+
+typedef struct SignalRegistrationSession SignalRegistrationSession;
 
 typedef struct SignalSanitizedMetadata SignalSanitizedMetadata;
 
@@ -821,6 +849,32 @@ typedef struct {
 } SignalConstPointerFingerprint;
 
 typedef struct {
+  /**
+   * The badge ID.
+   */
+  const char *id;
+  /**
+   * Whether the badge is currently configured to be visible.
+   */
+  bool visible;
+  /**
+   * When the badge expires.
+   */
+  double expiration_secs;
+} SignalFfiRegisterResponseBadge;
+
+/**
+ * A representation of a array allocated on the Rust heap for use in C code.
+ */
+typedef struct {
+  SignalFfiRegisterResponseBadge *base;
+  /**
+   * The number of elements in the buffer (not necessarily the number of bytes).
+   */
+  size_t length;
+} SignalOwnedBufferOfFfiRegisterResponseBadge;
+
+typedef struct {
   SignalSenderKeyRecord *raw;
 } SignalMutPointerSenderKeyRecord;
 
@@ -993,6 +1047,105 @@ typedef struct {
 typedef struct {
   const SignalSenderKeyDistributionMessage *raw;
 } SignalConstPointerSenderKeyDistributionMessage;
+
+typedef struct {
+  SignalRegisterAccountResponse *raw;
+} SignalMutPointerRegisterAccountResponse;
+
+typedef struct {
+  const SignalRegisterAccountResponse *raw;
+} SignalConstPointerRegisterAccountResponse;
+
+typedef uint8_t SignalOptionalUuid[17];
+
+typedef struct {
+  /**
+   * Bridged as a string of bytes, but each entry is a UTF-8 `String` key
+   * concatenated with a byte for the value.
+   */
+  SignalBytestringArray entries;
+} SignalFfiCheckSvr2CredentialsResponse;
+
+/**
+ * A C callback used to report the results of Rust futures.
+ *
+ * cbindgen will produce independent C types like `SignalCPromisei32` and
+ * `SignalCPromiseProtocolAddress`.
+ *
+ * This derives Copy because it behaves like a C type; nevertheless, a promise should still only be
+ * completed once.
+ */
+typedef struct {
+  void (*complete)(SignalFfiError *error, const SignalFfiCheckSvr2CredentialsResponse *result, const void *context);
+  const void *context;
+  SignalCancellationId cancellation_id;
+} SignalCPromiseFfiCheckSvr2CredentialsResponse;
+
+typedef struct {
+  const SignalRegistrationService *raw;
+} SignalConstPointerRegistrationService;
+
+typedef struct {
+  const size_t *base;
+  size_t length;
+} SignalBorrowedSliceOfusize;
+
+typedef struct {
+  SignalBorrowedBuffer bytes;
+  SignalBorrowedSliceOfusize lengths;
+} SignalBorrowedBytestringArray;
+
+typedef struct {
+  SignalRegistrationService *raw;
+} SignalMutPointerRegistrationService;
+
+/**
+ * A C callback used to report the results of Rust futures.
+ *
+ * cbindgen will produce independent C types like `SignalCPromisei32` and
+ * `SignalCPromiseProtocolAddress`.
+ *
+ * This derives Copy because it behaves like a C type; nevertheless, a promise should still only be
+ * completed once.
+ */
+typedef struct {
+  void (*complete)(SignalFfiError *error, const SignalMutPointerRegistrationService *result, const void *context);
+  const void *context;
+  SignalCancellationId cancellation_id;
+} SignalCPromiseMutPointerRegistrationService;
+
+typedef struct {
+  const char *number;
+  const char *push_token;
+  const char *mcc;
+  const char *mnc;
+} SignalFfiRegistrationCreateSessionRequest;
+
+typedef const SignalConnectionManager *(*SignalGetConnectChatConnectionManager)(void *ctx);
+
+typedef void (*SignalDestroyConnectChatBridge)(void *ctx);
+
+/**
+ * A ref-counting pointer to a [`ConnectionManager`] and a callback to
+ * decrement the count.
+ */
+typedef struct {
+  void *ctx;
+  SignalGetConnectChatConnectionManager get_connection_manager;
+  SignalDestroyConnectChatBridge destroy;
+} SignalFfiConnectChatBridgeStruct;
+
+typedef struct {
+  const SignalFfiConnectChatBridgeStruct *raw;
+} SignalConstPointerFfiConnectChatBridgeStruct;
+
+typedef struct {
+  SignalRegistrationSession *raw;
+} SignalMutPointerRegistrationSession;
+
+typedef struct {
+  const SignalRegistrationSession *raw;
+} SignalConstPointerRegistrationSession;
 
 typedef struct {
   const SignalSanitizedMetadata *raw;
@@ -1363,6 +1516,8 @@ SignalFfiError *signal_error_get_address(const SignalFfiError *err, SignalMutPoi
 
 SignalFfiError *signal_error_get_message(const SignalFfiError *err, const char **out);
 
+SignalFfiError *signal_error_get_registration_error_not_deliverable(const SignalFfiError *err, const char **out_reason, bool *out_permanent);
+
 SignalFfiError *signal_error_get_retry_after_seconds(const SignalFfiError *err, uint32_t *out);
 
 SignalFfiError *signal_error_get_tries_remaining(const SignalFfiError *err, uint32_t *out);
@@ -1394,6 +1549,8 @@ SignalFfiError *signal_fingerprint_scannable_encoding(SignalOwnedBuffer *out, Si
 void signal_free_buffer(const unsigned char *buf, size_t buf_len);
 
 void signal_free_bytestring_array(SignalBytestringArray array);
+
+void signal_free_list_of_register_response_badges(SignalOwnedBufferOfFfiRegisterResponseBadge buffer);
 
 void signal_free_list_of_strings(SignalOwnedBufferOfCStringPtr buffer);
 
@@ -1811,6 +1968,62 @@ SignalFfiError *signal_receipt_credential_request_context_get_request(unsigned c
 
 SignalFfiError *signal_receipt_credential_response_check_valid_contents(SignalBorrowedBuffer buffer);
 
+SignalFfiError *signal_register_account_response_destroy(SignalMutPointerRegisterAccountResponse p);
+
+SignalFfiError *signal_register_account_response_get_entitlement_backup_expiration_seconds(uint64_t *out, SignalConstPointerRegisterAccountResponse response);
+
+SignalFfiError *signal_register_account_response_get_entitlement_backup_level(uint64_t *out, SignalConstPointerRegisterAccountResponse response);
+
+SignalFfiError *signal_register_account_response_get_entitlement_badges(SignalOwnedBufferOfFfiRegisterResponseBadge *out, SignalConstPointerRegisterAccountResponse response);
+
+SignalFfiError *signal_register_account_response_get_identity(SignalServiceIdFixedWidthBinaryBytes *out, SignalConstPointerRegisterAccountResponse response, uint8_t identity_type);
+
+SignalFfiError *signal_register_account_response_get_number(const char **out, SignalConstPointerRegisterAccountResponse response);
+
+SignalFfiError *signal_register_account_response_get_reregistration(bool *out, SignalConstPointerRegisterAccountResponse response);
+
+SignalFfiError *signal_register_account_response_get_storage_capable(bool *out, SignalConstPointerRegisterAccountResponse response);
+
+SignalFfiError *signal_register_account_response_get_username_hash(SignalOwnedBuffer *out, SignalConstPointerRegisterAccountResponse response);
+
+SignalFfiError *signal_register_account_response_get_username_link_handle(SignalOptionalUuid *out, SignalConstPointerRegisterAccountResponse response);
+
+SignalFfiError *signal_registration_service_check_svr2_credentials(SignalCPromiseFfiCheckSvr2CredentialsResponse *promise, SignalConstPointerTokioAsyncContext async_runtime, SignalConstPointerRegistrationService service, SignalBorrowedBytestringArray svr_tokens);
+
+SignalFfiError *signal_registration_service_create_session(SignalCPromiseMutPointerRegistrationService *promise, SignalConstPointerTokioAsyncContext async_runtime, SignalFfiRegistrationCreateSessionRequest create_session, SignalConstPointerFfiConnectChatBridgeStruct connect_chat);
+
+SignalFfiError *signal_registration_service_destroy(SignalMutPointerRegistrationService p);
+
+SignalFfiError *signal_registration_service_registration_session(SignalMutPointerRegistrationSession *out, SignalConstPointerRegistrationService service);
+
+SignalFfiError *signal_registration_service_request_push_challenge(SignalCPromisebool *promise, SignalConstPointerTokioAsyncContext async_runtime, SignalConstPointerRegistrationService service, const char *push_token, const void *push_token_type);
+
+SignalFfiError *signal_registration_service_request_verification_code(SignalCPromisebool *promise, SignalConstPointerTokioAsyncContext async_runtime, SignalConstPointerRegistrationService service, const char *transport, const char *client, SignalBorrowedBytestringArray languages);
+
+SignalFfiError *signal_registration_service_resume_session(SignalCPromiseMutPointerRegistrationService *promise, SignalConstPointerTokioAsyncContext async_runtime, const char *session_id, const char *number, SignalConstPointerFfiConnectChatBridgeStruct connect_chat);
+
+SignalFfiError *signal_registration_service_session_id(const char **out, SignalConstPointerRegistrationService service);
+
+SignalFfiError *signal_registration_service_submit_captcha(SignalCPromisebool *promise, SignalConstPointerTokioAsyncContext async_runtime, SignalConstPointerRegistrationService service, const char *captcha_value);
+
+SignalFfiError *signal_registration_service_submit_push_challenge(SignalCPromisebool *promise, SignalConstPointerTokioAsyncContext async_runtime, SignalConstPointerRegistrationService service, const char *push_challenge);
+
+SignalFfiError *signal_registration_service_submit_verification_code(SignalCPromisebool *promise, SignalConstPointerTokioAsyncContext async_runtime, SignalConstPointerRegistrationService service, const char *code);
+
+SignalFfiError *signal_registration_session_destroy(SignalMutPointerRegistrationSession p);
+
+SignalFfiError *signal_registration_session_get_allowed_to_request_code(bool *out, SignalConstPointerRegistrationSession session);
+
+SignalFfiError *signal_registration_session_get_next_call_seconds(uint32_t *out, SignalConstPointerRegistrationSession session);
+
+SignalFfiError *signal_registration_session_get_next_sms_seconds(uint32_t *out, SignalConstPointerRegistrationSession session);
+
+SignalFfiError *signal_registration_session_get_next_verification_attempt_seconds(uint32_t *out, SignalConstPointerRegistrationSession session);
+
+SignalFfiError *signal_registration_session_get_requested_information(SignalOwnedBuffer *out, SignalConstPointerRegistrationSession session);
+
+SignalFfiError *signal_registration_session_get_verified(bool *out, SignalConstPointerRegistrationSession session);
+
 #if defined(SIGNAL_MEDIA_SUPPORTED)
 SignalFfiError *signal_sanitized_metadata_clone(SignalMutPointerSanitizedMetadata *new_obj, SignalConstPointerSanitizedMetadata obj);
 #endif
@@ -1834,8 +2047,6 @@ SignalFfiError *signal_sanitized_metadata_get_metadata(SignalOwnedBuffer *out, S
 SignalFfiError *signal_sealed_sender_multi_recipient_encrypt(SignalOwnedBuffer *out, SignalBorrowedSliceOfConstPointerProtocolAddress recipients, SignalBorrowedSliceOfConstPointerSessionRecord recipient_sessions, SignalBorrowedBuffer excluded_recipients, SignalConstPointerUnidentifiedSenderMessageContent content, SignalConstPointerFfiIdentityKeyStoreStruct identity_key_store);
 
 SignalFfiError *signal_sealed_sender_multi_recipient_message_for_single_recipient(SignalOwnedBuffer *out, SignalBorrowedBuffer encoded_multi_recipient_message);
-
-SignalFfiError *signal_sealed_session_cipher_decrypt(SignalOwnedBuffer *out, const char **sender_e164, const char **sender_uuid, uint32_t *sender_device_id, SignalBorrowedBuffer ctext, SignalConstPointerPublicKey trust_root, uint64_t timestamp, const char *local_e164, const char *local_uuid, unsigned int local_device_id, SignalConstPointerFfiSessionStoreStruct session_store, SignalConstPointerFfiIdentityKeyStoreStruct identity_store, SignalConstPointerFfiPreKeyStoreStruct prekey_store, SignalConstPointerFfiSignedPreKeyStoreStruct signed_prekey_store);
 
 SignalFfiError *signal_sealed_session_cipher_decrypt_to_usmc(SignalMutPointerUnidentifiedSenderMessageContent *out, SignalBorrowedBuffer ctext, SignalConstPointerFfiIdentityKeyStoreStruct identity_store);
 

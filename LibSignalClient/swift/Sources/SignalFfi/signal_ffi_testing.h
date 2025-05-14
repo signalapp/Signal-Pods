@@ -22,7 +22,11 @@ typedef struct SignalFakeChatConnection SignalFakeChatConnection;
 
 typedef struct SignalFakeChatRemoteEnd SignalFakeChatRemoteEnd;
 
+typedef struct SignalFakeChatResponse SignalFakeChatResponse;
+
 typedef struct SignalFakeChatSentRequest SignalFakeChatSentRequest;
+
+typedef struct SignalFakeChatServer SignalFakeChatServer;
 
 typedef struct SignalNonSuspendingBackgroundThreadRuntime SignalNonSuspendingBackgroundThreadRuntime;
 
@@ -59,8 +63,16 @@ typedef struct {
 } SignalMutPointerFakeChatRemoteEnd;
 
 typedef struct {
+  SignalFakeChatResponse *raw;
+} SignalMutPointerFakeChatResponse;
+
+typedef struct {
   SignalFakeChatSentRequest *raw;
 } SignalMutPointerFakeChatSentRequest;
+
+typedef struct {
+  SignalFakeChatServer *raw;
+} SignalMutPointerFakeChatServer;
 
 typedef struct {
   SignalOtherTestingHandleType *raw;
@@ -73,6 +85,8 @@ typedef struct {
 typedef struct {
   SignalNonSuspendingBackgroundThreadRuntime *raw;
 } SignalMutPointerNonSuspendingBackgroundThreadRuntime;
+
+typedef uint8_t SignalOptionalUuid[17];
 
 typedef struct {
   const SignalNonSuspendingBackgroundThreadRuntime *raw;
@@ -119,8 +133,36 @@ typedef struct {
 } SignalCPromiseMutPointerFakeChatSentRequest;
 
 typedef struct {
+  const SignalFakeChatResponse *raw;
+} SignalConstPointerFakeChatResponse;
+
+typedef struct {
+  bool present;
+  SignalBorrowedBuffer value;
+} SignalOptionalBorrowedSliceOfc_uchar;
+
+typedef struct {
   const SignalFakeChatSentRequest *raw;
 } SignalConstPointerFakeChatSentRequest;
+
+/**
+ * A C callback used to report the results of Rust futures.
+ *
+ * cbindgen will produce independent C types like `SignalCPromisei32` and
+ * `SignalCPromiseProtocolAddress`.
+ *
+ * This derives Copy because it behaves like a C type; nevertheless, a promise should still only be
+ * completed once.
+ */
+typedef struct {
+  void (*complete)(SignalFfiError *error, const SignalMutPointerFakeChatRemoteEnd *result, const void *context);
+  const void *context;
+  SignalRawCancellationId cancellation_id;
+} SignalCPromiseMutPointerFakeChatRemoteEnd;
+
+typedef struct {
+  const SignalFakeChatServer *raw;
+} SignalConstPointerFakeChatServer;
 
 /**
  * A C callback used to report the results of Rust futures.
@@ -187,7 +229,11 @@ SignalFfiError *signal_fake_chat_connection_destroy(SignalMutPointerFakeChatConn
 
 SignalFfiError *signal_fake_chat_remote_end_destroy(SignalMutPointerFakeChatRemoteEnd p);
 
+SignalFfiError *signal_fake_chat_response_destroy(SignalMutPointerFakeChatResponse p);
+
 SignalFfiError *signal_fake_chat_sent_request_destroy(SignalMutPointerFakeChatSentRequest p);
+
+SignalFfiError *signal_fake_chat_server_destroy(SignalMutPointerFakeChatServer p);
 
 SignalFfiError *signal_other_testing_handle_type_clone(SignalMutPointerOtherTestingHandleType *new_obj, SignalConstPointerOtherTestingHandleType obj);
 
@@ -221,6 +267,8 @@ SignalFfiError *signal_testing_chat_send_error_convert(const char *error_descrip
 
 SignalFfiError *signal_testing_connection_manager_is_using_proxy(int32_t *out, SignalConstPointerConnectionManager manager);
 
+SignalFfiError *signal_testing_convert_optional_uuid(SignalOptionalUuid *out, bool present);
+
 SignalFfiError *signal_testing_error_on_borrow_async(const void *_input);
 
 SignalFfiError *signal_testing_error_on_borrow_io(SignalCPromisebool *promise, SignalConstPointerNonSuspendingBackgroundThreadRuntime async_runtime, const void *_input);
@@ -249,9 +297,19 @@ SignalFfiError *signal_testing_fake_chat_remote_end_send_raw_server_request(Sign
 
 SignalFfiError *signal_testing_fake_chat_remote_end_send_raw_server_response(SignalConstPointerFakeChatRemoteEnd chat, SignalBorrowedBuffer bytes);
 
+SignalFfiError *signal_testing_fake_chat_remote_end_send_server_response(SignalConstPointerFakeChatRemoteEnd chat, SignalConstPointerFakeChatResponse response);
+
+SignalFfiError *signal_testing_fake_chat_response_create(SignalMutPointerFakeChatResponse *out, uint64_t id, uint16_t status, const char *message, SignalBorrowedBytestringArray headers, SignalOptionalBorrowedSliceOfc_uchar body);
+
 SignalFfiError *signal_testing_fake_chat_sent_request_request_id(uint64_t *out, SignalConstPointerFakeChatSentRequest request);
 
 SignalFfiError *signal_testing_fake_chat_sent_request_take_http_request(SignalMutPointerHttpRequest *out, SignalMutPointerFakeChatSentRequest request);
+
+SignalFfiError *signal_testing_fake_chat_server_create(SignalMutPointerFakeChatServer *out);
+
+SignalFfiError *signal_testing_fake_chat_server_get_next_remote(SignalCPromiseMutPointerFakeChatRemoteEnd *promise, SignalConstPointerTokioAsyncContext async_runtime, SignalConstPointerFakeChatServer server);
+
+SignalFfiError *signal_testing_fake_registration_session_create_session(SignalCPromiseMutPointerRegistrationService *promise, SignalConstPointerTokioAsyncContext async_runtime, SignalFfiRegistrationCreateSessionRequest create_session, SignalConstPointerFakeChatServer chat);
 
 SignalFfiError *signal_testing_future_failure(SignalCPromisei32 *promise, SignalConstPointerNonSuspendingBackgroundThreadRuntime async_runtime, uint8_t _input);
 
@@ -296,6 +354,24 @@ SignalFfiError *signal_testing_panic_on_return_io(SignalCPromiseRawPointer *prom
 SignalFfiError *signal_testing_panic_on_return_sync(const void **out, const void *_needs_cleanup);
 
 SignalFfiError *signal_testing_process_bytestring_array(SignalBytestringArray *out, SignalBorrowedSliceOfBuffers input);
+
+SignalFfiError *signal_testing_register_account_response_create_test_value(SignalMutPointerRegisterAccountResponse *out);
+
+SignalFfiError *signal_testing_registration_service_check_svr2_credentials_error_convert(const char *error_description);
+
+SignalFfiError *signal_testing_registration_service_check_svr2_credentials_response_convert(SignalFfiCheckSvr2CredentialsResponse *out);
+
+SignalFfiError *signal_testing_registration_service_create_session_error_convert(const char *error_description);
+
+SignalFfiError *signal_testing_registration_service_request_verification_code_error_convert(const char *error_description);
+
+SignalFfiError *signal_testing_registration_service_resume_session_error_convert(const char *error_description);
+
+SignalFfiError *signal_testing_registration_service_submit_verification_error_convert(const char *error_description);
+
+SignalFfiError *signal_testing_registration_service_update_session_error_convert(const char *error_description);
+
+SignalFfiError *signal_testing_registration_session_info_convert(SignalMutPointerRegistrationSession *out);
 
 SignalFfiError *signal_testing_return_string_array(SignalStringArray *out);
 

@@ -56,6 +56,14 @@ extension SignalCPromiseMutPointerUnauthenticatedChatConnection: PromiseStruct {
     typealias Result = SignalMutPointerUnauthenticatedChatConnection
 }
 
+extension SignalCPromiseMutPointerRegistrationService: PromiseStruct {
+    typealias Result = SignalMutPointerRegistrationService
+}
+
+extension SignalCPromiseFfiCheckSvr2CredentialsResponse: PromiseStruct {
+    typealias Result = SignalFfiCheckSvr2CredentialsResponse
+}
+
 /// A type-erased version of ``Completer``.
 ///
 /// Not for direct use, see Completer instead.
