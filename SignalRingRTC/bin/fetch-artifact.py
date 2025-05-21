@@ -18,20 +18,20 @@ from typing import BinaryIO
 UNVERIFIED_DOWNLOAD_NAME = "unverified.tmp"
 
 PREBUILD_CHECKSUMS = {
-    'android': '5d14b5efbc3965ba1ad3c4470d1ad74044f239ef321bb6938b2aee46a00cf462',
-    'ios': '81d1de264069a85bce8e9bacb2c0defce933867500aad4566c9b77345add8787',
-    'linux-x64-sim': '75bb5a1b8c87861b899f56ad03f8557b56563252ae2fe9b6446f850b25166170',
-    'linux-x64': '716b7b63fe76d4b5e4c02b233f291c90bca80a05f7f9a48bb2a667e7911a2c8f',
-    'linux-arm64-sim': '6c5f6955b8544150c68beab695ad76f20d1b04ce979e0bda7d739315e778a501',
-    'linux-arm64': '09b49220ef040d656f0926bf0fcac4ddb2272355a1995dd1174266ca2cb11023',
-    'mac-x64-sim': '44b6fdb63a2a57fd2e0d95a76c02b6674e8addec5dc2da043dbe8bb90a069117',
-    'mac-x64': '423890ecd66e89bba19c2ae8c56d8ece1e2aa7742219fd4d69875f030a1e6b7b',
-    'mac-arm64-sim': 'ef43be8a489ce82a04685850d309bcee27c0edfaa3acbaff714119cac7304c78',
-    'mac-arm64': '6f84c0e23428c726462ded573d2e1a968f00dce6aee2855726e19f36ab92c12c',
-    'windows-x64-sim': 'bdf423647854676d9ba8dba4c34eef7eb9094a422719521942dd71384ee92279',
-    'windows-x64': '4a36d0b8b27a43cff38a7aa44256a7192ee9e2b5ebaed7138ec75755196b2529',
-    'windows-arm64-sim': '39dff2a32902e5680cf5df1eb6b4ba0973507ec1ab6ef963bde4360c9be0896d',
-    'windows-arm64': '40240ca458011879128cafbda95fbc0387abfab765c903861f99d3775a9d7de9',
+    'android': '71fa4131af533243ff2146e6683f83f67e63c2f0458efc79c7112784a91d82ba',
+    'ios': '9fc31e019b94219b3ba564539c79ad6627db5373d2673b8b5cda71ab14842864',
+    'linux-x64-sim': 'c82e07adfa37fe1feaded115218e77d54568f9437bcf6c4741d0c5609fa06a4f',
+    'linux-x64': '6a46046e340b5c1d7755ccf9aa2cdc32195f00483d439f4abd157ce1e8e1c20a',
+    'linux-arm64-sim': '2af5f0de2e15bddb9510c6ebeed8dc70103472fed6f9fcdb462ff2c90dfe55f5',
+    'linux-arm64': 'f5dccc5e3dcd967285b7b79c5f4392ac00cfc38e985bda1baa1d7a42c6d971f2',
+    'mac-x64-sim': 'b294f3382f586a86ca88215f1567d0d1282c358999966520d7ff48f24b83b2f9',
+    'mac-x64': '0318684e0645301bf203ed60d4ea05c5c99a89a9e61fecc2e6f72027b2975d45',
+    'mac-arm64-sim': '2ecca5d2ac96620f5bccc1e3c0c759d871e70b7d28975c0a3379dfc01db06ab2',
+    'mac-arm64': '0440a99a38f11ea98a16b9677846d7c2a510890580acf9a99711cd605ffb4e9c',
+    'windows-x64-sim': '8e2a842b265ebd2a71e52327b362c7c97cd639474822d62d083605cbd85b305d',
+    'windows-x64': '71bc65a26176e02fd6aaa263c3cc08addd78bec0d22df734d7900457b0a2f8e9',
+    'windows-arm64-sim': 'cfcfa23188270e0a3885b3cca4d7e4ea95ced322dd5e16c86dd8c29e0d23598d',
+    'windows-arm64': '8555e9ec44b9e992b9b7b7f93ff534e0a46b1df7eac2e5f9ad36f07069ea7e56',
 }
 
 
