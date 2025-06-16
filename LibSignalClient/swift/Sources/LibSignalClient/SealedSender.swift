@@ -66,17 +66,15 @@ public class UnidentifiedSenderMessageContent: NativeHandleOwner<SignalMutPointe
         groupId: GroupIdBytes
     ) throws {
         var result = SignalMutPointerUnidentifiedSenderMessageContent()
-        try withNativeHandles(message, sender) { messageHandle, senderHandle in
-            try groupId.withUnsafeBorrowedBuffer { groupIdBuffer in
-                try checkError(
-                    signal_unidentified_sender_message_content_new(
-                        &result,
-                        messageHandle.const(),
-                        senderHandle.const(),
-                        contentHint.rawValue,
-                        groupIdBuffer
-                    ))
-            }
+        try withAllBorrowed(message, sender, .bytes(groupId)) { messageHandle, senderHandle, groupIdBuffer in
+            try checkError(
+                signal_unidentified_sender_message_content_new(
+                    &result,
+                    messageHandle.const(),
+                    senderHandle.const(),
+                    contentHint.rawValue,
+                    groupIdBuffer
+                ))
         }
         self.init(owned: NonNull(result)!)
     }
@@ -89,20 +87,16 @@ public class UnidentifiedSenderMessageContent: NativeHandleOwner<SignalMutPointe
         groupId: GroupIdBytes
     ) throws {
         var result = SignalMutPointerUnidentifiedSenderMessageContent()
-        try message.withUnsafeBorrowedBuffer { messageBuffer in
-            try sender.withNativeHandle { senderHandle in
-                try groupId.withUnsafeBorrowedBuffer { groupIdBuffer in
-                    try checkError(
-                        signal_unidentified_sender_message_content_new_from_content_and_type(
-                            &result,
-                            messageBuffer,
-                            type.rawValue,
-                            senderHandle.const(),
-                            contentHint.rawValue,
-                            groupIdBuffer
-                        ))
-                }
-            }
+        try withAllBorrowed(.bytes(message), sender, .bytes(groupId)) { messageBuffer, senderHandle, groupIdBuffer in
+            try checkError(
+                signal_unidentified_sender_message_content_new_from_content_and_type(
+                    &result,
+                    messageBuffer,
+                    type.rawValue,
+                    senderHandle.const(),
+                    contentHint.rawValue,
+                    groupIdBuffer
+                ))
         }
         self.init(owned: NonNull(result)!)
     }
@@ -132,20 +126,20 @@ public class UnidentifiedSenderMessageContent: NativeHandleOwner<SignalMutPointe
         return .init(rawValue: rawType)
     }
 
-    public var contents: [UInt8] {
+    public var contents: Data {
         return withNativeHandle { nativeHandle in
             failOnError {
-                try invokeFnReturningArray {
+                try invokeFnReturningData {
                     signal_unidentified_sender_message_content_get_contents($0, nativeHandle.const())
                 }
             }
         }
     }
 
-    public var groupId: [UInt8]? {
+    public var groupId: Data? {
         let result = withNativeHandle { nativeHandle in
             failOnError {
-                try invokeFnReturningArray {
+                try invokeFnReturningData {
                     signal_unidentified_sender_message_content_get_group_id_or_empty($0, nativeHandle.const())
                 }
             }
@@ -167,10 +161,10 @@ public class UnidentifiedSenderMessageContent: NativeHandleOwner<SignalMutPointe
         return .init(rawValue: rawHint)
     }
 
-    public func serialize() -> [UInt8] {
+    public func serialize() -> Data {
         return withNativeHandle { nativeHandle in
             failOnError {
-                try invokeFnReturningArray {
+                try invokeFnReturningData {
                     signal_unidentified_sender_message_content_serialize($0, nativeHandle.const())
                 }
             }
@@ -205,10 +199,10 @@ public func sealedSenderEncrypt(
     for recipient: ProtocolAddress,
     identityStore: IdentityKeyStore,
     context: StoreContext
-) throws -> [UInt8] {
-    return try withNativeHandles(recipient, content) { recipientHandle, contentHandle in
+) throws -> Data {
+    return try withAllBorrowed(recipient, content) { recipientHandle, contentHandle in
         try withIdentityKeyStore(identityStore, context) { ffiIdentityStore in
-            try invokeFnReturningArray {
+            try invokeFnReturningData {
                 signal_sealed_session_cipher_encrypt(
                     $0,
                     recipientHandle.const(),
@@ -227,36 +221,29 @@ public func sealedSenderMultiRecipientEncrypt(
     identityStore: IdentityKeyStore,
     sessionStore: SessionStore,
     context: StoreContext
-) throws -> [UInt8] {
+) throws -> Data {
     let sessions = try sessionStore.loadExistingSessions(for: recipients, context: context)
     // Use withExtendedLifetime instead of withNativeHandle for the arrays of wrapper objects,
     // which aren't compatible with withNativeHandle's simple lexical scoping.
     return try withExtendedLifetime((recipients, sessions)) {
-        let recipientHandles = recipients.map { $0.unsafeNativeHandle }
-        let sessionHandles = sessions.map { $0.unsafeNativeHandle }
-        return try content.withNativeHandle { contentHandle in
-            try recipientHandles.withUnsafeBufferPointer { recipientHandles in
-                try recipientHandles.withMemoryRebound(to: SignalConstPointerProtocolAddress.self) { recipientHandles in
-                    let recipientHandlesBuffer = SignalBorrowedSliceOfConstPointerProtocolAddress(base: recipientHandles.baseAddress, length: recipientHandles.count)
-                    return try sessionHandles.withUnsafeBufferPointer { sessionHandles in
-                        try sessionHandles.withMemoryRebound(to: SignalConstPointerSessionRecord.self) { sessionHandles in
-                            let sessionHandlesBuffer = SignalBorrowedSliceOfConstPointerSessionRecord(base: sessionHandles.baseAddress, length: sessionHandles.count)
-                            return try ServiceId.concatenatedFixedWidthBinary(excludedRecipients).withUnsafeBorrowedBuffer { excludedRecipientsBuffer in
-                                try withIdentityKeyStore(identityStore, context) { ffiIdentityStore in
-                                    try invokeFnReturningArray {
-                                        signal_sealed_sender_multi_recipient_encrypt(
-                                            $0,
-                                            recipientHandlesBuffer,
-                                            sessionHandlesBuffer,
-                                            excludedRecipientsBuffer,
-                                            contentHandle.const(),
-                                            ffiIdentityStore
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                    }
+        let recipientHandles = recipients.map { SignalConstPointerProtocolAddress(raw: $0.unsafeNativeHandle) }
+        let sessionHandles = sessions.map { SignalConstPointerSessionRecord(raw: $0.unsafeNativeHandle) }
+        return try withAllBorrowed(
+            content,
+            .slice(recipientHandles),
+            .slice(sessionHandles),
+            .bytes(ServiceId.concatenatedFixedWidthBinary(excludedRecipients))
+        ) { contentHandle, recipientHandlesBuffer, sessionHandlesBuffer, excludedRecipientsBuffer in
+            try withIdentityKeyStore(identityStore, context) { ffiIdentityStore in
+                try invokeFnReturningData {
+                    signal_sealed_sender_multi_recipient_encrypt(
+                        $0,
+                        recipientHandlesBuffer,
+                        sessionHandlesBuffer,
+                        excludedRecipientsBuffer,
+                        contentHandle.const(),
+                        ffiIdentityStore
+                    )
                 }
             }
         }
@@ -264,9 +251,9 @@ public func sealedSenderMultiRecipientEncrypt(
 }
 
 // For testing only.
-internal func sealedSenderMultiRecipientMessageForSingleRecipient(_ message: [UInt8]) throws -> [UInt8] {
+internal func sealedSenderMultiRecipientMessageForSingleRecipient(_ message: Data) throws -> Data {
     return try message.withUnsafeBorrowedBuffer { message in
-        try invokeFnReturningArray {
+        try invokeFnReturningData {
             signal_sealed_sender_multi_recipient_message_for_single_recipient($0, message)
         }
     }

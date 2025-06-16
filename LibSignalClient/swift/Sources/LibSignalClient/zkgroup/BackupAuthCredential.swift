@@ -7,7 +7,7 @@ import Foundation
 import SignalFfi
 
 public class BackupAuthCredential: ByteArray, @unchecked Sendable {
-    public required init(contents: [UInt8]) throws {
+    public required init(contents: Data) throws {
         try super.init(contents, checkValid: signal_backup_auth_credential_check_valid_contents)
     }
 
@@ -19,19 +19,15 @@ public class BackupAuthCredential: ByteArray, @unchecked Sendable {
 
     public func present(serverParams: GenericServerPublicParams, randomness: Randomness) -> BackupAuthCredentialPresentation {
         return failOnError {
-            try withUnsafeBorrowedBuffer { contents in
-                try serverParams.withUnsafeBorrowedBuffer { serverParams in
-                    try randomness.withUnsafePointerToBytes { randomness in
-                        try invokeFnReturningVariableLengthSerialized {
-                            signal_backup_auth_credential_present_deterministic($0, contents, serverParams, randomness)
-                        }
-                    }
+            try withAllBorrowed(self, serverParams, randomness) { contents, serverParams, randomness in
+                try invokeFnReturningVariableLengthSerialized {
+                    signal_backup_auth_credential_present_deterministic($0, contents, serverParams, randomness)
                 }
             }
         }
     }
 
-    public var backupID: [UInt8] {
+    public var backupID: Data {
         return failOnError {
             try withUnsafeBorrowedBuffer { contents in
                 try invokeFnReturningFixedLengthArray {

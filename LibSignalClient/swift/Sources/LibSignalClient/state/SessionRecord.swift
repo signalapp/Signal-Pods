@@ -24,10 +24,10 @@ public class SessionRecord: ClonableHandleOwner<SignalMutPointerSessionRecord> {
         self.init(owned: NonNull(handle)!)
     }
 
-    public func serialize() -> [UInt8] {
+    public func serialize() -> Data {
         return self.withNativeHandle { nativeHandle in
             failOnError {
-                try invokeFnReturningArray {
+                try invokeFnReturningData {
                     signal_session_record_serialize($0, nativeHandle.const())
                 }
             }
@@ -62,7 +62,7 @@ public class SessionRecord: ClonableHandleOwner<SignalMutPointerSessionRecord> {
 
     public func currentRatchetKeyMatches(_ key: PublicKey) throws -> Bool {
         var result = false
-        try withNativeHandles(self, key) { sessionHandle, keyHandle in
+        try withAllBorrowed(self, key) { sessionHandle, keyHandle in
             try checkError(signal_session_record_current_ratchet_key_matches(&result, sessionHandle.const(), keyHandle.const()))
         }
         return result

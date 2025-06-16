@@ -30,7 +30,7 @@ public class PreKeyRecord: ClonableHandleOwner<SignalMutPointerPreKeyRecord> {
         privateKey: PrivateKey
     ) throws {
         var handle = SignalMutPointerPreKeyRecord()
-        try withNativeHandles(publicKey, privateKey) { publicKeyHandle, privateKeyHandle in
+        try withAllBorrowed(publicKey, privateKey) { publicKeyHandle, privateKeyHandle in
             try checkError(signal_pre_key_record_new(&handle, id, publicKeyHandle.const(), privateKeyHandle.const()))
         }
         self.init(owned: NonNull(handle)!)
@@ -40,10 +40,10 @@ public class PreKeyRecord: ClonableHandleOwner<SignalMutPointerPreKeyRecord> {
         try self.init(id: id, publicKey: privateKey.publicKey, privateKey: privateKey)
     }
 
-    public func serialize() -> [UInt8] {
+    public func serialize() -> Data {
         return withNativeHandle { nativeHandle in
             failOnError {
-                try invokeFnReturningArray {
+                try invokeFnReturningData {
                     signal_pre_key_record_serialize($0, nativeHandle.const())
                 }
             }

@@ -7,17 +7,13 @@ import Foundation
 import SignalFfi
 
 public class CallLinkAuthCredentialPresentation: ByteArray, @unchecked Sendable {
-    public required init(contents: [UInt8]) throws {
+    public required init(contents: Data) throws {
         try super.init(contents, checkValid: signal_call_link_auth_credential_presentation_check_valid_contents)
     }
 
     public func verify(now: Date = Date(), serverParams: GenericServerSecretParams, callLinkParams: CallLinkPublicParams) throws {
-        try withUnsafeBorrowedBuffer { contents in
-            try serverParams.withUnsafeBorrowedBuffer { serverParams in
-                try callLinkParams.withUnsafeBorrowedBuffer { callLinkParams in
-                    try checkError(signal_call_link_auth_credential_presentation_verify(contents, UInt64(now.timeIntervalSince1970), serverParams, callLinkParams))
-                }
-            }
+        try withAllBorrowed(self, serverParams, callLinkParams) { contents, serverParams, callLinkParams in
+            try checkError(signal_call_link_auth_credential_presentation_verify(contents, UInt64(now.timeIntervalSince1970), serverParams, callLinkParams))
         }
     }
 

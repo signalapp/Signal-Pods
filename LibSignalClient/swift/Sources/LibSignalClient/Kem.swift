@@ -84,10 +84,10 @@ public class KEMPublicKey: ClonableHandleOwner<SignalMutPointerKyberPublicKey>, 
         return signal_kyber_public_key_destroy(handle.pointer)
     }
 
-    public func serialize() -> [UInt8] {
+    public func serialize() -> Data {
         return withNativeHandle { nativeHandle in
             failOnError {
-                try invokeFnReturningArray {
+                try invokeFnReturningData {
                     signal_kyber_public_key_serialize($0, nativeHandle.const())
                 }
             }
@@ -119,8 +119,8 @@ extension SignalConstPointerKyberPublicKey: SignalConstPointer {
 
 extension KEMPublicKey: Equatable {
     public static func == (lhs: KEMPublicKey, rhs: KEMPublicKey) -> Bool {
-        return withNativeHandles(lhs, rhs) { lHandle, rHandle in
-            failOnError {
+        return failOnError {
+            try withAllBorrowed(lhs, rhs) { lHandle, rHandle in
                 try invokeFnReturningBool {
                     signal_kyber_public_key_equals($0, lHandle.const(), rHandle.const())
                 }
@@ -147,10 +147,10 @@ public class KEMSecretKey: ClonableHandleOwner<SignalMutPointerKyberSecretKey>, 
         return signal_kyber_secret_key_destroy(handle.pointer)
     }
 
-    public func serialize() -> [UInt8] {
+    public func serialize() -> Data {
         return withNativeHandle { nativeHandle in
             failOnError {
-                try invokeFnReturningArray {
+                try invokeFnReturningData {
                     signal_kyber_secret_key_serialize($0, nativeHandle.const())
                 }
             }

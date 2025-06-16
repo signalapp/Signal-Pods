@@ -17,16 +17,14 @@ public struct IdentityKey: Equatable, Sendable {
         self.publicKey = try PublicKey(bytes)
     }
 
-    public func serialize() -> [UInt8] {
+    public func serialize() -> Data {
         return self.publicKey.serialize()
     }
 
     public func verifyAlternateIdentity<Bytes: ContiguousBytes>(_ other: IdentityKey, signature: Bytes) throws -> Bool {
         var result = false
-        try withNativeHandles(publicKey, other.publicKey) { selfHandle, otherHandle in
-            try signature.withUnsafeBorrowedBuffer { signatureBuffer in
-                try checkError(signal_identitykey_verify_alternate_identity(&result, selfHandle.const(), otherHandle.const(), signatureBuffer))
-            }
+        try withAllBorrowed(publicKey, other.publicKey, .bytes(signature)) { selfHandle, otherHandle, signatureBuffer in
+            try checkError(signal_identitykey_verify_alternate_identity(&result, selfHandle.const(), otherHandle.const(), signatureBuffer))
         }
         return result
     }
@@ -58,10 +56,10 @@ public struct IdentityKeyPair: Sendable {
         self.privateKey = privateKey
     }
 
-    public func serialize() -> [UInt8] {
-        return withNativeHandles(self.publicKey, self.privateKey) { publicKey, privateKey in
-            failOnError {
-                try invokeFnReturningArray {
+    public func serialize() -> Data {
+        return failOnError {
+            try withAllBorrowed(self.publicKey, self.privateKey) { publicKey, privateKey in
+                try invokeFnReturningData {
                     signal_identitykeypair_serialize($0, publicKey.const(), privateKey.const())
                 }
             }
@@ -72,10 +70,10 @@ public struct IdentityKeyPair: Sendable {
         return IdentityKey(publicKey: self.publicKey)
     }
 
-    public func signAlternateIdentity(_ other: IdentityKey) -> [UInt8] {
-        return withNativeHandles(self.publicKey, self.privateKey, other.publicKey) { publicKey, privateKey, other in
-            failOnError {
-                try invokeFnReturningArray {
+    public func signAlternateIdentity(_ other: IdentityKey) -> Data {
+        return failOnError {
+            try withAllBorrowed(self.publicKey, self.privateKey, other.publicKey) { publicKey, privateKey, other in
+                try invokeFnReturningData {
                     signal_identitykeypair_sign_alternate_identity($0, publicKey.const(), privateKey.const(), other.const())
                 }
             }

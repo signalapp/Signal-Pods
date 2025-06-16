@@ -201,6 +201,7 @@ typedef enum {
   SignalErrorCodeInvalidRegistrationId = 81,
   SignalErrorCodeInvalidSession = 82,
   SignalErrorCodeInvalidSenderKeySession = 83,
+  SignalErrorCodeInvalidProtocolAddress = 84,
   SignalErrorCodeDuplicatedMessage = 90,
   SignalErrorCodeCallbackError = 100,
   SignalErrorCodeVerificationFailure = 110,
@@ -1589,6 +1590,8 @@ void signal_error_free(SignalFfiError *err);
 
 SignalFfiError *signal_error_get_address(const SignalFfiError *err, SignalMutPointerProtocolAddress *out);
 
+SignalFfiError *signal_error_get_invalid_protocol_address(const SignalFfiError *err, const char **name_out, uint32_t *device_id_out);
+
 SignalFfiError *signal_error_get_message(const SignalFfiError *err, const char **out);
 
 SignalFfiError *signal_error_get_registration_error_not_deliverable(const SignalFfiError *err, const char **out_reason, bool *out_permanent);
@@ -1915,11 +1918,11 @@ SignalFfiError *signal_pre_key_bundle_get_device_id(uint32_t *out, SignalConstPo
 
 SignalFfiError *signal_pre_key_bundle_get_identity_key(SignalMutPointerPublicKey *out, SignalConstPointerPreKeyBundle p);
 
-SignalFfiError *signal_pre_key_bundle_get_kyber_pre_key_id(uint32_t *out, SignalConstPointerPreKeyBundle bundle);
+SignalFfiError *signal_pre_key_bundle_get_kyber_pre_key_id(uint32_t *out, SignalConstPointerPreKeyBundle obj);
 
 SignalFfiError *signal_pre_key_bundle_get_kyber_pre_key_public(SignalMutPointerKyberPublicKey *out, SignalConstPointerPreKeyBundle bundle);
 
-SignalFfiError *signal_pre_key_bundle_get_kyber_pre_key_signature(SignalOwnedBuffer *out, SignalConstPointerPreKeyBundle bundle);
+SignalFfiError *signal_pre_key_bundle_get_kyber_pre_key_signature(SignalOwnedBuffer *out, SignalConstPointerPreKeyBundle obj);
 
 SignalFfiError *signal_pre_key_bundle_get_pre_key_id(uint32_t *out, SignalConstPointerPreKeyBundle obj);
 

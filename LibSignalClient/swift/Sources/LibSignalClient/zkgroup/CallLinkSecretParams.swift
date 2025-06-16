@@ -17,7 +17,7 @@ public class CallLinkSecretParams: ByteArray, @unchecked Sendable {
         }
     }
 
-    public required init(contents: [UInt8]) throws {
+    public required init(contents: Data) throws {
         try super.init(contents, checkValid: signal_call_link_secret_params_check_valid_contents)
     }
 
@@ -32,11 +32,9 @@ public class CallLinkSecretParams: ByteArray, @unchecked Sendable {
     }
 
     public func decrypt(_ ciphertext: UuidCiphertext) throws -> Aci {
-        return try withUnsafeBorrowedBuffer { contents in
-            try ciphertext.withUnsafePointerToSerialized { ciphertext in
-                try invokeFnReturningServiceId {
-                    signal_call_link_secret_params_decrypt_user_id($0, contents, ciphertext)
-                }
+        return try withAllBorrowed(self, .fixed(ciphertext)) { contents, ciphertext in
+            try invokeFnReturningServiceId {
+                signal_call_link_secret_params_decrypt_user_id($0, contents, ciphertext)
             }
         }
     }

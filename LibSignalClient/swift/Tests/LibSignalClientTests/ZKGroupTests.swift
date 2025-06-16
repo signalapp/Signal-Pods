@@ -3,12 +3,13 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
+import Foundation
 import LibSignalClient
-import XCTest
+import Testing
 
 private let SECONDS_PER_DAY: UInt64 = 24 * 60 * 60
 
-class ZKGroupTests: TestCaseBase {
+class ZKGroupTests {
     let TEST_ARRAY_16: UUID = .init(uuid: (0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F))
 
     let TEST_ARRAY_16_1: UUID = .init(uuid: (0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6A, 0x6B, 0x6C, 0x6D, 0x6E, 0x6F, 0x70, 0x71, 0x72, 0x73))
@@ -18,10 +19,10 @@ class ZKGroupTests: TestCaseBase {
         0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F
     ))
 
-    let TEST_ARRAY_32_1: [UInt8] = [
+    let TEST_ARRAY_32_1 = Data([
         0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6A, 0x6B, 0x6C, 0x6D, 0x6E, 0x6F, 0x70, 0x71, 0x72, 0x73,
         0x74, 0x75, 0x76, 0x77, 0x78, 0x79, 0x7A, 0x7B, 0x7C, 0x7D, 0x7E, 0x7F, 0x80, 0x81, 0x82, 0x83,
-    ]
+    ])
 
     let TEST_ARRAY_32_2: Randomness = .init((
         0xC8, 0xC9, 0xCA, 0xCB, 0xCC, 0xCD, 0xCE, 0xCF, 0xD0, 0xD1, 0xD2, 0xD3, 0xD4, 0xD5, 0xD6, 0xD7,
@@ -75,31 +76,34 @@ class ZKGroupTests: TestCaseBase {
         0x08, 0x1F, 0x77, 0xC7, 0x2C, 0x8F, 0x52, 0x54, 0x74, 0x40, 0xE2, 0x01, 0x00,
     ]
 
-    let serverSignatureResult: [UInt8] = [
+    let serverSignatureResult = Data([
         0x87, 0xD3, 0x54, 0x56, 0x4D, 0x35, 0xEF, 0x91, 0xED, 0xBA, 0x85, 0x1E, 0x08, 0x15, 0x61, 0x2E,
         0x86, 0x4C, 0x22, 0x7A, 0x04, 0x71, 0xD5, 0x0C, 0x27, 0x06, 0x98, 0x60, 0x44, 0x06, 0xD0, 0x03,
         0xA5, 0x54, 0x73, 0xF5, 0x76, 0xCF, 0x24, 0x1F, 0xC6, 0xB4, 0x1C, 0x6B, 0x16, 0xE5, 0xE6, 0x3B,
         0x33, 0x3C, 0x02, 0xFE, 0x4A, 0x33, 0x85, 0x80, 0x22, 0xFD, 0xD7, 0xA4, 0xAB, 0x36, 0x7B, 0x06,
-    ]
+    ])
 
-    func testSerializeRoundTrip() throws {
+    @Test
+    func serializeRoundTrip() throws {
         let serverSecretParams = try ServerSecretParams.generate(randomness: self.TEST_ARRAY_32)
         let serializedSecretParams = serverSecretParams.serialize()
-        XCTAssertEqual(serializedSecretParams, try ServerSecretParams(contents: serializedSecretParams).serialize())
+        #expect(try ServerSecretParams(contents: serializedSecretParams).serialize() == serializedSecretParams)
 
         let serverPublicParams = try serverSecretParams.getPublicParams()
         let serializedPublicParams = serverPublicParams.serialize()
-        XCTAssertEqual(serializedPublicParams, try ServerPublicParams(contents: serializedPublicParams).serialize())
+        #expect(try ServerPublicParams(contents: serializedPublicParams).serialize() == serializedPublicParams)
     }
 
-    func testGroupIdStringConversion() throws {
+    @Test
+    func groupIdStringConversion() throws {
         let masterKey = try GroupMasterKey(contents: TEST_ARRAY_32_1)
         let groupSecretParams = try GroupSecretParams.deriveFromMasterKey(groupMasterKey: masterKey)
         let groupId = try groupSecretParams.getPublicParams().getGroupIdentifier()
-        XCTAssertEqual("84e256730548f8ba09069b223eccc133f599f9827edc7084f8921e4a70cd9e4c", "\(groupId)")
+        #expect("84e256730548f8ba09069b223eccc133f599f9827edc7084f8921e4a70cd9e4c" == "\(groupId)")
     }
 
-    func testAuthZkcIntegration() throws {
+    @Test
+    func authZkcIntegration() throws {
         let aci = Aci(fromUUID: TEST_ARRAY_16)
         let pni = Pni(fromUUID: TEST_ARRAY_16_1)
         let redemptionTime: UInt64 = 123_456 * SECONDS_PER_DAY
@@ -116,7 +120,7 @@ class ZKGroupTests: TestCaseBase {
         let masterKey = try GroupMasterKey(contents: TEST_ARRAY_32_1)
         let groupSecretParams = try GroupSecretParams.deriveFromMasterKey(groupMasterKey: masterKey)
 
-        XCTAssertEqual((try groupSecretParams.getMasterKey()).serialize(), masterKey.serialize())
+        #expect((try groupSecretParams.getMasterKey()).serialize() == masterKey.serialize())
 
         let groupPublicParams = try groupSecretParams.getPublicParams()
 
@@ -133,23 +137,24 @@ class ZKGroupTests: TestCaseBase {
         // Create and decrypt user entry
         let aciCiphertext = try clientZkGroupCipher.encrypt(aci)
         let aciPlaintext = try clientZkGroupCipher.decrypt(aciCiphertext)
-        XCTAssertEqual(aci, aciPlaintext)
+        #expect(aci == aciPlaintext)
         let pniCiphertext = try clientZkGroupCipher.encrypt(pni)
         let pniPlaintext = try clientZkGroupCipher.decrypt(pniCiphertext)
-        XCTAssertEqual(pni, pniPlaintext)
+        #expect(pni == pniPlaintext)
 
         // Create presentation
         let presentation = try clientZkAuthCipher.createAuthCredentialPresentation(randomness: self.TEST_ARRAY_32_5, groupSecretParams: groupSecretParams, authCredential: authCredential)
 
         // Verify presentation
         let uuidCiphertextRecv = try presentation.getUuidCiphertext()
-        XCTAssertEqual(aciCiphertext.serialize(), uuidCiphertextRecv.serialize())
-        XCTAssertEqual(pniCiphertext.serialize(), try presentation.getPniCiphertext().serialize())
-        XCTAssertEqual(try presentation.getRedemptionTime(), Date(timeIntervalSince1970: TimeInterval(redemptionTime)))
+        #expect(aciCiphertext.serialize() == uuidCiphertextRecv.serialize())
+        #expect(try presentation.getPniCiphertext().serialize() == pniCiphertext.serialize())
+        #expect(try presentation.getRedemptionTime() == Date(timeIntervalSince1970: TimeInterval(redemptionTime)))
         try serverZkAuth.verifyAuthCredentialPresentation(groupPublicParams: groupPublicParams, authCredentialPresentation: presentation, now: Date(timeIntervalSince1970: TimeInterval(redemptionTime)))
     }
 
-    func testExpiringProfileKeyIntegration() throws {
+    @Test
+    func expiringProfileKeyIntegration() throws {
         let userId = Aci(fromUUID: TEST_ARRAY_16)
         // Generate keys (client's are per-group, server's are not)
         // ---
@@ -163,7 +168,7 @@ class ZKGroupTests: TestCaseBase {
         let masterKey = try GroupMasterKey(contents: TEST_ARRAY_32_1)
         let groupSecretParams = try GroupSecretParams.deriveFromMasterKey(groupMasterKey: masterKey)
 
-        XCTAssertEqual(try groupSecretParams.getMasterKey().serialize(), masterKey.serialize())
+        #expect(try groupSecretParams.getMasterKey().serialize() == masterKey.serialize())
 
         let groupPublicParams = try groupSecretParams.getPublicParams()
         let clientZkProfileCipher = ClientZkProfileOperations(serverPublicParams: serverPublicParams)
@@ -189,27 +194,32 @@ class ZKGroupTests: TestCaseBase {
         // Create encrypted UID and profile key
         let uuidCiphertext = try clientZkGroupCipher.encrypt(userId)
         let plaintext = try clientZkGroupCipher.decrypt(uuidCiphertext)
-        XCTAssertEqual(plaintext, userId)
+        #expect(plaintext == userId)
 
         let profileKeyCiphertext = try clientZkGroupCipher.encryptProfileKey(profileKey: profileKey, userId: userId)
         let decryptedProfileKey = try clientZkGroupCipher.decryptProfileKey(profileKeyCiphertext: profileKeyCiphertext, userId: userId)
-        XCTAssertEqual(profileKey.serialize(), decryptedProfileKey.serialize())
+        #expect(profileKey.serialize() == decryptedProfileKey.serialize())
 
-        XCTAssertEqual(Date(timeIntervalSince1970: TimeInterval(expiration)), profileKeyCredential.expirationTime)
+        #expect(Date(timeIntervalSince1970: TimeInterval(expiration)) == profileKeyCredential.expirationTime)
 
         let presentation = try clientZkProfileCipher.createProfileKeyCredentialPresentation(randomness: self.TEST_ARRAY_32_5, groupSecretParams: groupSecretParams, profileKeyCredential: profileKeyCredential)
 
         // Verify presentation
         try serverZkProfile.verifyProfileKeyCredentialPresentation(groupPublicParams: groupPublicParams, profileKeyCredentialPresentation: presentation)
         try serverZkProfile.verifyProfileKeyCredentialPresentation(groupPublicParams: groupPublicParams, profileKeyCredentialPresentation: presentation, now: Date(timeIntervalSince1970: TimeInterval(expiration - 5)))
-        XCTAssertThrowsError(try serverZkProfile.verifyProfileKeyCredentialPresentation(groupPublicParams: groupPublicParams, profileKeyCredentialPresentation: presentation, now: Date(timeIntervalSince1970: TimeInterval(expiration))))
-        XCTAssertThrowsError(try serverZkProfile.verifyProfileKeyCredentialPresentation(groupPublicParams: groupPublicParams, profileKeyCredentialPresentation: presentation, now: Date(timeIntervalSince1970: TimeInterval(expiration + 5))))
+        #expect(throws: SignalError.self) {
+            try serverZkProfile.verifyProfileKeyCredentialPresentation(groupPublicParams: groupPublicParams, profileKeyCredentialPresentation: presentation, now: Date(timeIntervalSince1970: TimeInterval(expiration)))
+        }
+        #expect(throws: SignalError.self) {
+            try serverZkProfile.verifyProfileKeyCredentialPresentation(groupPublicParams: groupPublicParams, profileKeyCredentialPresentation: presentation, now: Date(timeIntervalSince1970: TimeInterval(expiration + 5)))
+        }
 
         let uuidCiphertextRecv = try presentation.getUuidCiphertext()
-        XCTAssertEqual(uuidCiphertext.serialize(), uuidCiphertextRecv.serialize())
+        #expect(uuidCiphertext.serialize() == uuidCiphertextRecv.serialize())
     }
 
-    func testServerSignatures() throws {
+    @Test
+    func serverSignatures() throws {
         let serverSecretParams = try ServerSecretParams.generate(randomness: self.TEST_ARRAY_32)
         let serverPublicParams = try serverSecretParams.getPublicParams()
 
@@ -218,67 +228,71 @@ class ZKGroupTests: TestCaseBase {
         let signature = try serverSecretParams.sign(randomness: self.TEST_ARRAY_32_2, message: message)
         try serverPublicParams.verifySignature(message: message, notarySignature: signature)
 
-        XCTAssertEqual(signature.serialize(), self.serverSignatureResult)
+        #expect(signature.serialize() == self.serverSignatureResult)
 
         var alteredMessage = message
         alteredMessage[0] ^= 1
         do {
             try serverPublicParams.verifySignature(message: alteredMessage, notarySignature: signature)
-            XCTAssert(false)
+            Issue.record("should have thrown")
         } catch SignalError.verificationFailed(_) {
             // good
         }
     }
 
-    func testInvalidSerialized() throws {
-        let ckp: [UInt8] = Array(repeating: 255, count: 289)
+    @Test
+    func invalidSerialized() throws {
+        let ckp = Data(repeating: 255, count: 289)
         do {
             _ = try GroupSecretParams(contents: ckp)
-            XCTFail("should have thrown")
+            Issue.record("should have thrown")
         } catch SignalError.invalidType(_) {
             // good
         }
     }
 
-    func testWrongSizeSerialized() throws {
-        let ckp: [UInt8] = Array(repeating: 255, count: 5)
+    @Test
+    func wrongSizeSerialized() throws {
+        let ckp = Data(repeating: 255, count: 5)
         do {
             _ = try GroupSecretParams(contents: ckp)
-            XCTFail("should have thrown")
+            Issue.record("should have thrown")
         } catch SignalError.invalidType(_) {
             // good
         }
     }
 
-    func testBlobEncryption() throws {
+    @Test
+    func blobEncryption() throws {
         let groupSecretParams = try GroupSecretParams.generate()
         let clientZkGroupCipher = ClientZkGroupCipher(groupSecretParams: groupSecretParams)
 
-        let plaintext: [UInt8] = [0, 1, 2, 3, 4]
+        let plaintext = Data([0, 1, 2, 3, 4])
         let ciphertext = try clientZkGroupCipher.encryptBlob(plaintext: plaintext)
         let plaintext2 = try clientZkGroupCipher.decryptBlob(blobCiphertext: ciphertext)
 
-        XCTAssertEqual(plaintext, plaintext2)
+        #expect(plaintext == plaintext2)
     }
 
-    func testBlobEncryptionWithRandom() throws {
+    @Test
+    func blobEncryptionWithRandom() throws {
         let masterKey = try GroupMasterKey(contents: TEST_ARRAY_32_1)
         let groupSecretParams = try GroupSecretParams.deriveFromMasterKey(groupMasterKey: masterKey)
         let clientZkGroupCipher = ClientZkGroupCipher(groupSecretParams: groupSecretParams)
 
-        let plaintext: [UInt8] = [
+        let plaintext = Data([
             0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17,
             0x18, 0x19,
-        ]
+        ])
 
-        let ciphertext: [UInt8] = [
+        let ciphertext = Data([
             0xDD, 0x4D, 0x03, 0x2C, 0xA9, 0xBB, 0x75, 0xA4, 0xA7, 0x85, 0x41, 0xB9, 0x0C, 0xB4, 0xE9, 0x57,
             0x43, 0xF3, 0xB0, 0xDA, 0xBF, 0xC7, 0xE1, 0x11, 0x01, 0xB0, 0x98, 0xE3, 0x4F, 0x6C, 0xF6, 0x51,
             0x39, 0x40, 0xA0, 0x4C, 0x1F, 0x20, 0xA3, 0x02, 0x69, 0x2A, 0xFD, 0xC7, 0x08, 0x7F, 0x10, 0x19,
             0x60, 0x00,
-        ]
+        ])
 
-        let ciphertext257: [UInt8] = [
+        let ciphertext257 = Data([
             0x5C, 0xB5, 0xB7, 0xBF, 0xF0, 0x6E, 0x85, 0xD9, 0x29, 0xF3, 0x51, 0x1F, 0xD1, 0x94, 0xE6, 0x38,
             0xCF, 0x32, 0xA4, 0x76, 0x63, 0x86, 0x8B, 0xC8, 0xE6, 0x4D, 0x98, 0xFB, 0x1B, 0xBE, 0x43, 0x5E,
             0xBD, 0x21, 0xC7, 0x63, 0xCE, 0x2D, 0x42, 0xE8, 0x5A, 0x1B, 0x2C, 0x16, 0x9F, 0x12, 0xF9, 0x81,
@@ -299,19 +313,20 @@ class ZKGroupTests: TestCaseBase {
             0xC3, 0x33, 0x8E, 0x2F, 0x4B, 0x08, 0x1A, 0x8A, 0x53, 0xCB, 0xA0, 0x98, 0x8E, 0xEF, 0x11, 0x67,
             0x64, 0xD9, 0x44, 0xF1, 0xCE, 0x3F, 0x20, 0xA3, 0x02, 0x69, 0x2A, 0xFD, 0xC7, 0x08, 0x7F, 0x10,
             0x19, 0x60, 0x00,
-        ]
+        ])
 
         let ciphertext2 = try clientZkGroupCipher.encryptBlob(randomness: self.TEST_ARRAY_32_2, plaintext: plaintext)
         let plaintext2 = try clientZkGroupCipher.decryptBlob(blobCiphertext: ciphertext2)
 
-        XCTAssertEqual(plaintext, plaintext2)
-        XCTAssertEqual(ciphertext, ciphertext2)
+        #expect(plaintext == plaintext2)
+        #expect(ciphertext == ciphertext2)
 
         let plaintext257 = try clientZkGroupCipher.decryptBlob(blobCiphertext: ciphertext257)
-        XCTAssertEqual(plaintext, plaintext257)
+        #expect(plaintext == plaintext257)
     }
 
-    func testCreateCallLinkCredential() throws {
+    @Test
+    func createCallLinkCredential() throws {
         let userId = Aci(fromUUID: TEST_ARRAY_16)
 
         let serverSecretParams = GenericServerSecretParams.generate(randomness: self.TEST_ARRAY_32)
@@ -337,10 +352,13 @@ class ZKGroupTests: TestCaseBase {
         try presentation.verify(roomId: roomId, serverParams: serverSecretParams, callLinkParams: clientPublicParams)
         try presentation.verify(roomId: roomId, now: Date(timeIntervalSince1970: TimeInterval(startOfDay + SECONDS_PER_DAY)), serverParams: serverSecretParams, callLinkParams: clientPublicParams)
 
-        XCTAssertThrowsError(try presentation.verify(roomId: roomId, now: Date(timeIntervalSince1970: TimeInterval(startOfDay + 30 * 60 * 60)), serverParams: serverSecretParams, callLinkParams: clientPublicParams))
+        #expect(throws: SignalError.self) {
+            try presentation.verify(roomId: roomId, now: Date(timeIntervalSince1970: TimeInterval(startOfDay + 30 * 60 * 60)), serverParams: serverSecretParams, callLinkParams: clientPublicParams)
+        }
     }
 
-    func testCallLinkAuthCredential() throws {
+    @Test
+    func callLinkAuthCredential() throws {
         let userId = Aci(fromUUID: TEST_ARRAY_16)
 
         let serverSecretParams = GenericServerSecretParams.generate(randomness: self.TEST_ARRAY_32)
@@ -362,21 +380,25 @@ class ZKGroupTests: TestCaseBase {
         try presentation.verify(serverParams: serverSecretParams, callLinkParams: clientPublicParams)
         try presentation.verify(now: Date(timeIntervalSince1970: TimeInterval(startOfDay + SECONDS_PER_DAY)), serverParams: serverSecretParams, callLinkParams: clientPublicParams)
 
-        XCTAssertThrowsError(try presentation.verify(now: Date(timeIntervalSince1970: TimeInterval(startOfDay + 3 * SECONDS_PER_DAY)), serverParams: serverSecretParams, callLinkParams: clientPublicParams))
+        #expect(throws: SignalError.self) {
+            try presentation.verify(now: Date(timeIntervalSince1970: TimeInterval(startOfDay + 3 * SECONDS_PER_DAY)), serverParams: serverSecretParams, callLinkParams: clientPublicParams)
+        }
 
         // Client
-        XCTAssertEqual(userId, try clientSecretParams.decrypt(presentation.userId))
+        #expect(try clientSecretParams.decrypt(presentation.userId) == userId)
     }
 
-    func testDeriveProfileKey() throws {
-        let expectedAccessKey: [UInt8] = [0x5A, 0x72, 0x3A, 0xCE, 0xE5, 0x2C, 0x5E, 0xA0, 0x2B, 0x92, 0xA3, 0xA3, 0x60, 0xC0, 0x95, 0x95]
-        let profileKeyBytes: [UInt8] = Array(repeating: 0x02, count: 32)
+    @Test
+    func deriveProfileKey() throws {
+        let expectedAccessKey = Data([0x5A, 0x72, 0x3A, 0xCE, 0xE5, 0x2C, 0x5E, 0xA0, 0x2B, 0x92, 0xA3, 0xA3, 0x60, 0xC0, 0x95, 0x95])
+        let profileKeyBytes = Data(repeating: 0x02, count: 32)
 
         let result = try ProfileKey(contents: profileKeyBytes).deriveAccessKey()
-        XCTAssertEqual(expectedAccessKey, result)
+        #expect(expectedAccessKey == result)
     }
 
-    func testBackupAuthCredentialDeterministic() throws {
+    @Test
+    func backupAuthCredentialDeterministic() throws {
         // Chosen randomly
         let backupKey: [UInt8] = [
             0xF9, 0xAB, 0xBB, 0xFF, 0xA7, 0xD4, 0x24, 0x92,
@@ -388,7 +410,7 @@ class ZKGroupTests: TestCaseBase {
 
         // These are expectations; if the contents of a credential or derivation of a backup ID
         // changes, they will need to be updated.
-        let serializedBackupID: [UInt8] = [0xA2, 0x89, 0x62, 0xC7, 0xF9, 0xAC, 0x91, 0x0F, 0x66, 0xE4, 0xBC, 0xB3, 0x3F, 0x2C, 0xEF, 0x06]
+        let serializedBackupID = Data([0xA2, 0x89, 0x62, 0xC7, 0xF9, 0xAC, 0x91, 0x0F, 0x66, 0xE4, 0xBC, 0xB3, 0x3F, 0x2C, 0xEF, 0x06])
         let serializedRequestCredential = Data(base64Encoded: "AISCxQa8OsFqphsQPxqtzJk5+jndpE3SJG6bfazQB399rN6N8Dv5DAwvY4N36Uj0qGf0cV5a/8rf5nkxLeVNnF3ojRSO8xaZOpKJOvWSDJIGn6EeMl2jOjx+IQg8d8M0AQ==")!
 
         let backupLevel = BackupLevel.free
@@ -398,23 +420,20 @@ class ZKGroupTests: TestCaseBase {
         let request = context.getRequest()
         let serverSecretParams = GenericServerSecretParams.generate(randomness: self.TEST_ARRAY_32)
         let serverPublicParams = serverSecretParams.getPublicParams()
-        XCTAssertEqual(
-            request.serialize(),
-            Array(serializedRequestCredential),
-            Data(request.serialize()).base64EncodedString()
-        )
+        #expect(request.serialize() == serializedRequestCredential, Comment(rawValue: Data(request.serialize()).base64EncodedString()))
 
         let now = UInt64(Date().timeIntervalSince1970)
         let startOfDay = now - (now % SECONDS_PER_DAY)
         let redemptionTime = Date(timeIntervalSince1970: TimeInterval(startOfDay))
         let response = request.issueCredential(timestamp: redemptionTime, backupLevel: backupLevel, type: credentialType, params: serverSecretParams, randomness: self.TEST_ARRAY_32_2)
         let credential = try context.receive(response, timestamp: redemptionTime, params: serverPublicParams)
-        XCTAssertEqual(credential.backupID, serializedBackupID, credential.backupID.hexString)
-        XCTAssertEqual(credential.backupLevel, backupLevel)
-        XCTAssertEqual(credential.type, credentialType)
+        #expect(credential.backupID == serializedBackupID, Comment(rawValue: credential.backupID.hexString))
+        #expect(credential.backupLevel == backupLevel)
+        #expect(credential.type == credentialType)
     }
 
-    func testBackupAuthCredential() throws {
+    @Test
+    func backupAuthCredential() throws {
         let backupLevel = BackupLevel.free
         let credentialType = BackupCredentialType.messages
 
@@ -435,8 +454,8 @@ class ZKGroupTests: TestCaseBase {
 
         // Client
         let credential = try context.receive(response, timestamp: redemptionTime, params: serverPublicParams)
-        XCTAssertEqual(backupLevel, credential.backupLevel)
-        XCTAssertEqual(credentialType, credential.type)
+        #expect(backupLevel == credential.backupLevel)
+        #expect(credentialType == credential.type)
 
         let presentation = credential.present(serverParams: serverPublicParams, randomness: self.TEST_ARRAY_32_3)
 
@@ -445,13 +464,18 @@ class ZKGroupTests: TestCaseBase {
         try presentation.verify(now: Date(timeIntervalSince1970: TimeInterval(startOfDay + SECONDS_PER_DAY)), serverParams: serverSecretParams)
 
         // credential should be expired after 2 days
-        XCTAssertThrowsError(try presentation.verify(now: Date(timeIntervalSince1970: TimeInterval(startOfDay + 1 + SECONDS_PER_DAY * 2)), serverParams: serverSecretParams))
+        #expect(throws: SignalError.self) {
+            try presentation.verify(now: Date(timeIntervalSince1970: TimeInterval(startOfDay + 1 + SECONDS_PER_DAY * 2)), serverParams: serverSecretParams)
+        }
 
         // future credential should be invalid
-        XCTAssertThrowsError(try presentation.verify(now: Date(timeIntervalSince1970: TimeInterval(startOfDay - 1 - SECONDS_PER_DAY)), serverParams: serverSecretParams))
+        #expect(throws: SignalError.self) {
+            try presentation.verify(now: Date(timeIntervalSince1970: TimeInterval(startOfDay - 1 - SECONDS_PER_DAY)), serverParams: serverSecretParams)
+        }
     }
 
-    func testGroupSendIntegration() throws {
+    @Test
+    func groupSendIntegration() throws {
         let serverSecretParams = try! ServerSecretParams.generate(randomness: self.TEST_ARRAY_32)
         let serverPublicParams = try! serverSecretParams.getPublicParams()
 
@@ -486,24 +510,22 @@ class ZKGroupTests: TestCaseBase {
             serverParams: serverPublicParams
         )
 
-        XCTAssertThrowsError(
+        #expect(throws: SignalError.self, "missing local user") {
             try response.receive(
                 groupMembers: [bobAci, eveAci, malloryAci],
                 localUser: aliceAci,
                 groupParams: groupSecretParams,
                 serverParams: serverPublicParams
-            ),
-            "missing local user"
-        )
-        XCTAssertThrowsError(
+            )
+        }
+        #expect(throws: SignalError.self, "missing another user") {
             try response.receive(
                 groupMembers: [aliceAci, eveAci, malloryAci],
                 localUser: aliceAci,
                 groupParams: groupSecretParams,
                 serverParams: serverPublicParams
-            ),
-            "missing another user"
-        )
+            )
+        }
 
         // Try receive with ciphertexts instead.
         do {
@@ -512,31 +534,25 @@ class ZKGroupTests: TestCaseBase {
                 localUser: aliceCiphertext,
                 serverParams: serverPublicParams
             )
-            XCTAssertEqual(
-                receivedEndorsements.endorsements.map { $0.serialize() },
-                repeatReceivedEndorsements.endorsements.map { $0.serialize() }
+            #expect(
+                receivedEndorsements.endorsements.map { $0.serialize() } == repeatReceivedEndorsements.endorsements.map { $0.serialize() }
             )
-            XCTAssertEqual(
-                receivedEndorsements.combinedEndorsement.serialize(),
-                repeatReceivedEndorsements.combinedEndorsement.serialize()
-            )
+            #expect(receivedEndorsements.combinedEndorsement.serialize() == repeatReceivedEndorsements.combinedEndorsement.serialize())
 
-            XCTAssertThrowsError(
+            #expect(throws: SignalError.self, "missing local user") {
                 try response.receive(
                     groupMembers: groupCiphertexts[1...],
                     localUser: aliceCiphertext,
                     serverParams: serverPublicParams
-                ),
-                "missing local user"
-            )
-            XCTAssertThrowsError(
+                )
+            }
+            #expect(throws: SignalError.self, "missing another user") {
                 try response.receive(
                     groupMembers: groupCiphertexts[..<3],
                     localUser: aliceCiphertext,
                     serverParams: serverPublicParams
-                ),
-                "missing another user"
-            )
+                )
+            }
         }
 
         let combinedToken = receivedEndorsements.combinedEndorsement.toToken(groupParams: groupSecretParams)
@@ -556,29 +572,26 @@ class ZKGroupTests: TestCaseBase {
             keyPair: verifyKey
         )
 
-        XCTAssertThrowsError(
+        #expect(throws: SignalError.self, "included extra user") {
             try fullCombinedToken.verify(
                 userIds: [aliceAci, bobAci, eveAci, malloryAci],
                 keyPair: verifyKey
-            ),
-            "included extra user"
-        )
-        XCTAssertThrowsError(
+            )
+        }
+        #expect(throws: SignalError.self, "missing user") {
             try fullCombinedToken.verify(
                 userIds: [eveAci, malloryAci],
                 keyPair: verifyKey
-            ),
-            "missing user"
-        )
+            )
+        }
 
-        XCTAssertThrowsError(
+        #expect(throws: SignalError.self, "expired") {
             try fullCombinedToken.verify(
                 userIds: [bobAci, eveAci, malloryAci],
                 now: expiration.addingTimeInterval(1),
                 keyPair: verifyKey
-            ),
-            "expired"
-        )
+            )
+        }
 
         // Excluding a user
         do {
@@ -623,6 +636,7 @@ class ZKGroupTests: TestCaseBase {
         }
     }
 
+    @Test
     func test1000PersonGroup() throws {
         // SERVER
         // Generate keys
@@ -657,6 +671,7 @@ class ZKGroupTests: TestCaseBase {
         _ = try response.receive(groupMembers: encryptedMembers, localUser: encryptedMembers[0], serverParams: serverPublicParams)
     }
 
+    @Test
     func test1PersonGroup() throws {
         // SERVER
         // Generate keys
