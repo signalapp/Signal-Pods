@@ -439,8 +439,13 @@ static yy_png_info *yy_png_info_create(const uint8_t *data, uint32_t length) {
         chunk->fourcc = *((uint32_t *)(chunk_data + 4));
         if ((uint64_t)chunk->offset + 4 + chunk->length + 4 > (uint64_t)length) break;
         chunk->crc32 = yy_swap_endian_uint32(*((uint32_t *)(chunk_data + 8 + chunk->length)));
-        chunk_num++;
         offset += 12 + chunk->length;
+        if (chunk->fourcc == YY_FOUR_CC('t', 'E', 'X', 't') ||
+            chunk->fourcc == YY_FOUR_CC('z', 'T', 'X', 't') ||
+            chunk->fourcc == YY_FOUR_CC('i', 'T', 'X', 't')) {
+            continue;
+        }
+        chunk_num++;
         
         switch (chunk->fourcc) {
             case YY_FOUR_CC('a', 'c', 'T', 'L') : {
