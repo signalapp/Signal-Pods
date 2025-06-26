@@ -21,7 +21,7 @@ public enum SignalError: Error {
     case invalidKey(String)
     case invalidSignature(String)
     case invalidAttestationData(String)
-    case fingerprintVersionMismatch(String)
+    case fingerprintVersionMismatch(theirs: UInt32, ours: UInt32)
     case fingerprintParsingError(String)
     case sealedSenderSelfSend(String)
     case untrustedIdentity(String)
@@ -58,6 +58,7 @@ public enum SignalError: Error {
     case networkProtocolError(String)
     case cdsiInvalidToken(String)
     case rateLimitedError(retryAfter: TimeInterval, message: String)
+    case rateLimitChallengeError(token: String, options: Set<ChallengeOption>, message: String)
     case svrDataMissing(String)
     case svrRestoreFailed(triesRemaining: UInt32, message: String)
     case svrRotationMachineTooManySteps(String)
@@ -134,7 +135,13 @@ internal func checkError(_ error: SignalFfiErrorRef?) throws {
     case SignalErrorCodeInvalidAttestationData:
         throw SignalError.invalidAttestationData(errStr)
     case SignalErrorCodeFingerprintVersionMismatch:
-        throw SignalError.fingerprintVersionMismatch(errStr)
+        let theirs = try invokeFnReturningInteger {
+            signal_error_get_their_fingerprint_version(error, $0)
+        }
+        let ours = try invokeFnReturningInteger {
+            signal_error_get_our_fingerprint_version(error, $0)
+        }
+        throw SignalError.fingerprintVersionMismatch(theirs: theirs, ours: ours)
     case SignalErrorCodeUntrustedIdentity:
         throw SignalError.untrustedIdentity(errStr)
     case SignalErrorCodeInvalidKeyIdentifier:
@@ -216,6 +223,18 @@ internal func checkError(_ error: SignalFfiErrorRef?) throws {
             signal_error_get_retry_after_seconds(error, $0)
         }
         throw SignalError.rateLimitedError(retryAfter: TimeInterval(retryAfterSeconds), message: errStr)
+    case SignalErrorCodeRateLimitChallenge:
+        var tokenOut: UnsafePointer<Int8>?
+        let options = try invokeFnReturningData {
+            signal_error_get_rate_limit_challenge(error, &tokenOut, $0)
+        }
+        let token = String(cString: tokenOut!)
+        signal_free_string(tokenOut)
+        throw SignalError.rateLimitChallengeError(
+            token: token,
+            options: Set(try options.map { try ChallengeOption(fromNative: $0) }),
+            message: errStr
+        )
     case SignalErrorCodeSvrDataMissing:
         throw SignalError.svrDataMissing(errStr)
     case SignalErrorCodeSvrRestoreFailed:
@@ -248,8 +267,6 @@ internal func checkError(_ error: SignalFfiErrorRef?) throws {
         throw RegistrationError.unknown(errStr)
     case SignalErrorCodeRegistrationInvalidSessionId:
         throw RegistrationError.invalidSessionId(errStr)
-    case SignalErrorCodeRegistrationRequestNotValid:
-        throw RegistrationError.requestNotValid(errStr)
     case SignalErrorCodeRegistrationSessionNotFound:
         throw RegistrationError.sessionNotFound(errStr)
     case SignalErrorCodeRegistrationNotReadyForVerification:
@@ -283,7 +300,11 @@ internal func checkError(_ error: SignalFfiErrorRef?) throws {
             return err
         }
 
-        throw RegistrationError.registrationLock(timeRemaining: TimeInterval(timeRemaining), svr2Username: svr2Username, svr2Password: svr2Password)
+        throw RegistrationError.registrationLock(
+            timeRemaining: TimeInterval(timeRemaining),
+            svr2Username: svr2Username,
+            svr2Password: svr2Password
+        )
     case SignalErrorCodeKeyTransparencyError:
         throw SignalError.keyTransparencyError(errStr)
     case SignalErrorCodeKeyTransparencyVerificationFailed:
@@ -297,7 +318,8 @@ internal func failOnError(_ error: SignalFfiErrorRef?) {
     failOnError { try checkError(error) }
 }
 
-internal func failOnError<Result>(_ fn: () throws -> Result, file: StaticString = #file, line: UInt32 = #line) -> Result {
+internal func failOnError<Result>(_ fn: () throws -> Result, file: StaticString = #file, line: UInt32 = #line) -> Result
+{
     do {
         return try fn()
     } catch {
