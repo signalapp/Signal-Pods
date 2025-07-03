@@ -306,82 +306,6 @@ static double yy_png_delay_to_seconds(uint16_t num, uint16_t den) {
     }
 }
 
-static bool yy_png_validate_animation_chunk_order(yy_png_chunk_info *chunks,  /* input */
-                                                  uint32_t chunk_num,         /* input */
-                                                  uint32_t *first_idat_index, /* output */
-                                                  bool *first_frame_is_cover  /* output */) {
-    /*
-     PNG at least contains 3 chunks: IHDR, IDAT, IEND.
-     `IHDR` must appear first.
-     `IDAT` must appear consecutively.
-     `IEND` must appear end.
-     
-     APNG must contains one `acTL` and at least one 'fcTL' and `fdAT`.
-     `fdAT` must appear consecutively.
-     `fcTL` must appear before `IDAT` or `fdAT`.
-     */
-    if (chunk_num <= 2) return false;
-    if (chunks->fourcc != YY_FOUR_CC('I', 'H', 'D', 'R')) return false;
-    if ((chunks + chunk_num - 1)->fourcc != YY_FOUR_CC('I', 'E', 'N', 'D')) return false;
-    
-    uint32_t prev_fourcc = 0;
-    uint32_t IHDR_num = 0;
-    uint32_t IDAT_num = 0;
-    uint32_t acTL_num = 0;
-    uint32_t fcTL_num = 0;
-    uint32_t first_IDAT = 0;
-    bool first_frame_cover = false;
-    for (uint32_t i = 0; i < chunk_num; i++) {
-        yy_png_chunk_info *chunk = chunks + i;
-        switch (chunk->fourcc) {
-            case YY_FOUR_CC('I', 'H', 'D', 'R'): {  // png header
-                if (i != 0) return false;
-                if (IHDR_num > 0) return false;
-                IHDR_num++;
-            } break;
-            case YY_FOUR_CC('I', 'D', 'A', 'T'): {  // png data
-                if (prev_fourcc != YY_FOUR_CC('I', 'D', 'A', 'T')) {
-                    if (IDAT_num == 0)
-                        first_IDAT = i;
-                    else
-                        return false;
-                }
-                IDAT_num++;
-            } break;
-            case YY_FOUR_CC('a', 'c', 'T', 'L'): {  // apng control
-                if (acTL_num > 0) return false;
-                acTL_num++;
-            } break;
-            case YY_FOUR_CC('f', 'c', 'T', 'L'): {  // apng frame control
-                if (i + 1 == chunk_num) return false;
-                if ((chunk + 1)->fourcc != YY_FOUR_CC('f', 'd', 'A', 'T') &&
-                    (chunk + 1)->fourcc != YY_FOUR_CC('I', 'D', 'A', 'T')) {
-                    return false;
-                }
-                if (fcTL_num == 0) {
-                    if ((chunk + 1)->fourcc == YY_FOUR_CC('I', 'D', 'A', 'T')) {
-                        first_frame_cover = true;
-                    }
-                }
-                fcTL_num++;
-            } break;
-            case YY_FOUR_CC('f', 'd', 'A', 'T'): {  // apng data
-                if (prev_fourcc != YY_FOUR_CC('f', 'd', 'A', 'T') && prev_fourcc != YY_FOUR_CC('f', 'c', 'T', 'L')) {
-                    return false;
-                }
-            } break;
-        }
-        prev_fourcc = chunk->fourcc;
-    }
-    if (IHDR_num != 1) return false;
-    if (IDAT_num == 0) return false;
-    if (acTL_num != 1) return false;
-    if (fcTL_num < acTL_num) return false;
-    *first_idat_index = first_IDAT;
-    *first_frame_is_cover = first_frame_cover;
-    return true;
-}
-
 static void yy_png_info_release(yy_png_info *info) {
     if (info) {
         if (info->chunks) free(info->chunks);
@@ -417,6 +341,9 @@ static yy_png_info *yy_png_info_create(const uint8_t *data, uint32_t length) {
     int32_t apng_frame_index = 0;
     int32_t apng_frame_number = -1;
     bool apng_chunk_error = false;
+    bool first_frame_is_cover = false;
+    bool encountered_fdAT = false;
+    uint32_t first_IDAT_index = 0;
     do {
         if (chunk_num >= chunk_capacity) {
             yy_png_chunk_info *new_chunks = realloc(chunks, sizeof(yy_png_chunk_info) * (chunk_capacity + chunk_realloc_num));
@@ -439,12 +366,21 @@ static yy_png_info *yy_png_info_create(const uint8_t *data, uint32_t length) {
         chunk->fourcc = *((uint32_t *)(chunk_data + 4));
         if ((uint64_t)chunk->offset + 4 + chunk->length + 4 > (uint64_t)length) break;
         chunk->crc32 = yy_swap_endian_uint32(*((uint32_t *)(chunk_data + 8 + chunk->length)));
-        chunk_num++;
         offset += 12 + chunk->length;
+        if (chunk->fourcc == YY_FOUR_CC('t', 'E', 'X', 't') ||
+            chunk->fourcc == YY_FOUR_CC('z', 'T', 'X', 't') ||
+            chunk->fourcc == YY_FOUR_CC('i', 'T', 'X', 't') ||
+            chunk->fourcc == YY_FOUR_CC('t', 'I', 'M', 'E') ||
+            chunk->fourcc == YY_FOUR_CC('e', 'X', 'I', 'f')) {
+            continue;
+        }
+        chunk_num++;
         
         switch (chunk->fourcc) {
             case YY_FOUR_CC('a', 'c', 'T', 'L') : {
-                if (chunk->length == 8) {
+                if (apng_frame_number != -1 || first_IDAT_index != 0) {
+                    apng_chunk_error = true;
+                } else if (chunk->length == 8) {
                     apng_frame_number = yy_swap_endian_uint32(*((uint32_t *)(chunk_data + 8)));
                     apng_loop_num = yy_swap_endian_uint32(*((uint32_t *)(chunk_data + 12)));
                 } else {
@@ -456,9 +392,17 @@ static yy_png_info *yy_png_info_create(const uint8_t *data, uint32_t length) {
                 if (chunk->fourcc == YY_FOUR_CC('f', 'c', 'T', 'L')) {
                     if (chunk->length != 26) {
                         apng_chunk_error = true;
+                    } else if (apng_frame_index > 0 && !encountered_fdAT) {
+                        apng_chunk_error = true;
                     } else {
                         apng_frame_index++;
+                        encountered_fdAT = false;
                     }
+                } else if (apng_sequence_index == -1 || first_IDAT_index == 0 ||
+                    (apng_sequence_index == 0 && first_frame_is_cover)) {
+                    apng_chunk_error = true;
+                } else {
+                    encountered_fdAT = true;
                 }
                 if (chunk->length > 4) {
                     uint32_t sequence = yy_swap_endian_uint32(*((uint32_t *)(chunk_data + 8)));
@@ -470,6 +414,24 @@ static yy_png_info *yy_png_info_create(const uint8_t *data, uint32_t length) {
                 } else {
                     apng_chunk_error = true;
                 }
+                if (apng_sequence_index == 0 && first_IDAT_index == 0) {
+                    first_frame_is_cover = true;
+                }
+            } break;
+            case YY_FOUR_CC('I', 'D', 'A', 'T') : {
+                if (first_IDAT_index == 0) {
+                    first_IDAT_index = chunk_num - 1;
+                } else if ((chunk - 1)->fourcc != YY_FOUR_CC('I', 'D', 'A', 'T')) {
+                    free(chunks);
+                    return NULL;
+                }
+                encountered_fdAT = true;
+            } break;
+            case YY_FOUR_CC('I', 'H', 'D', 'R') : {
+                if (chunk_num != 1) {
+                    free(chunks);
+                    return NULL;
+                }
             } break;
             case YY_FOUR_CC('I', 'E', 'N', 'D') : {
                 offset = length; // end, break do-while loop
@@ -479,9 +441,14 @@ static yy_png_info *yy_png_info_create(const uint8_t *data, uint32_t length) {
     
     if (chunk_num < 3 ||
         chunks->fourcc != YY_FOUR_CC('I', 'H', 'D', 'R') ||
+        (chunks + chunk_num - 1)->fourcc != YY_FOUR_CC('I', 'E', 'N', 'D') ||
+        first_IDAT_index == 0 ||
         chunks->length != 13) {
         free(chunks);
         return NULL;
+    }
+    if (!encountered_fdAT) {
+        apng_chunk_error = true;
     }
     
     // png info
@@ -496,12 +463,6 @@ static yy_png_info *yy_png_info_create(const uint8_t *data, uint32_t length) {
     
     // apng info
     if (!apng_chunk_error && apng_frame_number == apng_frame_index && apng_frame_number >= 1) {
-        bool first_frame_is_cover = false;
-        uint32_t first_IDAT_index = 0;
-        if (!yy_png_validate_animation_chunk_order(info->chunks, info->chunk_num, &first_IDAT_index, &first_frame_is_cover)) {
-            return info; // ignore apng chunk
-        }
-        
         info->apng_loop_num = apng_loop_num;
         info->apng_frame_num = apng_frame_number;
         info->apng_first_frame_is_cover = first_frame_is_cover;
@@ -523,11 +484,11 @@ static yy_png_info *yy_png_info_create(const uint8_t *data, uint32_t length) {
             yy_png_chunk_info *chunk = info->chunks + i;
             switch (chunk->fourcc) {
                 case YY_FOUR_CC('I', 'D', 'A', 'T'): {
-                    if (info->apng_shared_insert_index == 0) {
-                        info->apng_shared_insert_index = i;
-                    }
                     if (first_frame_is_cover) {
                         yy_png_frame_info *frame = info->apng_frames + frame_index;
+                        if (frame->chunk_index == 0) {
+                            frame->chunk_index = i;
+                        }
                         frame->chunk_num++;
                         frame->chunk_size += chunk->length + 12;
                     }
@@ -537,19 +498,23 @@ static yy_png_info *yy_png_info_create(const uint8_t *data, uint32_t length) {
                 case YY_FOUR_CC('f', 'c', 'T', 'L'): {
                     frame_index++;
                     yy_png_frame_info *frame = info->apng_frames + frame_index;
-                    frame->chunk_index = i + 1;
                     yy_png_chunk_fcTL_read(&frame->frame_control, data + chunk->offset + 8);
                 } break;
                 case YY_FOUR_CC('f', 'd', 'A', 'T'): {
                     yy_png_frame_info *frame = info->apng_frames + frame_index;
+                    if (frame->chunk_index == 0) {
+                        frame->chunk_index = i;
+                    }
                     frame->chunk_num++;
                     frame->chunk_size += chunk->length + 12;
                 } break;
                 default: {
-                    *shared_chunk_index = i;
-                    shared_chunk_index++;
-                    info->apng_shared_chunk_size += chunk->length + 12;
-                    info->apng_shared_chunk_num++;
+                    if (i < first_IDAT_index || i == info->chunk_num - 1) {
+                        *shared_chunk_index = i;
+                        shared_chunk_index++;
+                        info->apng_shared_chunk_size += chunk->length + 12;
+                        info->apng_shared_chunk_num++;
+                    }
                 } break;
             }
         }
