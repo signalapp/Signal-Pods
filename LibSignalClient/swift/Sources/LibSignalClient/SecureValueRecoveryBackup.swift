@@ -117,15 +117,14 @@ public class SvrB {
     /// - Throws:
     ///   - ``SignalError/invalidArgument(_:)`` if `previousSecretData` is malformed. There's no
     ///     choice here but to **start a new chain**.
-    ///   - ``SignalError/svrRestoreFailed(triesRemaining:message:)`` if restoration fails. This
-    ///     should never happen but if it does the user's data is **not recoverable**.
-    ///   - ``SignalError/svrDataMissing(_:)`` if the backup data is not found on the server,
-    ///     indicating an **incorrect backup key** (which may in turn imply the user's data is not
-    ///     recoverable).
     ///   - ``SignalError/rateLimitedError(retryAfter:message:)`` if the server is rate limiting
     ///     this client. This is **retryable** after waiting the designated delay.
-    ///   - Other ``SignalError``s for networking and attestation issues. These are **retryable**,
-    ///     but some may indicate a possible bug in libsignal or in the enclave.
+    ///   - ``SignalError/connectionFailed(_:)``, ``SignalError/ioError(_:)``, or
+    ///     ``SignalError/webSocketError(_:)`` for networking failures before and during
+    ///     communication with the server. These can be **automatically retried** (backoff
+    ///     recommended).
+    ///   - Other ``SignalError``s for networking and attestation issues. These can be manually
+    ///     retried, but some may indicate a possible bug in libsignal or in the enclave.
     public func store(
         backupKey: BackupKey,
         previousSecretData: Data
@@ -179,8 +178,12 @@ public class SvrB {
     ///     recoverable).
     ///   - ``SignalError/rateLimitedError(retryAfter:message:)`` if the server is rate limiting
     ///     this client. This is **retryable** after waiting the designated delay.
-    ///   - Other ``SignalError``s for networking and attestation issues. These are **retryable**,
-    ///     but some may indicate a possible bug in libsignal or in the enclave.
+    ///   - ``SignalError/connectionFailed(_:)``, ``SignalError/ioError(_:)``, or
+    ///     ``SignalError/webSocketError(_:)`` for networking failures before and during
+    ///     communication with the server. These can be **automatically retried** (backoff
+    ///     recommended).
+    ///   - Other ``SignalError``s for networking and attestation issues. These can be manually
+    ///     retried, but some may indicate a possible bug in libsignal or in the enclave.
     public func restore(
         backupKey: BackupKey,
         metadata: Data
@@ -206,6 +209,41 @@ public class SvrB {
         }
 
         return RestoreBackupResponse(owned: NonNull(rawResult)!)
+    }
+
+    /// Attempts to remove the info stored with SVR-B for this particular username/password pair.
+    ///
+    /// This is a best-effort operation; a successful return means the data has been removed from
+    /// (or never was present in) the current SVR-B enclaves, but may still be present in previous
+    /// ones that have yet to be decommissioned. Conversely, a thrown error may still have removed
+    /// information from previous enclaves.
+    ///
+    /// This should not typically be needed; rather than explicitly removing an entry, the client
+    /// should generally overwrite with a new ``store(backupKey:previousSecretData:)`` instead.
+    ///
+    /// - Throws:
+    ///   - ``SignalError/rateLimitedError(retryAfter:message:)`` if the server is rate limiting
+    ///     this client. This is **retryable** after waiting the designated delay.
+    ///   - ``SignalError/connectionFailed(_:)``, ``SignalError/ioError(_:)``, or
+    ///     ``SignalError/webSocketError(_:)`` for networking failures before and during
+    ///     communication with the server. These can be **automatically retried** (backoff
+    ///     recommended).
+    ///   - Other ``SignalError``s for networking and attestation issues. These can be manually
+    ///     retried, but some may indicate a possible bug in libsignal or in the enclave.
+    public func remove() async throws {
+        let _: Bool = try await self.net.asyncContext.invokeAsyncFunction {
+            promise,
+            runtime in
+            net.connectionManager.withNativeHandle { connectionManager in
+                signal_secure_value_recovery_for_backups_remove_backup(
+                    promise,
+                    runtime.const(),
+                    connectionManager.const(),
+                    self.auth.username,
+                    self.auth.password
+                )
+            }
+        }
     }
 }
 

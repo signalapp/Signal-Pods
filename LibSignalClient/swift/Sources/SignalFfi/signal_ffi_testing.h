@@ -297,6 +297,10 @@ SignalFfiError *signal_testing_connection_manager_is_using_proxy(int32_t *out, S
 
 SignalFfiError *signal_testing_convert_optional_uuid(SignalOptionalUuid *out, bool present);
 
+SignalFfiError *signal_testing_create_otp(const char **out, const char *username, SignalBorrowedBuffer secret);
+
+SignalFfiError *signal_testing_create_otp_from_base64(const char **out, const char *username, const char *secret);
+
 SignalFfiError *signal_testing_error_on_borrow_async(const void *_input);
 
 SignalFfiError *signal_testing_error_on_borrow_io(SignalCPromisebool *promise, SignalConstPointerNonSuspendingBackgroundThreadRuntime async_runtime, const void *_input);
@@ -428,6 +432,10 @@ SignalFfiError *signal_testing_semaphore_new(SignalMutPointerTestingSemaphore *o
 SignalFfiError *signal_testing_signed_public_pre_key_check_bridges_correctly(SignalConstPointerPublicKey source_public_key, SignalFfiSignedPublicPreKey signed_pre_key);
 
 SignalFfiError *signal_testing_testing_handle_type_get_value(uint8_t *out, SignalConstPointerTestingHandleType handle);
+
+SignalFfiError *signal_testing_tokio_async_context_future_success_bytes(SignalCPromiseOwnedBufferOfc_uchar *promise, SignalConstPointerTokioAsyncContext async_runtime, int32_t count);
+
+SignalFfiError *signal_testing_tokio_async_context_new_single_threaded(SignalMutPointerTokioAsyncContext *out);
 
 SignalFfiError *signal_testing_tokio_async_future(SignalCPromisei32 *promise, SignalConstPointerTokioAsyncContext async_runtime, uint8_t input);
 
