@@ -268,9 +268,7 @@ fileprivate let _protobuf_package = "google.protobuf"
 
 extension Google_Protobuf_FieldMask: Message, _MessageImplementationBase, _ProtoNameProviding {
   public static let protoMessageName: String = _protobuf_package + ".FieldMask"
-  public static let _protobuf_nameMap: _NameMap = [
-    1: .same(proto: "paths"),
-  ]
+  public static let _protobuf_nameMap = _NameMap(bytecode: "\0\u{1}paths\0")
 
   public mutating func decodeMessage<D: Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {

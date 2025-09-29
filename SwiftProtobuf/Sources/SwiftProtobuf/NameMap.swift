@@ -14,27 +14,37 @@
 /// use this data.  We should develop and publicize a suitable API
 /// for that purpose.  (Which might be the same as the internal API.)
 
-/// This must be exactly the same as the corresponding code in the
-/// protoc-gen-swift code generator.  Changing it will break
-/// compatibility of the library with older generated code.
+/// This must produce exactly the same outputs as the corresponding
+/// code in the protoc-gen-swift code generator. Changing it will
+/// break compatibility of the library with older generated code.
 ///
 /// It does not necessarily need to match protoc's JSON field naming
 /// logic, however.
-private func toJsonFieldName(_ s: String) -> String {
-    var result = String()
+private func toJSONFieldName(_ s: UnsafeBufferPointer<UInt8>) -> String {
+    var result = String.UnicodeScalarView()
     var capitalizeNext = false
     for c in s {
-        if c == "_" {
+        if c == UInt8(ascii: "_") {
             capitalizeNext = true
         } else if capitalizeNext {
-            result.append(String(c).uppercased())
+            result.append(Unicode.Scalar(c).uppercasedAssumingASCII)
             capitalizeNext = false
         } else {
-            result.append(String(c))
+            result.append(Unicode.Scalar(c))
         }
     }
-    return result
+    return String(result)
 }
+#if !REMOVE_LEGACY_NAMEMAP_INITIALIZERS
+private func toJSONFieldName(_ s: StaticString) -> String {
+    guard s.hasPointerRepresentation else {
+        // If it's a single code point, it wouldn't be changed by the above algorithm.
+        // Return it as-is.
+        return s.description
+    }
+    return toJSONFieldName(UnsafeBufferPointer(start: s.utf8Start, count: s.utf8CodeUnitCount))
+}
+#endif  // !REMOVE_LEGACY_NAMEMAP_INITIALIZERS
 
 /// Allocate static memory buffers to intern UTF-8
 /// string data.  Track the buffers and release all of those buffers
@@ -71,6 +81,89 @@ private class InternPool {
     }
 }
 
+/// Instructions used in bytecode streams that define proto name mappings.
+///
+/// Since field and enum case names are encoded in numeric order, field and case number operands in
+/// the bytecode are stored as adjacent differences. Most messages/enums use densely packed
+/// numbers, so we've optimized the opcodes for that; each instruction that takes a single
+/// field/case number has two forms: one that assumes the next number is +1 from the previous
+/// number, and a second form that takes an arbitrary delta from the previous number.
+///
+/// This has package visibility so that it is also visible to the generator.
+package enum ProtoNameInstruction: UInt64, CaseIterable {
+    /// The proto (text format) name and the JSON name are the same string.
+    ///
+    /// ## Operands
+    /// * (Delta only) An integer representing the (delta from the previous) field or enum case
+    ///   number.
+    /// * A string containing the single text format and JSON name.
+    case sameNext = 1
+    case sameDelta = 2
+
+    /// The JSON name can be computed from the proto string.
+    ///
+    /// ## Operands
+    /// * (Delta only) An integer representing the (delta from the previous) field or enum case
+    ///   number.
+    /// * A string containing the single text format name, from which the JSON name will be
+    ///   dynamically computed.
+    case standardNext = 3
+    case standardDelta = 4
+
+    /// The JSON and text format names are just different.
+    ///
+    /// ## Operands
+    /// * (Delta only) An integer representing the (delta from the previous) field or enum case
+    ///   number.
+    /// * A string containing the text format name.
+    /// * A string containing the JSON name.
+    case uniqueNext = 5
+    case uniqueDelta = 6
+
+    /// Used for group fields only to represent the message type name of a group.
+    ///
+    /// ## Operands
+    /// * (Delta only) An integer representing the (delta from the previous) field number.
+    /// * A string containing the (UpperCamelCase by convention) message type name, from which the
+    ///   text format and JSON names can be derived (lowercase).
+    case groupNext = 7
+    case groupDelta = 8
+
+    /// Used for enum cases only to represent a value's primary proto name (the first defined case)
+    /// and its aliases. The JSON and text format names for enums are always the same.
+    ///
+    /// ## Operands
+    /// * (Delta only) An integer representing the (delta from the previous) enum case number.
+    /// * An integer `aliasCount` representing the number of aliases.
+    /// * A string containing the text format/JSON name (the first defined case with this number).
+    /// * `aliasCount` strings containing other text format/JSON names that are aliases.
+    case aliasNext = 9
+    case aliasDelta = 10
+
+    /// Represents a reserved name in a proto message.
+    ///
+    /// ## Operands
+    /// * The name of a reserved field.
+    case reservedName = 11
+
+    /// Represents a range of reserved field numbers or enum case numbers in a proto message.
+    ///
+    /// ## Operands
+    /// * An integer representing the lower bound (inclusive) of the reserved number range.
+    /// * An integer representing the delta between the upper bound (exclusive) and the lower bound
+    ///   of the reserved number range.
+    case reservedNumbers = 12
+
+    /// Indicates whether the opcode represents an instruction that has an explicit delta encoded
+    /// as its first operand.
+    var hasExplicitDelta: Bool {
+        switch self {
+        case .sameDelta, .standardDelta, .uniqueDelta, .groupDelta, .aliasDelta: return true
+        default: return false
+        }
+    }
+}
+
 /// An immutable bidirectional mapping between field/enum-case names
 /// and numbers, used to record field names for text-based
 /// serialization (JSON and text).  These maps are lazily instantiated
@@ -88,12 +181,12 @@ public struct _NameMap: ExpressibleByDictionaryLiteral {
     /// block of UTF-8 data) where possible.  In cases where the string
     /// has to be computed, it caches the UTF-8 bytes in an
     /// unmovable and immutable heap area.
-    internal struct Name: Hashable, CustomStringConvertible {
+    package struct Name: Hashable, CustomStringConvertible {
+        #if !REMOVE_LEGACY_NAMEMAP_INITIALIZERS
         // This should not be used outside of this file, as it requires
         // coordinating the lifecycle with the lifecycle of the pool
         // where the raw UTF8 gets interned.
         fileprivate init(staticString: StaticString, pool: InternPool) {
-            self.nameString = .staticString(staticString)
             if staticString.hasPointerRepresentation {
                 self.utf8Buffer = UnsafeRawBufferPointer(
                     start: staticString.utf8Start,
@@ -103,6 +196,7 @@ public struct _NameMap: ExpressibleByDictionaryLiteral {
                 self.utf8Buffer = staticString.withUTF8Buffer { pool.intern(utf8Ptr: $0) }
             }
         }
+        #endif  // !REMOVE_LEGACY_NAMEMAP_INITIALIZERS
 
         // This should not be used outside of this file, as it requires
         // coordinating the lifecycle with the lifecycle of the pool
@@ -110,29 +204,24 @@ public struct _NameMap: ExpressibleByDictionaryLiteral {
         fileprivate init(string: String, pool: InternPool) {
             let utf8 = string.utf8
             self.utf8Buffer = pool.intern(utf8: utf8)
-            self.nameString = .string(string)
         }
 
         // This is for building a transient `Name` object sufficient for lookup purposes.
         // It MUST NOT be exposed outside of this file.
         fileprivate init(transientUtf8Buffer: UnsafeRawBufferPointer) {
-            self.nameString = .staticString("")
             self.utf8Buffer = transientUtf8Buffer
         }
 
-        private(set) var utf8Buffer: UnsafeRawBufferPointer
-
-        private enum NameString {
-            case string(String)
-            case staticString(StaticString)
+        // This is for building a `Name` object from a slice of a bytecode `StaticString`.
+        // It MUST NOT be exposed outside of this file.
+        fileprivate init(bytecodeUTF8Buffer: UnsafeBufferPointer<UInt8>) {
+            self.utf8Buffer = UnsafeRawBufferPointer(bytecodeUTF8Buffer)
         }
-        private var nameString: NameString
+
+        internal let utf8Buffer: UnsafeRawBufferPointer
 
         public var description: String {
-            switch nameString {
-            case .string(let s): return s
-            case .staticString(let s): return s.description
-            }
+            String(decoding: self.utf8Buffer, as: UTF8.self)
         }
 
         public func hash(into hasher: inout Hasher) {
@@ -155,6 +244,8 @@ public struct _NameMap: ExpressibleByDictionaryLiteral {
         private(set) var proto: Name
     }
 
+    #if !REMOVE_LEGACY_NAMEMAP_INITIALIZERS
+
     /// A description of the names for a particular field or enum case.
     /// The different forms here let us minimize the amount of string
     /// data that we store in the binary.
@@ -176,6 +267,8 @@ public struct _NameMap: ExpressibleByDictionaryLiteral {
         /// enums are always the same.
         case aliased(proto: StaticString, aliases: [StaticString])
     }
+
+    #endif  // !REMOVE_LEGACY_NAMEMAP_INITIALIZERS
 
     private var internPool = InternPool()
 
@@ -201,7 +294,21 @@ public struct _NameMap: ExpressibleByDictionaryLiteral {
     /// Creates a new empty field/enum-case name/number mapping.
     public init() {}
 
+    #if REMOVE_LEGACY_NAMEMAP_INITIALIZERS
+
+    // Provide a dummy for ExpressibleByDictionaryLiteral conformance.
+    public init(dictionaryLiteral elements: (Int, Int)...) {
+        fatalError("Support compiled out removed")
+    }
+
+    #else  // !REMOVE_LEGACY_NAMEMAP_INITIALIZERS
+
     /// Build the bidirectional maps between numbers and proto/JSON names.
+    @available(
+        *,
+        deprecated,
+        message: "Please regenerate your .pb.swift files with the current version of the SwiftProtobuf protoc plugin."
+    )
     public init(
         reservedNames: [String],
         reservedRanges: [Range<Int32>],
@@ -214,6 +321,11 @@ public struct _NameMap: ExpressibleByDictionaryLiteral {
     }
 
     /// Build the bidirectional maps between numbers and proto/JSON names.
+    @available(
+        *,
+        deprecated,
+        message: "Please regenerate your .pb.swift files with the current version of the SwiftProtobuf protoc plugin."
+    )
     public init(dictionaryLiteral elements: (Int, NameDescription)...) {
         initHelper(elements)
     }
@@ -234,7 +346,7 @@ public struct _NameMap: ExpressibleByDictionaryLiteral {
 
             case .standard(proto: let p):
                 let protoName = Name(staticString: p, pool: internPool)
-                let jsonString = toJsonFieldName(protoName.description)
+                let jsonString = toJSONFieldName(p)
                 let jsonName = Name(string: jsonString, pool: internPool)
                 let names = Names(json: jsonName, proto: protoName)
                 numberToNameMap[number] = names
@@ -262,6 +374,97 @@ public struct _NameMap: ExpressibleByDictionaryLiteral {
                     protoToNumberMap[protoName] = number
                     jsonToNumberMap[protoName] = number
                 }
+            }
+        }
+    }
+
+    #endif  // !REMOVE_LEGACY_NAMEMAP_INITIALIZERS
+
+    public init(bytecode: StaticString) {
+        var previousNumber = 0
+        BytecodeInterpreter<ProtoNameInstruction>(program: bytecode).execute { instruction, reader in
+            func nextNumber() -> Int {
+                let next: Int
+                if instruction.hasExplicitDelta {
+                    next = previousNumber + Int(reader.nextInt32())
+                } else {
+                    next = previousNumber + 1
+                }
+                previousNumber = next
+                return next
+            }
+
+            switch instruction {
+            case .sameNext, .sameDelta:
+                let number = nextNumber()
+                let protoName = Name(bytecodeUTF8Buffer: reader.nextNullTerminatedString())
+                numberToNameMap[number] = Names(json: protoName, proto: protoName)
+                protoToNumberMap[protoName] = number
+                jsonToNumberMap[protoName] = number
+
+            case .standardNext, .standardDelta:
+                let number = nextNumber()
+                let protoNameBuffer = reader.nextNullTerminatedString()
+                let protoName = Name(bytecodeUTF8Buffer: protoNameBuffer)
+                let jsonString = toJSONFieldName(protoNameBuffer)
+                let jsonName = Name(string: jsonString, pool: internPool)
+                numberToNameMap[number] = Names(json: jsonName, proto: protoName)
+                protoToNumberMap[protoName] = number
+                jsonToNumberMap[protoName] = number
+                jsonToNumberMap[jsonName] = number
+
+            case .uniqueNext, .uniqueDelta:
+                let number = nextNumber()
+                let protoName = Name(bytecodeUTF8Buffer: reader.nextNullTerminatedString())
+                let jsonName = Name(bytecodeUTF8Buffer: reader.nextNullTerminatedString())
+                numberToNameMap[number] = Names(json: jsonName, proto: protoName)
+                protoToNumberMap[protoName] = number
+                jsonToNumberMap[protoName] = number
+                jsonToNumberMap[jsonName] = number
+
+            case .groupNext, .groupDelta:
+                let number = nextNumber()
+                let protoNameBuffer = reader.nextNullTerminatedString()
+                let protoName = Name(bytecodeUTF8Buffer: protoNameBuffer)
+                protoToNumberMap[protoName] = number
+                jsonToNumberMap[protoName] = number
+
+                let lowercaseName: Name
+                let hasUppercase = protoNameBuffer.contains { (UInt8(ascii: "A")...UInt8(ascii: "Z")).contains($0) }
+                if hasUppercase {
+                    lowercaseName = Name(
+                        string: String(decoding: protoNameBuffer, as: UTF8.self).lowercased(),
+                        pool: internPool
+                    )
+                    protoToNumberMap[lowercaseName] = number
+                    jsonToNumberMap[lowercaseName] = number
+                } else {
+                    // No need to convert and intern a separate copy of the string
+                    // if it would be identical.
+                    lowercaseName = protoName
+                }
+                numberToNameMap[number] = Names(json: lowercaseName, proto: protoName)
+
+            case .aliasNext, .aliasDelta:
+                let number = nextNumber()
+                let protoName = Name(bytecodeUTF8Buffer: reader.nextNullTerminatedString())
+                numberToNameMap[number] = Names(json: protoName, proto: protoName)
+                protoToNumberMap[protoName] = number
+                jsonToNumberMap[protoName] = number
+                for alias in reader.nextNullTerminatedStringArray() {
+                    let protoName = Name(bytecodeUTF8Buffer: alias)
+                    protoToNumberMap[protoName] = number
+                    jsonToNumberMap[protoName] = number
+                }
+
+            case .reservedName:
+                let name = String(decoding: reader.nextNullTerminatedString(), as: UTF8.self)
+                reservedNames.append(name)
+
+            case .reservedNumbers:
+                let lowerBound = reader.nextInt32()
+                let upperBound = lowerBound + reader.nextInt32()
+                reservedRanges.append(lowerBound..<upperBound)
             }
         }
     }

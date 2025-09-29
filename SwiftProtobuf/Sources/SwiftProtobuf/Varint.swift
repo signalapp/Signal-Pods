@@ -13,13 +13,13 @@
 // -----------------------------------------------------------------------------
 
 /// Contains helper methods to varint-encode and decode integers.
-internal enum Varint {
+package enum Varint {
 
     /// Computes the number of bytes that would be needed to store a 32-bit varint.
     ///
     /// - Parameter value: The number whose varint size should be calculated.
     /// - Returns: The size, in bytes, of the 32-bit varint.
-    static func encodedSize(of value: UInt32) -> Int {
+    package static func encodedSize(of value: UInt32) -> Int {
         if (value & (~0 << 7)) == 0 {
             return 1
         }
@@ -40,7 +40,7 @@ internal enum Varint {
     ///
     /// - Parameter value: The number whose varint size should be calculated.
     /// - Returns: The size, in bytes, of the 32-bit varint.
-    static func encodedSize(of value: Int32) -> Int {
+    package static func encodedSize(of value: Int32) -> Int {
         if value >= 0 {
             return encodedSize(of: UInt32(bitPattern: value))
         } else {
@@ -67,15 +67,15 @@ internal enum Varint {
         var n = 2
 
         if (value & (~0 << 35)) != 0 {
-            n += 4
+            n &+= 4
             value >>= 28
         }
         if (value & (~0 << 21)) != 0 {
-            n += 2
+            n &+= 2
             value >>= 14
         }
         if (value & (~0 << 14)) != 0 {
-            n += 1
+            n &+= 1
         }
         return n
     }
@@ -98,9 +98,9 @@ internal enum Varint {
         var ints = 0
         while n < count {
             if start.load(fromByteOffset: n, as: UInt8.self) < 128 {
-                ints += 1
+                ints &+= 1
             }
-            n += 1
+            n &+= 1
         }
         return ints
     }

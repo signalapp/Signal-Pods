@@ -59,6 +59,11 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: ProtobufAPIVersionCheck 
 /// sometimes simply referred to as "APIs" in other contexts, such as the name of
 /// this message itself. See https://cloud.google.com/apis/design/glossary for
 /// detailed terminology.
+///
+/// New usages of this message as an alternative to ServiceDescriptorProto are
+/// strongly discouraged. This message does not reliability preserve all
+/// information necessary to model the schema and preserve semantics. Instead
+/// make use of FileDescriptorSet which preserves the necessary information.
 public struct Google_Protobuf_Api: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
@@ -112,6 +117,9 @@ public struct Google_Protobuf_Api: Sendable {
   /// The source syntax of the service.
   public var syntax: Google_Protobuf_Syntax = .proto2
 
+  /// The source edition string, only valid when syntax is SYNTAX_EDITIONS.
+  public var edition: String = String()
+
   public var unknownFields = UnknownStorage()
 
   public init() {}
@@ -120,6 +128,11 @@ public struct Google_Protobuf_Api: Sendable {
 }
 
 /// Method represents a method of an API interface.
+///
+/// New usages of this message as an alternative to MethodDescriptorProto are
+/// strongly discouraged. This message does not reliability preserve all
+/// information necessary to model the schema and preserve semantics. Instead
+/// make use of FileDescriptorSet which preserves the necessary information.
 public struct Google_Protobuf_Method: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
@@ -144,7 +157,20 @@ public struct Google_Protobuf_Method: Sendable {
   public var options: [Google_Protobuf_Option] = []
 
   /// The source syntax of this method.
+  ///
+  /// This field should be ignored, instead the syntax should be inherited from
+  /// Api. This is similar to Field and EnumValue.
+  ///
+  /// NOTE: This field was marked as deprecated in the .proto file.
   public var syntax: Google_Protobuf_Syntax = .proto2
+
+  /// The source edition string, only valid when syntax is SYNTAX_EDITIONS.
+  ///
+  /// This field should be ignored, instead the edition should be inherited from
+  /// Api. This is similar to Field and EnumValue.
+  ///
+  /// NOTE: This field was marked as deprecated in the .proto file.
+  public var edition: String = String()
 
   public var unknownFields = UnknownStorage()
 
@@ -252,15 +278,7 @@ fileprivate let _protobuf_package = "google.protobuf"
 
 extension Google_Protobuf_Api: Message, _MessageImplementationBase, _ProtoNameProviding {
   public static let protoMessageName: String = _protobuf_package + ".Api"
-  public static let _protobuf_nameMap: _NameMap = [
-    1: .same(proto: "name"),
-    2: .same(proto: "methods"),
-    3: .same(proto: "options"),
-    4: .same(proto: "version"),
-    5: .standard(proto: "source_context"),
-    6: .same(proto: "mixins"),
-    7: .same(proto: "syntax"),
-  ]
+  public static let _protobuf_nameMap = _NameMap(bytecode: "\0\u{1}name\0\u{1}methods\0\u{1}options\0\u{1}version\0\u{3}source_context\0\u{1}mixins\0\u{1}syntax\0\u{1}edition\0")
 
   public mutating func decodeMessage<D: Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
@@ -275,6 +293,7 @@ extension Google_Protobuf_Api: Message, _MessageImplementationBase, _ProtoNamePr
       case 5: try { try decoder.decodeSingularMessageField(value: &self._sourceContext) }()
       case 6: try { try decoder.decodeRepeatedMessageField(value: &self.mixins) }()
       case 7: try { try decoder.decodeSingularEnumField(value: &self.syntax) }()
+      case 8: try { try decoder.decodeSingularStringField(value: &self.edition) }()
       default: break
       }
     }
@@ -306,6 +325,9 @@ extension Google_Protobuf_Api: Message, _MessageImplementationBase, _ProtoNamePr
     if self.syntax != .proto2 {
       try visitor.visitSingularEnumField(value: self.syntax, fieldNumber: 7)
     }
+    if !self.edition.isEmpty {
+      try visitor.visitSingularStringField(value: self.edition, fieldNumber: 8)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -317,6 +339,7 @@ extension Google_Protobuf_Api: Message, _MessageImplementationBase, _ProtoNamePr
     if lhs._sourceContext != rhs._sourceContext {return false}
     if lhs.mixins != rhs.mixins {return false}
     if lhs.syntax != rhs.syntax {return false}
+    if lhs.edition != rhs.edition {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -324,15 +347,7 @@ extension Google_Protobuf_Api: Message, _MessageImplementationBase, _ProtoNamePr
 
 extension Google_Protobuf_Method: Message, _MessageImplementationBase, _ProtoNameProviding {
   public static let protoMessageName: String = _protobuf_package + ".Method"
-  public static let _protobuf_nameMap: _NameMap = [
-    1: .same(proto: "name"),
-    2: .standard(proto: "request_type_url"),
-    3: .standard(proto: "request_streaming"),
-    4: .standard(proto: "response_type_url"),
-    5: .standard(proto: "response_streaming"),
-    6: .same(proto: "options"),
-    7: .same(proto: "syntax"),
-  ]
+  public static let _protobuf_nameMap = _NameMap(bytecode: "\0\u{1}name\0\u{3}request_type_url\0\u{3}request_streaming\0\u{3}response_type_url\0\u{3}response_streaming\0\u{1}options\0\u{1}syntax\0\u{1}edition\0")
 
   public mutating func decodeMessage<D: Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
@@ -347,6 +362,7 @@ extension Google_Protobuf_Method: Message, _MessageImplementationBase, _ProtoNam
       case 5: try { try decoder.decodeSingularBoolField(value: &self.responseStreaming) }()
       case 6: try { try decoder.decodeRepeatedMessageField(value: &self.options) }()
       case 7: try { try decoder.decodeSingularEnumField(value: &self.syntax) }()
+      case 8: try { try decoder.decodeSingularStringField(value: &self.edition) }()
       default: break
       }
     }
@@ -374,6 +390,9 @@ extension Google_Protobuf_Method: Message, _MessageImplementationBase, _ProtoNam
     if self.syntax != .proto2 {
       try visitor.visitSingularEnumField(value: self.syntax, fieldNumber: 7)
     }
+    if !self.edition.isEmpty {
+      try visitor.visitSingularStringField(value: self.edition, fieldNumber: 8)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -385,6 +404,7 @@ extension Google_Protobuf_Method: Message, _MessageImplementationBase, _ProtoNam
     if lhs.responseStreaming != rhs.responseStreaming {return false}
     if lhs.options != rhs.options {return false}
     if lhs.syntax != rhs.syntax {return false}
+    if lhs.edition != rhs.edition {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -392,10 +412,7 @@ extension Google_Protobuf_Method: Message, _MessageImplementationBase, _ProtoNam
 
 extension Google_Protobuf_Mixin: Message, _MessageImplementationBase, _ProtoNameProviding {
   public static let protoMessageName: String = _protobuf_package + ".Mixin"
-  public static let _protobuf_nameMap: _NameMap = [
-    1: .same(proto: "name"),
-    2: .same(proto: "root"),
-  ]
+  public static let _protobuf_nameMap = _NameMap(bytecode: "\0\u{1}name\0\u{1}root\0")
 
   public mutating func decodeMessage<D: Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
