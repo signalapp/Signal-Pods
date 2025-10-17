@@ -24,14 +24,13 @@ extension AuthenticatedChatConnection {
         }
 
         return failOnError {
-            var chatHandle = SignalMutPointerAuthenticatedChatConnection(untyped: nil)
-            try fakeChatConnection.withNativeHandle {
-                try checkError(
+            let chatHandle = try fakeChatConnection.withNativeHandle { connectionHandle in
+                try invokeFnReturningValueByPointer(.init()) {
                     signal_testing_fake_chat_connection_take_authenticated_chat(
-                        &chatHandle,
-                        $0.const()
+                        $0,
+                        connectionHandle.const()
                     )
-                )
+                }
             }
             let chat = AuthenticatedChatConnection(
                 fakeHandle: NonNull(chatHandle)!,
@@ -39,14 +38,13 @@ extension AuthenticatedChatConnection {
             )
 
             listenerBridge.setConnection(chatConnection: chat)
-            var fakeRemoteHandle = SignalMutPointerFakeChatRemoteEnd()
-            try fakeChatConnection.withNativeHandle {
-                try checkError(
+            let fakeRemoteHandle = try fakeChatConnection.withNativeHandle { connectionHandle in
+                try invokeFnReturningValueByPointer(.init()) {
                     signal_testing_fake_chat_connection_take_remote(
-                        &fakeRemoteHandle,
-                        $0.const()
+                        $0,
+                        connectionHandle.const()
                     )
-                )
+                }
             }
 
             let fakeRemote = FakeChatRemote(
@@ -72,14 +70,13 @@ extension UnauthenticatedChatConnection {
         }
 
         return failOnError {
-            var chatHandle = SignalMutPointerAuthenticatedChatConnection(untyped: nil)
-            try fakeChatConnection.withNativeHandle {
-                try checkError(
+            let chatHandle = try fakeChatConnection.withNativeHandle { connectionHandle in
+                try invokeFnReturningValueByPointer(.init()) {
                     signal_testing_fake_chat_connection_take_authenticated_chat(
-                        &chatHandle,
-                        $0.const()
+                        $0,
+                        connectionHandle.const()
                     )
-                )
+                }
             }
             let chat = UnauthenticatedChatConnection(
                 fakeHandle: NonNull(chatHandle)!,
@@ -88,14 +85,13 @@ extension UnauthenticatedChatConnection {
             )
 
             listenerBridge.setConnection(chatConnection: chat)
-            var fakeRemoteHandle = SignalMutPointerFakeChatRemoteEnd()
-            try fakeChatConnection.withNativeHandle {
-                try checkError(
+            let fakeRemoteHandle = try fakeChatConnection.withNativeHandle { connectionHandle in
+                try invokeFnReturningValueByPointer(.init()) {
                     signal_testing_fake_chat_connection_take_remote(
-                        &fakeRemoteHandle,
-                        $0.const()
+                        $0,
+                        connectionHandle.const()
                     )
-                )
+                }
             }
 
             let fakeRemote = FakeChatRemote(
@@ -180,26 +176,25 @@ internal class FakeChatRemote: NativeHandleOwner<SignalMutPointerFakeChatRemoteE
     }
 
     func getNextIncomingRequest() async throws -> (ChatRequest.InternalRequest, UInt64) {
-        let request = try await self.tokioAsyncContext.invokeAsyncFunction { promise, asyncContext in
-            withNativeHandle { handle in
-                signal_testing_fake_chat_remote_end_receive_incoming_request(
-                    promise,
-                    asyncContext.const(),
-                    handle.const()
-                )
+        while true {
+            let request = try await self.tokioAsyncContext.invokeAsyncFunction { promise, asyncContext in
+                withNativeHandle { handle in
+                    signal_testing_fake_chat_remote_end_receive_incoming_request(
+                        promise,
+                        asyncContext.const(),
+                        handle.const()
+                    )
+                }
             }
-        }
-        defer { signal_fake_chat_sent_request_destroy(request) }
-
-        let httpRequest: ChatRequest.InternalRequest =
-            try invokeFnReturningNativeHandle {
-                signal_testing_fake_chat_sent_request_take_http_request($0, request)
+            guard request.present else {
+                continue
             }
-        let requestId = try invokeFnReturningInteger {
-            signal_testing_fake_chat_sent_request_request_id($0, request.const())
-        }
 
-        return (httpRequest, requestId)
+            let httpRequest = ChatRequest.InternalRequest(owned: NonNull(request.first)!)
+            let requestId = request.second
+
+            return (httpRequest, requestId)
+        }
     }
 
     func sendResponse(requestId: UInt64, _ response: ChatResponse) throws {
@@ -252,8 +247,11 @@ internal class FakeChatServer: NativeHandleOwner<SignalMutPointerFakeChatServer>
     internal init(asyncContext: TokioAsyncContext) {
         self.asyncContext = asyncContext
 
-        var pointer = SignalMutPointerFakeChatServer()
-        failOnError(signal_testing_fake_chat_server_create(&pointer))
+        let pointer = failOnError {
+            try invokeFnReturningValueByPointer(.init()) {
+                signal_testing_fake_chat_server_create($0)
+            }
+        }
         super.init(owned: NonNull(pointer)!)
     }
 
@@ -285,18 +283,16 @@ internal class FakeChatResponse: NativeHandleOwner<SignalMutPointerFakeChatRespo
                     "\(key): \(value)"
                 }.withUnsafeBorrowedBytestringArray { headers in
                     try response.body.withUnsafeBorrowedBuffer { body in
-                        var nativeHandle = SignalMutPointerFakeChatResponse()
-                        try checkError(
+                        try invokeFnReturningValueByPointer(.init()) {
                             signal_testing_fake_chat_response_create(
-                                &nativeHandle,
+                                $0,
                                 requestId,
                                 response.status,
                                 message,
                                 headers,
                                 SignalOptionalBorrowedSliceOfc_uchar(present: true, value: body)
                             )
-                        )
-                        return nativeHandle
+                        }
                     }
                 }
             }
@@ -413,28 +409,6 @@ extension SignalConstPointerFakeChatRemoteEnd: SignalConstPointer {
     }
 }
 
-extension SignalMutPointerFakeChatSentRequest: SignalMutPointer {
-    public typealias ConstPointer = SignalConstPointerFakeChatSentRequest
-
-    public init(untyped: OpaquePointer?) {
-        self.init(raw: untyped)
-    }
-
-    public func toOpaque() -> OpaquePointer? {
-        self.raw
-    }
-
-    public func const() -> Self.ConstPointer {
-        Self.ConstPointer(raw: self.raw)
-    }
-}
-
-extension SignalConstPointerFakeChatSentRequest: SignalConstPointer {
-    public func toOpaque() -> OpaquePointer? {
-        self.raw
-    }
-}
-
 extension SignalMutPointerFakeChatServer: SignalMutPointer {
     public typealias ConstPointer = SignalConstPointerFakeChatServer
 
@@ -479,8 +453,8 @@ extension SignalConstPointerFakeChatResponse: SignalConstPointer {
     }
 }
 
-extension SignalCPromiseMutPointerFakeChatSentRequest: PromiseStruct {
-    typealias Result = SignalMutPointerFakeChatSentRequest
+extension SignalCPromiseOptionalPairOfMutPointerHttpRequestu64: PromiseStruct {
+    typealias Result = SignalOptionalPairOfMutPointerHttpRequestu64
 }
 
 extension SignalCPromiseMutPointerFakeChatRemoteEnd: PromiseStruct {

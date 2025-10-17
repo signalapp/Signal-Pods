@@ -70,6 +70,8 @@ public enum SignalError: Error {
     case connectedElsewhere(String)
     case keyTransparencyError(String)
     case keyTransparencyVerificationFailed(String)
+    case requestUnauthorized(String)
+    case mismatchedDevices(entries: [MismatchedDeviceEntry], message: String)
 
     case unknown(UInt32, String)
 }
@@ -157,8 +159,9 @@ internal func checkError(_ error: SignalFfiErrorRef?) throws {
         }
         throw SignalError.invalidRegistrationId(address: address, message: errStr)
     case SignalErrorCodeInvalidProtocolAddress:
-        var pair = SignalPairOfc_charu32()
-        try checkError(signal_error_get_invalid_protocol_address(&pair, error))
+        let pair = try invokeFnReturningValueByPointer(.init()) {
+            signal_error_get_invalid_protocol_address($0, error)
+        }
         defer { signal_free_string(pair.first) }
         let name = String(cString: pair.first!)
         throw SignalError.invalidProtocolAddress(name: name, deviceId: pair.second, message: errStr)
@@ -225,8 +228,9 @@ internal func checkError(_ error: SignalFfiErrorRef?) throws {
         }
         throw SignalError.rateLimitedError(retryAfter: TimeInterval(retryAfterSeconds), message: errStr)
     case SignalErrorCodeRateLimitChallenge:
-        var pair = SignalPairOfc_charOwnedBufferOfc_uchar()
-        try checkError(signal_error_get_rate_limit_challenge(&pair, error))
+        let pair = try invokeFnReturningValueByPointer(.init()) {
+            signal_error_get_rate_limit_challenge($0, error)
+        }
         defer {
             signal_free_string(pair.first)
             signal_free_buffer(pair.second.base, pair.second.length)
@@ -279,8 +283,9 @@ internal func checkError(_ error: SignalFfiErrorRef?) throws {
     case SignalErrorCodeRegistrationSendVerificationCodeFailed:
         throw RegistrationError.sendVerificationFailed(errStr)
     case SignalErrorCodeRegistrationCodeNotDeliverable:
-        var pair = SignalPairOfc_charbool()
-        try checkError(signal_error_get_registration_error_not_deliverable(&pair, error))
+        let pair = try invokeFnReturningValueByPointer(.init()) {
+            signal_error_get_registration_error_not_deliverable($0, error)
+        }
         defer { signal_free_string(pair.first) }
         let message = String(cString: pair.first!)
         throw RegistrationError.codeNotDeliverable(message: message, permanentFailure: pair.second)
@@ -314,6 +319,16 @@ internal func checkError(_ error: SignalFfiErrorRef?) throws {
         throw SignalError.keyTransparencyError(errStr)
     case SignalErrorCodeKeyTransparencyVerificationFailed:
         throw SignalError.keyTransparencyVerificationFailed(errStr)
+    case SignalErrorCodeRequestUnauthorized:
+        throw SignalError.requestUnauthorized(errStr)
+    case SignalErrorCodeMismatchedDevices:
+        var entries = SignalOwnedBufferOfFfiMismatchedDevicesError()
+        try checkError(signal_error_get_mismatched_device_errors(&entries, error))
+        defer { signal_free_list_of_mismatched_device_errors(entries) }
+        throw SignalError.mismatchedDevices(
+            entries: UnsafeBufferPointer(start: entries.base, count: entries.length).map { MismatchedDeviceEntry($0) },
+            message: errStr
+        )
     default:
         throw SignalError.unknown(errType, errStr)
     }
