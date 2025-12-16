@@ -183,7 +183,6 @@ code_sign_if_enabled() {
 if [[ "$CONFIGURATION" == "App Store Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/GRDB.swift/GRDB.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/LibSignalClient/LibSignalClient.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/Mantle/Mantle.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Reachability/Reachability.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SDWebImage/SDWebImage.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SDWebImageWebPCoder/SDWebImageWebPCoder.framework"
@@ -205,7 +204,6 @@ fi
 if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/GRDB.swift/GRDB.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/LibSignalClient/LibSignalClient.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/Mantle/Mantle.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Reachability/Reachability.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SDWebImage/SDWebImage.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SDWebImageWebPCoder/SDWebImageWebPCoder.framework"
@@ -227,7 +225,6 @@ fi
 if [[ "$CONFIGURATION" == "Profiling" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/GRDB.swift/GRDB.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/LibSignalClient/LibSignalClient.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/Mantle/Mantle.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Reachability/Reachability.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SDWebImage/SDWebImage.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SDWebImageWebPCoder/SDWebImageWebPCoder.framework"
@@ -249,7 +246,6 @@ fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/GRDB.swift/GRDB.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/LibSignalClient/LibSignalClient.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/Mantle/Mantle.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Reachability/Reachability.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SDWebImage/SDWebImage.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SDWebImageWebPCoder/SDWebImageWebPCoder.framework"
@@ -270,7 +266,6 @@ fi
 if [[ "$CONFIGURATION" == "Testable Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/GRDB.swift/GRDB.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/LibSignalClient/LibSignalClient.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/Mantle/Mantle.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Reachability/Reachability.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SDWebImage/SDWebImage.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SDWebImageWebPCoder/SDWebImageWebPCoder.framework"
