@@ -179,43 +179,49 @@ internal class ProvisioningListenerBridge {
     /// The resulting struct must eventually have its `destroy` callback invoked with its `ctx` as argument,
     /// or the ProvisioningListenerBridge object used to construct it (`self`) will be leaked.
     func makeListenerStruct() -> SignalFfiProvisioningListenerStruct {
-        let receivedAddress: SignalReceivedProvisioningAddress = { rawCtx, rawAddress, ackHandle in
+        let receivedAddress: SignalFfiProvisioningListenerReceivedAddress = { rawCtx, rawAddress, ackHandle in
             defer { signal_free_string(rawAddress) }
             let bridge = Unmanaged<ProvisioningListenerBridge>.fromOpaque(rawCtx!).takeUnretainedValue()
 
-            let ackHandleOwner = AckHandleOwner(owned: NonNull(untyped: ackHandle!))
+            let ackHandleOwner = AckHandleOwner(owned: NonNull(ackHandle)!)
             guard let connection = bridge.connection else {
-                return
+                // The client no longer listening is not an error.
+                return 0
             }
 
             let address = String(cString: rawAddress!)
             bridge.listener.provisioningConnection(connection, didReceiveAddress: address) {
                 _ = ackHandleOwner.withNativeHandle { ackHandle in signal_server_message_ack_send(ackHandle.const()) }
             }
+            return 0
         }
 
-        let receivedEnvelope: SignalReceivedProvisioningEnvelope = { rawCtx, envelope, ackHandle in
+        let receivedEnvelope: SignalFfiProvisioningListenerReceivedEnvelope = { rawCtx, envelope, ackHandle in
             let bridge = Unmanaged<ProvisioningListenerBridge>.fromOpaque(rawCtx!).takeUnretainedValue()
 
-            let ackHandleOwner = AckHandleOwner(owned: NonNull(untyped: ackHandle!))
+            let ackHandleOwner = AckHandleOwner(owned: NonNull(ackHandle)!)
             let envelopeData = Data(consuming: envelope)
             guard let connection = bridge.connection else {
-                return
+                // The client no longer listening is not an error.
+                return 0
             }
 
             bridge.listener.provisioningConnection(connection, didReceiveEnvelope: envelopeData) {
                 _ = ackHandleOwner.withNativeHandle { ackHandle in signal_server_message_ack_send(ackHandle.const()) }
             }
+            return 0
         }
-        let connectionInterrupted: SignalConnectionInterrupted = { rawCtx, maybeError in
+        let connectionInterrupted: SignalFfiProvisioningListenerConnectionInterrupted = { rawCtx, maybeError in
             let bridge = Unmanaged<ProvisioningListenerBridge>.fromOpaque(rawCtx!).takeUnretainedValue()
             let error = convertError(maybeError)
 
             guard let connection = bridge.connection else {
-                return
+                // The client no longer listening is not an error.
+                return 0
             }
 
             bridge.listener.connectionWasInterrupted(connection, error: error)
+            return 0
         }
         return .init(
             ctx: Unmanaged.passRetained(self).toOpaque(),
