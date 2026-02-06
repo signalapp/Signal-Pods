@@ -114,7 +114,8 @@ def download_if_needed(archive_file: str, url: str, checksum: str, archive_dir: 
 
     print("downloading {}...".format(archive_file), file=sys.stderr)
     try:
-        with urllib.request.urlopen(url) as response:
+        ssl_context = ssl.create_default_context()
+        with urllib.request.urlopen(url, context=ssl_context) as response:
             digest = hashlib.sha256()
             download_path = os.path.join(archive_dir, UNVERIFIED_DOWNLOAD_NAME)
             f_download = open(download_path, 'w+b')
