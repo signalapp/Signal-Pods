@@ -15,9 +15,9 @@ necessary for using the generated code.
 After using the protoc plugin to generate Swift code from your .proto
 files, you will need to add this library to your project.
 
-[![Build and Test](https://github.com/apple/swift-protobuf/workflows/Build%20and%20Test/badge.svg)](https://github.com/apple/swift-protobuf/actions?query=workflow%3A%22Build+and+Test%22)
-[![Check Upstream Protos](https://github.com/apple/swift-protobuf/workflows/Check%20Upstream%20Proto%20Files/badge.svg)](https://github.com/apple/swift-protobuf/actions?query=workflow%3A%22Check+Upstream+Proto+Files%22)
-[![Run Conformance Tests](https://github.com/apple/swift-protobuf/workflows/Run%20Conformance%20Tests/badge.svg)](https://github.com/apple/swift-protobuf/actions?query=workflow%3A%22Run+Conformance+Tests%22)
+[![Build and Test](https://github.com/apple/swift-protobuf/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/apple/swift-protobuf/actions/workflows/build.yml)
+[![Check Upstream Protos](https://github.com/apple/swift-protobuf/actions/workflows/check_upstream_protos.yml/badge.svg?branch=main)](https://github.com/apple/swift-protobuf/actions/workflows/check_upstream_protos.yml)
+[![Run Protobuf Head Conformance Tests](https://github.com/apple/swift-protobuf/actions/workflows/head_conformance.yml/badge.svg?branch=main)](https://github.com/apple/swift-protobuf/actions/workflows/head_conformance.yml)
 
 # Features of SwiftProtobuf
 
@@ -90,7 +90,7 @@ your project as explained below.
 
 To use Swift with Protocol buffers, you'll need:
 
-* A Swift 5.10 or later compiler (or, if building with Xcode, Xcode 15.3 or later
+* A Swift 6.0 or later compiler (or, if building with Xcode, Xcode 16.0 or later
   as required by the App Store). The Swift protobuf project is being developed
   and tested against the latest release version of Swift available from
   [Swift.org](https://swift.org)
@@ -269,7 +269,7 @@ let binaryData: Data = try info.serializedBytes()
 let binaryDataAsBytes: [UInt8] = try info.serializedBytes()
 
 // Note that while the `serializedBytes()` spelling is generally preferred,
-// you may also use `serializedData()` to get the bytes as an instance of 
+// you may also use `serializedData()` to get the bytes as an instance of
 // `Data` where required.
 // This means that the following two statements are equivalent:
 // let binaryData: Data = try info.serializedBytes()

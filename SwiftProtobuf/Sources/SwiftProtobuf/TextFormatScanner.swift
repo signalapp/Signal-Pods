@@ -38,7 +38,16 @@ private let asciiForwardSlash = UInt8(ascii: "/")
 private let asciiHash = UInt8(ascii: "#")
 private let asciiUnderscore = UInt8(ascii: "_")
 private let asciiQuestionMark = UInt8(ascii: "?")
+private let asciiTilde = UInt8(ascii: "~")
+private let asciiPercent = UInt8(ascii: "%")
+private let asciiExclamation: UInt8 = UInt8(ascii: "!")
+private let asciiDollarSign: UInt8 = UInt8(ascii: "$")
+private let asciiAmpersand: UInt8 = UInt8(ascii: "&")
+private let asciiAsterisk: UInt8 = UInt8(ascii: "*")
+private let asciiEquals: UInt8 = UInt8(ascii: "=")
 private let asciiSpace = UInt8(ascii: " ")
+private let asciiOpenParenthesis: UInt8 = UInt8(ascii: "(")
+private let asciiCloseParenthesis: UInt8 = UInt8(ascii: ")")
 private let asciiOpenSquareBracket = UInt8(ascii: "[")
 private let asciiCloseSquareBracket = UInt8(ascii: "]")
 private let asciiOpenCurlyBracket = UInt8(ascii: "{")
@@ -283,14 +292,18 @@ internal struct TextFormatScanner {
     }
 
     /// Skip whitespace
+    ///
+    /// https://protobuf.dev/reference/protobuf/textformat-spec/#whitespace
     private mutating func skipWhitespace() {
         while p != end {
             let u = p[0]
             switch u {
             case asciiSpace,
-                asciiTab,
-                asciiNewLine,
-                asciiCarriageReturn:  // space, tab, NL, CR
+                asciiTab,  // 9
+                asciiNewLine,  // 10
+                asciiVerticalTab,  // 11
+                asciiFormFeed,  // 12
+                asciiCarriageReturn:  // 13
                 p += 1
             case asciiHash:  // # comment
                 p += 1
@@ -298,6 +311,8 @@ internal struct TextFormatScanner {
                     // Skip until end of line
                     let c = p[0]
                     p += 1
+                    // NOTE: The support for asciiCarriageReturn (13) to end the comment is not
+                    // actually to spec.
                     if c == asciiNewLine || c == asciiCarriageReturn {
                         break
                     }
@@ -1045,7 +1060,14 @@ internal struct TextFormatScanner {
     /// Any URLs are syntactically (almost) identical to extension
     /// keys, so we share the code for those.
     internal mutating func nextOptionalAnyURL() throws -> String? {
-        try nextOptionalExtensionKey()
+        skipWhitespace()
+        if p == end {
+            return nil
+        }
+        guard p[0] == asciiOpenSquareBracket else {  // [
+            return nil
+        }
+        return try parseComplexFieldName(allowAnyName: true)
     }
 
     /// Returns next extension key or nil if end-of-input or
@@ -1053,12 +1075,6 @@ internal struct TextFormatScanner {
     ///
     /// Throws an error if the next token starts with '[' but
     /// cannot be parsed as an extension key.
-    ///
-    /// Note: This accepts / characters to support Any URL parsing.
-    /// Technically, Any URLs can contain / characters and extension
-    /// key names cannot.  But in practice, accepting / chracters for
-    /// extension keys works fine, since the result just gets rejected
-    /// when the key is looked up.
     internal mutating func nextOptionalExtensionKey() throws -> String? {
         skipWhitespace()
         if p == end {
@@ -1067,36 +1083,118 @@ internal struct TextFormatScanner {
         guard p[0] == asciiOpenSquareBracket else {  // [
             return nil
         }
-        return try parseExtensionKey()
+        return try parseComplexFieldName(allowAnyName: false)
     }
 
-    /// Parse the rest of an [extension_field_name] in the input, assuming the
-    /// initial "[" character has already been read (and is in the prefix)
-    /// This is also used for AnyURL, so we include "/".
-    private mutating func parseExtensionKey() throws -> String {
+    /// Parse the rest of an ExtensionName or AnyName. See
+    ///   https://protobuf.dev/reference/protobuf/textformat-spec/#field-names
+    /// Assumes the initial "[" character has already been read (and is in the prefix)
+    private mutating func parseComplexFieldName(allowAnyName: Bool) throws -> String {
         assert(p[0] == asciiOpenSquareBracket)
         p += 1
+        skipWhitespace()
         if p == end {
             throw TextFormatDecodingError.malformedText
         }
-        let start = p
-        switch p[0] {
-        case asciiLowerA...asciiLowerZ, asciiUpperA...asciiUpperZ:
-            p += 1
-        default:
-            throw TextFormatDecodingError.malformedText
+        var start = p
+        var sawPercentEncoding: Bool = false
+        if allowAnyName {
+            switch p[0] {
+            case asciiLowerA...asciiLowerZ,  // spec: url_unreserved - letter
+                asciiUpperA...asciiUpperZ,  // spec: url_unreserved - letter
+                asciiZero...asciiNine,  // spec: url_unreserved - dec
+                asciiUnderscore,  // spec: url_unreserved
+                asciiPeriod,  // spec: url_unreserved
+                asciiMinus,  // spec: url_unreserved
+                asciiPeriod,  // spec: url_unreserved
+                asciiTilde,  // spec: url_unreserved
+                asciiExclamation,  // spec: url_sub_delim
+                asciiDollarSign,  // spec: url_sub_delim
+                asciiAmpersand,  // spec: url_sub_delim
+                asciiOpenParenthesis,  // spec: url_sub_delim
+                asciiCloseParenthesis,  // spec: url_sub_delim
+                asciiAsterisk,  // spec: url_sub_delim
+                asciiEquals,  // spec: url_sub_delim
+                asciiPlus,  // spec: url_sub_delim
+                asciiComma,  // spec: url_sub_delim
+                asciiSemicolon:  // spec: url_sub_delim
+                p += 1
+            case asciiPercent:  // spec: url_pct_encoded
+                sawPercentEncoding = true
+                p += 1
+            default:
+                throw TextFormatDecodingError.malformedText
+            }
+        } else {
+            switch p[0] {
+            // spec: IDENT for start of TypeName
+            case asciiLowerA...asciiLowerZ,
+                asciiUpperA...asciiUpperZ,
+                asciiUnderscore:
+                p += 1
+            default:
+                throw TextFormatDecodingError.malformedText
+            }
+        }
+        var collector: String? = nil
+        func appendCurrent() throws {
+            guard p != start else { return }
+            guard let complexName = utf8ToString(bytes: start, count: p - start) else {
+                throw TextFormatDecodingError.malformedText
+            }
+            if collector == nil {
+                collector = complexName
+            } else {
+                collector!.append(complexName)
+            }
         }
         loop: while p != end {
             switch p[0] {
-            case asciiLowerA...asciiLowerZ,
-                asciiUpperA...asciiUpperZ,
-                asciiZero...asciiNine,
-                asciiUnderscore,
-                asciiPeriod,
-                asciiForwardSlash:
+            case asciiLowerA...asciiLowerZ,  // spec: IDENT - letter
+                asciiUpperA...asciiUpperZ,  // spec: IDENT - letter
+                asciiZero...asciiNine,  // spec: IDENT - letter
+                asciiUnderscore,  // spec: IDENT - letter
+                asciiPeriod:  // spec: TypeName
                 p += 1
             case asciiCloseSquareBracket:  // ]
                 break loop
+            case asciiForwardSlash,  // spec: url_unreserved
+                asciiMinus,  // spec: url_unreserved
+                asciiPeriod,  // spec: url_unreserved
+                asciiTilde,  // spec: url_unreserved
+                asciiExclamation,  // spec: url_sub_delim
+                asciiDollarSign,  // spec: url_sub_delim
+                asciiAmpersand,  // spec: url_sub_delim
+                asciiOpenParenthesis,  // spec: url_sub_delim
+                asciiCloseParenthesis,  // spec: url_sub_delim
+                asciiAsterisk,  // spec: url_sub_delim
+                asciiEquals,  // spec: url_sub_delim
+                asciiPlus,  // spec: url_sub_delim
+                asciiComma,  // spec: url_sub_delim
+                asciiSemicolon:  // spec: url_sub_delim
+                guard allowAnyName else {
+                    throw TextFormatDecodingError.malformedText
+                }
+                p += 1
+            case asciiPercent:  // spec: url_pct_encoded
+                guard allowAnyName else {
+                    throw TextFormatDecodingError.malformedText
+                }
+                sawPercentEncoding = true
+                p += 1
+            // Don't really want to call skipWhitespace after each character, so duplicate
+            // the cases here.
+            case asciiSpace,
+                asciiTab,  // 9
+                asciiNewLine,  // 10
+                asciiVerticalTab,  // 11
+                asciiFormFeed,  // 12
+                asciiCarriageReturn,  // 13
+                asciiHash:  // # comment
+                // Append what we have, then skip the whitespace/comments and grab the star.
+                try appendCurrent()
+                skipWhitespace()
+                start = p
             default:
                 throw TextFormatDecodingError.malformedText
             }
@@ -1104,16 +1202,38 @@ internal struct TextFormatScanner {
         if p == end || p[0] != asciiCloseSquareBracket {
             throw TextFormatDecodingError.malformedText
         }
-        guard let extensionName = utf8ToString(bytes: start, count: p - start) else {
+        try appendCurrent()
+        // If there was never anything in the braces, it was malformed.
+        guard let complexName = collector else {
             throw TextFormatDecodingError.malformedText
         }
         p += 1  // Skip ]
         skipWhitespace()
-        return extensionName
+
+        // Spec requires ensuring any percent escape is valid hex afterwards (and the conformance
+        // tests check this is done).
+        if sawPercentEncoding {
+            func isValidHexDigit(_ c: UInt8) -> Bool {
+                (c >= asciiZero && c <= asciiNine) || (c >= asciiUpperA && c <= asciiUpperF)
+                    || (c >= asciiLowerA && c <= asciiLowerF)
+            }
+            var scan = complexName.utf8.makeIterator()
+            while let byte = scan.next() {
+                guard byte == asciiPercent else { continue }
+                guard let firstHex = scan.next(), isValidHexDigit(firstHex),
+                    let secondHex = scan.next(), isValidHexDigit(secondHex)
+                else {
+                    throw TextFormatDecodingError.malformedText
+                }
+            }
+        }
+
+        return complexName
     }
 
     /// Returns text of next regular key or nil if end-of-input.
-    internal mutating func nextKey(allowExtensions: Bool) throws -> String? {
+    internal mutating func nextKey(allowExtensions: Bool, allowAnyNames: Bool = false) throws -> String? {
+        assert(allowExtensions || !allowAnyNames)  // allowAnyNames doesn't make sense without allowExtensions
         skipWhitespace()
         if p == end {
             return nil
@@ -1122,7 +1242,7 @@ internal struct TextFormatScanner {
         switch c {
         case asciiOpenSquareBracket:  // [
             if allowExtensions {
-                return "[\(try parseExtensionKey())]"
+                return "[\(try parseComplexFieldName(allowAnyName: allowAnyNames))]"
             }
             throw TextFormatDecodingError.unknownField
         case asciiLowerA...asciiLowerZ,
@@ -1195,7 +1315,7 @@ internal struct TextFormatScanner {
                 // Unknown field name or reserved, break and skip
                 break
             case asciiOpenSquareBracket:  // Start of an extension field
-                let key = try parseExtensionKey()
+                let key = try parseComplexFieldName(allowAnyName: false)
                 if let fieldNumber = extensions?.fieldNumberForProto(messageType: messageType, protoFieldName: key) {
                     return fieldNumber
                 }
@@ -1380,7 +1500,7 @@ internal struct TextFormatScanner {
             if p == end {
                 throw TextFormatDecodingError.malformedText
             }
-            if let _ = try nextKey(allowExtensions: true) {
+            if let _ = try nextKey(allowExtensions: true, allowAnyNames: true) {
                 // Got a valid field name or extension name ("[ext.name]")
             } else {
                 throw TextFormatDecodingError.malformedText
