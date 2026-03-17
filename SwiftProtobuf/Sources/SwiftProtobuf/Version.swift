@@ -12,14 +12,18 @@
 ///
 // -----------------------------------------------------------------------------
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 // Expose version information about the library.
 public struct Version {
     /// Major version.
     public static let major = 1
     /// Minor version.
-    public static let minor = 35
+    public static let minor = 36
     /// Revision number.
     public static let revision = 1
 

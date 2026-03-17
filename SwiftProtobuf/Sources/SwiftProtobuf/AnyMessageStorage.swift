@@ -13,7 +13,11 @@
 ///
 // -----------------------------------------------------------------------------
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 private func serializeAnyJSON(
     for message: any Message,
@@ -414,7 +418,7 @@ extension AnyMessageStorage {
     // actually look up the value in their runtime registries, but since we do deferred parsing
     // we can't assume the registry is complete, thus just do this minimal validation check.
     fileprivate func isTypeURLValid() -> Bool {
-        _typeURL.contains("/")
+        _typeURL.contains(where: { $0 == "/" })
     }
 
     // Override the traversal-based JSON encoding

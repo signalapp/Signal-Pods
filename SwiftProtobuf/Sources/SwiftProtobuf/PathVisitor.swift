@@ -12,7 +12,13 @@
 ///
 // -----------------------------------------------------------------------------
 
+#if FieldMaskUtilities
+
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 // Visitor captures all values of message with their paths
 struct PathVisitor<T: Message>: Visitor {
@@ -282,3 +288,5 @@ struct PathVisitor<T: Message>: Visitor {
         visit(value, fieldNumber: fieldNumber)
     }
 }
+
+#endif

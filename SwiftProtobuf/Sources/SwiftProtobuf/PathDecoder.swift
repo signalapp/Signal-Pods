@@ -12,7 +12,13 @@
 ///
 // -----------------------------------------------------------------------------
 
+#if FieldMaskUtilities
+
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// Describes errors can occure during decoding a proto by path.
 public enum PathDecodingError: Error {
@@ -441,3 +447,5 @@ extension Message {
         try decodeMessage(decoder: &decoder)
     }
 }
+
+#endif
