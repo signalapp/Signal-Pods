@@ -9,12 +9,16 @@ import SignalFfi
 public func signalEncrypt<Bytes: ContiguousBytes>(
     message: Bytes,
     for address: ProtocolAddress,
+    localAddress: ProtocolAddress,
     sessionStore: SessionStore,
     identityStore: IdentityKeyStore,
     now: Date = Date(),
     context: StoreContext
 ) throws -> CiphertextMessage {
-    return try withAllBorrowed(address, .bytes(message)) { addressHandle, messageBuffer in
+    return try withAllBorrowed(address, localAddress, .bytes(message)) {
+        addressHandle,
+        localAddressHandle,
+        messageBuffer in
         try withSessionStore(sessionStore, context) { ffiSessionStore in
             try withIdentityKeyStore(identityStore, context) { ffiIdentityStore in
                 try invokeFnReturningNativeHandle {
@@ -22,6 +26,7 @@ public func signalEncrypt<Bytes: ContiguousBytes>(
                         $0,
                         messageBuffer,
                         addressHandle.const(),
+                        localAddressHandle.const(),
                         ffiSessionStore,
                         ffiIdentityStore,
                         UInt64(now.timeIntervalSince1970 * 1000)
@@ -59,6 +64,7 @@ public func signalDecrypt(
 public func signalDecryptPreKey(
     message: PreKeySignalMessage,
     from address: ProtocolAddress,
+    localAddress: ProtocolAddress,
     sessionStore: SessionStore,
     identityStore: IdentityKeyStore,
     preKeyStore: PreKeyStore,
@@ -66,7 +72,7 @@ public func signalDecryptPreKey(
     kyberPreKeyStore: KyberPreKeyStore,
     context: StoreContext
 ) throws -> Data {
-    return try withAllBorrowed(message, address) { messageHandle, addressHandle in
+    return try withAllBorrowed(message, address, localAddress) { messageHandle, addressHandle, localAddressHandle in
         try withSessionStore(sessionStore, context) { ffiSessionStore in
             try withIdentityKeyStore(identityStore, context) { ffiIdentityStore in
                 try withPreKeyStore(preKeyStore, context) { ffiPreKeyStore in
@@ -77,6 +83,7 @@ public func signalDecryptPreKey(
                                     $0,
                                     messageHandle.const(),
                                     addressHandle.const(),
+                                    localAddressHandle.const(),
                                     ffiSessionStore,
                                     ffiIdentityStore,
                                     ffiPreKeyStore,

@@ -31,6 +31,7 @@ class SessionTests: TestCaseBase {
             let ctext_a = try! signalEncrypt(
                 message: ptext_a,
                 for: bob_address,
+                localAddress: alice_address,
                 sessionStore: alice_store,
                 identityStore: alice_store,
                 context: NullContext()
@@ -43,6 +44,7 @@ class SessionTests: TestCaseBase {
             let ptext_b = try! signalDecryptPreKey(
                 message: ctext_b,
                 from: alice_address,
+                localAddress: bob_address,
                 sessionStore: bob_store,
                 identityStore: bob_store,
                 preKeyStore: bob_store,
@@ -59,6 +61,7 @@ class SessionTests: TestCaseBase {
             let ctext2_b = try! signalEncrypt(
                 message: ptext2_b,
                 for: alice_address,
+                localAddress: bob_address,
                 sessionStore: bob_store,
                 identityStore: bob_store,
                 context: NullContext()
@@ -98,6 +101,7 @@ class SessionTests: TestCaseBase {
             let ctext_a = try! signalEncrypt(
                 message: ptext_a,
                 for: bob_address,
+                localAddress: alice_address,
                 sessionStore: alice_store,
                 identityStore: alice_store,
                 context: NullContext()
@@ -111,6 +115,7 @@ class SessionTests: TestCaseBase {
                 try signalDecryptPreKey(
                     message: ctext_b,
                     from: alice_address,
+                    localAddress: bob_address,
                     sessionStore: bob_store,
                     identityStore: bob_store,
                     preKeyStore: bob_store,
@@ -130,6 +135,7 @@ class SessionTests: TestCaseBase {
 
     func testExpiresUnacknowledgedSessions() {
         let bob_address = try! ProtocolAddress(name: "+14151111112", deviceId: 1)
+        let alice_address = try! ProtocolAddress(name: "+14151111111", deviceId: 1)
 
         let alice_store = InMemorySignalProtocolStore()
         let bob_store = InMemorySignalProtocolStore()
@@ -188,6 +194,7 @@ class SessionTests: TestCaseBase {
         let ctext_a = try! signalEncrypt(
             message: ptext_a,
             for: bob_address,
+            localAddress: alice_address,
             sessionStore: alice_store,
             identityStore: alice_store,
             now: Date(timeIntervalSinceReferenceDate: 0),
@@ -204,6 +211,7 @@ class SessionTests: TestCaseBase {
             try signalEncrypt(
                 message: ptext_a,
                 for: bob_address,
+                localAddress: alice_address,
                 sessionStore: alice_store,
                 identityStore: alice_store,
                 now: Date(timeIntervalSinceReferenceDate: 60 * 60 * 24 * 90),
@@ -288,6 +296,7 @@ class SessionTests: TestCaseBase {
         let ctext_a = try! signalEncrypt(
             message: ptext_a,
             for: bob_address,
+            localAddress: alice_address,
             sessionStore: alice_store,
             identityStore: alice_store,
             context: NullContext()
@@ -299,6 +308,7 @@ class SessionTests: TestCaseBase {
         _ = try! signalDecryptPreKey(
             message: ctext_b,
             from: alice_address,
+            localAddress: bob_address,
             sessionStore: bob_store,
             identityStore: bob_store,
             preKeyStore: bob_store,
@@ -311,6 +321,7 @@ class SessionTests: TestCaseBase {
             _ = try signalDecryptPreKey(
                 message: ctext_b,
                 from: mallory_address,
+                localAddress: bob_address,
                 sessionStore: bob_store,
                 identityStore: bob_store,
                 preKeyStore: bob_store,
@@ -368,6 +379,10 @@ class SessionTests: TestCaseBase {
             let ciphertextMessage = try signalEncrypt(
                 message: message,
                 for: address,
+                localAddress: try ProtocolAddress(
+                    name: senderCert.sender.uuidString,
+                    deviceId: UInt32(senderCert.sender.deviceId)
+                ),
                 sessionStore: sessionStore,
                 identityStore: identityStore,
                 context: context
@@ -419,6 +434,7 @@ class SessionTests: TestCaseBase {
         let plaintext = try signalDecryptPreKey(
             message: try! PreKeySignalMessage(bytes: usmc.contents),
             from: alice_address,
+            localAddress: bob_address,
             sessionStore: bob_store,
             identityStore: bob_store,
             preKeyStore: bob_store,
@@ -432,6 +448,7 @@ class SessionTests: TestCaseBase {
         let innerMessage = try signalEncrypt(
             message: [],
             for: bob_address,
+            localAddress: alice_address,
             sessionStore: alice_store,
             identityStore: alice_store,
             context: NullContext()
@@ -762,6 +779,7 @@ class SessionTests: TestCaseBase {
         let bob_first_message = try signalEncrypt(
             message: Array("swim camp".utf8),
             for: alice_address,
+            localAddress: bob_address,
             sessionStore: bob_store,
             identityStore: bob_store,
             context: NullContext()
@@ -769,6 +787,7 @@ class SessionTests: TestCaseBase {
         _ = try signalDecryptPreKey(
             message: PreKeySignalMessage(bytes: bob_first_message),
             from: bob_address,
+            localAddress: alice_address,
             sessionStore: alice_store,
             identityStore: alice_store,
             preKeyStore: alice_store,
@@ -780,6 +799,7 @@ class SessionTests: TestCaseBase {
         let bob_message = try signalEncrypt(
             message: Array("space camp".utf8),
             for: alice_address,
+            localAddress: bob_address,
             sessionStore: bob_store,
             identityStore: bob_store,
             context: NullContext()

@@ -269,6 +269,7 @@ typedef enum {
   SignalErrorCodeRequestUnauthorized = 220,
   SignalErrorCodeMismatchedDevices = 221,
   SignalErrorCodeServiceIdNotFound = 222,
+  SignalErrorCodeUploadTooLarge = 223,
 } SignalErrorCode;
 
 enum SignalSvr2CredentialsResult {
@@ -1111,15 +1112,18 @@ typedef struct {
   SignalIncrementalMac *raw;
 } SignalMutPointerIncrementalMac;
 
-typedef void (*SignalLogCallback)(void *ctx, SignalLogLevel level, const char *file, uint32_t line, const char *message);
+typedef int (*SignalFfiLoggerLog)(void *ctx, SignalLogLevel level, const char *file, uint32_t line, const char *message);
 
-typedef void (*SignalLogFlushCallback)(void *ctx);
+typedef int (*SignalFfiLoggerFlush)(void *ctx);
+
+typedef void (*SignalFfiLoggerDestroy)(void *ctx);
 
 typedef struct {
   void *ctx;
-  SignalLogCallback log;
-  SignalLogFlushCallback flush;
-} SignalFfiLogger;
+  SignalFfiLoggerLog log;
+  SignalFfiLoggerFlush flush;
+  SignalFfiLoggerDestroy destroy;
+} SignalFfiLoggerStruct;
 
 /**
  * A C callback used to report the results of Rust futures.
@@ -1731,7 +1735,7 @@ SignalFfiError *signal_authenticated_chat_connection_destroy(SignalMutPointerAut
 
 SignalFfiError *signal_authenticated_chat_connection_disconnect(SignalCPromisebool *promise, SignalConstPointerTokioAsyncContext async_runtime, SignalConstPointerAuthenticatedChatConnection chat);
 
-SignalFfiError *signal_authenticated_chat_connection_get_upload_form(SignalCPromiseFfiUploadForm *promise, SignalConstPointerTokioAsyncContext async_runtime, SignalConstPointerAuthenticatedChatConnection chat);
+SignalFfiError *signal_authenticated_chat_connection_get_upload_form(SignalCPromiseFfiUploadForm *promise, SignalConstPointerTokioAsyncContext async_runtime, SignalConstPointerAuthenticatedChatConnection chat, uint64_t upload_length);
 
 SignalFfiError *signal_authenticated_chat_connection_info(SignalMutPointerChatConnectionInfo *out, SignalConstPointerAuthenticatedChatConnection chat);
 
@@ -1903,7 +1907,7 @@ SignalFfiError *signal_create_call_link_credential_response_check_valid_contents
 
 SignalFfiError *signal_decrypt_message(SignalOwnedBuffer *out, SignalConstPointerSignalMessage message, SignalConstPointerProtocolAddress protocol_address, SignalConstPointerFfiSessionStoreStruct session_store, SignalConstPointerFfiIdentityKeyStoreStruct identity_key_store);
 
-SignalFfiError *signal_decrypt_pre_key_message(SignalOwnedBuffer *out, SignalConstPointerPreKeySignalMessage message, SignalConstPointerProtocolAddress protocol_address, SignalConstPointerFfiSessionStoreStruct session_store, SignalConstPointerFfiIdentityKeyStoreStruct identity_key_store, SignalConstPointerFfiPreKeyStoreStruct prekey_store, SignalConstPointerFfiSignedPreKeyStoreStruct signed_prekey_store, SignalConstPointerFfiKyberPreKeyStoreStruct kyber_prekey_store);
+SignalFfiError *signal_decrypt_pre_key_message(SignalOwnedBuffer *out, SignalConstPointerPreKeySignalMessage message, SignalConstPointerProtocolAddress protocol_address, SignalConstPointerProtocolAddress local_address, SignalConstPointerFfiSessionStoreStruct session_store, SignalConstPointerFfiIdentityKeyStoreStruct identity_key_store, SignalConstPointerFfiPreKeyStoreStruct prekey_store, SignalConstPointerFfiSignedPreKeyStoreStruct signed_prekey_store, SignalConstPointerFfiKyberPreKeyStoreStruct kyber_prekey_store);
 
 SignalFfiError *signal_decryption_error_message_clone(SignalMutPointerDecryptionErrorMessage *new_obj, SignalConstPointerDecryptionErrorMessage obj);
 
@@ -1929,7 +1933,7 @@ SignalFfiError *signal_device_transfer_generate_private_key(SignalOwnedBuffer *o
 
 SignalFfiError *signal_device_transfer_generate_private_key_with_format(SignalOwnedBuffer *out, uint8_t key_format);
 
-SignalFfiError *signal_encrypt_message(SignalMutPointerCiphertextMessage *out, SignalBorrowedBuffer ptext, SignalConstPointerProtocolAddress protocol_address, SignalConstPointerFfiSessionStoreStruct session_store, SignalConstPointerFfiIdentityKeyStoreStruct identity_key_store, uint64_t now);
+SignalFfiError *signal_encrypt_message(SignalMutPointerCiphertextMessage *out, SignalBorrowedBuffer ptext, SignalConstPointerProtocolAddress protocol_address, SignalConstPointerProtocolAddress local_address, SignalConstPointerFfiSessionStoreStruct session_store, SignalConstPointerFfiIdentityKeyStoreStruct identity_key_store, uint64_t now);
 
 void signal_error_free(SignalFfiError *err);
 
@@ -2118,7 +2122,7 @@ SignalFfiError *signal_incremental_mac_initialize(SignalMutPointerIncrementalMac
 
 SignalFfiError *signal_incremental_mac_update(SignalOwnedBuffer *out, SignalMutPointerIncrementalMac mac, SignalBorrowedBuffer bytes, uint32_t offset, uint32_t length);
 
-bool signal_init_logger(SignalLogLevel max_level, SignalFfiLogger logger);
+bool signal_init_logger(SignalLogLevel max_level, SignalFfiLoggerStruct logger);
 
 SignalFfiError *signal_key_transparency_aci_search_key(SignalOwnedBuffer *out, const SignalServiceIdFixedWidthBinaryBytes *aci);
 
@@ -2766,9 +2770,11 @@ SignalFfiError *signal_unauthenticated_chat_connection_destroy(SignalMutPointerU
 
 SignalFfiError *signal_unauthenticated_chat_connection_disconnect(SignalCPromisebool *promise, SignalConstPointerTokioAsyncContext async_runtime, SignalConstPointerUnauthenticatedChatConnection chat);
 
-SignalFfiError *signal_unauthenticated_chat_connection_get_pre_keys_access_group_auth(SignalCPromiseFfiPreKeysResponse *promise, SignalConstPointerTokioAsyncContext async_runtime, SignalConstPointerUnauthenticatedChatConnection chat, SignalBorrowedBuffer auth, const SignalServiceIdFixedWidthBinaryBytes *target, int32_t device);
-
 SignalFfiError *signal_unauthenticated_chat_connection_get_pre_keys_access_key_auth(SignalCPromiseFfiPreKeysResponse *promise, SignalConstPointerTokioAsyncContext async_runtime, SignalConstPointerUnauthenticatedChatConnection chat, const uint8_t (*auth)[16], const SignalServiceIdFixedWidthBinaryBytes *target, int32_t device);
+
+SignalFfiError *signal_unauthenticated_chat_connection_get_pre_keys_group_auth(SignalCPromiseFfiPreKeysResponse *promise, SignalConstPointerTokioAsyncContext async_runtime, SignalConstPointerUnauthenticatedChatConnection chat, SignalBorrowedBuffer auth, const SignalServiceIdFixedWidthBinaryBytes *target, int32_t device);
+
+SignalFfiError *signal_unauthenticated_chat_connection_get_pre_keys_unrestricted_auth(SignalCPromiseFfiPreKeysResponse *promise, SignalConstPointerTokioAsyncContext async_runtime, SignalConstPointerUnauthenticatedChatConnection chat, const SignalServiceIdFixedWidthBinaryBytes *target, int32_t device);
 
 SignalFfiError *signal_unauthenticated_chat_connection_info(SignalMutPointerChatConnectionInfo *out, SignalConstPointerUnauthenticatedChatConnection chat);
 
