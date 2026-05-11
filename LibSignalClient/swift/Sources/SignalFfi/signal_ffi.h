@@ -1211,18 +1211,20 @@ typedef struct {
   const SignalMessageBackupValidationOutcome *raw;
 } SignalConstPointerMessageBackupValidationOutcome;
 
-typedef int (*SignalFfiInputStreamRead)(void *ctx, size_t *out, SignalBorrowedMutableBuffer buf);
+typedef int (*SignalFfiSyncInputStreamRead)(void *ctx, size_t *out, SignalBorrowedMutableBuffer buf);
 
-typedef int (*SignalFfiInputStreamSkip)(void *ctx, uint64_t amount);
+typedef int (*SignalFfiSyncInputStreamSkip)(void *ctx, uint64_t amount);
 
-typedef void (*SignalFfiInputStreamDestroy)(void *ctx);
+typedef void (*SignalFfiSyncInputStreamDestroy)(void *ctx);
 
 typedef struct {
   void *ctx;
-  SignalFfiInputStreamRead read;
-  SignalFfiInputStreamSkip skip;
-  SignalFfiInputStreamDestroy destroy;
-} SignalInputStream;
+  SignalFfiSyncInputStreamRead read;
+  SignalFfiSyncInputStreamSkip skip;
+  SignalFfiSyncInputStreamDestroy destroy;
+} SignalSyncInputStream;
+
+typedef SignalSyncInputStream SignalInputStream;
 
 typedef struct {
   const SignalInputStream *raw;
@@ -1655,8 +1657,6 @@ typedef struct {
 typedef struct {
   SignalValidatingMac *raw;
 } SignalMutPointerValidatingMac;
-
-typedef SignalInputStream SignalSyncInputStream;
 
 typedef struct {
   const SignalSyncInputStream *raw;
@@ -2235,8 +2235,6 @@ SignalFfiError *signal_message_get_serialized(SignalOwnedBuffer *out, SignalCons
 
 SignalFfiError *signal_message_new(SignalMutPointerSignalMessage *out, uint8_t message_version, SignalBorrowedBuffer mac_key, SignalConstPointerPublicKey sender_ratchet_key, uint32_t counter, uint32_t previous_counter, SignalBorrowedBuffer ciphertext, SignalConstPointerPublicKey sender_identity_key, SignalConstPointerPublicKey receiver_identity_key, SignalBorrowedBuffer pq_ratchet);
 
-SignalFfiError *signal_message_verify_mac(bool *out, SignalConstPointerSignalMessage msg, SignalConstPointerPublicKey sender_identity_key, SignalConstPointerPublicKey receiver_identity_key, SignalBorrowedBuffer mac_key);
-
 SignalFfiError *signal_mp4_sanitizer_sanitize(SignalMutPointerSanitizedMetadata *out, SignalConstPointerFfiInputStreamStruct input, uint64_t len);
 
 SignalFfiError *signal_online_backup_validator_add_frame(SignalMutPointerOnlineBackupValidator backup, SignalBorrowedBuffer frame);
@@ -2719,7 +2717,7 @@ SignalFfiError *signal_session_record_get_local_registration_id(uint32_t *out, S
 
 SignalFfiError *signal_session_record_get_remote_registration_id(uint32_t *out, SignalConstPointerSessionRecord obj);
 
-SignalFfiError *signal_session_record_has_usable_sender_chain(bool *out, SignalConstPointerSessionRecord s, uint64_t now);
+SignalFfiError *signal_session_record_has_usable_sender_chain(bool *out, SignalConstPointerSessionRecord s, double require_pq_ratio, uint64_t now);
 
 SignalFfiError *signal_session_record_serialize(SignalOwnedBuffer *out, SignalConstPointerSessionRecord obj);
 
