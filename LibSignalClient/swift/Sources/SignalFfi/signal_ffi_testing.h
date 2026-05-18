@@ -119,6 +119,11 @@ typedef struct {
 } SignalConstPointerFakeChatRemoteEnd;
 
 typedef struct {
+  uint32_t first;
+  uint32_t second;
+} SignalPairOfu32u32;
+
+typedef struct {
   bool present;
   SignalMutPointerHttpRequest first;
   uint64_t second;
@@ -236,21 +241,6 @@ typedef struct {
   SignalTestingSemaphore *raw;
 } SignalMutPointerTestingSemaphore;
 
-/**
- * A C callback used to report the results of Rust futures.
- *
- * cbindgen will produce independent C types like `SignalCPromisei32` and
- * `SignalCPromiseProtocolAddress`.
- *
- * This derives Copy because it behaves like a C type; nevertheless, a promise should still only be
- * completed once.
- */
-typedef struct {
-  void (*complete)(SignalFfiError *error, const SignalOwnedBuffer *result, const void *context);
-  const void *context;
-  SignalRawCancellationId cancellation_id;
-} SignalCPromiseOwnedBufferOfc_uchar;
-
 typedef struct {
   SignalTestingValueHolder *raw;
 } SignalMutPointerTestingValueHolder;
@@ -327,7 +317,7 @@ SignalFfiError *signal_testing_error_on_return_io(SignalCPromiseRawPointer *prom
 
 SignalFfiError *signal_testing_error_on_return_sync(const void **out, const void *_needs_cleanup);
 
-SignalFfiError *signal_testing_fake_chat_connection_create(SignalMutPointerFakeChatConnection *out, SignalConstPointerTokioAsyncContext tokio, SignalConstPointerFfiChatListenerStruct listener, const char *alerts_joined_by_newlines);
+SignalFfiError *signal_testing_fake_chat_connection_create(SignalMutPointerFakeChatConnection *out, SignalConstPointerTokioAsyncContext tokio, SignalConstPointerFfiChatListenerStruct listener, const char *grpc_overrides_joined_by_newlines, const char *alerts_joined_by_newlines);
 
 SignalFfiError *signal_testing_fake_chat_connection_create_provisioning(SignalMutPointerFakeChatConnection *out, SignalConstPointerTokioAsyncContext tokio, SignalConstPointerFfiProvisioningListenerStruct listener);
 
@@ -339,13 +329,25 @@ SignalFfiError *signal_testing_fake_chat_connection_take_remote(SignalMutPointer
 
 SignalFfiError *signal_testing_fake_chat_connection_take_unauthenticated_chat(SignalMutPointerUnauthenticatedChatConnection *out, SignalConstPointerFakeChatConnection chat);
 
+SignalFfiError *signal_testing_fake_chat_remote_end_binproto_to_json(const char **out, const char *name, SignalBorrowedBuffer input);
+
+SignalFfiError *signal_testing_fake_chat_remote_end_grpc_frame_for_message_length(SignalOwnedBuffer *out, uint32_t len);
+
 SignalFfiError *signal_testing_fake_chat_remote_end_inject_connection_interrupted(SignalConstPointerFakeChatRemoteEnd chat);
+
+SignalFfiError *signal_testing_fake_chat_remote_end_json_to_binproto(SignalOwnedBuffer *out, const char *name, const char *input);
+
+SignalFfiError *signal_testing_fake_chat_remote_end_next_grpc_message(SignalPairOfu32u32 *out, SignalBorrowedBuffer input, uint32_t offset);
+
+SignalFfiError *signal_testing_fake_chat_remote_end_receive_incoming_grpc_request(SignalCPromiseOptionalPairOfMutPointerHttpRequestu64 *promise, SignalConstPointerTokioAsyncContext async_runtime, SignalConstPointerFakeChatRemoteEnd chat);
 
 SignalFfiError *signal_testing_fake_chat_remote_end_receive_incoming_request(SignalCPromiseOptionalPairOfMutPointerHttpRequestu64 *promise, SignalConstPointerTokioAsyncContext async_runtime, SignalConstPointerFakeChatRemoteEnd chat);
 
 SignalFfiError *signal_testing_fake_chat_remote_end_send_raw_server_request(SignalConstPointerFakeChatRemoteEnd chat, SignalBorrowedBuffer bytes);
 
 SignalFfiError *signal_testing_fake_chat_remote_end_send_raw_server_response(SignalConstPointerFakeChatRemoteEnd chat, SignalBorrowedBuffer bytes);
+
+SignalFfiError *signal_testing_fake_chat_remote_end_send_server_grpc_response(SignalCPromisebool *promise, SignalConstPointerTokioAsyncContext async_runtime, SignalConstPointerFakeChatRemoteEnd chat, SignalConstPointerFakeChatResponse response);
 
 SignalFfiError *signal_testing_fake_chat_remote_end_send_server_response(SignalConstPointerFakeChatRemoteEnd chat, SignalConstPointerFakeChatResponse response);
 
@@ -386,6 +388,8 @@ SignalFfiError *signal_testing_key_trans_chat_send_error(void);
 SignalFfiError *signal_testing_key_trans_fatal_verification_failure(void);
 
 SignalFfiError *signal_testing_key_trans_non_fatal_verification_failure(void);
+
+SignalFfiError *signal_testing_key_trans_stored_account_data(SignalOwnedBuffer *out);
 
 SignalFfiError *signal_testing_other_testing_handle_type_get_value(const char **out, SignalConstPointerOtherTestingHandleType handle);
 
