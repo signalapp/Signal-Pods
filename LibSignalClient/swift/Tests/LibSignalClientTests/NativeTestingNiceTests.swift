@@ -134,6 +134,31 @@ struct NativeTestingNiceTests {
         )
     }
     @Test
+    func testMyTestSimpleEnum() throws {
+        try DerivedArgConverterMySimpleTestEnum.testConversion(
+            items: [.a, .b],
+            toString: {
+                switch $0 {
+                case .a: "A"
+                case .b: "B"
+                }
+            },
+            nativeToString: { try NativeTestingNice.TESTING_MySimpleTestEnum_to_string(x: $0) },
+            rawNativeToString: SignalFfi.signal_testing_my_simple_test_enum_to_string,
+            nativeIdentity: { try NativeTestingNice.TESTING_MySimpleTestEnum_identity(x: $0) },
+        )
+    }
+    @Test
+    func testDataVecU8() throws {
+        try DataConverter.testConversion(
+            items: (0..<10).lazy.map { count in Data((0..<(1 << count)).map { _ in UInt8.random(in: 0...255) }) },
+            toString: { $0.base64EncodedString() },
+            nativeToString: { try NativeTestingNice.TESTING_conversion_Data_VecU8_to_string(x: $0) },
+            rawNativeToString: SignalFfi.signal_testing_conversion_data_vec_u8_to_string,
+            nativeIdentity: { try NativeTestingNice.TESTING_conversion_Data_VecU8_identity(x: $0) }
+        )
+    }
+    @Test
     func testMyTestPoint() throws {
         try DerivedArgConverterMyTestPoint.testConversion(
             items: [MyTestPoint(1, 2)],
