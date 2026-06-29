@@ -12,11 +12,121 @@
 // Some of our type names grow long
 // swiftlint:disable type_name
 
+// swiftlint:disable explicit_init_for_public_struct
+
 #if !os(iOS) || targetEnvironment(simulator)
 
 import Foundation
 import SignalFfi
 @testable import LibSignalClient
+
+enum FfiBorrowedSliceConstructor_SignalBorrowedSliceOfCStringPtr_StringConverter: FfiBorrowedSliceConstructor {
+    public typealias BorrowedSlice = SignalFfi.SignalBorrowedSliceOfCStringPtr
+    public typealias Element = StringConverter.FfiArg
+    public static func construct(
+        _ buffer: UnsafeBufferPointer<Element>,
+    ) -> BorrowedSlice {
+        BorrowedSlice(base: buffer.baseAddress, length: buffer.count)
+    }
+}
+
+enum FfiBorrowedSliceConstructor_SignalBorrowedSliceOfMySimpleTestEnumFfiArg_DerivedArgConverterMySimpleTestEnum:
+    FfiBorrowedSliceConstructor
+{
+    public typealias BorrowedSlice = SignalFfi.SignalBorrowedSliceOfMySimpleTestEnumFfiArg
+    public typealias Element = DerivedArgConverterMySimpleTestEnum.FfiArg
+    public static func construct(
+        _ buffer: UnsafeBufferPointer<Element>,
+    ) -> BorrowedSlice {
+        BorrowedSlice(base: buffer.baseAddress, length: buffer.count)
+    }
+}
+
+enum FfiOwnedBufferOfMaxAlignedProject_SignalOwnedBufferOfMaxAlignedCStringPtr_StringConverter:
+    FfiOwnedBufferOfMaxAlignedProject
+{
+    public typealias Buffer = SignalFfi.SignalOwnedBufferOfMaxAlignedCStringPtr
+    public typealias Element = StringConverter.FfiReturn
+    public static func empty() -> Buffer {
+        Buffer()
+    }
+    public static func project(
+        _ buffer: Buffer
+    ) -> UnsafeBufferPointer<Element> {
+        UnsafeBufferPointer(start: buffer.base, count: buffer.length)
+    }
+    public static func typeErased(
+        _ buffer: Buffer
+    ) -> SignalOwnedBufferOfMaxAlignedc_void {
+        SignalOwnedBufferOfMaxAlignedc_void(
+            base: UnsafeMutableRawPointer(buffer.base),
+            length: buffer.length,
+            size_bytes: buffer.size_bytes,
+        )
+    }
+}
+
+enum
+    FfiOwnedBufferOfMaxAlignedProject_SignalOwnedBufferOfMaxAlignedMySimpleTestEnumFfiResult_DerivedReturnConverterMySimpleTestEnum:
+        FfiOwnedBufferOfMaxAlignedProject
+{
+    public typealias Buffer = SignalFfi.SignalOwnedBufferOfMaxAlignedMySimpleTestEnumFfiResult
+    public typealias Element = DerivedReturnConverterMySimpleTestEnum.FfiReturn
+    public static func empty() -> Buffer {
+        Buffer()
+    }
+    public static func project(
+        _ buffer: Buffer
+    ) -> UnsafeBufferPointer<Element> {
+        UnsafeBufferPointer(start: buffer.base, count: buffer.length)
+    }
+    public static func typeErased(
+        _ buffer: Buffer
+    ) -> SignalOwnedBufferOfMaxAlignedc_void {
+        SignalOwnedBufferOfMaxAlignedc_void(
+            base: UnsafeMutableRawPointer(buffer.base),
+            length: buffer.length,
+            size_bytes: buffer.size_bytes,
+        )
+    }
+}
+
+enum FfiOwnedBufferOfMaxAlignedProject_SignalOwnedBufferOfMaxAlignedu832_FixedByteArrayConverterFixedByteArrayHelper32:
+    FfiOwnedBufferOfMaxAlignedProject
+{
+    public typealias Buffer = SignalFfi.SignalOwnedBufferOfMaxAlignedu832
+    public typealias Element = FixedByteArrayConverter<FixedByteArrayHelper32>.FfiReturn
+    public static func empty() -> Buffer {
+        Buffer()
+    }
+    public static func project(
+        _ buffer: Buffer
+    ) -> UnsafeBufferPointer<Element> {
+        UnsafeBufferPointer(start: buffer.base, count: buffer.length)
+    }
+    public static func typeErased(
+        _ buffer: Buffer
+    ) -> SignalOwnedBufferOfMaxAlignedc_void {
+        SignalOwnedBufferOfMaxAlignedc_void(
+            base: UnsafeMutableRawPointer(buffer.base),
+            length: buffer.length,
+            size_bytes: buffer.size_bytes,
+        )
+    }
+}
+
+internal enum FixedByteArrayHelper32: FixedByteArrayHelper {
+    public typealias Ffi = (
+        UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
+        UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8
+    )
+    public static func count() -> Int {
+        32
+    }
+    public static func emptyFfi() -> Ffi {
+        (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+    }
+}
 
 internal enum MyRemoteDeriveEnum {
     case unit
@@ -64,6 +174,16 @@ internal struct MyTestStruct {
     var myNumericField: Int32
     var myStringField: String
 
+}
+
+internal struct ReserveUsernameHashArgs {
+    var usernames: [Data]
+
+}
+
+internal enum ReserveUsernameHashOut {
+    case success(Data)
+    case usernameNotAvailable
 }
 
 internal struct SetDeviceNameArgs {
@@ -251,6 +371,49 @@ internal enum DerivedReturnConverterMyTestStruct: NiceReturnConverter {
         let my_string_field = Result { try StringConverter.convertReturn(consuming: ffiValue.my_string_field) }
 
         return MyTestStruct(myNumericField: try my_numeric_field.get(), myStringField: try my_string_field.get())
+    }
+}
+
+internal enum DerivedReturnConverterReserveUsernameHashArgs: NiceReturnConverter {
+    typealias NiceReturn = ReserveUsernameHashArgs
+    typealias FfiReturn = SignalReserveUsernameHashArgsFfiResult
+    static func emptyFfiReturn() -> FfiReturn {
+        SignalReserveUsernameHashArgsFfiResult()
+    }
+    static func convertReturn(consuming ffiValue: FfiReturn) throws -> NiceReturn {
+
+        let usernames = Result {
+            try ArrayReturnConverter<
+                FixedByteArrayConverter<FixedByteArrayHelper32>,
+                FfiOwnedBufferOfMaxAlignedProject_SignalOwnedBufferOfMaxAlignedu832_FixedByteArrayConverterFixedByteArrayHelper32
+            >.convertReturn(consuming: ffiValue.usernames)
+        }
+
+        return ReserveUsernameHashArgs(usernames: try usernames.get())
+    }
+}
+
+internal enum DerivedReturnConverterReserveUsernameHashOut: NiceReturnConverter {
+    typealias NiceReturn = ReserveUsernameHashOut
+    typealias FfiReturn = SignalReserveUsernameHashOutFfiResult
+    static func emptyFfiReturn() -> FfiReturn {
+        SignalReserveUsernameHashOutFfiResult()
+    }
+    static func convertReturn(consuming ffiValue: FfiReturn) throws -> NiceReturn {
+        let ffiTag = ffiValue.tag
+        switch ffiTag {
+        case SignalReserveUsernameHashOutFfiResultSuccess:
+            let _0 = Result {
+                try FixedByteArrayConverter<FixedByteArrayHelper32>.convertReturn(
+                    consuming: ffiValue.success._0
+                )
+            }
+            return ReserveUsernameHashOut.success(try _0.get())
+        case SignalReserveUsernameHashOutFfiResultUsernameNotAvailable:
+            return ReserveUsernameHashOut.usernameNotAvailable
+        default:
+            throw SignalError.internalError("Unexpected enum tag for ReserveUsernameHashOut: \(ffiTag)")
+        }
     }
 }
 
@@ -930,6 +1093,48 @@ internal enum NativeTestingNice {
         }
 
     }
+    internal static func TESTING_MySimpleTestEnum_BridgeVec_identity(
+        x: [MySimpleTestEnum],
+    ) throws -> [MySimpleTestEnum] {
+        try ArrayArgConverter<
+            DerivedArgConverterMySimpleTestEnum,
+            FfiBorrowedSliceConstructor_SignalBorrowedSliceOfMySimpleTestEnumFfiArg_DerivedArgConverterMySimpleTestEnum
+        >.convertArgBorrowed(x) { xFfi in
+            var rawOutput = ArrayReturnConverter<
+                DerivedReturnConverterMySimpleTestEnum,
+                FfiOwnedBufferOfMaxAlignedProject_SignalOwnedBufferOfMaxAlignedMySimpleTestEnumFfiResult_DerivedReturnConverterMySimpleTestEnum
+            >.emptyFfiReturn()
+            try checkError(
+                SignalFfi.signal_testing_my_simple_test_enum_bridge_vec_identity(
+                    &rawOutput,
+                    xFfi,
+                )
+            )
+            return try ArrayReturnConverter<
+                DerivedReturnConverterMySimpleTestEnum,
+                FfiOwnedBufferOfMaxAlignedProject_SignalOwnedBufferOfMaxAlignedMySimpleTestEnumFfiResult_DerivedReturnConverterMySimpleTestEnum
+            >.convertReturn(consuming: rawOutput)
+        }
+
+    }
+    internal static func TESTING_MySimpleTestEnum_BridgeVec_to_string(
+        x: [MySimpleTestEnum],
+    ) throws -> String {
+        try ArrayArgConverter<
+            DerivedArgConverterMySimpleTestEnum,
+            FfiBorrowedSliceConstructor_SignalBorrowedSliceOfMySimpleTestEnumFfiArg_DerivedArgConverterMySimpleTestEnum
+        >.convertArgBorrowed(x) { xFfi in
+            var rawOutput = StringConverter.emptyFfiReturn()
+            try checkError(
+                SignalFfi.signal_testing_my_simple_test_enum_bridge_vec_to_string(
+                    &rawOutput,
+                    xFfi,
+                )
+            )
+            return try StringConverter.convertReturn(consuming: rawOutput)
+        }
+
+    }
     internal static func TESTING_MySimpleTestEnum_identity(
         x: MySimpleTestEnum,
     ) throws -> MySimpleTestEnum {
@@ -1050,6 +1255,22 @@ internal enum NativeTestingNice {
         }
 
     }
+    internal static func TESTING_ReserveUsernameHashTests() throws -> [GrpcTestCase<
+        ReserveUsernameHashArgs, ReserveUsernameHashOut
+    >] {
+        var rawOutput = GrpcTestCaseVecConverter<
+            DerivedReturnConverterReserveUsernameHashArgs, DerivedReturnConverterReserveUsernameHashOut
+        >.emptyFfiReturn()
+        try checkError(
+            SignalFfi.signal_testing_reserve_username_hash_tests(
+                &rawOutput,
+            )
+        )
+        return try GrpcTestCaseVecConverter<
+            DerivedReturnConverterReserveUsernameHashArgs, DerivedReturnConverterReserveUsernameHashOut
+        >.convertReturn(consuming: rawOutput)
+
+    }
     internal static func TESTING_SetDeviceNameTests() throws -> [GrpcTestCase<SetDeviceNameArgs, SetDeviceNameOut>] {
         var rawOutput = GrpcTestCaseVecConverter<
             DerivedReturnConverterSetDeviceNameArgs, DerivedReturnConverterSetDeviceNameOut
@@ -1097,6 +1318,118 @@ internal enum NativeTestingNice {
                 }
             }
         return try DataConverter.convertReturn(consuming: rawOutput)
+
+    }
+    internal static func TESTING_conversion_BridgeVecData32_identity(
+        x: [Data],
+    ) throws -> [Data] {
+        try ArrayArgConverter<
+            FixedByteArrayConverter<FixedByteArrayHelper32>,
+            FfiBorrowedSliceConstructor_SignalBorrowedSliceOfu832_FixedByteArrayConverterFixedByteArrayHelper32
+        >.convertArgBorrowed(x) { xFfi in
+            var rawOutput = ArrayReturnConverter<
+                FixedByteArrayConverter<FixedByteArrayHelper32>,
+                FfiOwnedBufferOfMaxAlignedProject_SignalOwnedBufferOfMaxAlignedu832_FixedByteArrayConverterFixedByteArrayHelper32
+            >.emptyFfiReturn()
+            try checkError(
+                SignalFfi.signal_testing_conversion_bridge_vec_data32_identity(
+                    &rawOutput,
+                    xFfi,
+                )
+            )
+            return try ArrayReturnConverter<
+                FixedByteArrayConverter<FixedByteArrayHelper32>,
+                FfiOwnedBufferOfMaxAlignedProject_SignalOwnedBufferOfMaxAlignedu832_FixedByteArrayConverterFixedByteArrayHelper32
+            >.convertReturn(consuming: rawOutput)
+        }
+
+    }
+    internal static func TESTING_conversion_BridgeVecData32_to_string(
+        x: [Data],
+    ) throws -> String {
+        try ArrayArgConverter<
+            FixedByteArrayConverter<FixedByteArrayHelper32>,
+            FfiBorrowedSliceConstructor_SignalBorrowedSliceOfu832_FixedByteArrayConverterFixedByteArrayHelper32
+        >.convertArgBorrowed(x) { xFfi in
+            var rawOutput = StringConverter.emptyFfiReturn()
+            try checkError(
+                SignalFfi.signal_testing_conversion_bridge_vec_data32_to_string(
+                    &rawOutput,
+                    xFfi,
+                )
+            )
+            return try StringConverter.convertReturn(consuming: rawOutput)
+        }
+
+    }
+    internal static func TESTING_conversion_BridgeVecString_identity(
+        x: [String],
+    ) throws -> [String] {
+        try ArrayArgConverter<
+            StringConverter, FfiBorrowedSliceConstructor_SignalBorrowedSliceOfCStringPtr_StringConverter
+        >.convertArgBorrowed(x) { xFfi in
+            var rawOutput = ArrayReturnConverter<
+                StringConverter,
+                FfiOwnedBufferOfMaxAlignedProject_SignalOwnedBufferOfMaxAlignedCStringPtr_StringConverter
+            >.emptyFfiReturn()
+            try checkError(
+                SignalFfi.signal_testing_conversion_bridge_vec_string_identity(
+                    &rawOutput,
+                    xFfi,
+                )
+            )
+            return try ArrayReturnConverter<
+                StringConverter,
+                FfiOwnedBufferOfMaxAlignedProject_SignalOwnedBufferOfMaxAlignedCStringPtr_StringConverter
+            >.convertReturn(consuming: rawOutput)
+        }
+
+    }
+    internal static func TESTING_conversion_BridgeVecString_to_string(
+        x: [String],
+    ) throws -> String {
+        try ArrayArgConverter<
+            StringConverter, FfiBorrowedSliceConstructor_SignalBorrowedSliceOfCStringPtr_StringConverter
+        >.convertArgBorrowed(x) { xFfi in
+            var rawOutput = StringConverter.emptyFfiReturn()
+            try checkError(
+                SignalFfi.signal_testing_conversion_bridge_vec_string_to_string(
+                    &rawOutput,
+                    xFfi,
+                )
+            )
+            return try StringConverter.convertReturn(consuming: rawOutput)
+        }
+
+    }
+    internal static func TESTING_conversion_Data32_identity(
+        x: Data,
+    ) throws -> Data {
+        try FixedByteArrayConverter<FixedByteArrayHelper32>.convertArgBorrowed(x) { xFfi in
+            var rawOutput = FixedByteArrayConverter<FixedByteArrayHelper32>.emptyFfiReturn()
+            try checkError(
+                SignalFfi.signal_testing_conversion_data32_identity(
+                    &rawOutput,
+                    xFfi,
+                )
+            )
+            return try FixedByteArrayConverter<FixedByteArrayHelper32>.convertReturn(consuming: rawOutput)
+        }
+
+    }
+    internal static func TESTING_conversion_Data32_to_string(
+        x: Data,
+    ) throws -> String {
+        try FixedByteArrayConverter<FixedByteArrayHelper32>.convertArgBorrowed(x) { xFfi in
+            var rawOutput = StringConverter.emptyFfiReturn()
+            try checkError(
+                SignalFfi.signal_testing_conversion_data32_to_string(
+                    &rawOutput,
+                    xFfi,
+                )
+            )
+            return try StringConverter.convertReturn(consuming: rawOutput)
+        }
 
     }
     internal static func TESTING_conversion_Data_VecU8_identity(
