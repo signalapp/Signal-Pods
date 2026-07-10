@@ -125,7 +125,6 @@ def download_if_needed(archive_file: str, url: str, checksum: str, archive_dir: 
                 "--show-error",
                 "--silent",
                 "--retry", "3",
-                "--retry-all-errors",
                 "--output", download_path,
                 url,
             ],

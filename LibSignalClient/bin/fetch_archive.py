@@ -57,7 +57,6 @@ def download_if_needed(archive_file: str, url: str, checksum: str) -> BinaryIO:
                 '--show-error',
                 '--silent',
                 '--retry', '3',
-                '--retry-all-errors',
                 '--output', UNVERIFIED_DOWNLOAD_NAME,
                 url,
             ],
