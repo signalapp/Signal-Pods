@@ -25,7 +25,11 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 #define SignalBACKUP_FORWARD_SECRECY_TOKEN_LEN 32
 
-#define SignalMEDIA_ENCRYPTION_KEY_LEN (32 + 32)
+#define SignalMEDIA_ENCRYPTION_AES_KEY_LEN 32
+
+#define SignalMEDIA_ENCRYPTION_HMAC_KEY_LEN 32
+
+#define SignalMEDIA_ENCRYPTION_KEY_LEN (SignalMEDIA_ENCRYPTION_AES_KEY_LEN + SignalMEDIA_ENCRYPTION_HMAC_KEY_LEN)
 
 #define SignalBackupId_LEN 16
 
@@ -36,6 +40,14 @@ SPDX-License-Identifier: AGPL-3.0-only
 #define SignalAes256GcmDecryption_TAG_SIZE SignalTAG_SIZE
 
 #define SignalAes256GcmDecryption_NONCE_SIZE SignalNONCE_SIZE
+
+/**
+ * A "reasonable" default value to use for bulk-polled streaming network APIs.
+ *
+ * Chosen only for being neither too small (thus wasting time in the bridge layer processing many
+ * small chunks) nor too large (thus allocating a bunch of memory at once).
+ */
+#define SignalBULK_POLLED_STREAM_DEFAULT_CHUNK_SIZE 64
 
 #define SignalCallLinkSecretParams_ROOT_KEY_MAX_BYTES_FOR_SHO 16
 
@@ -272,6 +284,7 @@ typedef enum {
   SignalErrorCodeUploadTooLarge = 223,
   SignalErrorCodeDeviceIdNotFound = 224,
   SignalErrorCodeUsernameNotAvailable = 225,
+  SignalErrorCodeUsernameNotSet = 226,
 } SignalErrorCode;
 
 enum SignalSvr2CredentialsResult {
@@ -314,6 +327,8 @@ typedef struct SignalConnectionInfo SignalConnectionInfo;
 typedef struct SignalConnectionManager SignalConnectionManager;
 
 typedef struct SignalConnectionProxyConfig SignalConnectionProxyConfig;
+
+typedef struct SignalCopyBackupMediaStream SignalCopyBackupMediaStream;
 
 typedef struct SignalDecryptionErrorMessage SignalDecryptionErrorMessage;
 
@@ -470,44 +485,7 @@ typedef struct {
   SignalAes256GcmSiv *raw;
 } SignalMutPointerAes256GcmSiv;
 
-typedef struct {
-  SignalAuthenticatedChatConnection *raw;
-} SignalMutPointerAuthenticatedChatConnection;
-
 typedef uint64_t SignalCancellationId;
-
-/**
- * A C callback used to report the results of Rust futures.
- *
- * cbindgen will produce independent C types like `SignalCPromisei32` and
- * `SignalCPromiseProtocolAddress`.
- *
- * This derives Copy because it behaves like a C type; nevertheless, a promise should still only be
- * completed once.
- */
-typedef struct {
-  void (*complete)(SignalFfiError *error, const SignalMutPointerAuthenticatedChatConnection *result, const void *context);
-  const void *context;
-  SignalCancellationId cancellation_id;
-} SignalCPromiseMutPointerAuthenticatedChatConnection;
-
-typedef struct {
-  const SignalTokioAsyncContext *raw;
-} SignalConstPointerTokioAsyncContext;
-
-typedef struct {
-  const SignalConnectionManager *raw;
-} SignalConstPointerConnectionManager;
-
-typedef struct {
-  const size_t *base;
-  size_t length;
-} SignalBorrowedSliceOfusize;
-
-typedef struct {
-  SignalBorrowedBuffer bytes;
-  SignalBorrowedSliceOfusize lengths;
-} SignalBorrowedBytestringArray;
 
 /**
  * A C callback used to report the results of Rust futures.
@@ -525,8 +503,89 @@ typedef struct {
 } SignalCPromisebool;
 
 typedef struct {
+  const SignalTokioAsyncContext *raw;
+} SignalConstPointerTokioAsyncContext;
+
+typedef struct {
   const SignalAuthenticatedChatConnection *raw;
 } SignalConstPointerAuthenticatedChatConnection;
+
+typedef struct {
+  SignalAuthenticatedChatConnection *raw;
+} SignalMutPointerAuthenticatedChatConnection;
+
+/**
+ * A C callback used to report the results of Rust futures.
+ *
+ * cbindgen will produce independent C types like `SignalCPromisei32` and
+ * `SignalCPromiseProtocolAddress`.
+ *
+ * This derives Copy because it behaves like a C type; nevertheless, a promise should still only be
+ * completed once.
+ */
+typedef struct {
+  void (*complete)(SignalFfiError *error, const SignalMutPointerAuthenticatedChatConnection *result, const void *context);
+  const void *context;
+  SignalCancellationId cancellation_id;
+} SignalCPromiseMutPointerAuthenticatedChatConnection;
+
+typedef struct {
+  const SignalConnectionManager *raw;
+} SignalConstPointerConnectionManager;
+
+typedef struct {
+  const size_t *base;
+  size_t length;
+} SignalBorrowedSliceOfusize;
+
+typedef struct {
+  SignalBorrowedBuffer bytes;
+  SignalBorrowedSliceOfusize lengths;
+} SignalBorrowedBytestringArray;
+
+typedef struct {
+  uint8_t id;
+  SignalOwnedBuffer encrypted_name;
+  uint64_t last_seen;
+  uint16_t registration_id;
+  SignalOwnedBuffer created_at_ciphertext;
+} SignalLinkedDeviceInternalFfiResult;
+
+/**
+ * A buffer of `length` elements of type `T`, allocated with the alignment of
+ * [`libc::max_align_t`].
+ *
+ * The number of bytes allocated is stored in `size_bytes`.
+ *
+ * `base` should be allocated via Rust's global alloc (i.e. via [`std::alloc::alloc`])
+ *
+ * # Motivation
+ * Rust's global allocator takes a size and alignment for _both_ allocation and deallocation. As a
+ * result, if we want to have a general "free this buffer" function, that function needs to be
+ * able to know the total size of the allocation and its alignment. Having a fixed (constant)
+ * alignment means we don't need to store the alignment in this struct (or have a separate free
+ * function for each type).
+ */
+typedef struct {
+  SignalLinkedDeviceInternalFfiResult *base;
+  size_t length;
+  size_t size_bytes;
+} SignalOwnedBufferOfMaxAlignedLinkedDeviceInternalFfiResult;
+
+/**
+ * A C callback used to report the results of Rust futures.
+ *
+ * cbindgen will produce independent C types like `SignalCPromisei32` and
+ * `SignalCPromiseProtocolAddress`.
+ *
+ * This derives Copy because it behaves like a C type; nevertheless, a promise should still only be
+ * completed once.
+ */
+typedef struct {
+  void (*complete)(SignalFfiError *error, const SignalOwnedBufferOfMaxAlignedLinkedDeviceInternalFfiResult *result, const void *context);
+  const void *context;
+  SignalCancellationId cancellation_id;
+} SignalCPromiseOwnedBufferOfMaxAlignedLinkedDeviceInternalFfiResult;
 
 /**
  * A representation of a array allocated on the Rust heap for use in C code.
@@ -702,6 +761,21 @@ typedef struct {
   uint8_t bytes[16];
 } SignalUuid;
 
+/**
+ * A C callback used to report the results of Rust futures.
+ *
+ * cbindgen will produce independent C types like `SignalCPromisei32` and
+ * `SignalCPromiseProtocolAddress`.
+ *
+ * This derives Copy because it behaves like a C type; nevertheless, a promise should still only be
+ * completed once.
+ */
+typedef struct {
+  void (*complete)(SignalFfiError *error, const SignalUuid *result, const void *context);
+  const void *context;
+  SignalCancellationId cancellation_id;
+} SignalCPromiseUuid;
+
 typedef struct {
   SignalPrivateKey *raw;
 } SignalMutPointerPrivateKey;
@@ -828,6 +902,119 @@ typedef struct {
 typedef struct {
   SignalConnectionProxyConfig *raw;
 } SignalMutPointerConnectionProxyConfig;
+
+typedef struct {
+  const SignalCopyBackupMediaStream *raw;
+} SignalConstPointerCopyBackupMediaStream;
+
+typedef struct {
+  SignalCopyBackupMediaStream *raw;
+} SignalMutPointerCopyBackupMediaStream;
+
+typedef struct {
+  int32_t source_attachment_cdn;
+  SignalCStringPtr source_key;
+  int64_t object_length;
+  uint8_t media_id[SignalMEDIA_ID_LEN];
+  uint8_t encryption_key[SignalMEDIA_ENCRYPTION_KEY_LEN];
+} SignalBridgeCopyBackupMediaItemFfiResult;
+
+/**
+ * A buffer of `length` elements of type `T`, allocated with the alignment of
+ * [`libc::max_align_t`].
+ *
+ * The number of bytes allocated is stored in `size_bytes`.
+ *
+ * `base` should be allocated via Rust's global alloc (i.e. via [`std::alloc::alloc`])
+ *
+ * # Motivation
+ * Rust's global allocator takes a size and alignment for _both_ allocation and deallocation. As a
+ * result, if we want to have a general "free this buffer" function, that function needs to be
+ * able to know the total size of the allocation and its alignment. Having a fixed (constant)
+ * alignment means we don't need to store the alignment in this struct (or have a separate free
+ * function for each type).
+ */
+typedef struct {
+  SignalBridgeCopyBackupMediaItemFfiResult *base;
+  size_t length;
+  size_t size_bytes;
+} SignalOwnedBufferOfMaxAlignedBridgeCopyBackupMediaItemFfiResult;
+
+typedef enum {
+  SignalBridgeCopyBackupMediaResultFfiResultSuccess,
+  SignalBridgeCopyBackupMediaResultFfiResultSourceNotFound,
+  SignalBridgeCopyBackupMediaResultFfiResultWrongSourceLength,
+  SignalBridgeCopyBackupMediaResultFfiResultOutOfSpace,
+} SignalBridgeCopyBackupMediaResultFfiResult_Tag;
+
+typedef struct {
+  int32_t cdn;
+} SignalBridgeCopyBackupMediaResultFfiResultSignalSuccess_Body;
+
+typedef struct {
+  SignalBridgeCopyBackupMediaResultFfiResult_Tag tag;
+  union {
+    SignalBridgeCopyBackupMediaResultFfiResultSignalSuccess_Body success;
+  };
+} SignalBridgeCopyBackupMediaResultFfiResult;
+
+typedef struct {
+  uint8_t media_id[SignalMEDIA_ID_LEN];
+  SignalBridgeCopyBackupMediaResultFfiResult result;
+} SignalBridgeCopyBackupMediaOutcomeFfiResult;
+
+/**
+ * A buffer of `length` elements of type `T`, allocated with the alignment of
+ * [`libc::max_align_t`].
+ *
+ * The number of bytes allocated is stored in `size_bytes`.
+ *
+ * `base` should be allocated via Rust's global alloc (i.e. via [`std::alloc::alloc`])
+ *
+ * # Motivation
+ * Rust's global allocator takes a size and alignment for _both_ allocation and deallocation. As a
+ * result, if we want to have a general "free this buffer" function, that function needs to be
+ * able to know the total size of the allocation and its alignment. Having a fixed (constant)
+ * alignment means we don't need to store the alignment in this struct (or have a separate free
+ * function for each type).
+ */
+typedef struct {
+  SignalBridgeCopyBackupMediaOutcomeFfiResult *base;
+  size_t length;
+  size_t size_bytes;
+} SignalOwnedBufferOfMaxAlignedBridgeCopyBackupMediaOutcomeFfiResult;
+
+/**
+ * A low-level three-state enum: 0 (still going), `MAP_FAILED` (finished), or a valid pointer
+ * (error).
+ *
+ * `MAP_FAILED` was chosen because it's an existing C pointer sentinel value, even though it won't
+ * be aligned to match `SignalFfiError`. This is fine as long as we don't try to load from it
+ * (which wouldn't work anyway) or convert it to a reference.
+ */
+typedef struct {
+  SignalFfiError *raw;
+} SignalFfiBulkPolledStreamTerminationReason;
+
+typedef struct {
+  SignalOwnedBufferOfMaxAlignedBridgeCopyBackupMediaOutcomeFfiResult chunk;
+  SignalFfiBulkPolledStreamTerminationReason termination;
+} SignalCopyBackupMediaNextChunkFfiResult;
+
+/**
+ * A C callback used to report the results of Rust futures.
+ *
+ * cbindgen will produce independent C types like `SignalCPromisei32` and
+ * `SignalCPromiseProtocolAddress`.
+ *
+ * This derives Copy because it behaves like a C type; nevertheless, a promise should still only be
+ * completed once.
+ */
+typedef struct {
+  void (*complete)(SignalFfiError *error, const SignalCopyBackupMediaNextChunkFfiResult *result, const void *context);
+  const void *context;
+  SignalCancellationId cancellation_id;
+} SignalCPromiseCopyBackupMediaNextChunkFfiResult;
 
 typedef struct {
   const SignalMessage *raw;
@@ -977,11 +1164,6 @@ typedef struct {
 typedef struct {
   const SignalServerPublicParams *raw;
 } SignalConstPointerServerPublicParams;
-
-/**
- * Like [`std::panic::AssertUnwindSafe`], but FFI-compatible.
- */
-typedef const SignalFfiError *SignalUnwindSafeArgSignalFfiError;
 
 typedef struct {
   SignalCStringPtr first;
@@ -1623,6 +1805,19 @@ typedef struct {
 } SignalMutPointerTokioAsyncContext;
 
 typedef struct {
+  int32_t source_attachment_cdn;
+  SignalCStringPtr source_key;
+  int64_t object_length;
+  const uint8_t (*media_id)[SignalMEDIA_ID_LEN];
+  const uint8_t (*encryption_key)[SignalMEDIA_ENCRYPTION_KEY_LEN];
+} SignalBridgeCopyBackupMediaItemFfiArg;
+
+typedef struct {
+  const SignalBridgeCopyBackupMediaItemFfiArg *base;
+  size_t length;
+} SignalBorrowedSliceOfBridgeCopyBackupMediaItemFfiArg;
+
+typedef struct {
   SignalOwnedBufferOfCStringPtr first;
   SignalOwnedBufferOfCStringPtr second;
 } SignalPairOfOwnedBufferOfCStringPtrOwnedBufferOfCStringPtr;
@@ -1826,11 +2021,15 @@ SignalFfiError *signal_auth_credential_with_pni_check_valid_contents(SignalBorro
 
 SignalFfiError *signal_auth_credential_with_pni_response_check_valid_contents(SignalBorrowedBuffer bytes);
 
+SignalFfiError *signal_authenticated_chat_connection_clear_push_token(SignalCPromisebool *promise, SignalConstPointerTokioAsyncContext async_runtime, SignalConstPointerAuthenticatedChatConnection chat);
+
 SignalFfiError *signal_authenticated_chat_connection_connect(SignalCPromiseMutPointerAuthenticatedChatConnection *promise, SignalConstPointerTokioAsyncContext async_runtime, SignalConstPointerConnectionManager connection_manager, SignalCStringPtr username, SignalCStringPtr password, bool receive_stories, SignalBorrowedBytestringArray languages);
 
 SignalFfiError *signal_authenticated_chat_connection_destroy(SignalMutPointerAuthenticatedChatConnection p);
 
 SignalFfiError *signal_authenticated_chat_connection_disconnect(SignalCPromisebool *promise, SignalConstPointerTokioAsyncContext async_runtime, SignalConstPointerAuthenticatedChatConnection chat);
+
+SignalFfiError *signal_authenticated_chat_connection_get_devices(SignalCPromiseOwnedBufferOfMaxAlignedLinkedDeviceInternalFfiResult *promise, SignalConstPointerTokioAsyncContext async_runtime, SignalConstPointerAuthenticatedChatConnection chat);
 
 SignalFfiError *signal_authenticated_chat_connection_get_upload_form(SignalCPromiseFfiUploadForm *promise, SignalConstPointerTokioAsyncContext async_runtime, SignalConstPointerAuthenticatedChatConnection chat, uint64_t upload_length);
 
@@ -1839,6 +2038,8 @@ SignalFfiError *signal_authenticated_chat_connection_info(SignalMutPointerChatCo
 SignalFfiError *signal_authenticated_chat_connection_init_listener(SignalConstPointerAuthenticatedChatConnection chat, SignalConstPointerFfiChatListenerStruct listener);
 
 SignalFfiError *signal_authenticated_chat_connection_preconnect(SignalCPromisebool *promise, SignalConstPointerTokioAsyncContext async_runtime, SignalConstPointerConnectionManager connection_manager);
+
+SignalFfiError *signal_authenticated_chat_connection_remove_device(SignalCPromisebool *promise, SignalConstPointerTokioAsyncContext async_runtime, SignalConstPointerAuthenticatedChatConnection chat, uint8_t device_id);
 
 SignalFfiError *signal_authenticated_chat_connection_reserve_username_hash(SignalCPromiseu832 *promise, SignalConstPointerTokioAsyncContext async_runtime, SignalConstPointerAuthenticatedChatConnection chat, SignalBorrowedSliceOfu832 username_hashes);
 
@@ -1850,7 +2051,11 @@ SignalFfiError *signal_authenticated_chat_connection_send_raw_grpc(SignalCPromis
 
 SignalFfiError *signal_authenticated_chat_connection_send_sync_message(SignalCPromisebool *promise, SignalConstPointerTokioAsyncContext async_runtime, SignalConstPointerAuthenticatedChatConnection chat, uint64_t timestamp, SignalBorrowedSliceOfu32 device_ids, SignalBorrowedSliceOfu32 registration_ids, SignalBorrowedSliceOfConstPointerCiphertextMessage contents, bool is_urgent);
 
-SignalFfiError *signal_authenticated_chat_connection_set_device_name(SignalCPromisebool *promise, SignalConstPointerTokioAsyncContext async_runtime, SignalConstPointerAuthenticatedChatConnection chat, int32_t device_id, SignalBorrowedBuffer encrypted_name);
+SignalFfiError *signal_authenticated_chat_connection_set_device_name(SignalCPromisebool *promise, SignalConstPointerTokioAsyncContext async_runtime, SignalConstPointerAuthenticatedChatConnection chat, uint8_t device_id, SignalBorrowedBuffer encrypted_name);
+
+SignalFfiError *signal_authenticated_chat_connection_set_push_token_apns(SignalCPromisebool *promise, SignalConstPointerTokioAsyncContext async_runtime, SignalConstPointerAuthenticatedChatConnection chat, SignalCStringPtr apns_token);
+
+SignalFfiError *signal_authenticated_chat_connection_set_username_link(SignalCPromiseUuid *promise, SignalConstPointerTokioAsyncContext async_runtime, SignalConstPointerAuthenticatedChatConnection chat, SignalBorrowedBuffer username_ciphertext, bool keep_link_handle);
 
 SignalFfiError *signal_avatar_upload_credential_check_valid_contents(SignalBorrowedBuffer credential_bytes);
 
@@ -2020,6 +2225,14 @@ SignalFfiError *signal_connection_proxy_config_destroy(SignalMutPointerConnectio
 
 SignalFfiError *signal_connection_proxy_config_new(SignalMutPointerConnectionProxyConfig *out, SignalCStringPtr scheme, SignalCStringPtr host, int32_t port, SignalCStringPtr username, SignalCStringPtr password);
 
+SignalFfiError *signal_copy_backup_media_stream_cancel(SignalConstPointerCopyBackupMediaStream stream);
+
+SignalFfiError *signal_copy_backup_media_stream_destroy(SignalMutPointerCopyBackupMediaStream p);
+
+SignalFfiError *signal_copy_backup_media_stream_force_emit_vec_of_bridge_copy_backup_media_item(SignalOwnedBufferOfMaxAlignedBridgeCopyBackupMediaItemFfiResult *out);
+
+SignalFfiError *signal_copy_backup_media_stream_next(SignalCPromiseCopyBackupMediaNextChunkFfiResult *promise, SignalConstPointerTokioAsyncContext async_runtime, SignalConstPointerCopyBackupMediaStream stream);
+
 SignalFfiError *signal_create_call_link_credential_check_valid_contents(SignalBorrowedBuffer params_bytes);
 
 SignalFfiError *signal_create_call_link_credential_present_deterministic(SignalOwnedBuffer *out, SignalBorrowedBuffer credential_bytes, SignalBorrowedBuffer room_id, const SignalServiceIdFixedWidthBinaryBytes *user_id, SignalBorrowedBuffer server_params_bytes, SignalBorrowedBuffer call_link_params_bytes, const uint8_t (*randomness)[SignalRANDOMNESS_LEN]);
@@ -2106,33 +2319,33 @@ SignalFfiError *signal_encrypt_message(SignalMutPointerCiphertextMessage *out, S
 
 void signal_error_free(SignalFfiError *err);
 
-SignalFfiError *signal_error_get_address(SignalMutPointerProtocolAddress *out, SignalUnwindSafeArgSignalFfiError err);
+SignalFfiError *signal_error_get_address(SignalMutPointerProtocolAddress *out, const SignalFfiError *err);
 
-SignalFfiError *signal_error_get_invalid_protocol_address(SignalPairOfCStringPtru32 *out, SignalUnwindSafeArgSignalFfiError err);
+SignalFfiError *signal_error_get_invalid_protocol_address(SignalPairOfCStringPtru32 *out, const SignalFfiError *err);
 
-SignalFfiError *signal_error_get_message(SignalCStringPtr *out, SignalUnwindSafeArgSignalFfiError err);
+SignalFfiError *signal_error_get_message(SignalCStringPtr *out, const SignalFfiError *err);
 
-SignalFfiError *signal_error_get_mismatched_device_errors(SignalOwnedBufferOfFfiMismatchedDevicesError *out, SignalUnwindSafeArgSignalFfiError err);
+SignalFfiError *signal_error_get_mismatched_device_errors(SignalOwnedBufferOfFfiMismatchedDevicesError *out, const SignalFfiError *err);
 
-SignalFfiError *signal_error_get_our_fingerprint_version(uint32_t *out, SignalUnwindSafeArgSignalFfiError err);
+SignalFfiError *signal_error_get_our_fingerprint_version(uint32_t *out, const SignalFfiError *err);
 
-SignalFfiError *signal_error_get_rate_limit_challenge(SignalPairOfPairOfCStringPtrOwnedBufferOfc_uchari64 *out, SignalUnwindSafeArgSignalFfiError err);
+SignalFfiError *signal_error_get_rate_limit_challenge(SignalPairOfPairOfCStringPtrOwnedBufferOfc_uchari64 *out, const SignalFfiError *err);
 
-SignalFfiError *signal_error_get_registration_error_not_deliverable(SignalPairOfCStringPtrbool *out, SignalUnwindSafeArgSignalFfiError err);
+SignalFfiError *signal_error_get_registration_error_not_deliverable(SignalPairOfCStringPtrbool *out, const SignalFfiError *err);
 
 SignalFfiError *signal_error_get_registration_lock(uint64_t *out_time_remaining_seconds, const char **out_svr2_username, const char **out_svr2_password, const SignalFfiError *err);
 
-SignalFfiError *signal_error_get_retry_after_seconds(uint32_t *out, SignalUnwindSafeArgSignalFfiError err);
+SignalFfiError *signal_error_get_retry_after_seconds(uint32_t *out, const SignalFfiError *err);
 
-SignalFfiError *signal_error_get_their_fingerprint_version(uint32_t *out, SignalUnwindSafeArgSignalFfiError err);
+SignalFfiError *signal_error_get_their_fingerprint_version(uint32_t *out, const SignalFfiError *err);
 
-SignalFfiError *signal_error_get_tries_remaining(uint32_t *out, SignalUnwindSafeArgSignalFfiError err);
+SignalFfiError *signal_error_get_tries_remaining(uint32_t *out, const SignalFfiError *err);
 
 uint32_t signal_error_get_type(const SignalFfiError *err);
 
-SignalFfiError *signal_error_get_unknown_fields(SignalStringArray *out, SignalUnwindSafeArgSignalFfiError err);
+SignalFfiError *signal_error_get_unknown_fields(SignalStringArray *out, const SignalFfiError *err);
 
-SignalFfiError *signal_error_get_uuid(SignalUuid *out, SignalUnwindSafeArgSignalFfiError err);
+SignalFfiError *signal_error_get_uuid(SignalUuid *out, const SignalFfiError *err);
 
 SignalFfiError *signal_expiring_profile_key_credential_check_valid_contents(SignalBorrowedBuffer buffer);
 
@@ -2932,6 +3145,8 @@ SignalFfiError *signal_tokio_async_context_destroy(SignalMutPointerTokioAsyncCon
 SignalFfiError *signal_tokio_async_context_new(SignalMutPointerTokioAsyncContext *out);
 
 SignalFfiError *signal_unauthenticated_chat_connection_account_exists(SignalCPromisebool *promise, SignalConstPointerTokioAsyncContext async_runtime, SignalConstPointerUnauthenticatedChatConnection chat, const SignalServiceIdFixedWidthBinaryBytes *account);
+
+SignalFfiError *signal_unauthenticated_chat_connection_backup_copy_media(SignalMutPointerCopyBackupMediaStream *out, SignalConstPointerUnauthenticatedChatConnection chat, SignalBorrowedBuffer credential, SignalBorrowedBuffer server_keys, SignalConstPointerPrivateKey signing_key, SignalBorrowedSliceOfBridgeCopyBackupMediaItemFfiArg items, int64_t rng);
 
 SignalFfiError *signal_unauthenticated_chat_connection_backup_delete_all(SignalCPromisebool *promise, SignalConstPointerTokioAsyncContext async_runtime, SignalConstPointerUnauthenticatedChatConnection chat, SignalBorrowedBuffer credential, SignalBorrowedBuffer server_keys, SignalConstPointerPrivateKey signing_key, int64_t rng);
 
