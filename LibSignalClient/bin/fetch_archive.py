@@ -11,9 +11,8 @@
 import argparse
 import hashlib
 import os
-import ssl
+import subprocess
 import sys
-import urllib.request
 from typing import BinaryIO
 
 UNVERIFIED_DOWNLOAD_NAME = 'unverified.tmp'
@@ -50,27 +49,34 @@ def download_if_needed(archive_file: str, url: str, checksum: str) -> BinaryIO:
 
     print('downloading {}...'.format(archive_file), file=sys.stderr)
     try:
-        with urllib.request.urlopen(url) as response:
-            digest = hashlib.sha256()
-            fw = open(UNVERIFIED_DOWNLOAD_NAME, 'w+b')
-            chunk = response.read1()
-            while chunk:
-                digest.update(chunk)
-                fw.write(chunk)
-                chunk = response.read1()
-            assert digest.hexdigest() == checksum.lower(), 'expected {}, actual {}'.format(checksum.lower(), digest.hexdigest())
-            os.replace(UNVERIFIED_DOWNLOAD_NAME, archive_file)
-            return fw
-    except (urllib.error.HTTPError, urllib.error.URLError) as e:
-        if isinstance(e.reason, ssl.SSLCertVerificationError):
-            # See:
-            #
-            # - https://stackoverflow.com/questions/27835619/urllib-and-ssl-certificate-verify-failed-error
-            # - https://stackoverflow.com/a/77491061
-            print('Failed to verify SSL certificate. Do you need to `pip install pip-system-certs`?', file=sys.stderr)
-        else:
-            print(e, e.filename, file=sys.stderr)
+        subprocess.run(
+            [
+                'curl',
+                '--fail',
+                '--location',
+                '--show-error',
+                '--silent',
+                '--retry', '3',
+                '--retry-all-errors',
+                '--output', UNVERIFIED_DOWNLOAD_NAME,
+                url,
+            ],
+            check=True,
+        )
+    except subprocess.CalledProcessError as e:
+        print('curl failed to download {} (exit {})'.format(url, e.returncode), file=sys.stderr)
         sys.exit(1)
+
+    digest = hashlib.sha256()
+    with open(UNVERIFIED_DOWNLOAD_NAME, 'rb') as fw:
+        chunk = fw.read1()
+        while chunk:
+            digest.update(chunk)
+            chunk = fw.read1()
+    assert digest.hexdigest() == checksum.lower(), 'expected {}, actual {}'.format(checksum.lower(), digest.hexdigest())
+
+    os.replace(UNVERIFIED_DOWNLOAD_NAME, archive_file)
+    return open(archive_file, 'rb')
 
 
 def main() -> None:
