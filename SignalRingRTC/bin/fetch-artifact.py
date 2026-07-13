@@ -7,17 +7,22 @@
 
 import argparse
 import hashlib
+import http.client
 import json
 import os
 import platform
+import shutil
 import ssl
 import sys
 import tarfile
+import time
 import urllib.request
 
 from typing import BinaryIO
 
 UNVERIFIED_DOWNLOAD_NAME = "unverified.tmp"
+DOWNLOAD_ATTEMPTS = 3
+RETRY_BACKOFF_SECONDS = 1
 
 fetch_script_file_path = os.path.realpath(__file__)
 fetch_script_file_dir = os.path.dirname(fetch_script_file_path)
@@ -116,31 +121,43 @@ def download_if_needed(archive_file: str, url: str, checksum: str, archive_dir: 
         pass
 
     print("downloading {}...".format(archive_file), file=sys.stderr)
-    try:
-        with urllib.request.urlopen(url) as response:
-            digest = hashlib.sha256()
-            download_path = os.path.join(archive_dir, UNVERIFIED_DOWNLOAD_NAME)
-            f_download = open(download_path, 'w+b')
-            chunk = response.read1()
-            while chunk:
-                digest.update(chunk)
-                f_download.write(chunk)
-                chunk = response.read1()
-            assert digest.hexdigest() == checksum.lower(), "expected {}, actual {}".format(checksum.lower(), digest.hexdigest())
-            f_download.close()
-            os.replace(download_path, archive_path)
-            return open(archive_path, 'rb')
-    except (urllib.error.HTTPError, urllib.error.URLError) as e:
-        if isinstance(e.reason, ssl.SSLCertVerificationError):
-            # See:
-            #
-            # - https://stackoverflow.com/questions/27835619/urllib-and-ssl-certificate-verify-failed-error
-            # - https://stackoverflow.com/a/77491061
-            print("Failed to verify SSL certificate. Do you need to `pip install pip-system-certs`?", file=sys.stderr)
-        else:
-            print(e, e.filename, file=sys.stderr)
+    download_path = os.path.join(archive_dir, UNVERIFIED_DOWNLOAD_NAME)
+    last_error: Exception = RuntimeError("no download attempts were made")
+    for attempt in range(1, DOWNLOAD_ATTEMPTS + 1):
+        try:
+            with urllib.request.urlopen(url) as response:
+                with open(download_path, 'wb') as f_download:
+                    shutil.copyfileobj(response, f_download)
 
-        sys.exit(1)
+                digest = hashlib.sha256()
+                with open(download_path, 'rb') as f_verify:
+                    chunk = f_verify.read1()
+                    while chunk:
+                        digest.update(chunk)
+                        chunk = f_verify.read1()
+                if digest.hexdigest() != checksum.lower():
+                    raise ValueError("expected {}, actual {}".format(checksum.lower(), digest.hexdigest()))
+                os.replace(download_path, archive_path)
+                return open(archive_path, 'rb')
+        except (urllib.error.HTTPError, urllib.error.URLError) as e:
+            if isinstance(e.reason, ssl.SSLCertVerificationError):
+                # See:
+                #
+                # - https://stackoverflow.com/questions/27835619/urllib-and-ssl-certificate-verify-failed-error
+                # - https://stackoverflow.com/a/77491061
+                print("Failed to verify SSL certificate. Do you need to `pip install pip-system-certs`?", file=sys.stderr)
+                sys.exit(1)
+            last_error = e
+        except (http.client.HTTPException, ConnectionError, TimeoutError, ValueError) as e:
+            last_error = e
+
+        if attempt < DOWNLOAD_ATTEMPTS:
+            print("download attempt {}/{} failed ({}); retrying in {}s...".format(
+                attempt, DOWNLOAD_ATTEMPTS, last_error, RETRY_BACKOFF_SECONDS), file=sys.stderr)
+            time.sleep(RETRY_BACKOFF_SECONDS)
+
+    print("download of {} failed after {} attempts: {}".format(archive_file, DOWNLOAD_ATTEMPTS, last_error), file=sys.stderr)
+    sys.exit(1)
 
 
 def main() -> None:
