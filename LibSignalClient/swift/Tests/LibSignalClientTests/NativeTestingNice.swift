@@ -116,10 +116,11 @@ enum
     }
 }
 
-enum FfiOwnedBufferOfMaxAlignedProject_SignalOwnedBufferOfMaxAlignedu832_FixedByteArrayConverterFixedByteArrayHelper32:
-    FfiOwnedBufferOfMaxAlignedProject
+enum
+    FfiOwnedBufferOfMaxAlignedProject_SignalOwnedBufferOfMaxAlignedc_uchar32_FixedByteArrayConverterFixedByteArrayHelper32:
+        FfiOwnedBufferOfMaxAlignedProject
 {
-    public typealias Buffer = SignalFfi.SignalOwnedBufferOfMaxAlignedu832
+    public typealias Buffer = SignalFfi.SignalOwnedBufferOfMaxAlignedc_uchar32
     public typealias Element = FixedByteArrayConverter<FixedByteArrayHelper32>.FfiReturn
     public static func empty() -> Buffer {
         Buffer()
@@ -556,7 +557,7 @@ internal enum DerivedReturnConverterReserveUsernameHashArgs: NiceReturnConverter
         let usernames = Result {
             try ArrayReturnConverter<
                 FixedByteArrayConverter<FixedByteArrayHelper32>,
-                FfiOwnedBufferOfMaxAlignedProject_SignalOwnedBufferOfMaxAlignedu832_FixedByteArrayConverterFixedByteArrayHelper32
+                FfiOwnedBufferOfMaxAlignedProject_SignalOwnedBufferOfMaxAlignedc_uchar32_FixedByteArrayConverterFixedByteArrayHelper32
             >.convertReturn(consuming: ffiValue.usernames)
         }
 
@@ -1340,6 +1341,26 @@ internal enum NativeTestingNice {
         >.convertReturn(consuming: rawOutput)
 
     }
+    internal static func TESTING_DeleteUsernameHashTests() throws -> [GrpcTestCase<Void, Void>] {
+        var rawOutput = GrpcTestCaseVecConverter<VoidConverter, VoidConverter>.emptyFfiReturn()
+        try checkError(
+            SignalFfi.signal_testing_delete_username_hash_tests(
+                &rawOutput,
+            )
+        )
+        return try GrpcTestCaseVecConverter<VoidConverter, VoidConverter>.convertReturn(consuming: rawOutput)
+
+    }
+    internal static func TESTING_DeleteUsernameLinkTests() throws -> [GrpcTestCase<Void, Void>] {
+        var rawOutput = GrpcTestCaseVecConverter<VoidConverter, VoidConverter>.emptyFfiReturn()
+        try checkError(
+            SignalFfi.signal_testing_delete_username_link_tests(
+                &rawOutput,
+            )
+        )
+        return try GrpcTestCaseVecConverter<VoidConverter, VoidConverter>.convertReturn(consuming: rawOutput)
+
+    }
     internal static func TESTING_GetDevicesTests() throws -> [GrpcTestCase<Void, GetDevicesOut>] {
         var rawOutput = GrpcTestCaseVecConverter<VoidConverter, DerivedReturnConverterGetDevicesOut>.emptyFfiReturn()
         try checkError(
@@ -1689,11 +1710,11 @@ internal enum NativeTestingNice {
     ) throws -> [Data] {
         try ArrayArgConverter<
             FixedByteArrayConverter<FixedByteArrayHelper32>,
-            FfiBorrowedSliceConstructor_SignalBorrowedSliceOfu832_FixedByteArrayConverterFixedByteArrayHelper32
+            FfiBorrowedSliceConstructor_SignalBorrowedSliceOfc_uchar32_FixedByteArrayConverterFixedByteArrayHelper32
         >.convertArgBorrowed(x) { xFfi in
             var rawOutput = ArrayReturnConverter<
                 FixedByteArrayConverter<FixedByteArrayHelper32>,
-                FfiOwnedBufferOfMaxAlignedProject_SignalOwnedBufferOfMaxAlignedu832_FixedByteArrayConverterFixedByteArrayHelper32
+                FfiOwnedBufferOfMaxAlignedProject_SignalOwnedBufferOfMaxAlignedc_uchar32_FixedByteArrayConverterFixedByteArrayHelper32
             >.emptyFfiReturn()
             try checkError(
                 SignalFfi.signal_testing_conversion_bridge_vec_data32_identity(
@@ -1703,7 +1724,7 @@ internal enum NativeTestingNice {
             )
             return try ArrayReturnConverter<
                 FixedByteArrayConverter<FixedByteArrayHelper32>,
-                FfiOwnedBufferOfMaxAlignedProject_SignalOwnedBufferOfMaxAlignedu832_FixedByteArrayConverterFixedByteArrayHelper32
+                FfiOwnedBufferOfMaxAlignedProject_SignalOwnedBufferOfMaxAlignedc_uchar32_FixedByteArrayConverterFixedByteArrayHelper32
             >.convertReturn(consuming: rawOutput)
         }
 
@@ -1713,7 +1734,7 @@ internal enum NativeTestingNice {
     ) throws -> String {
         try ArrayArgConverter<
             FixedByteArrayConverter<FixedByteArrayHelper32>,
-            FfiBorrowedSliceConstructor_SignalBorrowedSliceOfu832_FixedByteArrayConverterFixedByteArrayHelper32
+            FfiBorrowedSliceConstructor_SignalBorrowedSliceOfc_uchar32_FixedByteArrayConverterFixedByteArrayHelper32
         >.convertArgBorrowed(x) { xFfi in
             var rawOutput = StringConverter.emptyFfiReturn()
             try checkError(
