@@ -17,6 +17,1266 @@
 import Foundation
 import SignalFfi
 
+extension SignalCPromisec_uchar32: SignalCPromise {
+
+    typealias Result = SignalType_FixedArray32_uint8_t
+
+    init(
+        generic_complete:
+            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalType_FixedArray32_uint8_t_SignalType_ConstPointer_void?,
+        generic_context: SignalType_ConstPointer_void?,
+        generic_cancellation_id: UInt64,
+    ) {
+        self.init(
+            complete: generic_complete,
+            context: generic_context,
+            cancellation_id: generic_cancellation_id,
+
+        )
+    }
+
+    var generic_complete:
+        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalType_FixedArray32_uint8_t_SignalType_ConstPointer_void?
+    {
+        get { self.complete }
+        set { complete = newValue }
+    }
+
+    var generic_context: SignalType_ConstPointer_void? {
+        get { self.context }
+        set { context = newValue }
+    }
+
+    var generic_cancellation_id: UInt64 {
+        get { self.cancellation_id }
+        set { cancellation_id = newValue }
+    }
+
+}
+
+extension SignalCPromisebool: SignalCPromise {
+
+    typealias Result = CBool
+
+    init(
+        generic_complete:
+            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_bool_SignalType_ConstPointer_void?,
+        generic_context: SignalType_ConstPointer_void?,
+        generic_cancellation_id: UInt64,
+    ) {
+        self.init(
+            complete: generic_complete,
+            context: generic_context,
+            cancellation_id: generic_cancellation_id,
+
+        )
+    }
+
+    var generic_complete:
+        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_bool_SignalType_ConstPointer_void?
+    {
+        get { self.complete }
+        set { complete = newValue }
+    }
+
+    var generic_context: SignalType_ConstPointer_void? {
+        get { self.context }
+        set { context = newValue }
+    }
+
+    var generic_cancellation_id: UInt64 {
+        get { self.cancellation_id }
+        set { cancellation_id = newValue }
+    }
+
+}
+
+extension SignalCPromiseFfiCdsiLookupResponse: SignalCPromise {
+
+    typealias Result = SignalFfiCdsiLookupResponse
+
+    init(
+        generic_complete:
+            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalFfiCdsiLookupResponse_SignalType_ConstPointer_void?,
+        generic_context: SignalType_ConstPointer_void?,
+        generic_cancellation_id: UInt64,
+    ) {
+        self.init(
+            complete: generic_complete,
+            context: generic_context,
+            cancellation_id: generic_cancellation_id,
+
+        )
+    }
+
+    var generic_complete:
+        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalFfiCdsiLookupResponse_SignalType_ConstPointer_void?
+    {
+        get { self.complete }
+        set { complete = newValue }
+    }
+
+    var generic_context: SignalType_ConstPointer_void? {
+        get { self.context }
+        set { context = newValue }
+    }
+
+    var generic_cancellation_id: UInt64 {
+        get { self.cancellation_id }
+        set { cancellation_id = newValue }
+    }
+
+}
+
+extension SignalCPromiseFfiChatResponse: SignalCPromise {
+
+    typealias Result = SignalFfiChatResponse
+
+    init(
+        generic_complete:
+            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalFfiChatResponse_SignalType_ConstPointer_void?,
+        generic_context: SignalType_ConstPointer_void?,
+        generic_cancellation_id: UInt64,
+    ) {
+        self.init(
+            complete: generic_complete,
+            context: generic_context,
+            cancellation_id: generic_cancellation_id,
+
+        )
+    }
+
+    var generic_complete:
+        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalFfiChatResponse_SignalType_ConstPointer_void?
+    {
+        get { self.complete }
+        set { complete = newValue }
+    }
+
+    var generic_context: SignalType_ConstPointer_void? {
+        get { self.context }
+        set { context = newValue }
+    }
+
+    var generic_cancellation_id: UInt64 {
+        get { self.cancellation_id }
+        set { cancellation_id = newValue }
+    }
+
+}
+
+extension SignalCPromiseFfiCheckSvr2CredentialsResponse: SignalCPromise {
+
+    typealias Result = SignalFfiCheckSvr2CredentialsResponse
+
+    init(
+        generic_complete:
+            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalFfiCheckSvr2CredentialsResponse_SignalType_ConstPointer_void?,
+        generic_context: SignalType_ConstPointer_void?,
+        generic_cancellation_id: UInt64,
+    ) {
+        self.init(
+            complete: generic_complete,
+            context: generic_context,
+            cancellation_id: generic_cancellation_id,
+
+        )
+    }
+
+    var generic_complete:
+        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalFfiCheckSvr2CredentialsResponse_SignalType_ConstPointer_void?
+    {
+        get { self.complete }
+        set { complete = newValue }
+    }
+
+    var generic_context: SignalType_ConstPointer_void? {
+        get { self.context }
+        set { context = newValue }
+    }
+
+    var generic_cancellation_id: UInt64 {
+        get { self.cancellation_id }
+        set { cancellation_id = newValue }
+    }
+
+}
+
+extension SignalCPromiseFfiPreKeysResponse: SignalCPromise {
+
+    typealias Result = SignalFfiPreKeysResponse
+
+    init(
+        generic_complete:
+            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalFfiPreKeysResponse_SignalType_ConstPointer_void?,
+        generic_context: SignalType_ConstPointer_void?,
+        generic_cancellation_id: UInt64,
+    ) {
+        self.init(
+            complete: generic_complete,
+            context: generic_context,
+            cancellation_id: generic_cancellation_id,
+
+        )
+    }
+
+    var generic_complete:
+        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalFfiPreKeysResponse_SignalType_ConstPointer_void?
+    {
+        get { self.complete }
+        set { complete = newValue }
+    }
+
+    var generic_context: SignalType_ConstPointer_void? {
+        get { self.context }
+        set { context = newValue }
+    }
+
+    var generic_cancellation_id: UInt64 {
+        get { self.cancellation_id }
+        set { cancellation_id = newValue }
+    }
+
+}
+
+extension SignalCPromiseFfiUploadForm: SignalCPromise {
+
+    typealias Result = SignalFfiUploadForm
+
+    init(
+        generic_complete:
+            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalFfiUploadForm_SignalType_ConstPointer_void?,
+        generic_context: SignalType_ConstPointer_void?,
+        generic_cancellation_id: UInt64,
+    ) {
+        self.init(
+            complete: generic_complete,
+            context: generic_context,
+            cancellation_id: generic_cancellation_id,
+
+        )
+    }
+
+    var generic_complete:
+        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalFfiUploadForm_SignalType_ConstPointer_void?
+    {
+        get { self.complete }
+        set { complete = newValue }
+    }
+
+    var generic_context: SignalType_ConstPointer_void? {
+        get { self.context }
+        set { context = newValue }
+    }
+
+    var generic_cancellation_id: UInt64 {
+        get { self.cancellation_id }
+        set { cancellation_id = newValue }
+    }
+
+}
+
+extension SignalCPromiseMutPointerCdsiLookup: SignalCPromise {
+
+    typealias Result = SignalMutPointerCdsiLookup
+
+    init(
+        generic_complete:
+            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalMutPointerCdsiLookup_SignalType_ConstPointer_void?,
+        generic_context: SignalType_ConstPointer_void?,
+        generic_cancellation_id: UInt64,
+    ) {
+        self.init(
+            complete: generic_complete,
+            context: generic_context,
+            cancellation_id: generic_cancellation_id,
+
+        )
+    }
+
+    var generic_complete:
+        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalMutPointerCdsiLookup_SignalType_ConstPointer_void?
+    {
+        get { self.complete }
+        set { complete = newValue }
+    }
+
+    var generic_context: SignalType_ConstPointer_void? {
+        get { self.context }
+        set { context = newValue }
+    }
+
+    var generic_cancellation_id: UInt64 {
+        get { self.cancellation_id }
+        set { cancellation_id = newValue }
+    }
+
+}
+
+extension SignalCPromiseMutPointerAuthenticatedChatConnection: SignalCPromise {
+
+    typealias Result = SignalMutPointerAuthenticatedChatConnection
+
+    init(
+        generic_complete:
+            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalMutPointerAuthenticatedChatConnection_SignalType_ConstPointer_void?,
+        generic_context: SignalType_ConstPointer_void?,
+        generic_cancellation_id: UInt64,
+    ) {
+        self.init(
+            complete: generic_complete,
+            context: generic_context,
+            cancellation_id: generic_cancellation_id,
+
+        )
+    }
+
+    var generic_complete:
+        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalMutPointerAuthenticatedChatConnection_SignalType_ConstPointer_void?
+    {
+        get { self.complete }
+        set { complete = newValue }
+    }
+
+    var generic_context: SignalType_ConstPointer_void? {
+        get { self.context }
+        set { context = newValue }
+    }
+
+    var generic_cancellation_id: UInt64 {
+        get { self.cancellation_id }
+        set { cancellation_id = newValue }
+    }
+
+}
+
+extension SignalCPromiseMutPointerProvisioningChatConnection: SignalCPromise {
+
+    typealias Result = SignalMutPointerProvisioningChatConnection
+
+    init(
+        generic_complete:
+            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalMutPointerProvisioningChatConnection_SignalType_ConstPointer_void?,
+        generic_context: SignalType_ConstPointer_void?,
+        generic_cancellation_id: UInt64,
+    ) {
+        self.init(
+            complete: generic_complete,
+            context: generic_context,
+            cancellation_id: generic_cancellation_id,
+
+        )
+    }
+
+    var generic_complete:
+        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalMutPointerProvisioningChatConnection_SignalType_ConstPointer_void?
+    {
+        get { self.complete }
+        set { complete = newValue }
+    }
+
+    var generic_context: SignalType_ConstPointer_void? {
+        get { self.context }
+        set { context = newValue }
+    }
+
+    var generic_cancellation_id: UInt64 {
+        get { self.cancellation_id }
+        set { cancellation_id = newValue }
+    }
+
+}
+
+extension SignalCPromiseMutPointerUnauthenticatedChatConnection: SignalCPromise {
+
+    typealias Result = SignalMutPointerUnauthenticatedChatConnection
+
+    init(
+        generic_complete:
+            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalMutPointerUnauthenticatedChatConnection_SignalType_ConstPointer_void?,
+        generic_context: SignalType_ConstPointer_void?,
+        generic_cancellation_id: UInt64,
+    ) {
+        self.init(
+            complete: generic_complete,
+            context: generic_context,
+            cancellation_id: generic_cancellation_id,
+
+        )
+    }
+
+    var generic_complete:
+        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalMutPointerUnauthenticatedChatConnection_SignalType_ConstPointer_void?
+    {
+        get { self.complete }
+        set { complete = newValue }
+    }
+
+    var generic_context: SignalType_ConstPointer_void? {
+        get { self.context }
+        set { context = newValue }
+    }
+
+    var generic_cancellation_id: UInt64 {
+        get { self.cancellation_id }
+        set { cancellation_id = newValue }
+    }
+
+}
+
+extension SignalCPromiseMutPointerRegistrationService: SignalCPromise {
+
+    typealias Result = SignalMutPointerRegistrationService
+
+    init(
+        generic_complete:
+            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalMutPointerRegistrationService_SignalType_ConstPointer_void?,
+        generic_context: SignalType_ConstPointer_void?,
+        generic_cancellation_id: UInt64,
+    ) {
+        self.init(
+            complete: generic_complete,
+            context: generic_context,
+            cancellation_id: generic_cancellation_id,
+
+        )
+    }
+
+    var generic_complete:
+        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalMutPointerRegistrationService_SignalType_ConstPointer_void?
+    {
+        get { self.complete }
+        set { complete = newValue }
+    }
+
+    var generic_context: SignalType_ConstPointer_void? {
+        get { self.context }
+        set { context = newValue }
+    }
+
+    var generic_cancellation_id: UInt64 {
+        get { self.cancellation_id }
+        set { cancellation_id = newValue }
+    }
+
+}
+
+extension SignalCPromiseMutPointerBackupRestoreResponse: SignalCPromise {
+
+    typealias Result = SignalMutPointerBackupRestoreResponse
+
+    init(
+        generic_complete:
+            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalMutPointerBackupRestoreResponse_SignalType_ConstPointer_void?,
+        generic_context: SignalType_ConstPointer_void?,
+        generic_cancellation_id: UInt64,
+    ) {
+        self.init(
+            complete: generic_complete,
+            context: generic_context,
+            cancellation_id: generic_cancellation_id,
+
+        )
+    }
+
+    var generic_complete:
+        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalMutPointerBackupRestoreResponse_SignalType_ConstPointer_void?
+    {
+        get { self.complete }
+        set { complete = newValue }
+    }
+
+    var generic_context: SignalType_ConstPointer_void? {
+        get { self.context }
+        set { context = newValue }
+    }
+
+    var generic_cancellation_id: UInt64 {
+        get { self.cancellation_id }
+        set { cancellation_id = newValue }
+    }
+
+}
+
+extension SignalCPromiseMutPointerBackupStoreResponse: SignalCPromise {
+
+    typealias Result = SignalMutPointerBackupStoreResponse
+
+    init(
+        generic_complete:
+            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalMutPointerBackupStoreResponse_SignalType_ConstPointer_void?,
+        generic_context: SignalType_ConstPointer_void?,
+        generic_cancellation_id: UInt64,
+    ) {
+        self.init(
+            complete: generic_complete,
+            context: generic_context,
+            cancellation_id: generic_cancellation_id,
+
+        )
+    }
+
+    var generic_complete:
+        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalMutPointerBackupStoreResponse_SignalType_ConstPointer_void?
+    {
+        get { self.complete }
+        set { complete = newValue }
+    }
+
+    var generic_context: SignalType_ConstPointer_void? {
+        get { self.context }
+        set { context = newValue }
+    }
+
+    var generic_cancellation_id: UInt64 {
+        get { self.cancellation_id }
+        set { cancellation_id = newValue }
+    }
+
+}
+
+extension SignalCPromiseMutPointerRegisterAccountResponse: SignalCPromise {
+
+    typealias Result = SignalMutPointerRegisterAccountResponse
+
+    init(
+        generic_complete:
+            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalMutPointerRegisterAccountResponse_SignalType_ConstPointer_void?,
+        generic_context: SignalType_ConstPointer_void?,
+        generic_cancellation_id: UInt64,
+    ) {
+        self.init(
+            complete: generic_complete,
+            context: generic_context,
+            cancellation_id: generic_cancellation_id,
+
+        )
+    }
+
+    var generic_complete:
+        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalMutPointerRegisterAccountResponse_SignalType_ConstPointer_void?
+    {
+        get { self.complete }
+        set { complete = newValue }
+    }
+
+    var generic_context: SignalType_ConstPointer_void? {
+        get { self.context }
+        set { context = newValue }
+    }
+
+    var generic_cancellation_id: UInt64 {
+        get { self.cancellation_id }
+        set { cancellation_id = newValue }
+    }
+
+}
+
+extension SignalCPromiseOptionalPairOfCStringPtrc_uchar32: SignalCPromise {
+
+    typealias Result = SignalOptionalPairOfCStringPtrc_uchar32
+
+    init(
+        generic_complete:
+            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalOptionalPairOfCStringPtrc_uchar32_SignalType_ConstPointer_void?,
+        generic_context: SignalType_ConstPointer_void?,
+        generic_cancellation_id: UInt64,
+    ) {
+        self.init(
+            complete: generic_complete,
+            context: generic_context,
+            cancellation_id: generic_cancellation_id,
+
+        )
+    }
+
+    var generic_complete:
+        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalOptionalPairOfCStringPtrc_uchar32_SignalType_ConstPointer_void?
+    {
+        get { self.complete }
+        set { complete = newValue }
+    }
+
+    var generic_context: SignalType_ConstPointer_void? {
+        get { self.context }
+        set { context = newValue }
+    }
+
+    var generic_cancellation_id: UInt64 {
+        get { self.cancellation_id }
+        set { cancellation_id = newValue }
+    }
+
+}
+
+extension SignalCPromiseOptionalUuid: SignalCPromise {
+
+    typealias Result = SignalOptionalUuid
+
+    init(
+        generic_complete:
+            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalOptionalUuid_SignalType_ConstPointer_void?,
+        generic_context: SignalType_ConstPointer_void?,
+        generic_cancellation_id: UInt64,
+    ) {
+        self.init(
+            complete: generic_complete,
+            context: generic_context,
+            cancellation_id: generic_cancellation_id,
+
+        )
+    }
+
+    var generic_complete:
+        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalOptionalUuid_SignalType_ConstPointer_void?
+    {
+        get { self.complete }
+        set { complete = newValue }
+    }
+
+    var generic_context: SignalType_ConstPointer_void? {
+        get { self.context }
+        set { context = newValue }
+    }
+
+    var generic_cancellation_id: UInt64 {
+        get { self.cancellation_id }
+        set { cancellation_id = newValue }
+    }
+
+}
+
+extension SignalCPromiseOwnedBufferOfc_uchar17: SignalCPromise {
+
+    typealias Result = SignalOwnedBufferOfc_uchar17
+
+    init(
+        generic_complete:
+            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalOwnedBufferOfc_uchar17_SignalType_ConstPointer_void?,
+        generic_context: SignalType_ConstPointer_void?,
+        generic_cancellation_id: UInt64,
+    ) {
+        self.init(
+            complete: generic_complete,
+            context: generic_context,
+            cancellation_id: generic_cancellation_id,
+
+        )
+    }
+
+    var generic_complete:
+        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalOwnedBufferOfc_uchar17_SignalType_ConstPointer_void?
+    {
+        get { self.complete }
+        set { complete = newValue }
+    }
+
+    var generic_context: SignalType_ConstPointer_void? {
+        get { self.context }
+        set { context = newValue }
+    }
+
+    var generic_cancellation_id: UInt64 {
+        get { self.cancellation_id }
+        set { cancellation_id = newValue }
+    }
+
+}
+
+extension SignalCPromiseOwnedBuffer: SignalCPromise {
+
+    typealias Result = SignalOwnedBuffer
+
+    init(
+        generic_complete:
+            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalOwnedBuffer_SignalType_ConstPointer_void?,
+        generic_context: SignalType_ConstPointer_void?,
+        generic_cancellation_id: UInt64,
+    ) {
+        self.init(
+            complete: generic_complete,
+            context: generic_context,
+            cancellation_id: generic_cancellation_id,
+
+        )
+    }
+
+    var generic_complete:
+        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalOwnedBuffer_SignalType_ConstPointer_void?
+    {
+        get { self.complete }
+        set { complete = newValue }
+    }
+
+    var generic_context: SignalType_ConstPointer_void? {
+        get { self.context }
+        set { context = newValue }
+    }
+
+    var generic_cancellation_id: UInt64 {
+        get { self.cancellation_id }
+        set { cancellation_id = newValue }
+    }
+
+}
+
+extension SignalCPromiseOwnedBufferOfMaxAlignedLinkedDeviceInternalFfiResult: SignalCPromise {
+
+    typealias Result = SignalOwnedBufferOfMaxAlignedLinkedDeviceInternalFfiResult
+
+    init(
+        generic_complete:
+            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalOwnedBufferOfMaxAlignedLinkedDeviceInternalFfiResult_SignalType_ConstPointer_void?,
+        generic_context: SignalType_ConstPointer_void?,
+        generic_cancellation_id: UInt64,
+    ) {
+        self.init(
+            complete: generic_complete,
+            context: generic_context,
+            cancellation_id: generic_cancellation_id,
+
+        )
+    }
+
+    var generic_complete:
+        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalOwnedBufferOfMaxAlignedLinkedDeviceInternalFfiResult_SignalType_ConstPointer_void?
+    {
+        get { self.complete }
+        set { complete = newValue }
+    }
+
+    var generic_context: SignalType_ConstPointer_void? {
+        get { self.context }
+        set { context = newValue }
+    }
+
+    var generic_cancellation_id: UInt64 {
+        get { self.cancellation_id }
+        set { cancellation_id = newValue }
+    }
+
+}
+
+extension SignalCPromisePairOfCStringPtrCStringPtr: SignalCPromise {
+
+    typealias Result = SignalPairOfCStringPtrCStringPtr
+
+    init(
+        generic_complete:
+            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalPairOfCStringPtrCStringPtr_SignalType_ConstPointer_void?,
+        generic_context: SignalType_ConstPointer_void?,
+        generic_cancellation_id: UInt64,
+    ) {
+        self.init(
+            complete: generic_complete,
+            context: generic_context,
+            cancellation_id: generic_cancellation_id,
+
+        )
+    }
+
+    var generic_complete:
+        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalPairOfCStringPtrCStringPtr_SignalType_ConstPointer_void?
+    {
+        get { self.complete }
+        set { complete = newValue }
+    }
+
+    var generic_context: SignalType_ConstPointer_void? {
+        get { self.context }
+        set { context = newValue }
+    }
+
+    var generic_cancellation_id: UInt64 {
+        get { self.cancellation_id }
+        set { cancellation_id = newValue }
+    }
+
+}
+
+extension SignalCPromisePairOfOwnedBufferOfCStringPtrOwnedBufferOfCStringPtr: SignalCPromise {
+
+    typealias Result = SignalPairOfOwnedBufferOfCStringPtrOwnedBufferOfCStringPtr
+
+    init(
+        generic_complete:
+            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalPairOfOwnedBufferOfCStringPtrOwnedBufferOfCStringPtr_SignalType_ConstPointer_void?,
+        generic_context: SignalType_ConstPointer_void?,
+        generic_cancellation_id: UInt64,
+    ) {
+        self.init(
+            complete: generic_complete,
+            context: generic_context,
+            cancellation_id: generic_cancellation_id,
+
+        )
+    }
+
+    var generic_complete:
+        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalPairOfOwnedBufferOfCStringPtrOwnedBufferOfCStringPtr_SignalType_ConstPointer_void?
+    {
+        get { self.complete }
+        set { complete = newValue }
+    }
+
+    var generic_context: SignalType_ConstPointer_void? {
+        get { self.context }
+        set { context = newValue }
+    }
+
+    var generic_cancellation_id: UInt64 {
+        get { self.cancellation_id }
+        set { cancellation_id = newValue }
+    }
+
+}
+
+extension SignalCPromisePairOfOwnedBufferOwnedBuffer: SignalCPromise {
+
+    typealias Result = SignalPairOfOwnedBufferOwnedBuffer
+
+    init(
+        generic_complete:
+            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalPairOfOwnedBufferOwnedBuffer_SignalType_ConstPointer_void?,
+        generic_context: SignalType_ConstPointer_void?,
+        generic_cancellation_id: UInt64,
+    ) {
+        self.init(
+            complete: generic_complete,
+            context: generic_context,
+            cancellation_id: generic_cancellation_id,
+
+        )
+    }
+
+    var generic_complete:
+        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalPairOfOwnedBufferOwnedBuffer_SignalType_ConstPointer_void?
+    {
+        get { self.complete }
+        set { complete = newValue }
+    }
+
+    var generic_context: SignalType_ConstPointer_void? {
+        get { self.context }
+        set { context = newValue }
+    }
+
+    var generic_cancellation_id: UInt64 {
+        get { self.cancellation_id }
+        set { cancellation_id = newValue }
+    }
+
+}
+
+extension SignalCPromiseUuid: SignalCPromise {
+
+    typealias Result = SignalUuid
+
+    init(
+        generic_complete:
+            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalUuid_SignalType_ConstPointer_void?,
+        generic_context: SignalType_ConstPointer_void?,
+        generic_cancellation_id: UInt64,
+    ) {
+        self.init(
+            complete: generic_complete,
+            context: generic_context,
+            cancellation_id: generic_cancellation_id,
+
+        )
+    }
+
+    var generic_complete:
+        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalUuid_SignalType_ConstPointer_void?
+    {
+        get { self.complete }
+        set { complete = newValue }
+    }
+
+    var generic_context: SignalType_ConstPointer_void? {
+        get { self.context }
+        set { context = newValue }
+    }
+
+    var generic_cancellation_id: UInt64 {
+        get { self.cancellation_id }
+        set { cancellation_id = newValue }
+    }
+
+}
+
+extension SignalCPromiseBridgeMediaBackupInfoFfiResult: SignalCPromise {
+
+    typealias Result = SignalBridgeMediaBackupInfoFfiResult
+
+    init(
+        generic_complete:
+            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalBridgeMediaBackupInfoFfiResult_SignalType_ConstPointer_void?,
+        generic_context: SignalType_ConstPointer_void?,
+        generic_cancellation_id: UInt64,
+    ) {
+        self.init(
+            complete: generic_complete,
+            context: generic_context,
+            cancellation_id: generic_cancellation_id,
+
+        )
+    }
+
+    var generic_complete:
+        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalBridgeMediaBackupInfoFfiResult_SignalType_ConstPointer_void?
+    {
+        get { self.complete }
+        set { complete = newValue }
+    }
+
+    var generic_context: SignalType_ConstPointer_void? {
+        get { self.context }
+        set { context = newValue }
+    }
+
+    var generic_cancellation_id: UInt64 {
+        get { self.cancellation_id }
+        set { cancellation_id = newValue }
+    }
+
+}
+
+extension SignalCPromiseBridgeMessageBackupInfoFfiResult: SignalCPromise {
+
+    typealias Result = SignalBridgeMessageBackupInfoFfiResult
+
+    init(
+        generic_complete:
+            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalBridgeMessageBackupInfoFfiResult_SignalType_ConstPointer_void?,
+        generic_context: SignalType_ConstPointer_void?,
+        generic_cancellation_id: UInt64,
+    ) {
+        self.init(
+            complete: generic_complete,
+            context: generic_context,
+            cancellation_id: generic_cancellation_id,
+
+        )
+    }
+
+    var generic_complete:
+        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalBridgeMessageBackupInfoFfiResult_SignalType_ConstPointer_void?
+    {
+        get { self.complete }
+        set { complete = newValue }
+    }
+
+    var generic_context: SignalType_ConstPointer_void? {
+        get { self.context }
+        set { context = newValue }
+    }
+
+    var generic_cancellation_id: UInt64 {
+        get { self.cancellation_id }
+        set { cancellation_id = newValue }
+    }
+
+}
+
+extension SignalCPromiseCopyBackupMediaNextChunkFfiResult: SignalCPromise {
+
+    typealias Result = SignalCopyBackupMediaNextChunkFfiResult
+
+    init(
+        generic_complete:
+            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalCopyBackupMediaNextChunkFfiResult_SignalType_ConstPointer_void?,
+        generic_context: SignalType_ConstPointer_void?,
+        generic_cancellation_id: UInt64,
+    ) {
+        self.init(
+            complete: generic_complete,
+            context: generic_context,
+            cancellation_id: generic_cancellation_id,
+
+        )
+    }
+
+    var generic_complete:
+        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalCopyBackupMediaNextChunkFfiResult_SignalType_ConstPointer_void?
+    {
+        get { self.complete }
+        set { complete = newValue }
+    }
+
+    var generic_context: SignalType_ConstPointer_void? {
+        get { self.context }
+        set { context = newValue }
+    }
+
+    var generic_cancellation_id: UInt64 {
+        get { self.cancellation_id }
+        set { cancellation_id = newValue }
+    }
+
+}
+
+extension SignalPairOfCStringPtrCStringPtr: SignalPairOf {
+
+    typealias First = SignalCStringPtr?
+
+    typealias Second = SignalCStringPtr?
+
+    init(
+        generic_first: SignalCStringPtr?,
+        generic_second: SignalCStringPtr?,
+    ) {
+        self.init(
+            first: generic_first,
+            second: generic_second,
+
+        )
+    }
+
+    var generic_first: SignalCStringPtr? {
+        get { self.first }
+        set { first = newValue }
+    }
+
+    var generic_second: SignalCStringPtr? {
+        get { self.second }
+        set { second = newValue }
+    }
+
+}
+
+extension SignalPairOfCStringPtrbool: SignalPairOf {
+
+    typealias First = SignalCStringPtr?
+
+    typealias Second = CBool
+
+    init(
+        generic_first: SignalCStringPtr?,
+        generic_second: CBool,
+    ) {
+        self.init(
+            first: generic_first,
+            second: generic_second,
+
+        )
+    }
+
+    var generic_first: SignalCStringPtr? {
+        get { self.first }
+        set { first = newValue }
+    }
+
+    var generic_second: CBool {
+        get { self.second }
+        set { second = newValue }
+    }
+
+}
+
+extension SignalPairOfCStringPtrOwnedBuffer: SignalPairOf {
+
+    typealias First = SignalCStringPtr?
+
+    typealias Second = SignalOwnedBuffer
+
+    init(
+        generic_first: SignalCStringPtr?,
+        generic_second: SignalOwnedBuffer,
+    ) {
+        self.init(
+            first: generic_first,
+            second: generic_second,
+
+        )
+    }
+
+    var generic_first: SignalCStringPtr? {
+        get { self.first }
+        set { first = newValue }
+    }
+
+    var generic_second: SignalOwnedBuffer {
+        get { self.second }
+        set { second = newValue }
+    }
+
+}
+
+extension SignalPairOfCStringPtru32: SignalPairOf {
+
+    typealias First = SignalCStringPtr?
+
+    typealias Second = UInt32
+
+    init(
+        generic_first: SignalCStringPtr?,
+        generic_second: UInt32,
+    ) {
+        self.init(
+            first: generic_first,
+            second: generic_second,
+
+        )
+    }
+
+    var generic_first: SignalCStringPtr? {
+        get { self.first }
+        set { first = newValue }
+    }
+
+    var generic_second: UInt32 {
+        get { self.second }
+        set { second = newValue }
+    }
+
+}
+
+extension SignalPairOfMutPointerPrivateKeyMutPointerPublicKey: SignalPairOf {
+
+    typealias First = SignalMutPointerPrivateKey
+
+    typealias Second = SignalMutPointerPublicKey
+
+    init(
+        generic_first: SignalMutPointerPrivateKey,
+        generic_second: SignalMutPointerPublicKey,
+    ) {
+        self.init(
+            first: generic_first,
+            second: generic_second,
+
+        )
+    }
+
+    var generic_first: SignalMutPointerPrivateKey {
+        get { self.first }
+        set { first = newValue }
+    }
+
+    var generic_second: SignalMutPointerPublicKey {
+        get { self.second }
+        set { second = newValue }
+    }
+
+}
+
+extension SignalPairOfMutPointerPublicKeyMutPointerPrivateKey: SignalPairOf {
+
+    typealias First = SignalMutPointerPublicKey
+
+    typealias Second = SignalMutPointerPrivateKey
+
+    init(
+        generic_first: SignalMutPointerPublicKey,
+        generic_second: SignalMutPointerPrivateKey,
+    ) {
+        self.init(
+            first: generic_first,
+            second: generic_second,
+
+        )
+    }
+
+    var generic_first: SignalMutPointerPublicKey {
+        get { self.first }
+        set { first = newValue }
+    }
+
+    var generic_second: SignalMutPointerPrivateKey {
+        get { self.second }
+        set { second = newValue }
+    }
+
+}
+
+extension SignalPairOfOwnedBufferOfCStringPtrOwnedBufferOfCStringPtr: SignalPairOf {
+
+    typealias First = SignalOwnedBufferOfCStringPtr
+
+    typealias Second = SignalOwnedBufferOfCStringPtr
+
+    init(
+        generic_first: SignalOwnedBufferOfCStringPtr,
+        generic_second: SignalOwnedBufferOfCStringPtr,
+    ) {
+        self.init(
+            first: generic_first,
+            second: generic_second,
+
+        )
+    }
+
+    var generic_first: SignalOwnedBufferOfCStringPtr {
+        get { self.first }
+        set { first = newValue }
+    }
+
+    var generic_second: SignalOwnedBufferOfCStringPtr {
+        get { self.second }
+        set { second = newValue }
+    }
+
+}
+
+extension SignalPairOfOwnedBufferOwnedBuffer: SignalPairOf {
+
+    typealias First = SignalOwnedBuffer
+
+    typealias Second = SignalOwnedBuffer
+
+    init(
+        generic_first: SignalOwnedBuffer,
+        generic_second: SignalOwnedBuffer,
+    ) {
+        self.init(
+            first: generic_first,
+            second: generic_second,
+
+        )
+    }
+
+    var generic_first: SignalOwnedBuffer {
+        get { self.first }
+        set { first = newValue }
+    }
+
+    var generic_second: SignalOwnedBuffer {
+        get { self.second }
+        set { second = newValue }
+    }
+
+}
+
+extension SignalPairOfPairOfCStringPtrOwnedBufferi64: SignalPairOf {
+
+    typealias First = SignalPairOfCStringPtrOwnedBuffer
+
+    typealias Second = Int64
+
+    init(
+        generic_first: SignalPairOfCStringPtrOwnedBuffer,
+        generic_second: Int64,
+    ) {
+        self.init(
+            first: generic_first,
+            second: generic_second,
+
+        )
+    }
+
+    var generic_first: SignalPairOfCStringPtrOwnedBuffer {
+        get { self.first }
+        set { first = newValue }
+    }
+
+    var generic_second: Int64 {
+        get { self.second }
+        set { second = newValue }
+    }
+
+}
+
 enum
     FfiBorrowedSliceConstructor_SignalBorrowedSliceOfBridgeCopyBackupMediaItemFfiArg_DerivedArgConverterBridgeCopyBackupMediaItem:
         FfiBorrowedSliceConstructor
@@ -182,6 +1442,20 @@ internal enum BridgeCopyBackupMediaResult {
     case outOfSpace
 }
 
+internal struct BridgeMediaBackupInfo {
+    var backupDir: String
+    var mediaDir: String
+    var usedSpace: Int64
+
+}
+
+internal struct BridgeMessageBackupInfo {
+    var backupDir: String
+    var cdn: Int32
+    var backupName: String
+
+}
+
 internal struct CopyBackupMediaNextChunk {
     var chunk: [BridgeCopyBackupMediaOutcome]
     var termination: BulkPolledStreamTermination?
@@ -271,6 +1545,46 @@ internal enum DerivedReturnConverterBridgeCopyBackupMediaResult: NiceReturnConve
         default:
             throw SignalError.internalError("Unexpected enum tag for BridgeCopyBackupMediaResult: \(ffiTag)")
         }
+    }
+}
+
+internal enum DerivedReturnConverterBridgeMediaBackupInfo: NiceReturnConverter {
+    typealias NiceReturn = BridgeMediaBackupInfo
+    typealias FfiReturn = SignalBridgeMediaBackupInfoFfiResult
+    static func emptyFfiReturn() -> FfiReturn {
+        SignalBridgeMediaBackupInfoFfiResult()
+    }
+    static func convertReturn(consuming ffiValue: FfiReturn) throws -> NiceReturn {
+
+        let backup_dir = Result { try StringConverter.convertReturn(consuming: ffiValue.backup_dir) }
+        let media_dir = Result { try StringConverter.convertReturn(consuming: ffiValue.media_dir) }
+        let used_space = Result { try IdentityConverter<Int64>.convertReturn(consuming: ffiValue.used_space) }
+
+        return BridgeMediaBackupInfo(
+            backupDir: try backup_dir.get(),
+            mediaDir: try media_dir.get(),
+            usedSpace: try used_space.get()
+        )
+    }
+}
+
+internal enum DerivedReturnConverterBridgeMessageBackupInfo: NiceReturnConverter {
+    typealias NiceReturn = BridgeMessageBackupInfo
+    typealias FfiReturn = SignalBridgeMessageBackupInfoFfiResult
+    static func emptyFfiReturn() -> FfiReturn {
+        SignalBridgeMessageBackupInfoFfiResult()
+    }
+    static func convertReturn(consuming ffiValue: FfiReturn) throws -> NiceReturn {
+
+        let backup_dir = Result { try StringConverter.convertReturn(consuming: ffiValue.backup_dir) }
+        let cdn = Result { try IdentityConverter<Int32>.convertReturn(consuming: ffiValue.cdn) }
+        let backup_name = Result { try StringConverter.convertReturn(consuming: ffiValue.backup_name) }
+
+        return BridgeMessageBackupInfo(
+            backupDir: try backup_dir.get(),
+            cdn: try cdn.get(),
+            backupName: try backup_name.get()
+        )
     }
 }
 
@@ -449,6 +1763,26 @@ internal enum NativeNice {
         return try VoidConverter.convertReturn(consuming: rawOutput)
 
     }
+    internal static func AuthenticatedChatConnection_clear_registration_lock(
+        asyncContext: TokioAsyncContext,
+        chat: AuthenticatedChatConnection,
+    ) async throws {
+        let rawOutput: VoidConverter.FfiReturn =
+            try await asyncContext.invokeAsyncFunction {
+                promiseFfi,
+                asyncContextFfi in
+                BridgeHandleRefConverter<SignalMutPointerAuthenticatedChatConnection, AuthenticatedChatConnection>
+                    .convertArgBorrowed(chat) { chatFfi in
+                        SignalFfi.signal_authenticated_chat_connection_clear_registration_lock(
+                            promiseFfi,
+                            asyncContextFfi.const(),
+                            chatFfi,
+                        )
+                    }
+            }
+        return try VoidConverter.convertReturn(consuming: rawOutput)
+
+    }
     internal static func AuthenticatedChatConnection_delete_username_hash(
         asyncContext: TokioAsyncContext,
         chat: AuthenticatedChatConnection,
@@ -595,6 +1929,30 @@ internal enum NativeNice {
         return try VoidConverter.convertReturn(consuming: rawOutput)
 
     }
+    internal static func AuthenticatedChatConnection_set_discoverable_by_phone_number(
+        asyncContext: TokioAsyncContext,
+        chat: AuthenticatedChatConnection,
+        discoverable: Bool,
+    ) async throws {
+        let rawOutput: VoidConverter.FfiReturn =
+            try await asyncContext.invokeAsyncFunction {
+                promiseFfi,
+                asyncContextFfi in
+                BridgeHandleRefConverter<SignalMutPointerAuthenticatedChatConnection, AuthenticatedChatConnection>
+                    .convertArgBorrowed(chat) { chatFfi in
+                        IdentityConverter<Bool>.convertArgBorrowed(discoverable) { discoverableFfi in
+                            SignalFfi.signal_authenticated_chat_connection_set_discoverable_by_phone_number(
+                                promiseFfi,
+                                asyncContextFfi.const(),
+                                chatFfi,
+                                discoverableFfi,
+                            )
+                        }
+                    }
+            }
+        return try VoidConverter.convertReturn(consuming: rawOutput)
+
+    }
     internal static func AuthenticatedChatConnection_set_push_token_apns(
         asyncContext: TokioAsyncContext,
         chat: AuthenticatedChatConnection,
@@ -612,6 +1970,54 @@ internal enum NativeNice {
                                 asyncContextFfi.const(),
                                 chatFfi,
                                 apns_tokenFfi,
+                            )
+                        }
+                    }
+            }
+        return try VoidConverter.convertReturn(consuming: rawOutput)
+
+    }
+    internal static func AuthenticatedChatConnection_set_registration_lock(
+        asyncContext: TokioAsyncContext,
+        chat: AuthenticatedChatConnection,
+        svrKey svr_key: Data,
+    ) async throws {
+        let rawOutput: VoidConverter.FfiReturn =
+            try await asyncContext.invokeAsyncFunction {
+                promiseFfi,
+                asyncContextFfi in
+                BridgeHandleRefConverter<SignalMutPointerAuthenticatedChatConnection, AuthenticatedChatConnection>
+                    .convertArgBorrowed(chat) { chatFfi in
+                        FixedByteArrayConverter<FixedByteArrayHelper32>.convertArgBorrowed(svr_key) { svr_keyFfi in
+                            SignalFfi.signal_authenticated_chat_connection_set_registration_lock(
+                                promiseFfi,
+                                asyncContextFfi.const(),
+                                chatFfi,
+                                svr_keyFfi,
+                            )
+                        }
+                    }
+            }
+        return try VoidConverter.convertReturn(consuming: rawOutput)
+
+    }
+    internal static func AuthenticatedChatConnection_set_registration_recovery_password(
+        asyncContext: TokioAsyncContext,
+        chat: AuthenticatedChatConnection,
+        svrKey svr_key: Data,
+    ) async throws {
+        let rawOutput: VoidConverter.FfiReturn =
+            try await asyncContext.invokeAsyncFunction {
+                promiseFfi,
+                asyncContextFfi in
+                BridgeHandleRefConverter<SignalMutPointerAuthenticatedChatConnection, AuthenticatedChatConnection>
+                    .convertArgBorrowed(chat) { chatFfi in
+                        FixedByteArrayConverter<FixedByteArrayHelper32>.convertArgBorrowed(svr_key) { svr_keyFfi in
+                            SignalFfi.signal_authenticated_chat_connection_set_registration_recovery_password(
+                                promiseFfi,
+                                asyncContextFfi.const(),
+                                chatFfi,
+                                svr_keyFfi,
                             )
                         }
                     }
@@ -683,6 +2089,66 @@ internal enum NativeNice {
                     }
             }
         return try DerivedReturnConverterCopyBackupMediaNextChunk.convertReturn(consuming: rawOutput)
+
+    }
+    internal static func SvrKey_DeriveLoggingKey(
+        svrKey svr_key: Data,
+    ) throws -> Data {
+        try FixedByteArrayConverter<FixedByteArrayHelper32>.convertArgBorrowed(svr_key) { svr_keyFfi in
+            var rawOutput = FixedByteArrayConverter<FixedByteArrayHelper32>.emptyFfiReturn()
+            try checkError(
+                SignalFfi.signal_svr_key_derive_logging_key(
+                    &rawOutput,
+                    svr_keyFfi,
+                )
+            )
+            return try FixedByteArrayConverter<FixedByteArrayHelper32>.convertReturn(consuming: rawOutput)
+        }
+
+    }
+    internal static func SvrKey_DeriveRegistrationLock(
+        svrKey svr_key: Data,
+    ) throws -> Data {
+        try FixedByteArrayConverter<FixedByteArrayHelper32>.convertArgBorrowed(svr_key) { svr_keyFfi in
+            var rawOutput = FixedByteArrayConverter<FixedByteArrayHelper32>.emptyFfiReturn()
+            try checkError(
+                SignalFfi.signal_svr_key_derive_registration_lock(
+                    &rawOutput,
+                    svr_keyFfi,
+                )
+            )
+            return try FixedByteArrayConverter<FixedByteArrayHelper32>.convertReturn(consuming: rawOutput)
+        }
+
+    }
+    internal static func SvrKey_DeriveRegistrationRecoveryPassword(
+        svrKey svr_key: Data,
+    ) throws -> Data {
+        try FixedByteArrayConverter<FixedByteArrayHelper32>.convertArgBorrowed(svr_key) { svr_keyFfi in
+            var rawOutput = FixedByteArrayConverter<FixedByteArrayHelper32>.emptyFfiReturn()
+            try checkError(
+                SignalFfi.signal_svr_key_derive_registration_recovery_password(
+                    &rawOutput,
+                    svr_keyFfi,
+                )
+            )
+            return try FixedByteArrayConverter<FixedByteArrayHelper32>.convertReturn(consuming: rawOutput)
+        }
+
+    }
+    internal static func SvrKey_DeriveStorageServiceKey(
+        svrKey svr_key: Data,
+    ) throws -> Data {
+        try FixedByteArrayConverter<FixedByteArrayHelper32>.convertArgBorrowed(svr_key) { svr_keyFfi in
+            var rawOutput = FixedByteArrayConverter<FixedByteArrayHelper32>.emptyFfiReturn()
+            try checkError(
+                SignalFfi.signal_svr_key_derive_storage_service_key(
+                    &rawOutput,
+                    svr_keyFfi,
+                )
+            )
+            return try FixedByteArrayConverter<FixedByteArrayHelper32>.convertReturn(consuming: rawOutput)
+        }
 
     }
     internal static func UnauthenticatedChatConnection_account_exists(
@@ -837,6 +2303,84 @@ internal enum NativeNice {
         return try BackupCdnCredentialsConverter.convertReturn(consuming: rawOutput)
 
     }
+    internal static func UnauthenticatedChatConnection_backup_get_media_backup_info(
+        asyncContext: TokioAsyncContext,
+        chat: UnauthenticatedChatConnection,
+        credential: BackupAuthCredential,
+        serverKeys server_keys: GenericServerPublicParams,
+        signingKey signing_key: PrivateKey,
+        rng: Int64,
+    ) async throws -> BridgeMediaBackupInfo {
+        let rawOutput: DerivedReturnConverterBridgeMediaBackupInfo.FfiReturn =
+            try await asyncContext.invokeAsyncFunction {
+                promiseFfi,
+                asyncContextFfi in
+                BridgeHandleRefConverter<SignalMutPointerUnauthenticatedChatConnection, UnauthenticatedChatConnection>
+                    .convertArgBorrowed(chat) { chatFfi in
+                        ByteArrayConverter<BackupAuthCredential>.convertArgBorrowed(credential) { credentialFfi in
+                            ByteArrayConverter<GenericServerPublicParams>.convertArgBorrowed(server_keys) {
+                                server_keysFfi in
+                                BridgeHandleRefConverter<SignalMutPointerPrivateKey, PrivateKey>.convertArgBorrowed(
+                                    signing_key
+                                ) { signing_keyFfi in
+                                    IdentityConverter.convertArgBorrowed(rng) { rngFfi in
+                                        SignalFfi.signal_unauthenticated_chat_connection_backup_get_media_backup_info(
+                                            promiseFfi,
+                                            asyncContextFfi.const(),
+                                            chatFfi,
+                                            credentialFfi,
+                                            server_keysFfi,
+                                            signing_keyFfi,
+                                            rngFfi,
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+            }
+        return try DerivedReturnConverterBridgeMediaBackupInfo.convertReturn(consuming: rawOutput)
+
+    }
+    internal static func UnauthenticatedChatConnection_backup_get_message_backup_info(
+        asyncContext: TokioAsyncContext,
+        chat: UnauthenticatedChatConnection,
+        credential: BackupAuthCredential,
+        serverKeys server_keys: GenericServerPublicParams,
+        signingKey signing_key: PrivateKey,
+        rng: Int64,
+    ) async throws -> BridgeMessageBackupInfo {
+        let rawOutput: DerivedReturnConverterBridgeMessageBackupInfo.FfiReturn =
+            try await asyncContext.invokeAsyncFunction {
+                promiseFfi,
+                asyncContextFfi in
+                BridgeHandleRefConverter<SignalMutPointerUnauthenticatedChatConnection, UnauthenticatedChatConnection>
+                    .convertArgBorrowed(chat) { chatFfi in
+                        ByteArrayConverter<BackupAuthCredential>.convertArgBorrowed(credential) { credentialFfi in
+                            ByteArrayConverter<GenericServerPublicParams>.convertArgBorrowed(server_keys) {
+                                server_keysFfi in
+                                BridgeHandleRefConverter<SignalMutPointerPrivateKey, PrivateKey>.convertArgBorrowed(
+                                    signing_key
+                                ) { signing_keyFfi in
+                                    IdentityConverter.convertArgBorrowed(rng) { rngFfi in
+                                        SignalFfi.signal_unauthenticated_chat_connection_backup_get_message_backup_info(
+                                            promiseFfi,
+                                            asyncContextFfi.const(),
+                                            chatFfi,
+                                            credentialFfi,
+                                            server_keysFfi,
+                                            signing_keyFfi,
+                                            rngFfi,
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+            }
+        return try DerivedReturnConverterBridgeMessageBackupInfo.convertReturn(consuming: rawOutput)
+
+    }
     internal static func UnauthenticatedChatConnection_backup_get_svrb_credentials(
         asyncContext: TokioAsyncContext,
         chat: UnauthenticatedChatConnection,
@@ -845,12 +2389,14 @@ internal enum NativeNice {
         signingKey signing_key: PrivateKey,
         rng: Int64,
     ) async throws -> (String, String) {
-        let rawOutput: PairOfStringConverterAndStringConverter.FfiReturn =
-            try await asyncContext.invokeAsyncFunction {
-                promiseFfi,
-                asyncContextFfi in
-                BridgeHandleRefConverter<SignalMutPointerUnauthenticatedChatConnection, UnauthenticatedChatConnection>
-                    .convertArgBorrowed(chat) { chatFfi in
+        let rawOutput:
+            PairOfResultConverter<StringConverter, StringConverter, SignalPairOfCStringPtrCStringPtr>.FfiReturn =
+                try await asyncContext.invokeAsyncFunction {
+                    promiseFfi,
+                    asyncContextFfi in
+                    BridgeHandleRefConverter<
+                        SignalMutPointerUnauthenticatedChatConnection, UnauthenticatedChatConnection
+                    >.convertArgBorrowed(chat) { chatFfi in
                         ByteArrayConverter<BackupAuthCredential>.convertArgBorrowed(credential) { credentialFfi in
                             ByteArrayConverter<GenericServerPublicParams>.convertArgBorrowed(server_keys) {
                                 server_keysFfi in
@@ -872,8 +2418,9 @@ internal enum NativeNice {
                             }
                         }
                     }
-            }
-        return try PairOfStringConverterAndStringConverter.convertReturn(consuming: rawOutput)
+                }
+        return try PairOfResultConverter<StringConverter, StringConverter, SignalPairOfCStringPtrCStringPtr>
+            .convertReturn(consuming: rawOutput)
 
     }
     internal static func UnauthenticatedChatConnection_backup_refresh(

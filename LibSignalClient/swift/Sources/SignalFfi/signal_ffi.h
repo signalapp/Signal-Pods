@@ -673,6 +673,32 @@ static_assert_64bit(alignof(SignalBridgeCopyBackupMediaItemFfiArg) == 8);
 typedef const SignalBridgeCopyBackupMediaItemFfiArg* SignalType_ConstPointer_SignalBridgeCopyBackupMediaItemFfiArg;
 static_assert_64bit(sizeof(SignalType_ConstPointer_SignalBridgeCopyBackupMediaItemFfiArg) == 8);
 static_assert_64bit(alignof(SignalType_ConstPointer_SignalBridgeCopyBackupMediaItemFfiArg) == 8);
+typedef struct {
+  const int8_t* backup_dir;
+  const int8_t* media_dir;
+  int64_t used_space;
+} SignalBridgeMediaBackupInfoFfiResult;
+static_assert_64bit(offsetof(SignalBridgeMediaBackupInfoFfiResult, backup_dir) == 0);
+static_assert_64bit(offsetof(SignalBridgeMediaBackupInfoFfiResult, media_dir) == 8);
+static_assert_64bit(offsetof(SignalBridgeMediaBackupInfoFfiResult, used_space) == 16);
+static_assert_64bit(sizeof(SignalBridgeMediaBackupInfoFfiResult) == 24);
+static_assert_64bit(alignof(SignalBridgeMediaBackupInfoFfiResult) == 8);
+typedef const SignalBridgeMediaBackupInfoFfiResult* SignalType_ConstPointer_SignalBridgeMediaBackupInfoFfiResult;
+static_assert_64bit(sizeof(SignalType_ConstPointer_SignalBridgeMediaBackupInfoFfiResult) == 8);
+static_assert_64bit(alignof(SignalType_ConstPointer_SignalBridgeMediaBackupInfoFfiResult) == 8);
+typedef struct {
+  const int8_t* backup_dir;
+  int32_t cdn;
+  const int8_t* backup_name;
+} SignalBridgeMessageBackupInfoFfiResult;
+static_assert_64bit(offsetof(SignalBridgeMessageBackupInfoFfiResult, backup_dir) == 0);
+static_assert_64bit(offsetof(SignalBridgeMessageBackupInfoFfiResult, cdn) == 8);
+static_assert_64bit(offsetof(SignalBridgeMessageBackupInfoFfiResult, backup_name) == 16);
+static_assert_64bit(sizeof(SignalBridgeMessageBackupInfoFfiResult) == 24);
+static_assert_64bit(alignof(SignalBridgeMessageBackupInfoFfiResult) == 8);
+typedef const SignalBridgeMessageBackupInfoFfiResult* SignalType_ConstPointer_SignalBridgeMessageBackupInfoFfiResult;
+static_assert_64bit(sizeof(SignalType_ConstPointer_SignalBridgeMessageBackupInfoFfiResult) == 8);
+static_assert_64bit(alignof(SignalType_ConstPointer_SignalBridgeMessageBackupInfoFfiResult) == 8);
 typedef enum {
   SignalBridgeCopyBackupMediaResultFfiResultSuccess,
   SignalBridgeCopyBackupMediaResultFfiResultSourceNotFound,
@@ -1818,6 +1844,9 @@ static_assert_64bit(alignof(SignalOwnedBufferOfMaxAlignedBridgeCopyBackupMediaIt
 typedef SignalOwnedBufferOfMaxAlignedBridgeCopyBackupMediaItemFfiResult* SignalType_MutPointer_SignalOwnedBufferOfMaxAlignedBridgeCopyBackupMediaItemFfiResult;
 static_assert_64bit(sizeof(SignalType_MutPointer_SignalOwnedBufferOfMaxAlignedBridgeCopyBackupMediaItemFfiResult) == 8);
 static_assert_64bit(alignof(SignalType_MutPointer_SignalOwnedBufferOfMaxAlignedBridgeCopyBackupMediaItemFfiResult) == 8);
+typedef SignalPairOfCStringPtrCStringPtr* SignalType_MutPointer_SignalPairOfCStringPtrCStringPtr;
+static_assert_64bit(sizeof(SignalType_MutPointer_SignalPairOfCStringPtrCStringPtr) == 8);
+static_assert_64bit(alignof(SignalType_MutPointer_SignalPairOfCStringPtrCStringPtr) == 8);
 typedef struct {
   const int8_t* first;
   bool second;
@@ -2257,6 +2286,38 @@ static_assert_64bit(alignof(SignalCPromiseUuid) == 8);
 typedef SignalCPromiseUuid* SignalType_MutPointer_SignalCPromiseUuid;
 static_assert_64bit(sizeof(SignalType_MutPointer_SignalCPromiseUuid) == 8);
 static_assert_64bit(alignof(SignalType_MutPointer_SignalCPromiseUuid) == 8);
+typedef void (*SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalBridgeMediaBackupInfoFfiResult_SignalType_ConstPointer_void)(SignalType_MutPointer_SignalFfiError, SignalType_ConstPointer_SignalBridgeMediaBackupInfoFfiResult, SignalType_ConstPointer_void);
+static_assert_64bit(sizeof(SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalBridgeMediaBackupInfoFfiResult_SignalType_ConstPointer_void) == 8);
+static_assert_64bit(alignof(SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalBridgeMediaBackupInfoFfiResult_SignalType_ConstPointer_void) == 8);
+typedef struct {
+  SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalBridgeMediaBackupInfoFfiResult_SignalType_ConstPointer_void complete;
+  const void* context;
+  uint64_t cancellation_id;
+} SignalCPromiseBridgeMediaBackupInfoFfiResult;
+static_assert_64bit(offsetof(SignalCPromiseBridgeMediaBackupInfoFfiResult, complete) == 0);
+static_assert_64bit(offsetof(SignalCPromiseBridgeMediaBackupInfoFfiResult, context) == 8);
+static_assert_64bit(offsetof(SignalCPromiseBridgeMediaBackupInfoFfiResult, cancellation_id) == 16);
+static_assert_64bit(sizeof(SignalCPromiseBridgeMediaBackupInfoFfiResult) == 24);
+static_assert_64bit(alignof(SignalCPromiseBridgeMediaBackupInfoFfiResult) == 8);
+typedef SignalCPromiseBridgeMediaBackupInfoFfiResult* SignalType_MutPointer_SignalCPromiseBridgeMediaBackupInfoFfiResult;
+static_assert_64bit(sizeof(SignalType_MutPointer_SignalCPromiseBridgeMediaBackupInfoFfiResult) == 8);
+static_assert_64bit(alignof(SignalType_MutPointer_SignalCPromiseBridgeMediaBackupInfoFfiResult) == 8);
+typedef void (*SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalBridgeMessageBackupInfoFfiResult_SignalType_ConstPointer_void)(SignalType_MutPointer_SignalFfiError, SignalType_ConstPointer_SignalBridgeMessageBackupInfoFfiResult, SignalType_ConstPointer_void);
+static_assert_64bit(sizeof(SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalBridgeMessageBackupInfoFfiResult_SignalType_ConstPointer_void) == 8);
+static_assert_64bit(alignof(SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalBridgeMessageBackupInfoFfiResult_SignalType_ConstPointer_void) == 8);
+typedef struct {
+  SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalBridgeMessageBackupInfoFfiResult_SignalType_ConstPointer_void complete;
+  const void* context;
+  uint64_t cancellation_id;
+} SignalCPromiseBridgeMessageBackupInfoFfiResult;
+static_assert_64bit(offsetof(SignalCPromiseBridgeMessageBackupInfoFfiResult, complete) == 0);
+static_assert_64bit(offsetof(SignalCPromiseBridgeMessageBackupInfoFfiResult, context) == 8);
+static_assert_64bit(offsetof(SignalCPromiseBridgeMessageBackupInfoFfiResult, cancellation_id) == 16);
+static_assert_64bit(sizeof(SignalCPromiseBridgeMessageBackupInfoFfiResult) == 24);
+static_assert_64bit(alignof(SignalCPromiseBridgeMessageBackupInfoFfiResult) == 8);
+typedef SignalCPromiseBridgeMessageBackupInfoFfiResult* SignalType_MutPointer_SignalCPromiseBridgeMessageBackupInfoFfiResult;
+static_assert_64bit(sizeof(SignalType_MutPointer_SignalCPromiseBridgeMessageBackupInfoFfiResult) == 8);
+static_assert_64bit(alignof(SignalType_MutPointer_SignalCPromiseBridgeMessageBackupInfoFfiResult) == 8);
 typedef void (*SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalCopyBackupMediaNextChunkFfiResult_SignalType_ConstPointer_void)(SignalType_MutPointer_SignalFfiError, SignalType_ConstPointer_SignalCopyBackupMediaNextChunkFfiResult, SignalType_ConstPointer_void);
 static_assert_64bit(sizeof(SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalCopyBackupMediaNextChunkFfiResult_SignalType_ConstPointer_void) == 8);
 static_assert_64bit(alignof(SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalCopyBackupMediaNextChunkFfiResult_SignalType_ConstPointer_void) == 8);
@@ -3040,6 +3101,11 @@ SignalFfiError* signal_authenticated_chat_connection_clear_push_token(
   SignalConstPointerTokioAsyncContext async_runtime,
   SignalConstPointerAuthenticatedChatConnection chat
 );
+SignalFfiError* signal_authenticated_chat_connection_clear_registration_lock(
+  SignalCPromisebool* promise,
+  SignalConstPointerTokioAsyncContext async_runtime,
+  SignalConstPointerAuthenticatedChatConnection chat
+);
 SignalFfiError* signal_authenticated_chat_connection_connect(
   SignalCPromiseMutPointerAuthenticatedChatConnection* promise,
   SignalConstPointerTokioAsyncContext async_runtime,
@@ -3147,11 +3213,29 @@ SignalFfiError* signal_authenticated_chat_connection_set_device_name(
   uint8_t device_id,
   SignalBorrowedBuffer encrypted_name
 );
+SignalFfiError* signal_authenticated_chat_connection_set_discoverable_by_phone_number(
+  SignalCPromisebool* promise,
+  SignalConstPointerTokioAsyncContext async_runtime,
+  SignalConstPointerAuthenticatedChatConnection chat,
+  bool discoverable
+);
 SignalFfiError* signal_authenticated_chat_connection_set_push_token_apns(
   SignalCPromisebool* promise,
   SignalConstPointerTokioAsyncContext async_runtime,
   SignalConstPointerAuthenticatedChatConnection chat,
   const int8_t* apns_token
+);
+SignalFfiError* signal_authenticated_chat_connection_set_registration_lock(
+  SignalCPromisebool* promise,
+  SignalConstPointerTokioAsyncContext async_runtime,
+  SignalConstPointerAuthenticatedChatConnection chat,
+  const SignalType_FixedArray32_uint8_t* svr_key
+);
+SignalFfiError* signal_authenticated_chat_connection_set_registration_recovery_password(
+  SignalCPromisebool* promise,
+  SignalConstPointerTokioAsyncContext async_runtime,
+  SignalConstPointerAuthenticatedChatConnection chat,
+  const SignalType_FixedArray32_uint8_t* svr_key
 );
 SignalFfiError* signal_authenticated_chat_connection_set_username_link(
   SignalCPromiseUuid* promise,
@@ -3781,8 +3865,7 @@ SignalFfiError* signal_error_get_registration_error_not_deliverable(
 );
 SignalFfiError* signal_error_get_registration_lock(
   uint64_t* out_time_remaining_seconds,
-  SignalCStringPtr* out_svr2_username,
-  SignalCStringPtr* out_svr2_password,
+  SignalPairOfCStringPtrCStringPtr* out_svr2_credentials,
   const SignalFfiError* err
 );
 SignalFfiError* signal_error_get_retry_after_seconds(
@@ -5541,6 +5624,22 @@ SignalFfiError* signal_svr2_client_new(
   SignalBorrowedBuffer attestation_msg,
   uint64_t current_timestamp
 );
+SignalFfiError* signal_svr_key_derive_logging_key(
+  SignalType_FixedArray32_uint8_t* out,
+  const SignalType_FixedArray32_uint8_t* svr_key
+);
+SignalFfiError* signal_svr_key_derive_registration_lock(
+  SignalType_FixedArray32_uint8_t* out,
+  const SignalType_FixedArray32_uint8_t* svr_key
+);
+SignalFfiError* signal_svr_key_derive_registration_recovery_password(
+  SignalType_FixedArray32_uint8_t* out,
+  const SignalType_FixedArray32_uint8_t* svr_key
+);
+SignalFfiError* signal_svr_key_derive_storage_service_key(
+  SignalType_FixedArray32_uint8_t* out,
+  const SignalType_FixedArray32_uint8_t* svr_key
+);
 SignalFfiError* signal_tokio_async_context_cancel(
   SignalConstPointerTokioAsyncContext context,
   uint64_t raw_cancellation_id
@@ -5585,6 +5684,15 @@ SignalFfiError* signal_unauthenticated_chat_connection_backup_get_cdn_credential
   int32_t cdn,
   int64_t rng
 );
+SignalFfiError* signal_unauthenticated_chat_connection_backup_get_media_backup_info(
+  SignalCPromiseBridgeMediaBackupInfoFfiResult* promise,
+  SignalConstPointerTokioAsyncContext async_runtime,
+  SignalConstPointerUnauthenticatedChatConnection chat,
+  SignalBorrowedBuffer credential,
+  SignalBorrowedBuffer server_keys,
+  SignalConstPointerPrivateKey signing_key,
+  int64_t rng
+);
 SignalFfiError* signal_unauthenticated_chat_connection_backup_get_media_upload_form(
   SignalCPromiseFfiUploadForm* promise,
   SignalConstPointerTokioAsyncContext async_runtime,
@@ -5593,6 +5701,15 @@ SignalFfiError* signal_unauthenticated_chat_connection_backup_get_media_upload_f
   SignalBorrowedBuffer server_keys,
   SignalConstPointerPrivateKey signing_key,
   uint64_t upload_size,
+  int64_t rng
+);
+SignalFfiError* signal_unauthenticated_chat_connection_backup_get_message_backup_info(
+  SignalCPromiseBridgeMessageBackupInfoFfiResult* promise,
+  SignalConstPointerTokioAsyncContext async_runtime,
+  SignalConstPointerUnauthenticatedChatConnection chat,
+  SignalBorrowedBuffer credential,
+  SignalBorrowedBuffer server_keys,
+  SignalConstPointerPrivateKey signing_key,
   int64_t rng
 );
 SignalFfiError* signal_unauthenticated_chat_connection_backup_get_svrb_credentials(
