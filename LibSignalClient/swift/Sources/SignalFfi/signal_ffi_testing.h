@@ -505,32 +505,6 @@ typedef SignalOwnedBufferOfMaxAlignedc_uchar32* SignalType_MutPointer_SignalOwne
 static_assert_64bit(sizeof(SignalType_MutPointer_SignalOwnedBufferOfMaxAlignedc_uchar32) == 8);
 static_assert_64bit(alignof(SignalType_MutPointer_SignalOwnedBufferOfMaxAlignedc_uchar32) == 8);
 typedef struct {
-  SignalCopyBackupMediaOutFfiResult* base;
-  size_t length;
-  size_t size_bytes;
-} SignalOwnedBufferOfMaxAlignedCopyBackupMediaOutFfiResult;
-static_assert_64bit(offsetof(SignalOwnedBufferOfMaxAlignedCopyBackupMediaOutFfiResult, base) == 0);
-static_assert_64bit(offsetof(SignalOwnedBufferOfMaxAlignedCopyBackupMediaOutFfiResult, length) == 8);
-static_assert_64bit(offsetof(SignalOwnedBufferOfMaxAlignedCopyBackupMediaOutFfiResult, size_bytes) == 16);
-static_assert_64bit(sizeof(SignalOwnedBufferOfMaxAlignedCopyBackupMediaOutFfiResult) == 24);
-static_assert_64bit(alignof(SignalOwnedBufferOfMaxAlignedCopyBackupMediaOutFfiResult) == 8);
-typedef SignalOwnedBufferOfMaxAlignedCopyBackupMediaOutFfiResult* SignalType_MutPointer_SignalOwnedBufferOfMaxAlignedCopyBackupMediaOutFfiResult;
-static_assert_64bit(sizeof(SignalType_MutPointer_SignalOwnedBufferOfMaxAlignedCopyBackupMediaOutFfiResult) == 8);
-static_assert_64bit(alignof(SignalType_MutPointer_SignalOwnedBufferOfMaxAlignedCopyBackupMediaOutFfiResult) == 8);
-typedef struct {
-  SignalDeleteBackupMediaOutFfiResult* base;
-  size_t length;
-  size_t size_bytes;
-} SignalOwnedBufferOfMaxAlignedDeleteBackupMediaOutFfiResult;
-static_assert_64bit(offsetof(SignalOwnedBufferOfMaxAlignedDeleteBackupMediaOutFfiResult, base) == 0);
-static_assert_64bit(offsetof(SignalOwnedBufferOfMaxAlignedDeleteBackupMediaOutFfiResult, length) == 8);
-static_assert_64bit(offsetof(SignalOwnedBufferOfMaxAlignedDeleteBackupMediaOutFfiResult, size_bytes) == 16);
-static_assert_64bit(sizeof(SignalOwnedBufferOfMaxAlignedDeleteBackupMediaOutFfiResult) == 24);
-static_assert_64bit(alignof(SignalOwnedBufferOfMaxAlignedDeleteBackupMediaOutFfiResult) == 8);
-typedef SignalOwnedBufferOfMaxAlignedDeleteBackupMediaOutFfiResult* SignalType_MutPointer_SignalOwnedBufferOfMaxAlignedDeleteBackupMediaOutFfiResult;
-static_assert_64bit(sizeof(SignalType_MutPointer_SignalOwnedBufferOfMaxAlignedDeleteBackupMediaOutFfiResult) == 8);
-static_assert_64bit(alignof(SignalType_MutPointer_SignalOwnedBufferOfMaxAlignedDeleteBackupMediaOutFfiResult) == 8);
-typedef struct {
   SignalMySimpleTestEnumFfiResult* base;
   size_t length;
   size_t size_bytes;
@@ -677,6 +651,23 @@ static_assert_64bit(alignof(SignalCPromiseOptionalPairOfMutPointerHttpRequestu64
 typedef SignalCPromiseOptionalPairOfMutPointerHttpRequestu64* SignalType_MutPointer_SignalCPromiseOptionalPairOfMutPointerHttpRequestu64;
 static_assert_64bit(sizeof(SignalType_MutPointer_SignalCPromiseOptionalPairOfMutPointerHttpRequestu64) == 8);
 static_assert_64bit(alignof(SignalType_MutPointer_SignalCPromiseOptionalPairOfMutPointerHttpRequestu64) == 8);
+typedef struct {
+  int32_t source_attachment_cdn;
+  const int8_t* source_key;
+  int64_t object_length;
+  SignalType_FixedArray15_uint8_t media_id;
+  SignalType_FixedArray64_uint8_t encryption_key;
+} SignalBridgeCopyBackupMediaItemFfiResult;
+static_assert_64bit(offsetof(SignalBridgeCopyBackupMediaItemFfiResult, source_attachment_cdn) == 0);
+static_assert_64bit(offsetof(SignalBridgeCopyBackupMediaItemFfiResult, source_key) == 8);
+static_assert_64bit(offsetof(SignalBridgeCopyBackupMediaItemFfiResult, object_length) == 16);
+static_assert_64bit(offsetof(SignalBridgeCopyBackupMediaItemFfiResult, media_id) == 24);
+static_assert_64bit(offsetof(SignalBridgeCopyBackupMediaItemFfiResult, encryption_key) == 39);
+static_assert_64bit(sizeof(SignalBridgeCopyBackupMediaItemFfiResult) == 104);
+static_assert_64bit(alignof(SignalBridgeCopyBackupMediaItemFfiResult) == 8);
+typedef SignalBridgeCopyBackupMediaItemFfiResult* SignalType_MutPointer_SignalBridgeCopyBackupMediaItemFfiResult;
+static_assert_64bit(sizeof(SignalType_MutPointer_SignalBridgeCopyBackupMediaItemFfiResult) == 8);
+static_assert_64bit(alignof(SignalType_MutPointer_SignalBridgeCopyBackupMediaItemFfiResult) == 8);
 typedef enum {
   SignalGetCdnCredentialsOutFfiResultSuccess,
   SignalGetCdnCredentialsOutFfiResultCredentialRejected,
@@ -748,6 +739,31 @@ typedef struct {
 } SignalGetSvrBCredentialsOutFfiResult;
 static_assert_64bit(sizeof(SignalGetSvrBCredentialsOutFfiResult) == 24);
 static_assert_64bit(alignof(SignalGetSvrBCredentialsOutFfiResult) == 8);
+typedef struct {
+  const int8_t* cursor;
+  int32_t limit;
+} SignalListMediaArgsFfiResult;
+static_assert_64bit(offsetof(SignalListMediaArgsFfiResult, cursor) == 0);
+static_assert_64bit(offsetof(SignalListMediaArgsFfiResult, limit) == 8);
+static_assert_64bit(sizeof(SignalListMediaArgsFfiResult) == 16);
+static_assert_64bit(alignof(SignalListMediaArgsFfiResult) == 8);
+typedef enum {
+  SignalListMediaOutFfiResultPage,
+  SignalListMediaOutFfiResultMalformedMediaId,
+  SignalListMediaOutFfiResultCredentialRejected,
+  SignalListMediaOutFfiResultMissingResponse,
+} SignalListMediaOutFfiResult_Tag;
+typedef struct {
+  SignalListMediaResponseFfiResult _0;
+} SignalListMediaOutFfiResultSignalPage_Body;
+typedef struct {
+  SignalListMediaOutFfiResult_Tag tag;
+  union {
+    SignalListMediaOutFfiResultSignalPage_Body page;
+  };
+} SignalListMediaOutFfiResult;
+static_assert_64bit(sizeof(SignalListMediaOutFfiResult) == 56);
+static_assert_64bit(alignof(SignalListMediaOutFfiResult) == 8);
 typedef struct {
   SignalUuid uuid;
   SignalType_FixedArray32_uint8_t entropy;
@@ -1035,6 +1051,36 @@ typedef struct {
 static_assert_64bit(offsetof(SignalMutPointerNonSuspendingBackgroundThreadRuntime, raw) == 0);
 static_assert_64bit(sizeof(SignalMutPointerNonSuspendingBackgroundThreadRuntime) == 8);
 static_assert_64bit(alignof(SignalMutPointerNonSuspendingBackgroundThreadRuntime) == 8);
+typedef struct {
+  SignalCopyBackupMediaOutFfiResult* base;
+  size_t length;
+  size_t size_bytes;
+} SignalOwnedBufferOfMaxAlignedCopyBackupMediaOutFfiResult;
+static_assert_64bit(offsetof(SignalOwnedBufferOfMaxAlignedCopyBackupMediaOutFfiResult, base) == 0);
+static_assert_64bit(offsetof(SignalOwnedBufferOfMaxAlignedCopyBackupMediaOutFfiResult, length) == 8);
+static_assert_64bit(offsetof(SignalOwnedBufferOfMaxAlignedCopyBackupMediaOutFfiResult, size_bytes) == 16);
+static_assert_64bit(sizeof(SignalOwnedBufferOfMaxAlignedCopyBackupMediaOutFfiResult) == 24);
+static_assert_64bit(alignof(SignalOwnedBufferOfMaxAlignedCopyBackupMediaOutFfiResult) == 8);
+typedef struct {
+  SignalDeleteBackupMediaOutFfiResult* base;
+  size_t length;
+  size_t size_bytes;
+} SignalOwnedBufferOfMaxAlignedDeleteBackupMediaOutFfiResult;
+static_assert_64bit(offsetof(SignalOwnedBufferOfMaxAlignedDeleteBackupMediaOutFfiResult, base) == 0);
+static_assert_64bit(offsetof(SignalOwnedBufferOfMaxAlignedDeleteBackupMediaOutFfiResult, length) == 8);
+static_assert_64bit(offsetof(SignalOwnedBufferOfMaxAlignedDeleteBackupMediaOutFfiResult, size_bytes) == 16);
+static_assert_64bit(sizeof(SignalOwnedBufferOfMaxAlignedDeleteBackupMediaOutFfiResult) == 24);
+static_assert_64bit(alignof(SignalOwnedBufferOfMaxAlignedDeleteBackupMediaOutFfiResult) == 8);
+typedef struct {
+  SignalBridgeCopyBackupMediaItemFfiResult* base;
+  size_t length;
+  size_t size_bytes;
+} SignalOwnedBufferOfMaxAlignedBridgeCopyBackupMediaItemFfiResult;
+static_assert_64bit(offsetof(SignalOwnedBufferOfMaxAlignedBridgeCopyBackupMediaItemFfiResult, base) == 0);
+static_assert_64bit(offsetof(SignalOwnedBufferOfMaxAlignedBridgeCopyBackupMediaItemFfiResult, length) == 8);
+static_assert_64bit(offsetof(SignalOwnedBufferOfMaxAlignedBridgeCopyBackupMediaItemFfiResult, size_bytes) == 16);
+static_assert_64bit(sizeof(SignalOwnedBufferOfMaxAlignedBridgeCopyBackupMediaItemFfiResult) == 24);
+static_assert_64bit(alignof(SignalOwnedBufferOfMaxAlignedBridgeCopyBackupMediaItemFfiResult) == 8);
 SignalFfiError* signal_comparable_backup_destroy(
   SignalMutPointerComparableBackup p
 );
@@ -1087,6 +1133,9 @@ SignalFfiError* signal_testing_NonSuspendingBackgroundThreadRuntime_destroy(
   SignalMutPointerNonSuspendingBackgroundThreadRuntime p
 );
 SignalFfiError* signal_testing_backup_delete_all_tests(
+  SignalOwnedBufferOfGrpcTestCaseBridgedFfi* out
+);
+SignalFfiError* signal_testing_backup_list_media_tests(
   SignalOwnedBufferOfGrpcTestCaseBridgedFfi* out
 );
 SignalFfiError* signal_testing_backup_refresh_tests(
@@ -1419,12 +1468,6 @@ SignalFfiError* signal_testing_fake_registration_session_create_session(
 SignalFfiError* signal_testing_fingerprint_version_mismatch_error(
   uint32_t theirs,
   uint32_t ours
-);
-SignalFfiError* signal_testing_force_emit_vec_of_bridge_copy_backup_media_out(
-  SignalOwnedBufferOfMaxAlignedCopyBackupMediaOutFfiResult* out
-);
-SignalFfiError* signal_testing_force_emit_vec_of_bridge_delete_backup_media_out(
-  SignalOwnedBufferOfMaxAlignedDeleteBackupMediaOutFfiResult* out
 );
 SignalFfiError* signal_testing_future_cancellation_counter_create(
   SignalMutPointerTestingFutureCancellationCounter* out,
