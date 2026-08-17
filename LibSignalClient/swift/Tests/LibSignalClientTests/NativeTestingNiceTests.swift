@@ -11,6 +11,19 @@ import Foundation
 import SignalFfi
 import Testing
 
+internal enum MyNiceTypeEnum {
+    case unit
+    case single(Int32)
+}
+internal enum MyNiceTypeSimpleEnum {
+    case a
+    case b
+}
+internal struct MyNiceTypeStruct {
+    var x: Int32
+    var y: Int32
+}
+
 extension NiceArgConverter {
     fileprivate static func testConversion(
         items: any Sequence<NiceArg>,
@@ -131,6 +144,32 @@ struct NativeTestingNiceTests {
             nativeToString: { try NativeTestingNice.TESTING_conversion_Data_to_string(x: $0) },
             rawNativeToString: SignalFfi.signal_testing_conversion_data_to_string,
             nativeIdentity: { try NativeTestingNice.TESTING_conversion_Data_identity(x: $0) }
+        )
+    }
+    @Test
+    func testOptionalBytes() throws {
+        try OptionalArgConverter<DataConverter, SignalOptionalOfBorrowedBuffer>.testConversion(
+            items: [nil, Data(), Data([0]), Data([0, 1])],
+            toString: { $0?.base64EncodedString() ?? "%" },
+            nativeToString: { try NativeTestingNice.TESTING_conversion_OptionalBytes_to_string(x: $0) },
+            rawNativeToString: SignalFfi.signal_testing_conversion_optional_bytes_to_string,
+            nativeIdentity: { try NativeTestingNice.TESTING_conversion_OptionalBytes_identity(x: $0) },
+        )
+    }
+    @Test
+    func testOptionalString() throws {
+        try OptionalStringConverter.testConversion(
+            items: [nil, "", "a", "abc"],
+            toString: {
+                if let x = $0 {
+                    "\"\(x)\""
+                } else {
+                    "null"
+                }
+            },
+            nativeToString: { try NativeTestingNice.TESTING_conversion_OptionalString_to_string(x: $0) },
+            rawNativeToString: SignalFfi.signal_testing_conversion_optional_string_to_string,
+            nativeIdentity: { try NativeTestingNice.TESTING_conversion_OptionalString_identity(x: $0) },
         )
     }
     @Test
@@ -304,6 +343,104 @@ struct NativeTestingNiceTests {
             nativeToString: { try NativeTestingNice.TESTING_conversion_Timestamp_to_string(x: $0) },
             rawNativeToString: SignalFfi.signal_testing_conversion_timestamp_to_string,
             nativeIdentity: { try NativeTestingNice.TESTING_conversion_Timestamp_identity(x: $0) },
+        )
+    }
+
+    let testFloats = [
+        0.0,
+        1.2,
+        -1.2,
+        Float.nan,
+        Float.infinity,
+        -Float.infinity,
+    ]
+
+    func float2str(_ x: Float) -> String {
+        if x == 0.0 {
+            "0"
+        } else if x.isNaN {
+            "NaN"
+        } else {
+            "\(x)"
+        }
+    }
+
+    @Test
+    func testFloat() throws {
+        try IdentityConverter<Float>
+            .testConversion(
+                items: testFloats,
+                toString: float2str,
+                nativeToString: { try NativeTestingNice.TESTING_conversion_Float_to_string(x: $0) },
+                rawNativeToString: SignalFfi.signal_testing_conversion_float_to_string,
+                nativeIdentity: { try NativeTestingNice.TESTING_conversion_Float_identity(x: $0) },
+            )
+    }
+
+    @Test
+    func testOptionalFloat() throws {
+        try OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>
+            .testConversion(
+                items: testFloats + [nil],
+                toString: {
+                    if let x = $0 {
+                        float2str(x)
+                    } else {
+                        ""
+                    }
+                },
+                nativeToString: { try NativeTestingNice.TESTING_conversion_OptionalFloat_to_string(x: $0) },
+                rawNativeToString: SignalFfi.signal_testing_conversion_optional_float_to_string,
+                nativeIdentity: { try NativeTestingNice.TESTING_conversion_OptionalFloat_identity(x: $0) },
+            )
+    }
+
+    @Test
+    func testMyNiceTypeSimpleEnum() throws {
+        try DerivedArgConverterMyNiceTypeSimpleEnumNot.testConversion(
+            items: [.a, .b],
+            toString: {
+                switch $0 {
+                case .a:
+                    "\"A\""
+                case .b:
+                    "\"B\""
+                }
+            },
+            nativeToString: { try NativeTestingNice.TESTING_MyNiceTypeSimpleEnum_to_string(x: $0) },
+            rawNativeToString: SignalFfi.signal_testing_my_nice_type_simple_enum_to_string,
+            nativeIdentity: { try NativeTestingNice.TESTING_MyNiceTypeSimpleEnum_identity(x: $0) }
+        )
+    }
+
+    @Test
+    func testMyNiceTypeEnum() throws {
+        try DerivedArgConverterMyNiceTypeEnumNot.testConversion(
+            items: [.unit, .single(12)],
+            toString: {
+                switch $0 {
+                case .single(let x):
+                    "{\"Single\":\(x)}"
+                case .unit:
+                    "\"Unit\""
+                }
+            },
+            nativeToString: { try NativeTestingNice.TESTING_MyNiceTypeEnum_to_string(x: $0) },
+            rawNativeToString: SignalFfi.signal_testing_my_nice_type_enum_to_string,
+            nativeIdentity: { try NativeTestingNice.TESTING_MyNiceTypeEnum_identity(x: $0) }
+        )
+    }
+
+    @Test
+    func testMyNiceTypeStruct() throws {
+        try DerivedArgConverterMyNiceTypeStructNot.testConversion(
+            items: [.init(x: 1, y: 2)],
+            toString: {
+                "{\"x\":\($0.x),\"y\":\($0.y)}"
+            },
+            nativeToString: { try NativeTestingNice.TESTING_MyNiceTypeStruct_to_string(x: $0) },
+            rawNativeToString: SignalFfi.signal_testing_my_nice_type_struct_to_string,
+            nativeIdentity: { try NativeTestingNice.TESTING_MyNiceTypeStruct_identity(x: $0) }
         )
     }
 

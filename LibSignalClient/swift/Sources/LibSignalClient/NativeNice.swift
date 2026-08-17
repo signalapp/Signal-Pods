@@ -1090,6 +1090,60 @@ extension SignalCPromiseListMediaResponseFfiResult: SignalCPromise {
 
 }
 
+extension SignalOptionalOff32: SignalOptionalOf {
+
+    typealias Contents = Float
+
+    init(
+        generic_present: CBool,
+        generic_value: MaybeUninitOff32,
+    ) {
+        self.init(
+            present: generic_present,
+            value: generic_value,
+
+        )
+    }
+
+    var generic_present: CBool {
+        get { self.present }
+        set { present = newValue }
+    }
+
+    var generic_value: MaybeUninitOff32 {
+        get { self.value }
+        set { value = newValue }
+    }
+
+}
+
+extension SignalOptionalOfBorrowedBuffer: SignalOptionalOf {
+
+    typealias Contents = SignalBorrowedBuffer
+
+    init(
+        generic_present: CBool,
+        generic_value: MaybeUninitOfBorrowedBuffer,
+    ) {
+        self.init(
+            present: generic_present,
+            value: generic_value,
+
+        )
+    }
+
+    var generic_present: CBool {
+        get { self.present }
+        set { present = newValue }
+    }
+
+    var generic_value: MaybeUninitOfBorrowedBuffer {
+        get { self.value }
+        set { value = newValue }
+    }
+
+}
+
 extension SignalPairOfCStringPtrCStringPtr: SignalPairOf {
 
     typealias First = SignalCStringPtr?
@@ -1377,6 +1431,16 @@ enum
     }
 }
 
+enum FfiBorrowedSliceConstructor_SignalBorrowedSliceOfCStringPtr_StringConverter: FfiBorrowedSliceConstructor {
+    typealias BorrowedSlice = SignalFfi.SignalBorrowedSliceOfCStringPtr
+    typealias Element = StringConverter.FfiArg
+    static func construct(
+        _ buffer: UnsafeBufferPointer<Element>,
+    ) -> BorrowedSlice {
+        BorrowedSlice(base: buffer.baseAddress, length: buffer.count)
+    }
+}
+
 enum FfiBorrowedSliceConstructor_SignalBorrowedSliceOfc_uchar32_FixedByteArrayConverterFixedByteArrayHelper32:
     FfiBorrowedSliceConstructor
 {
@@ -1574,6 +1638,37 @@ internal struct BridgeMessageBackupInfo {
 
 }
 
+/*
+// CallQualitySurvey
+
+internal struct CallQualitySurveyInternal {
+    var userSatisfied: Bool
+    var callQualityIssues: [String]
+    var additionalIssuesDescription: String?
+    var debugLogUrl: String?
+    var startTimestamp: Date
+    var endTimestamp: Date
+    var callType: String
+    var success: Bool
+    var callEndReason: String
+    var connectionRttMedian: Float?
+    var audioRttMedian: Float?
+    var videoRttMedian: Float?
+    var audioRecvJitterMedian: Float?
+    var videoRecvJitterMedian: Float?
+    var audioSendJitterMedian: Float?
+    var videoSendJitterMedian: Float?
+    var audioRecvPacketLossFraction: Float?
+    var videoRecvPacketLossFraction: Float?
+    var audioSendPacketLossFraction: Float?
+    var videoSendPacketLossFraction: Float?
+    var callTelemetry: Data?
+    var callIdHash: Data?
+
+}
+
+*/
+
 internal struct CopyBackupMediaNextChunk {
     var chunk: [BridgeCopyBackupMediaOutcome]
     var termination: BulkPolledStreamTermination?
@@ -1586,6 +1681,9 @@ internal struct DeleteBackupMediaNextChunk {
 
 }
 
+/*
+// LinkedDevice
+
 internal struct LinkedDeviceInternal {
     var id: DeviceId
     var encryptedName: Data
@@ -1594,6 +1692,8 @@ internal struct LinkedDeviceInternal {
     var createdAtCiphertext: Data
 
 }
+
+*/
 
 internal struct ListMediaItem {
     var cdn: Int32
@@ -1759,7 +1859,7 @@ internal enum DerivedReturnConverterDeleteBackupMediaNextChunk: NiceReturnConver
 }
 
 internal enum DerivedReturnConverterLinkedDeviceInternal: NiceReturnConverter {
-    typealias NiceReturn = LinkedDeviceInternal
+    typealias NiceReturn = LinkedDevice
     typealias FfiReturn = SignalLinkedDeviceInternalFfiResult
     static func emptyFfiReturn() -> FfiReturn {
         SignalLinkedDeviceInternalFfiResult()
@@ -1776,7 +1876,7 @@ internal enum DerivedReturnConverterLinkedDeviceInternal: NiceReturnConverter {
             try DataConverter.convertReturn(consuming: ffiValue.created_at_ciphertext)
         }
 
-        return LinkedDeviceInternal(
+        return LinkedDevice(
             id: try id.get(),
             encryptedName: try encrypted_name.get(),
             lastSeen: try last_seen.get(),
@@ -1992,6 +2092,448 @@ internal enum DerivedArgConverterBridgeDeleteBackupMediaItem: NiceArgConverter {
     }
 }
 
+internal enum DerivedArgConverterCallQualitySurveyInternal: NiceArgConverter {
+    typealias NiceArg = CallQualitySurvey
+    typealias FfiArg = SignalCallQualitySurveyInternalFfiArg
+
+    typealias KeepAlive = (
+        IdentityConverter<Bool>.KeepAlive?,
+        ArrayArgConverter<StringConverter, FfiBorrowedSliceConstructor_SignalBorrowedSliceOfCStringPtr_StringConverter>
+            .KeepAlive?, OptionalStringConverter.KeepAlive?, OptionalStringConverter.KeepAlive?,
+        TimestampConverter.KeepAlive?, TimestampConverter.KeepAlive?, StringConverter.KeepAlive?,
+        IdentityConverter<Bool>.KeepAlive?, StringConverter.KeepAlive?,
+        OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.KeepAlive?,
+        OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.KeepAlive?,
+        OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.KeepAlive?,
+        OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.KeepAlive?,
+        OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.KeepAlive?,
+        OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.KeepAlive?,
+        OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.KeepAlive?,
+        OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.KeepAlive?,
+        OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.KeepAlive?,
+        OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.KeepAlive?,
+        OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.KeepAlive?,
+        OptionalArgConverter<DataConverter, SignalOptionalOfBorrowedBuffer>.KeepAlive?,
+        OptionalArgConverter<DataConverter, SignalOptionalOfBorrowedBuffer>.KeepAlive?,
+    )
+    static func convertArg(_ niceArg: NiceArg) -> (FfiArg, KeepAlive?) {
+        let user_satisfied = niceArg.userSatisfied
+        let call_quality_issues = niceArg.callQualityIssues
+        let additional_issues_description = niceArg.additionalIssuesDescription
+        let debug_log_url = niceArg.debugLogUrl
+        let start_timestamp = niceArg.startTimestamp
+        let end_timestamp = niceArg.endTimestamp
+        let call_type = niceArg.callType
+        let success = niceArg.success
+        let call_end_reason = niceArg.callEndReason
+        let connection_rtt_median = niceArg.connectionRttMedian
+        let audio_rtt_median = niceArg.audioRttMedian
+        let video_rtt_median = niceArg.videoRttMedian
+        let audio_recv_jitter_median = niceArg.audioRecvJitterMedian
+        let video_recv_jitter_median = niceArg.videoRecvJitterMedian
+        let audio_send_jitter_median = niceArg.audioSendJitterMedian
+        let video_send_jitter_median = niceArg.videoSendJitterMedian
+        let audio_recv_packet_loss_fraction = niceArg.audioRecvPacketLossFraction
+        let video_recv_packet_loss_fraction = niceArg.videoRecvPacketLossFraction
+        let audio_send_packet_loss_fraction = niceArg.audioSendPacketLossFraction
+        let video_send_packet_loss_fraction = niceArg.videoSendPacketLossFraction
+        let call_telemetry = niceArg.callTelemetry
+        let call_id_hash = niceArg.callIdHash
+
+        let (user_satisfied_ffi, user_satisfied_keepalive):
+            (
+                IdentityConverter<Bool>.FfiArg,
+                IdentityConverter<Bool>.KeepAlive?,
+            ) = IdentityConverter<Bool>.convertArg(user_satisfied)
+        let (call_quality_issues_ffi, call_quality_issues_keepalive):
+            (
+                ArrayArgConverter<
+                    StringConverter, FfiBorrowedSliceConstructor_SignalBorrowedSliceOfCStringPtr_StringConverter
+                >.FfiArg,
+                ArrayArgConverter<
+                    StringConverter, FfiBorrowedSliceConstructor_SignalBorrowedSliceOfCStringPtr_StringConverter
+                >.KeepAlive?,
+            ) = ArrayArgConverter<
+                StringConverter, FfiBorrowedSliceConstructor_SignalBorrowedSliceOfCStringPtr_StringConverter
+            >.convertArg(call_quality_issues)
+        let (additional_issues_description_ffi, additional_issues_description_keepalive):
+            (
+                OptionalStringConverter.FfiArg,
+                OptionalStringConverter.KeepAlive?,
+            ) = OptionalStringConverter.convertArg(additional_issues_description)
+        let (debug_log_url_ffi, debug_log_url_keepalive):
+            (
+                OptionalStringConverter.FfiArg,
+                OptionalStringConverter.KeepAlive?,
+            ) = OptionalStringConverter.convertArg(debug_log_url)
+        let (start_timestamp_ffi, start_timestamp_keepalive):
+            (
+                TimestampConverter.FfiArg,
+                TimestampConverter.KeepAlive?,
+            ) = TimestampConverter.convertArg(start_timestamp)
+        let (end_timestamp_ffi, end_timestamp_keepalive):
+            (
+                TimestampConverter.FfiArg,
+                TimestampConverter.KeepAlive?,
+            ) = TimestampConverter.convertArg(end_timestamp)
+        let (call_type_ffi, call_type_keepalive):
+            (
+                StringConverter.FfiArg,
+                StringConverter.KeepAlive?,
+            ) = StringConverter.convertArg(call_type)
+        let (success_ffi, success_keepalive):
+            (
+                IdentityConverter<Bool>.FfiArg,
+                IdentityConverter<Bool>.KeepAlive?,
+            ) = IdentityConverter<Bool>.convertArg(success)
+        let (call_end_reason_ffi, call_end_reason_keepalive):
+            (
+                StringConverter.FfiArg,
+                StringConverter.KeepAlive?,
+            ) = StringConverter.convertArg(call_end_reason)
+        let (connection_rtt_median_ffi, connection_rtt_median_keepalive):
+            (
+                OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.FfiArg,
+                OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.KeepAlive?,
+            ) = OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.convertArg(connection_rtt_median)
+        let (audio_rtt_median_ffi, audio_rtt_median_keepalive):
+            (
+                OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.FfiArg,
+                OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.KeepAlive?,
+            ) = OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.convertArg(audio_rtt_median)
+        let (video_rtt_median_ffi, video_rtt_median_keepalive):
+            (
+                OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.FfiArg,
+                OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.KeepAlive?,
+            ) = OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.convertArg(video_rtt_median)
+        let (audio_recv_jitter_median_ffi, audio_recv_jitter_median_keepalive):
+            (
+                OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.FfiArg,
+                OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.KeepAlive?,
+            ) = OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.convertArg(audio_recv_jitter_median)
+        let (video_recv_jitter_median_ffi, video_recv_jitter_median_keepalive):
+            (
+                OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.FfiArg,
+                OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.KeepAlive?,
+            ) = OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.convertArg(video_recv_jitter_median)
+        let (audio_send_jitter_median_ffi, audio_send_jitter_median_keepalive):
+            (
+                OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.FfiArg,
+                OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.KeepAlive?,
+            ) = OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.convertArg(audio_send_jitter_median)
+        let (video_send_jitter_median_ffi, video_send_jitter_median_keepalive):
+            (
+                OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.FfiArg,
+                OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.KeepAlive?,
+            ) = OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.convertArg(video_send_jitter_median)
+        let (audio_recv_packet_loss_fraction_ffi, audio_recv_packet_loss_fraction_keepalive):
+            (
+                OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.FfiArg,
+                OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.KeepAlive?,
+            ) = OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.convertArg(
+                audio_recv_packet_loss_fraction
+            )
+        let (video_recv_packet_loss_fraction_ffi, video_recv_packet_loss_fraction_keepalive):
+            (
+                OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.FfiArg,
+                OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.KeepAlive?,
+            ) = OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.convertArg(
+                video_recv_packet_loss_fraction
+            )
+        let (audio_send_packet_loss_fraction_ffi, audio_send_packet_loss_fraction_keepalive):
+            (
+                OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.FfiArg,
+                OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.KeepAlive?,
+            ) = OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.convertArg(
+                audio_send_packet_loss_fraction
+            )
+        let (video_send_packet_loss_fraction_ffi, video_send_packet_loss_fraction_keepalive):
+            (
+                OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.FfiArg,
+                OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.KeepAlive?,
+            ) = OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.convertArg(
+                video_send_packet_loss_fraction
+            )
+        let (call_telemetry_ffi, call_telemetry_keepalive):
+            (
+                OptionalArgConverter<DataConverter, SignalOptionalOfBorrowedBuffer>.FfiArg,
+                OptionalArgConverter<DataConverter, SignalOptionalOfBorrowedBuffer>.KeepAlive?,
+            ) = OptionalArgConverter<DataConverter, SignalOptionalOfBorrowedBuffer>.convertArg(call_telemetry)
+        let (call_id_hash_ffi, call_id_hash_keepalive):
+            (
+                OptionalArgConverter<DataConverter, SignalOptionalOfBorrowedBuffer>.FfiArg,
+                OptionalArgConverter<DataConverter, SignalOptionalOfBorrowedBuffer>.KeepAlive?,
+            ) = OptionalArgConverter<DataConverter, SignalOptionalOfBorrowedBuffer>.convertArg(call_id_hash)
+
+        let ffiStructArg = FfiArg(
+            user_satisfied: user_satisfied_ffi,
+            call_quality_issues: call_quality_issues_ffi,
+            additional_issues_description: additional_issues_description_ffi,
+            debug_log_url: debug_log_url_ffi,
+            start_timestamp: start_timestamp_ffi,
+            end_timestamp: end_timestamp_ffi,
+            call_type: call_type_ffi,
+            success: success_ffi,
+            call_end_reason: call_end_reason_ffi,
+            connection_rtt_median: connection_rtt_median_ffi,
+            audio_rtt_median: audio_rtt_median_ffi,
+            video_rtt_median: video_rtt_median_ffi,
+            audio_recv_jitter_median: audio_recv_jitter_median_ffi,
+            video_recv_jitter_median: video_recv_jitter_median_ffi,
+            audio_send_jitter_median: audio_send_jitter_median_ffi,
+            video_send_jitter_median: video_send_jitter_median_ffi,
+            audio_recv_packet_loss_fraction: audio_recv_packet_loss_fraction_ffi,
+            video_recv_packet_loss_fraction: video_recv_packet_loss_fraction_ffi,
+            audio_send_packet_loss_fraction: audio_send_packet_loss_fraction_ffi,
+            video_send_packet_loss_fraction: video_send_packet_loss_fraction_ffi,
+            call_telemetry: call_telemetry_ffi,
+            call_id_hash: call_id_hash_ffi,
+        )
+        let ffiStructKeepAlive:
+            (
+                IdentityConverter<Bool>.KeepAlive?,
+                ArrayArgConverter<
+                    StringConverter, FfiBorrowedSliceConstructor_SignalBorrowedSliceOfCStringPtr_StringConverter
+                >.KeepAlive?, OptionalStringConverter.KeepAlive?, OptionalStringConverter.KeepAlive?,
+                TimestampConverter.KeepAlive?, TimestampConverter.KeepAlive?, StringConverter.KeepAlive?,
+                IdentityConverter<Bool>.KeepAlive?, StringConverter.KeepAlive?,
+                OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.KeepAlive?,
+                OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.KeepAlive?,
+                OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.KeepAlive?,
+                OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.KeepAlive?,
+                OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.KeepAlive?,
+                OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.KeepAlive?,
+                OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.KeepAlive?,
+                OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.KeepAlive?,
+                OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.KeepAlive?,
+                OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.KeepAlive?,
+                OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.KeepAlive?,
+                OptionalArgConverter<DataConverter, SignalOptionalOfBorrowedBuffer>.KeepAlive?,
+                OptionalArgConverter<DataConverter, SignalOptionalOfBorrowedBuffer>.KeepAlive?,
+            )? =
+                (user_satisfied_keepalive != nil || call_quality_issues_keepalive != nil
+                    || additional_issues_description_keepalive != nil || debug_log_url_keepalive != nil
+                    || start_timestamp_keepalive != nil || end_timestamp_keepalive != nil || call_type_keepalive != nil
+                    || success_keepalive != nil || call_end_reason_keepalive != nil
+                    || connection_rtt_median_keepalive != nil || audio_rtt_median_keepalive != nil
+                    || video_rtt_median_keepalive != nil || audio_recv_jitter_median_keepalive != nil
+                    || video_recv_jitter_median_keepalive != nil || audio_send_jitter_median_keepalive != nil
+                    || video_send_jitter_median_keepalive != nil || audio_recv_packet_loss_fraction_keepalive != nil
+                    || video_recv_packet_loss_fraction_keepalive != nil
+                    || audio_send_packet_loss_fraction_keepalive != nil
+                    || video_send_packet_loss_fraction_keepalive != nil || call_telemetry_keepalive != nil
+                    || call_id_hash_keepalive != nil || false)
+                ? (
+                    user_satisfied_keepalive, call_quality_issues_keepalive, additional_issues_description_keepalive,
+                    debug_log_url_keepalive, start_timestamp_keepalive, end_timestamp_keepalive, call_type_keepalive,
+                    success_keepalive, call_end_reason_keepalive, connection_rtt_median_keepalive,
+                    audio_rtt_median_keepalive, video_rtt_median_keepalive, audio_recv_jitter_median_keepalive,
+                    video_recv_jitter_median_keepalive, audio_send_jitter_median_keepalive,
+                    video_send_jitter_median_keepalive, audio_recv_packet_loss_fraction_keepalive,
+                    video_recv_packet_loss_fraction_keepalive, audio_send_packet_loss_fraction_keepalive,
+                    video_send_packet_loss_fraction_keepalive, call_telemetry_keepalive, call_id_hash_keepalive,
+                )
+                : nil
+
+        return (ffiStructArg, ffiStructKeepAlive)
+    }
+    static func convertArgBorrowed<Result>(
+        _ niceArg: NiceArg,
+        _ niceThunk: (FfiArg) throws -> Result,
+    ) rethrows -> Result {
+        let user_satisfied = niceArg.userSatisfied
+        let call_quality_issues = niceArg.callQualityIssues
+        let additional_issues_description = niceArg.additionalIssuesDescription
+        let debug_log_url = niceArg.debugLogUrl
+        let start_timestamp = niceArg.startTimestamp
+        let end_timestamp = niceArg.endTimestamp
+        let call_type = niceArg.callType
+        let success = niceArg.success
+        let call_end_reason = niceArg.callEndReason
+        let connection_rtt_median = niceArg.connectionRttMedian
+        let audio_rtt_median = niceArg.audioRttMedian
+        let video_rtt_median = niceArg.videoRttMedian
+        let audio_recv_jitter_median = niceArg.audioRecvJitterMedian
+        let video_recv_jitter_median = niceArg.videoRecvJitterMedian
+        let audio_send_jitter_median = niceArg.audioSendJitterMedian
+        let video_send_jitter_median = niceArg.videoSendJitterMedian
+        let audio_recv_packet_loss_fraction = niceArg.audioRecvPacketLossFraction
+        let video_recv_packet_loss_fraction = niceArg.videoRecvPacketLossFraction
+        let audio_send_packet_loss_fraction = niceArg.audioSendPacketLossFraction
+        let video_send_packet_loss_fraction = niceArg.videoSendPacketLossFraction
+        let call_telemetry = niceArg.callTelemetry
+        let call_id_hash = niceArg.callIdHash
+
+        return try IdentityConverter<Bool>.convertArgBorrowed(user_satisfied) {
+            ffi_user_satisfied in
+            return try ArrayArgConverter<
+                StringConverter, FfiBorrowedSliceConstructor_SignalBorrowedSliceOfCStringPtr_StringConverter
+            >.convertArgBorrowed(call_quality_issues) {
+                ffi_call_quality_issues in
+                return try OptionalStringConverter.convertArgBorrowed(additional_issues_description) {
+                    ffi_additional_issues_description in
+                    return try OptionalStringConverter.convertArgBorrowed(debug_log_url) {
+                        ffi_debug_log_url in
+                        return try TimestampConverter.convertArgBorrowed(start_timestamp) {
+                            ffi_start_timestamp in
+                            return try TimestampConverter.convertArgBorrowed(end_timestamp) {
+                                ffi_end_timestamp in
+                                return try StringConverter.convertArgBorrowed(call_type) {
+                                    ffi_call_type in
+                                    return try IdentityConverter<Bool>.convertArgBorrowed(success) {
+                                        ffi_success in
+                                        return try StringConverter.convertArgBorrowed(call_end_reason) {
+                                            ffi_call_end_reason in
+                                            return try OptionalArgConverter<
+                                                IdentityConverter<Float>, SignalOptionalOff32
+                                            >.convertArgBorrowed(connection_rtt_median) {
+                                                ffi_connection_rtt_median in
+                                                return try OptionalArgConverter<
+                                                    IdentityConverter<Float>, SignalOptionalOff32
+                                                >.convertArgBorrowed(audio_rtt_median) {
+                                                    ffi_audio_rtt_median in
+                                                    return try OptionalArgConverter<
+                                                        IdentityConverter<Float>, SignalOptionalOff32
+                                                    >.convertArgBorrowed(video_rtt_median) {
+                                                        ffi_video_rtt_median in
+                                                        return try OptionalArgConverter<
+                                                            IdentityConverter<Float>, SignalOptionalOff32
+                                                        >.convertArgBorrowed(audio_recv_jitter_median) {
+                                                            ffi_audio_recv_jitter_median in
+                                                            return try OptionalArgConverter<
+                                                                IdentityConverter<Float>, SignalOptionalOff32
+                                                            >.convertArgBorrowed(video_recv_jitter_median) {
+                                                                ffi_video_recv_jitter_median in
+                                                                return try OptionalArgConverter<
+                                                                    IdentityConverter<Float>, SignalOptionalOff32
+                                                                >.convertArgBorrowed(audio_send_jitter_median) {
+                                                                    ffi_audio_send_jitter_median in
+                                                                    return try OptionalArgConverter<
+                                                                        IdentityConverter<Float>, SignalOptionalOff32
+                                                                    >.convertArgBorrowed(video_send_jitter_median) {
+                                                                        ffi_video_send_jitter_median in
+                                                                        return try OptionalArgConverter<
+                                                                            IdentityConverter<Float>,
+                                                                            SignalOptionalOff32
+                                                                        >.convertArgBorrowed(
+                                                                            audio_recv_packet_loss_fraction
+                                                                        ) {
+                                                                            ffi_audio_recv_packet_loss_fraction in
+                                                                            return try OptionalArgConverter<
+                                                                                IdentityConverter<Float>,
+                                                                                SignalOptionalOff32
+                                                                            >.convertArgBorrowed(
+                                                                                video_recv_packet_loss_fraction
+                                                                            ) {
+                                                                                ffi_video_recv_packet_loss_fraction in
+                                                                                return try OptionalArgConverter<
+                                                                                    IdentityConverter<Float>,
+                                                                                    SignalOptionalOff32
+                                                                                >.convertArgBorrowed(
+                                                                                    audio_send_packet_loss_fraction
+                                                                                ) {
+                                                                                    ffi_audio_send_packet_loss_fraction
+                                                                                    in
+                                                                                    return try OptionalArgConverter<
+                                                                                        IdentityConverter<Float>,
+                                                                                        SignalOptionalOff32
+                                                                                    >.convertArgBorrowed(
+                                                                                        video_send_packet_loss_fraction
+                                                                                    ) {
+                                                                                        ffi_video_send_packet_loss_fraction
+                                                                                        in
+                                                                                        return try OptionalArgConverter<
+                                                                                            DataConverter,
+                                                                                            SignalOptionalOfBorrowedBuffer
+                                                                                        >.convertArgBorrowed(
+                                                                                            call_telemetry
+                                                                                        ) {
+                                                                                            ffi_call_telemetry in
+                                                                                            return try
+                                                                                                OptionalArgConverter<
+                                                                                                    DataConverter,
+                                                                                                    SignalOptionalOfBorrowedBuffer
+                                                                                                >.convertArgBorrowed(
+                                                                                                    call_id_hash
+                                                                                                ) {
+                                                                                                    ffi_call_id_hash in
+
+                                                                                                    return
+                                                                                                        try niceThunk(
+                                                                                                            FfiArg(
+                                                                                                                user_satisfied:
+                                                                                                                    ffi_user_satisfied,
+                                                                                                                call_quality_issues:
+                                                                                                                    ffi_call_quality_issues,
+                                                                                                                additional_issues_description:
+                                                                                                                    ffi_additional_issues_description,
+                                                                                                                debug_log_url:
+                                                                                                                    ffi_debug_log_url,
+                                                                                                                start_timestamp:
+                                                                                                                    ffi_start_timestamp,
+                                                                                                                end_timestamp:
+                                                                                                                    ffi_end_timestamp,
+                                                                                                                call_type:
+                                                                                                                    ffi_call_type,
+                                                                                                                success:
+                                                                                                                    ffi_success,
+                                                                                                                call_end_reason:
+                                                                                                                    ffi_call_end_reason,
+                                                                                                                connection_rtt_median:
+                                                                                                                    ffi_connection_rtt_median,
+                                                                                                                audio_rtt_median:
+                                                                                                                    ffi_audio_rtt_median,
+                                                                                                                video_rtt_median:
+                                                                                                                    ffi_video_rtt_median,
+                                                                                                                audio_recv_jitter_median:
+                                                                                                                    ffi_audio_recv_jitter_median,
+                                                                                                                video_recv_jitter_median:
+                                                                                                                    ffi_video_recv_jitter_median,
+                                                                                                                audio_send_jitter_median:
+                                                                                                                    ffi_audio_send_jitter_median,
+                                                                                                                video_send_jitter_median:
+                                                                                                                    ffi_video_send_jitter_median,
+                                                                                                                audio_recv_packet_loss_fraction:
+                                                                                                                    ffi_audio_recv_packet_loss_fraction,
+                                                                                                                video_recv_packet_loss_fraction:
+                                                                                                                    ffi_video_recv_packet_loss_fraction,
+                                                                                                                audio_send_packet_loss_fraction:
+                                                                                                                    ffi_audio_send_packet_loss_fraction,
+                                                                                                                video_send_packet_loss_fraction:
+                                                                                                                    ffi_video_send_packet_loss_fraction,
+                                                                                                                call_telemetry:
+                                                                                                                    ffi_call_telemetry,
+                                                                                                                call_id_hash:
+                                                                                                                    ffi_call_id_hash,
+                                                                                                            )
+                                                                                                        )
+
+                                                                                                }
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+}
+
 internal enum NativeNice {
     internal static func AuthenticatedChatConnection_clear_push_token(
         asyncContext: TokioAsyncContext,
@@ -2031,6 +2573,38 @@ internal enum NativeNice {
                     }
             }
         return try VoidConverter.convertReturn(consuming: rawOutput)
+
+    }
+    internal static func AuthenticatedChatConnection_confirm_username(
+        asyncContext: TokioAsyncContext,
+        chat: AuthenticatedChatConnection,
+        username: String,
+        usernameCiphertext username_ciphertext: Data,
+        rng: Int64,
+    ) async throws -> UUID {
+        let rawOutput: UuidNiceConverter.FfiReturn =
+            try await asyncContext.invokeAsyncFunction {
+                promiseFfi,
+                asyncContextFfi in
+                BridgeHandleRefConverter<SignalMutPointerAuthenticatedChatConnection, AuthenticatedChatConnection>
+                    .convertArgBorrowed(chat) { chatFfi in
+                        StringConverter.convertArgBorrowed(username) { usernameFfi in
+                            DataConverter.convertArgBorrowed(username_ciphertext) { username_ciphertextFfi in
+                                IdentityConverter.convertArgBorrowed(rng) { rngFfi in
+                                    SignalFfi.signal_authenticated_chat_connection_confirm_username(
+                                        promiseFfi,
+                                        asyncContextFfi.const(),
+                                        chatFfi,
+                                        usernameFfi,
+                                        username_ciphertextFfi,
+                                        rngFfi,
+                                    )
+                                }
+                            }
+                        }
+                    }
+            }
+        return try UuidNiceConverter.convertReturn(consuming: rawOutput)
 
     }
     internal static func AuthenticatedChatConnection_delete_username_hash(
@@ -2076,7 +2650,7 @@ internal enum NativeNice {
     internal static func AuthenticatedChatConnection_get_devices(
         asyncContext: TokioAsyncContext,
         chat: AuthenticatedChatConnection,
-    ) async throws -> [LinkedDeviceInternal] {
+    ) async throws -> [LinkedDevice] {
         let rawOutput:
             ArrayReturnConverter<
                 DerivedReturnConverterLinkedDeviceInternal,
@@ -2840,6 +3414,30 @@ internal enum NativeNice {
                                     }
                                 }
                             }
+                        }
+                    }
+            }
+        return try VoidConverter.convertReturn(consuming: rawOutput)
+
+    }
+    internal static func UnauthenticatedChatConnection_submit_call_quality_survey(
+        asyncContext: TokioAsyncContext,
+        chat: UnauthenticatedChatConnection,
+        survey: CallQualitySurvey,
+    ) async throws {
+        let rawOutput: VoidConverter.FfiReturn =
+            try await asyncContext.invokeAsyncFunction {
+                promiseFfi,
+                asyncContextFfi in
+                BridgeHandleRefConverter<SignalMutPointerUnauthenticatedChatConnection, UnauthenticatedChatConnection>
+                    .convertArgBorrowed(chat) { chatFfi in
+                        DerivedArgConverterCallQualitySurveyInternal.convertArgBorrowed(survey) { surveyFfi in
+                            SignalFfi.signal_unauthenticated_chat_connection_submit_call_quality_survey(
+                                promiseFfi,
+                                asyncContextFfi.const(),
+                                chatFfi,
+                                surveyFfi,
+                            )
                         }
                     }
             }
