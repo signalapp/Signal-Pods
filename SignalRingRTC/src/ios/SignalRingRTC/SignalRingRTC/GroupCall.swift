@@ -164,6 +164,44 @@ public struct VideoRequest {
     }
 }
 
+/// Used by the application to provide SVC parameters at group/ad-hoc creation time.
+@available(iOSApplicationExtension, unavailable)
+public struct SvcConfig {
+    let mode: String
+    let modeForScreenshare: String
+    let maxBitrateBps: UInt32?
+    
+    public init(mode: String, modeForScreenshare: String, maxBitrateBps: UInt32?) {
+        self.mode = mode
+        self.modeForScreenshare = modeForScreenshare
+        self.maxBitrateBps = maxBitrateBps
+    }
+}
+
+@available(iOSApplicationExtension, unavailable)
+fileprivate func makeAppOptionalSvcConfig(_ config: SvcConfig?) -> AppOptionalSvcConfig {
+    if let config = config {
+        let maxBitrateBps = if let maxBitrateBps = config.maxBitrateBps {
+            AppOptionalUInt32(value: maxBitrateBps, valid: true)
+        } else {
+            AppOptionalUInt32(value: 0, valid: false)
+        }
+        return AppOptionalSvcConfig(valid: true, config: AppSvcConfig(mode: allocatedAppByteSliceFromString(maybe_string: config.mode), modeForScreenshare: allocatedAppByteSliceFromString(maybe_string: config.modeForScreenshare), maxBitrateBps: maxBitrateBps))
+    } else {
+        return AppOptionalSvcConfig(valid: false, config: AppSvcConfig(mode: allocatedAppByteSliceFromString(maybe_string: nil), modeForScreenshare: allocatedAppByteSliceFromString(maybe_string: nil), maxBitrateBps: AppOptionalUInt32(value: 0, valid: false)))
+    }
+}
+
+@available(iOSApplicationExtension, unavailable)
+fileprivate func destroyAppOptionalSvcConfig(_ appOptionalSvcConfig: AppOptionalSvcConfig) {
+    if appOptionalSvcConfig.config.mode.bytes != nil {
+        appOptionalSvcConfig.config.mode.bytes.deallocate()
+    }
+    if appOptionalSvcConfig.config.modeForScreenshare.bytes != nil {
+        appOptionalSvcConfig.config.modeForScreenshare.bytes.deallocate()
+    }
+}
+
 public func callIdFromEra(_ era: String) -> UInt64 {
     // Necessary because withUTF8 might reallocate to get a contiguous UTF-8 string.
     var era = era
@@ -295,6 +333,7 @@ public class GroupCall {
     let hkdfExtraInfo: Data
     let audioLevelsIntervalMillis: UInt64?
     let dredDuration: UInt8
+    let svcConfig: SvcConfig?
 
     public weak var delegate: GroupCallDelegate?
 
@@ -312,7 +351,7 @@ public class GroupCall {
     var videoTrack: RTCVideoTrack?
 
     @MainActor
-    internal init(ringRtcCallManager: UnsafeMutableRawPointer, factory: RTCPeerConnectionFactory, groupCallByClientId: GroupCallByClientId, groupId: Data, sfuUrl: String, hkdfExtraInfo: Data, audioLevelsIntervalMillis: UInt64?, dredDuration: UInt8 = 0, videoCaptureController: VideoCaptureController) {
+    internal init(ringRtcCallManager: UnsafeMutableRawPointer, factory: RTCPeerConnectionFactory, groupCallByClientId: GroupCallByClientId, groupId: Data, sfuUrl: String, hkdfExtraInfo: Data, audioLevelsIntervalMillis: UInt64?, dredDuration: UInt8 = 0, svcConfig: SvcConfig? = nil, videoCaptureController: VideoCaptureController) {
         self.ringRtcCallManager = ringRtcCallManager
         self.factory = factory
         self.groupCallByClientId = groupCallByClientId
@@ -321,6 +360,7 @@ public class GroupCall {
         self.hkdfExtraInfo = hkdfExtraInfo
         self.audioLevelsIntervalMillis = audioLevelsIntervalMillis
         self.dredDuration = dredDuration
+        self.svcConfig = svcConfig
 
         self.endorsementPublicKey = nil
         self.localDeviceState = LocalDeviceState()
@@ -332,7 +372,7 @@ public class GroupCall {
     }
 
     @MainActor
-    internal init(ringRtcCallManager: UnsafeMutableRawPointer, factory: RTCPeerConnectionFactory, groupCallByClientId: GroupCallByClientId, sfuUrl: String, endorsementPublicKey: Data, authCredentialPresentation: [UInt8], linkRootKey: CallLinkRootKey, adminPasskey: Data?, hkdfExtraInfo: Data, audioLevelsIntervalMillis: UInt64?, dredDuration: UInt8 = 0, videoCaptureController: VideoCaptureController) {
+    internal init(ringRtcCallManager: UnsafeMutableRawPointer, factory: RTCPeerConnectionFactory, groupCallByClientId: GroupCallByClientId, sfuUrl: String, endorsementPublicKey: Data, authCredentialPresentation: [UInt8], linkRootKey: CallLinkRootKey, adminPasskey: Data?, hkdfExtraInfo: Data, audioLevelsIntervalMillis: UInt64?, dredDuration: UInt8 = 0, svcConfig: SvcConfig? = nil, videoCaptureController: VideoCaptureController) {
         self.ringRtcCallManager = ringRtcCallManager
         self.factory = factory
         self.groupCallByClientId = groupCallByClientId
@@ -342,7 +382,8 @@ public class GroupCall {
         self.hkdfExtraInfo = hkdfExtraInfo
         self.audioLevelsIntervalMillis = audioLevelsIntervalMillis
         self.dredDuration = dredDuration
-
+        self.svcConfig = svcConfig
+        
         self.localDeviceState = LocalDeviceState()
         self.remoteDeviceStates = [:]
 
@@ -376,6 +417,7 @@ public class GroupCall {
             let sfuUrlSlice = allocatedAppByteSliceFromString(maybe_string: self.sfuUrl)
             let hkdfExtraInfoSlice = allocatedAppByteSliceFromData(maybe_data: self.hkdfExtraInfo)
             let audioLevelsIntervalMillis = self.audioLevelsIntervalMillis ?? 0;
+            let appOptionalSvcConfig = makeAppOptionalSvcConfig(self.svcConfig)
 
             // Make sure to release the allocated memory when the function exists,
             // to ensure that the pointers are still valid when used in the RingRTC
@@ -387,6 +429,7 @@ public class GroupCall {
                 if hkdfExtraInfoSlice.bytes != nil {
                     hkdfExtraInfoSlice.bytes.deallocate()
                 }
+                destroyAppOptionalSvcConfig(appOptionalSvcConfig)
             }
 
             let audioConstraints = RTCMediaConstraints(mandatoryConstraints: nil, optionalConstraints: nil)
@@ -419,7 +462,7 @@ public class GroupCall {
                 // Note: getOwnedNativeAudioTrack/getOwnedNativeVideoTrack/getOwnedNativeFactory
                 // return owned RCs the first time they are called, and null after that.
                 // TODO: Consider renaming getOwnedNativeX to takeNative.
-                clientId = ringrtcCreateGroupCallClient(self.ringRtcCallManager, groupIdSlice, sfuUrlSlice, hkdfExtraInfoSlice, audioLevelsIntervalMillis, self.dredDuration, self.factory.getOwnedNativeFactory(), audioTrack.getOwnedNativeTrack(), videoTrack.getOwnedNativeTrack())
+                clientId = ringrtcCreateGroupCallClient(self.ringRtcCallManager, groupIdSlice, sfuUrlSlice, hkdfExtraInfoSlice, audioLevelsIntervalMillis, self.dredDuration, appOptionalSvcConfig, self.factory.getOwnedNativeFactory(), audioTrack.getOwnedNativeTrack(), videoTrack.getOwnedNativeTrack())
 
             case .callLink(let authCredentialPresentation, let rootKey, let adminPasskey):
                 let authCredentialPresentationSlice = allocatedAppByteSliceFromArray(maybe_bytes: authCredentialPresentation)
@@ -435,7 +478,7 @@ public class GroupCall {
                 // Note: getOwnedNativeAudioTrack/getOwnedNativeVideoTrack/getOwnedNativeFactory
                 // return owned RCs the first time they are called, and null after that.
                 // TODO: Consider renaming getOwnedNativeX to takeNative.
-                clientId = ringrtcCreateCallLinkCallClient(self.ringRtcCallManager, sfuUrlSlice, endorsementPublicKeySlice, authCredentialPresentationSlice, rootKeySlice, adminPasskeySlice, hkdfExtraInfoSlice, audioLevelsIntervalMillis, self.dredDuration, self.factory.getOwnedNativeFactory(), audioTrack.getOwnedNativeTrack(), videoTrack.getOwnedNativeTrack())
+                clientId = ringrtcCreateCallLinkCallClient(self.ringRtcCallManager, sfuUrlSlice, endorsementPublicKeySlice, authCredentialPresentationSlice, rootKeySlice, adminPasskeySlice, hkdfExtraInfoSlice, audioLevelsIntervalMillis, self.dredDuration, appOptionalSvcConfig, self.factory.getOwnedNativeFactory(), audioTrack.getOwnedNativeTrack(), videoTrack.getOwnedNativeTrack())
             }
             if clientId != GroupCall.invalidClientId {
                 // Add this instance to the shared dictionary.
