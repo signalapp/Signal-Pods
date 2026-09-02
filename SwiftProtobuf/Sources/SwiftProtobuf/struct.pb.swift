@@ -45,16 +45,21 @@
 // incompatible with the version of SwiftProtobuf to which you are linking.
 // Please ensure that you are building against the same version of the API
 // that was used to generate this file.
-fileprivate struct _GeneratedWithProtocGenSwiftVersion: ProtobufAPIVersionCheck {
+fileprivate nonisolated struct _GeneratedWithProtocGenSwiftVersion: ProtobufAPIVersionCheck {
   struct _2: ProtobufAPIVersion_2 {}
   typealias Version = _2
 }
 
-/// `NullValue` is a singleton enumeration to represent the null value for the
-/// `Value` type union.
+/// Represents a JSON `null`.
 ///
-/// The JSON representation for `NullValue` is JSON `null`.
-public enum Google_Protobuf_NullValue: Enum, Swift.CaseIterable {
+/// `NullValue` is a sentinel, using an enum with only one value to represent
+/// the null value for the `Value` type union.
+///
+/// A field of type `NullValue` with any value other than `0` is considered
+/// invalid. Most ProtoJSON serializers will emit a `Value` with a `null_value`
+/// set as a JSON `null` regardless of the integer value, and so will round trip
+/// to a `0` value.
+public nonisolated enum Google_Protobuf_NullValue: Enum, Swift.CaseIterable {
   public typealias RawValue = Int
 
   /// Null value.
@@ -86,16 +91,20 @@ public enum Google_Protobuf_NullValue: Enum, Swift.CaseIterable {
 
 }
 
-/// Represents an unordered key-value map, intending to perfectly
-/// capture the semantics of a JSON object. This enables parsing any arbitrary
-/// JSON payload as a message field in ProtoJSON format.
+/// Represents a JSON object.
 ///
-/// This type cannot represent large Int64 values or `NaN`/`Infinity` numbers,
-/// since JSON format generally does not support them in its number type.
+/// An unordered key-value map, intending to perfectly capture the semantics of a
+/// JSON object. This enables parsing any arbitrary JSON payload as a message
+/// field in ProtoJSON format.
+///
+/// This follows RFC 8259 guidelines for interoperable JSON: notably this type
+/// cannot represent large Int64 values or `NaN`/`Infinity` numbers,
+/// since the JSON format generally does not support those values in its number
+/// type.
 ///
 /// If you do not intend to parse arbitrary JSON into your message, a custom
-/// typed message should be preferred instead.
-public struct Google_Protobuf_Struct: Sendable {
+/// typed message should be preferred instead of using this type.
+public nonisolated struct Google_Protobuf_Struct: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -108,13 +117,13 @@ public struct Google_Protobuf_Struct: Sendable {
   public init() {}
 }
 
+/// Represents a JSON value.
+///
 /// `Value` represents a dynamically typed value which can be either
 /// null, a number, a string, a boolean, a recursive struct value, or a
 /// list of values. A producer of value is expected to set one of these
-/// variants. Absence of any variant indicates an error.
-///
-/// The JSON representation for `Value` is JSON value.
-public struct Google_Protobuf_Value: Sendable {
+/// variants. Absence of any variant is an invalid state.
+public nonisolated struct Google_Protobuf_Value: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -122,7 +131,7 @@ public struct Google_Protobuf_Value: Sendable {
   /// The kind of value.
   public var kind: Google_Protobuf_Value.OneOf_Kind? = nil
 
-  /// Represents a null value.
+  /// Represents a JSON `null`.
   public var nullValue: Google_Protobuf_NullValue {
     get {
       if case .nullValue(let v)? = kind {return v}
@@ -131,7 +140,10 @@ public struct Google_Protobuf_Value: Sendable {
     set {kind = .nullValue(newValue)}
   }
 
-  /// Represents a double value. Must not be `NaN`, `Infinity` or `-Infinity`.
+  /// Represents a JSON number. Must not be `NaN`, `Infinity` or
+  /// `-Infinity`, since those are not supported in JSON. This also cannot
+  /// represent large Int64 values, since JSON format generally does not
+  /// support them in its number type.
   public var numberValue: Double {
     get {
       if case .numberValue(let v)? = kind {return v}
@@ -140,7 +152,7 @@ public struct Google_Protobuf_Value: Sendable {
     set {kind = .numberValue(newValue)}
   }
 
-  /// Represents a string value.
+  /// Represents a JSON string.
   public var stringValue: String {
     get {
       if case .stringValue(let v)? = kind {return v}
@@ -149,7 +161,7 @@ public struct Google_Protobuf_Value: Sendable {
     set {kind = .stringValue(newValue)}
   }
 
-  /// Represents a boolean value.
+  /// Represents a JSON boolean (`true` or `false` literal in JSON).
   public var boolValue: Bool {
     get {
       if case .boolValue(let v)? = kind {return v}
@@ -158,7 +170,7 @@ public struct Google_Protobuf_Value: Sendable {
     set {kind = .boolValue(newValue)}
   }
 
-  /// Represents a structured value.
+  /// Represents a JSON object.
   public var structValue: Google_Protobuf_Struct {
     get {
       if case .structValue(let v)? = kind {return v}
@@ -167,7 +179,7 @@ public struct Google_Protobuf_Value: Sendable {
     set {kind = .structValue(newValue)}
   }
 
-  /// Represents a repeated `Value`.
+  /// Represents a JSON array.
   public var listValue: Google_Protobuf_ListValue {
     get {
       if case .listValue(let v)? = kind {return v}
@@ -179,18 +191,21 @@ public struct Google_Protobuf_Value: Sendable {
   public var unknownFields = UnknownStorage()
 
   /// The kind of value.
-  public enum OneOf_Kind: Equatable, Sendable {
-    /// Represents a null value.
+  public nonisolated enum OneOf_Kind: Equatable, Sendable {
+    /// Represents a JSON `null`.
     case nullValue(Google_Protobuf_NullValue)
-    /// Represents a double value. Must not be `NaN`, `Infinity` or `-Infinity`.
+    /// Represents a JSON number. Must not be `NaN`, `Infinity` or
+    /// `-Infinity`, since those are not supported in JSON. This also cannot
+    /// represent large Int64 values, since JSON format generally does not
+    /// support them in its number type.
     case numberValue(Double)
-    /// Represents a string value.
+    /// Represents a JSON string.
     case stringValue(String)
-    /// Represents a boolean value.
+    /// Represents a JSON boolean (`true` or `false` literal in JSON).
     case boolValue(Bool)
-    /// Represents a structured value.
+    /// Represents a JSON object.
     case structValue(Google_Protobuf_Struct)
-    /// Represents a repeated `Value`.
+    /// Represents a JSON array.
     case listValue(Google_Protobuf_ListValue)
 
   }
@@ -198,10 +213,8 @@ public struct Google_Protobuf_Value: Sendable {
   public init() {}
 }
 
-/// `ListValue` is a wrapper around a repeated field of values.
-///
-/// The JSON representation for `ListValue` is JSON array.
-public struct Google_Protobuf_ListValue: Sendable {
+/// Represents a JSON array.
+public nonisolated struct Google_Protobuf_ListValue: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -216,13 +229,13 @@ public struct Google_Protobuf_ListValue: Sendable {
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
-fileprivate let _protobuf_package = "google.protobuf"
+fileprivate nonisolated let _protobuf_package = "google.protobuf"
 
-extension Google_Protobuf_NullValue: _ProtoNameProviding {
+nonisolated extension Google_Protobuf_NullValue: _ProtoNameProviding {
   public static let _protobuf_nameMap = _NameMap(bytecode: "\0\u{2}\0NULL_VALUE\0")
 }
 
-extension Google_Protobuf_Struct: Message, _MessageImplementationBase, _ProtoNameProviding {
+nonisolated extension Google_Protobuf_Struct: Message, _MessageImplementationBase, _ProtoNameProviding {
   public static let protoMessageName: String = _protobuf_package + ".Struct"
   public static let _protobuf_nameMap = _NameMap(bytecode: "\0\u{1}fields\0")
 
@@ -252,7 +265,7 @@ extension Google_Protobuf_Struct: Message, _MessageImplementationBase, _ProtoNam
   }
 }
 
-extension Google_Protobuf_Value: Message, _MessageImplementationBase, _ProtoNameProviding {
+nonisolated extension Google_Protobuf_Value: Message, _MessageImplementationBase, _ProtoNameProviding {
   public static let protoMessageName: String = _protobuf_package + ".Value"
   public static let _protobuf_nameMap = _NameMap(bytecode: "\0\u{3}null_value\0\u{3}number_value\0\u{3}string_value\0\u{3}bool_value\0\u{3}struct_value\0\u{3}list_value\0")
 
@@ -367,7 +380,7 @@ extension Google_Protobuf_Value: Message, _MessageImplementationBase, _ProtoName
   }
 }
 
-extension Google_Protobuf_ListValue: Message, _MessageImplementationBase, _ProtoNameProviding {
+nonisolated extension Google_Protobuf_ListValue: Message, _MessageImplementationBase, _ProtoNameProviding {
   public static let protoMessageName: String = _protobuf_package + ".ListValue"
   public static let _protobuf_nameMap = _NameMap(bytecode: "\0\u{1}values\0")
 

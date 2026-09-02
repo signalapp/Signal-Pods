@@ -815,6 +815,10 @@ internal struct JSONScanner {
                     return nil  // Unterminated escape
                 }
                 sawBackslash = true
+            case 0..<asciiSpace:
+                // Unescaped control characters (U+0000...U+001F) are not
+                // allowed inside a JSON string; they must be escaped.
+                return nil
             default:
                 break
             }
@@ -980,7 +984,15 @@ internal struct JSONScanner {
                     throw JSONDecodingError.malformedNumber
                 }
                 advance()
-                return Float(d)
+                // A value that parses as a finite Double can still be out of
+                // range for Float (for example "1e39"), in which case the
+                // conversion yields an infinity. Reject it, matching the
+                // unquoted path below.
+                let f = Float(d)
+                if f.isFinite {
+                    return f
+                }
+                throw JSONDecodingError.malformedNumber
             } else {
                 // Slow Path: parseBareDouble returned nil: It might be
                 // a valid float, but had something that
@@ -1261,7 +1273,9 @@ internal struct JSONScanner {
         advance()
         let nameStart = index
         while hasMoreContent && currentByte != asciiDoubleQuote {
-            if currentByte == asciiBackslash {
+            if currentByte == asciiBackslash || currentByte < asciiSpace {
+                // Backslash escapes go through the slow path; unescaped control
+                // characters are invalid there and get rejected uniformly.
                 index = stringStart  // Reset to open quote
                 return nil
             }
