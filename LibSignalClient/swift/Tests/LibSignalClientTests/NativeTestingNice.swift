@@ -84,43 +84,6 @@ extension SignalCPromiseRawPointer: SignalCPromise {
 
 }
 
-extension SignalCPromisei32: SignalCPromise {
-
-    public typealias Result = Int32
-
-    public init(
-        generic_complete:
-            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_int32_t_SignalType_ConstPointer_void?,
-        generic_context: SignalType_ConstPointer_void?,
-        generic_cancellation_id: UInt64,
-    ) {
-        self.init(
-            complete: generic_complete,
-            context: generic_context,
-            cancellation_id: generic_cancellation_id,
-
-        )
-    }
-
-    public var generic_complete:
-        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_int32_t_SignalType_ConstPointer_void?
-    {
-        get { self.complete }
-        set { complete = newValue }
-    }
-
-    public var generic_context: SignalType_ConstPointer_void? {
-        get { self.context }
-        set { context = newValue }
-    }
-
-    public var generic_cancellation_id: UInt64 {
-        get { self.cancellation_id }
-        set { cancellation_id = newValue }
-    }
-
-}
-
 extension SignalCPromiseTestStreamChunkFfiResult: SignalCPromise {
 
     public typealias Result = SignalTestStreamChunkFfiResult
@@ -537,6 +500,74 @@ extension SignalOwnedBufferOfMaxAlignedBridgeCopyBackupMediaItemFfiResult: Signa
 
 }
 
+extension SignalOwnedBufferOfMaxAlignedChargeFailureFfiResult: SignalOwnedBufferOfMaxAligned {
+
+    public typealias Element = SignalChargeFailureFfiResult
+
+    public init(
+        generic_base: SignalType_MutPointer_SignalChargeFailureFfiResult?,
+        generic_length: size_t,
+        generic_size_bytes: size_t,
+    ) {
+        self.init(
+            base: generic_base,
+            length: generic_length,
+            size_bytes: generic_size_bytes,
+
+        )
+    }
+
+    public var generic_base: SignalType_MutPointer_SignalChargeFailureFfiResult? {
+        get { self.base }
+        set { base = newValue }
+    }
+
+    public var generic_length: size_t {
+        get { self.length }
+        set { length = newValue }
+    }
+
+    public var generic_size_bytes: size_t {
+        get { self.size_bytes }
+        set { size_bytes = newValue }
+    }
+
+}
+
+extension SignalOwnedBufferOfMaxAlignedDeviceCapabilityInternalFfiResult: SignalOwnedBufferOfMaxAligned {
+
+    public typealias Element = SignalDeviceCapabilityInternalFfiResult
+
+    public init(
+        generic_base: SignalType_MutPointer_SignalDeviceCapabilityInternalFfiResult?,
+        generic_length: size_t,
+        generic_size_bytes: size_t,
+    ) {
+        self.init(
+            base: generic_base,
+            length: generic_length,
+            size_bytes: generic_size_bytes,
+
+        )
+    }
+
+    public var generic_base: SignalType_MutPointer_SignalDeviceCapabilityInternalFfiResult? {
+        get { self.base }
+        set { base = newValue }
+    }
+
+    public var generic_length: size_t {
+        get { self.length }
+        set { length = newValue }
+    }
+
+    public var generic_size_bytes: size_t {
+        get { self.size_bytes }
+        set { size_bytes = newValue }
+    }
+
+}
+
 extension SignalPairOfi32CStringPtr: SignalPairOf {
 
     public typealias First = Int32
@@ -638,6 +669,26 @@ internal enum FixedByteArrayHelper64: FixedByteArrayHelper {
     }
 }
 
+internal struct CheckSvrCredentialsArgs {
+    var number: String
+    var passwords: [String]
+
+}
+
+internal struct ConfirmTotpKeyArgs {
+    var oneTimePassword: Int32
+    var name: String
+    var createdAt: Date
+    var svrKey: Data
+
+}
+
+internal enum ConfirmTotpKeyOut {
+    case success(Int32)
+    case oneTimePasswordNotVerified
+    case tooManyMfaKeys
+}
+
 internal struct ConfirmUsernameArgs {
     var username: String
     var usernameCiphertext: Data
@@ -657,11 +708,32 @@ internal enum CopyBackupMediaOut {
     case credentialRejectedWithoutAppropriateServerInfo
 }
 
+internal struct CreateLoginReceiptCredentialArgs {
+    var paymentProcessor: PaymentProvider
+    var purchaseIdentifier: String
+    var receiptCredentialRequestContext: ReceiptCredentialRequestContext
+    var serverParams: ServerPublicParamsSerialized
+    var purchaseTime: Date
+
+}
+
+internal enum CreateLoginReceiptCredentialOut {
+    case success(ReceiptCredential)
+    case unexpectedError(contains: String)
+    case explicitError(ReceiptCredentialError)
+}
+
 internal enum DeleteBackupMediaOut {
     case item(BridgeDeleteBackupMediaItem)
     case invalidDataInStream
     case credentialRejected
     case credentialRejectedWithoutAppropriateServerInfo
+}
+
+internal enum GenerateTotpKeyOut {
+    case success(BridgePendingTotpKey)
+    case tooManyTotpKeys
+    case tooManyMfaKeys
 }
 
 internal enum GetCdnCredentialsOut {
@@ -687,6 +759,11 @@ internal enum GetMessageBackupInfoOut {
     case missingResponse
 }
 
+internal enum GetStickerUploadFormsOut {
+    case success(GetStickerUploadFormsResponse)
+    case invalid
+}
+
 internal enum GetSvrBCredentialsOut {
     case success(username: String, password: String)
     case credentialRejected
@@ -704,6 +781,15 @@ internal enum ListMediaOut {
     case malformedMediaId
     case credentialRejected
     case missingResponse
+}
+
+internal struct ListMfaKeysArgs {
+    var svrKey: Data
+
+}
+
+internal enum ListMfaKeysOut {
+    case success([BridgeConfirmedMfaKey])
 }
 
 internal struct LookUpUsernameLinkArgs {
@@ -798,6 +884,13 @@ internal struct MyTestStruct {
 
 }
 
+internal enum ReceiptCredentialError {
+    case paymentStillProcessing
+    case paymentRequired(chargeFailure: [ChargeFailure])
+    case paymentNotFound
+    case receiptAlreadyIssued
+}
+
 internal enum RedeemBackupReceiptOut {
     case success
     case invalidReceipt
@@ -814,6 +907,15 @@ internal enum RemoveDeviceOut {
     case success
 }
 
+internal struct RemoveMfaKeyArgs {
+    var keyId: Int32
+
+}
+
+internal enum RemoveMfaKeyOut {
+    case success
+}
+
 internal struct ReserveUsernameHashArgs {
     var usernames: [Data]
 
@@ -822,6 +924,16 @@ internal struct ReserveUsernameHashArgs {
 internal enum ReserveUsernameHashOut {
     case success(Data)
     case usernameNotAvailable
+}
+
+internal struct ServerPublicParamsSerialized {
+    var bytes: Data
+
+}
+
+internal struct SetCapabilitiesArgs {
+    var capabilities: [DeviceCapabilityInternal]
+
 }
 
 internal struct SetDeviceNameArgs {
@@ -833,6 +945,19 @@ internal struct SetDeviceNameArgs {
 internal enum SetDeviceNameOut {
     case success
     case deviceNotFound
+}
+
+internal struct SetMfaKeyMetadataArgs {
+    var keyId: Int32
+    var name: String
+    var createdAt: Date
+    var svrKey: Data
+
+}
+
+internal enum SetMfaKeyMetadataOut {
+    case success
+    case keyNotFound
 }
 
 internal struct SetUsernameLinkArgs {
@@ -858,6 +983,8 @@ internal struct TestStreamChunk {
 
 }
 
+extension ReceiptCredentialError: Equatable {}
+
 internal enum DerivedReturnConverterBridgeCopyBackupMediaItem: NiceReturnConverter {
     typealias NiceReturn = BridgeCopyBackupMediaItem
     typealias FfiReturn = SignalBridgeCopyBackupMediaItemFfiResult
@@ -867,10 +994,12 @@ internal enum DerivedReturnConverterBridgeCopyBackupMediaItem: NiceReturnConvert
     static func convertReturn(consuming ffiValue: FfiReturn) throws -> NiceReturn {
 
         let source_attachment_cdn = Result {
-            try IdentityConverter<Int32>.convertReturn(consuming: ffiValue.source_attachment_cdn)
+            try IdentityResultConverter<Int32>.convertReturn(consuming: ffiValue.source_attachment_cdn)
         }
         let source_key = Result { try StringConverter.convertReturn(consuming: ffiValue.source_key) }
-        let object_length = Result { try IdentityConverter<Int64>.convertReturn(consuming: ffiValue.object_length) }
+        let object_length = Result {
+            try IdentityResultConverter<Int64>.convertReturn(consuming: ffiValue.object_length)
+        }
         let media_id = Result {
             try FixedByteArrayConverter<FixedByteArrayHelper15>.convertReturn(consuming: ffiValue.media_id)
         }
@@ -896,7 +1025,9 @@ internal enum DerivedReturnConverterCallQualitySurveyInternal: NiceReturnConvert
     }
     static func convertReturn(consuming ffiValue: FfiReturn) throws -> NiceReturn {
 
-        let user_satisfied = Result { try IdentityConverter<Bool>.convertReturn(consuming: ffiValue.user_satisfied) }
+        let user_satisfied = Result {
+            try IdentityResultConverter<Bool>.convertReturn(consuming: ffiValue.user_satisfied)
+        }
         let call_quality_issues = Result {
             try ArrayReturnConverter<StringConverter, SignalOwnedBufferOfMaxAlignedCStringPtr>.convertReturn(
                 consuming: ffiValue.call_quality_issues
@@ -909,60 +1040,60 @@ internal enum DerivedReturnConverterCallQualitySurveyInternal: NiceReturnConvert
         let start_timestamp = Result { try TimestampConverter.convertReturn(consuming: ffiValue.start_timestamp) }
         let end_timestamp = Result { try TimestampConverter.convertReturn(consuming: ffiValue.end_timestamp) }
         let call_type = Result { try StringConverter.convertReturn(consuming: ffiValue.call_type) }
-        let success = Result { try IdentityConverter<Bool>.convertReturn(consuming: ffiValue.success) }
+        let success = Result { try IdentityResultConverter<Bool>.convertReturn(consuming: ffiValue.success) }
         let call_end_reason = Result { try StringConverter.convertReturn(consuming: ffiValue.call_end_reason) }
         let connection_rtt_median = Result {
-            try OptionalReturnConverter<IdentityConverter<Float>, SignalOptionalOff32>.convertReturn(
+            try OptionalReturnConverter<IdentityResultConverter<Float>, SignalOptionalOff32>.convertReturn(
                 consuming: ffiValue.connection_rtt_median
             )
         }
         let audio_rtt_median = Result {
-            try OptionalReturnConverter<IdentityConverter<Float>, SignalOptionalOff32>.convertReturn(
+            try OptionalReturnConverter<IdentityResultConverter<Float>, SignalOptionalOff32>.convertReturn(
                 consuming: ffiValue.audio_rtt_median
             )
         }
         let video_rtt_median = Result {
-            try OptionalReturnConverter<IdentityConverter<Float>, SignalOptionalOff32>.convertReturn(
+            try OptionalReturnConverter<IdentityResultConverter<Float>, SignalOptionalOff32>.convertReturn(
                 consuming: ffiValue.video_rtt_median
             )
         }
         let audio_recv_jitter_median = Result {
-            try OptionalReturnConverter<IdentityConverter<Float>, SignalOptionalOff32>.convertReturn(
+            try OptionalReturnConverter<IdentityResultConverter<Float>, SignalOptionalOff32>.convertReturn(
                 consuming: ffiValue.audio_recv_jitter_median
             )
         }
         let video_recv_jitter_median = Result {
-            try OptionalReturnConverter<IdentityConverter<Float>, SignalOptionalOff32>.convertReturn(
+            try OptionalReturnConverter<IdentityResultConverter<Float>, SignalOptionalOff32>.convertReturn(
                 consuming: ffiValue.video_recv_jitter_median
             )
         }
         let audio_send_jitter_median = Result {
-            try OptionalReturnConverter<IdentityConverter<Float>, SignalOptionalOff32>.convertReturn(
+            try OptionalReturnConverter<IdentityResultConverter<Float>, SignalOptionalOff32>.convertReturn(
                 consuming: ffiValue.audio_send_jitter_median
             )
         }
         let video_send_jitter_median = Result {
-            try OptionalReturnConverter<IdentityConverter<Float>, SignalOptionalOff32>.convertReturn(
+            try OptionalReturnConverter<IdentityResultConverter<Float>, SignalOptionalOff32>.convertReturn(
                 consuming: ffiValue.video_send_jitter_median
             )
         }
         let audio_recv_packet_loss_fraction = Result {
-            try OptionalReturnConverter<IdentityConverter<Float>, SignalOptionalOff32>.convertReturn(
+            try OptionalReturnConverter<IdentityResultConverter<Float>, SignalOptionalOff32>.convertReturn(
                 consuming: ffiValue.audio_recv_packet_loss_fraction
             )
         }
         let video_recv_packet_loss_fraction = Result {
-            try OptionalReturnConverter<IdentityConverter<Float>, SignalOptionalOff32>.convertReturn(
+            try OptionalReturnConverter<IdentityResultConverter<Float>, SignalOptionalOff32>.convertReturn(
                 consuming: ffiValue.video_recv_packet_loss_fraction
             )
         }
         let audio_send_packet_loss_fraction = Result {
-            try OptionalReturnConverter<IdentityConverter<Float>, SignalOptionalOff32>.convertReturn(
+            try OptionalReturnConverter<IdentityResultConverter<Float>, SignalOptionalOff32>.convertReturn(
                 consuming: ffiValue.audio_send_packet_loss_fraction
             )
         }
         let video_send_packet_loss_fraction = Result {
-            try OptionalReturnConverter<IdentityConverter<Float>, SignalOptionalOff32>.convertReturn(
+            try OptionalReturnConverter<IdentityResultConverter<Float>, SignalOptionalOff32>.convertReturn(
                 consuming: ffiValue.video_send_packet_loss_fraction
             )
         }
@@ -1001,6 +1132,77 @@ internal enum DerivedReturnConverterCallQualitySurveyInternal: NiceReturnConvert
             callTelemetry: try call_telemetry.get(),
             callIdHash: try call_id_hash.get()
         )
+    }
+}
+
+internal enum DerivedReturnConverterCheckSvrCredentialsArgs: NiceReturnConverter {
+    typealias NiceReturn = CheckSvrCredentialsArgs
+    typealias FfiReturn = SignalCheckSvrCredentialsArgsFfiResult
+    static func emptyFfiReturn() -> FfiReturn {
+        SignalCheckSvrCredentialsArgsFfiResult()
+    }
+    static func convertReturn(consuming ffiValue: FfiReturn) throws -> NiceReturn {
+
+        let number = Result { try StringConverter.convertReturn(consuming: ffiValue.number) }
+        let passwords = Result {
+            try ArrayReturnConverter<StringConverter, SignalOwnedBufferOfMaxAlignedCStringPtr>.convertReturn(
+                consuming: ffiValue.passwords
+            )
+        }
+
+        return CheckSvrCredentialsArgs(number: try number.get(), passwords: try passwords.get())
+    }
+}
+
+internal enum DerivedReturnConverterConfirmTotpKeyArgs: NiceReturnConverter {
+    typealias NiceReturn = ConfirmTotpKeyArgs
+    typealias FfiReturn = SignalConfirmTotpKeyArgsFfiResult
+    static func emptyFfiReturn() -> FfiReturn {
+        SignalConfirmTotpKeyArgsFfiResult()
+    }
+    static func convertReturn(consuming ffiValue: FfiReturn) throws -> NiceReturn {
+
+        let one_time_password = Result {
+            try IdentityResultConverter<Int32>.convertReturn(consuming: ffiValue.one_time_password)
+        }
+        let name = Result { try StringConverter.convertReturn(consuming: ffiValue.name) }
+        let created_at = Result { try TimestampConverter.convertReturn(consuming: ffiValue.created_at) }
+        let svr_key = Result {
+            try FixedByteArrayConverter<FixedByteArrayHelper32>.convertReturn(consuming: ffiValue.svr_key)
+        }
+
+        return ConfirmTotpKeyArgs(
+            oneTimePassword: try one_time_password.get(),
+            name: try name.get(),
+            createdAt: try created_at.get(),
+            svrKey: try svr_key.get()
+        )
+    }
+}
+
+internal enum DerivedReturnConverterConfirmTotpKeyOut: NiceReturnConverter {
+    typealias NiceReturn = ConfirmTotpKeyOut
+    typealias FfiReturn = SignalConfirmTotpKeyOutFfiResult
+    static func emptyFfiReturn() -> FfiReturn {
+        SignalConfirmTotpKeyOutFfiResult()
+    }
+    static func convertReturn(consuming ffiValue: FfiReturn) throws -> NiceReturn {
+        let ffiTag = ffiValue.tag
+        switch ffiTag {
+        case SignalConfirmTotpKeyOutFfiResultSuccess:
+            let _0 = Result {
+                try IdentityResultConverter<Int32>.convertReturn(
+                    consuming: ffiValue.success._0
+                )
+            }
+            return ConfirmTotpKeyOut.success(try _0.get())
+        case SignalConfirmTotpKeyOutFfiResultOneTimePasswordNotVerified:
+            return ConfirmTotpKeyOut.oneTimePasswordNotVerified
+        case SignalConfirmTotpKeyOutFfiResultTooManyMfaKeys:
+            return ConfirmTotpKeyOut.tooManyMfaKeys
+        default:
+            throw SignalError.internalError("Unexpected enum tag for ConfirmTotpKeyOut: \(ffiTag)")
+        }
     }
 }
 
@@ -1073,6 +1275,74 @@ internal enum DerivedReturnConverterCopyBackupMediaOut: NiceReturnConverter {
     }
 }
 
+internal enum DerivedReturnConverterCreateLoginReceiptCredentialArgs: NiceReturnConverter {
+    typealias NiceReturn = CreateLoginReceiptCredentialArgs
+    typealias FfiReturn = SignalCreateLoginReceiptCredentialArgsFfiResult
+    static func emptyFfiReturn() -> FfiReturn {
+        SignalCreateLoginReceiptCredentialArgsFfiResult()
+    }
+    static func convertReturn(consuming ffiValue: FfiReturn) throws -> NiceReturn {
+
+        let payment_processor = Result {
+            try DerivedReturnConverterPaymentProvider.convertReturn(consuming: ffiValue.payment_processor)
+        }
+        let purchase_identifier = Result { try StringConverter.convertReturn(consuming: ffiValue.purchase_identifier) }
+        let receipt_credential_request_context = Result {
+            try ByteArrayConverter<ReceiptCredentialRequestContext>.convertReturn(
+                consuming: ffiValue.receipt_credential_request_context
+            )
+        }
+        let server_params = Result {
+            try DerivedReturnConverterServerPublicParamsSerialized.convertReturn(consuming: ffiValue.server_params)
+        }
+        let purchase_time = Result { try TimestampConverter.convertReturn(consuming: ffiValue.purchase_time) }
+
+        return CreateLoginReceiptCredentialArgs(
+            paymentProcessor: try payment_processor.get(),
+            purchaseIdentifier: try purchase_identifier.get(),
+            receiptCredentialRequestContext: try receipt_credential_request_context.get(),
+            serverParams: try server_params.get(),
+            purchaseTime: try purchase_time.get()
+        )
+    }
+}
+
+internal enum DerivedReturnConverterCreateLoginReceiptCredentialOut: NiceReturnConverter {
+    typealias NiceReturn = CreateLoginReceiptCredentialOut
+    typealias FfiReturn = SignalCreateLoginReceiptCredentialOutFfiResult
+    static func emptyFfiReturn() -> FfiReturn {
+        SignalCreateLoginReceiptCredentialOutFfiResult()
+    }
+    static func convertReturn(consuming ffiValue: FfiReturn) throws -> NiceReturn {
+        let ffiTag = ffiValue.tag
+        switch ffiTag {
+        case SignalCreateLoginReceiptCredentialOutFfiResultSuccess:
+            let _0 = Result {
+                try ByteArrayConverter<ReceiptCredential>.convertReturn(
+                    consuming: ffiValue.success._0
+                )
+            }
+            return CreateLoginReceiptCredentialOut.success(try _0.get())
+        case SignalCreateLoginReceiptCredentialOutFfiResultUnexpectedError:
+            let contains = Result {
+                try StringConverter.convertReturn(
+                    consuming: ffiValue.unexpected_error.contains
+                )
+            }
+            return CreateLoginReceiptCredentialOut.unexpectedError(contains: try contains.get())
+        case SignalCreateLoginReceiptCredentialOutFfiResultExplicitError:
+            let _0 = Result {
+                try DerivedReturnConverterReceiptCredentialError.convertReturn(
+                    consuming: ffiValue.explicit_error._0
+                )
+            }
+            return CreateLoginReceiptCredentialOut.explicitError(try _0.get())
+        default:
+            throw SignalError.internalError("Unexpected enum tag for CreateLoginReceiptCredentialOut: \(ffiTag)")
+        }
+    }
+}
+
 internal enum DerivedReturnConverterDeleteBackupMediaOut: NiceReturnConverter {
     typealias NiceReturn = DeleteBackupMediaOut
     typealias FfiReturn = SignalDeleteBackupMediaOutFfiResult
@@ -1097,6 +1367,61 @@ internal enum DerivedReturnConverterDeleteBackupMediaOut: NiceReturnConverter {
             return DeleteBackupMediaOut.credentialRejectedWithoutAppropriateServerInfo
         default:
             throw SignalError.internalError("Unexpected enum tag for DeleteBackupMediaOut: \(ffiTag)")
+        }
+    }
+}
+
+internal enum DerivedReturnConverterDeviceCapabilityInternal: NiceReturnConverter {
+    typealias NiceReturn = DeviceCapabilityInternal
+    typealias FfiReturn = SignalDeviceCapabilityInternalFfiResult
+    static func emptyFfiReturn() -> FfiReturn {
+        SignalDeviceCapabilityInternalFfiResult(0)
+    }
+    static func convertReturn(consuming ffiValue: FfiReturn) throws -> NiceReturn {
+        let ffiTag = ffiValue
+        switch ffiTag {
+        case SignalDeviceCapabilityInternalFfiResultStorage:
+            return DeviceCapabilityInternal.storage
+        case SignalDeviceCapabilityInternalFfiResultTransfer:
+            return DeviceCapabilityInternal.transfer
+        case SignalDeviceCapabilityInternalFfiResultAttachmentBackfill:
+            return DeviceCapabilityInternal.attachmentBackfill
+        case SignalDeviceCapabilityInternalFfiResultSparsePostQuantumRatchet:
+            return DeviceCapabilityInternal.sparsePostQuantumRatchet
+        case SignalDeviceCapabilityInternalFfiResultProfilesV2:
+            return DeviceCapabilityInternal.profilesV2
+        case SignalDeviceCapabilityInternalFfiResultUsernameChangeSyncMessage:
+            return DeviceCapabilityInternal.usernameChangeSyncMessage
+        case SignalDeviceCapabilityInternalFfiResultOptionalPhoneNumber:
+            return DeviceCapabilityInternal.optionalPhoneNumber
+        default:
+            throw SignalError.internalError("Unexpected enum tag for DeviceCapabilityInternal: \(ffiTag)")
+        }
+    }
+}
+
+internal enum DerivedReturnConverterGenerateTotpKeyOut: NiceReturnConverter {
+    typealias NiceReturn = GenerateTotpKeyOut
+    typealias FfiReturn = SignalGenerateTotpKeyOutFfiResult
+    static func emptyFfiReturn() -> FfiReturn {
+        SignalGenerateTotpKeyOutFfiResult()
+    }
+    static func convertReturn(consuming ffiValue: FfiReturn) throws -> NiceReturn {
+        let ffiTag = ffiValue.tag
+        switch ffiTag {
+        case SignalGenerateTotpKeyOutFfiResultSuccess:
+            let _0 = Result {
+                try DerivedReturnConverterBridgePendingTotpKey.convertReturn(
+                    consuming: ffiValue.success._0
+                )
+            }
+            return GenerateTotpKeyOut.success(try _0.get())
+        case SignalGenerateTotpKeyOutFfiResultTooManyTotpKeys:
+            return GenerateTotpKeyOut.tooManyTotpKeys
+        case SignalGenerateTotpKeyOutFfiResultTooManyMfaKeys:
+            return GenerateTotpKeyOut.tooManyMfaKeys
+        default:
+            throw SignalError.internalError("Unexpected enum tag for GenerateTotpKeyOut: \(ffiTag)")
         }
     }
 }
@@ -1197,6 +1522,30 @@ internal enum DerivedReturnConverterGetMessageBackupInfoOut: NiceReturnConverter
     }
 }
 
+internal enum DerivedReturnConverterGetStickerUploadFormsOut: NiceReturnConverter {
+    typealias NiceReturn = GetStickerUploadFormsOut
+    typealias FfiReturn = SignalGetStickerUploadFormsOutFfiResult
+    static func emptyFfiReturn() -> FfiReturn {
+        SignalGetStickerUploadFormsOutFfiResult()
+    }
+    static func convertReturn(consuming ffiValue: FfiReturn) throws -> NiceReturn {
+        let ffiTag = ffiValue.tag
+        switch ffiTag {
+        case SignalGetStickerUploadFormsOutFfiResultSuccess:
+            let _0 = Result {
+                try DerivedReturnConverterGetStickerUploadFormsResponse.convertReturn(
+                    consuming: ffiValue.success._0
+                )
+            }
+            return GetStickerUploadFormsOut.success(try _0.get())
+        case SignalGetStickerUploadFormsOutFfiResultInvalid:
+            return GetStickerUploadFormsOut.invalid
+        default:
+            throw SignalError.internalError("Unexpected enum tag for GetStickerUploadFormsOut: \(ffiTag)")
+        }
+    }
+}
+
 internal enum DerivedReturnConverterGetSvrBCredentialsOut: NiceReturnConverter {
     typealias NiceReturn = GetSvrBCredentialsOut
     typealias FfiReturn = SignalGetSvrBCredentialsOutFfiResult
@@ -1237,7 +1586,7 @@ internal enum DerivedReturnConverterListMediaArgs: NiceReturnConverter {
     static func convertReturn(consuming ffiValue: FfiReturn) throws -> NiceReturn {
 
         let cursor = Result { try OptionalStringConverter.convertReturn(consuming: ffiValue.cursor) }
-        let limit = Result { try IdentityConverter<Int32>.convertReturn(consuming: ffiValue.limit) }
+        let limit = Result { try IdentityResultConverter<Int32>.convertReturn(consuming: ffiValue.limit) }
 
         return ListMediaArgs(cursor: try cursor.get(), limit: try limit.get())
     }
@@ -1267,6 +1616,47 @@ internal enum DerivedReturnConverterListMediaOut: NiceReturnConverter {
             return ListMediaOut.missingResponse
         default:
             throw SignalError.internalError("Unexpected enum tag for ListMediaOut: \(ffiTag)")
+        }
+    }
+}
+
+internal enum DerivedReturnConverterListMfaKeysArgs: NiceReturnConverter {
+    typealias NiceReturn = ListMfaKeysArgs
+    typealias FfiReturn = SignalListMfaKeysArgsFfiResult
+    static func emptyFfiReturn() -> FfiReturn {
+        SignalListMfaKeysArgsFfiResult()
+    }
+    static func convertReturn(consuming ffiValue: FfiReturn) throws -> NiceReturn {
+
+        let svr_key = Result {
+            try FixedByteArrayConverter<FixedByteArrayHelper32>.convertReturn(consuming: ffiValue.svr_key)
+        }
+
+        return ListMfaKeysArgs(svrKey: try svr_key.get())
+    }
+}
+
+internal enum DerivedReturnConverterListMfaKeysOut: NiceReturnConverter {
+    typealias NiceReturn = ListMfaKeysOut
+    typealias FfiReturn = SignalListMfaKeysOutFfiResult
+    static func emptyFfiReturn() -> FfiReturn {
+        SignalListMfaKeysOutFfiResult()
+    }
+    static func convertReturn(consuming ffiValue: FfiReturn) throws -> NiceReturn {
+        let ffiTag = ffiValue.tag
+        switch ffiTag {
+        case SignalListMfaKeysOutFfiResultSuccess:
+            let _0 = Result {
+                try ArrayReturnConverter<
+                    DerivedReturnConverterBridgeConfirmedMfaKey,
+                    SignalOwnedBufferOfMaxAlignedBridgeConfirmedMfaKeyFfiResult
+                >.convertReturn(
+                    consuming: ffiValue.success._0
+                )
+            }
+            return ListMfaKeysOut.success(try _0.get())
+        default:
+            throw SignalError.internalError("Unexpected enum tag for ListMfaKeysOut: \(ffiTag)")
         }
     }
 }
@@ -1329,7 +1719,7 @@ internal enum DerivedReturnConverterMyNiceTypeEnumNot: NiceReturnConverter {
             return MyNiceTypeEnum.unit
         case SignalMyNiceTypeEnumNotFfiResultSingle:
             let _0 = Result {
-                try IdentityConverter<Int32>.convertReturn(
+                try IdentityResultConverter<Int32>.convertReturn(
                     consuming: ffiValue.single._0
                 )
             }
@@ -1367,8 +1757,8 @@ internal enum DerivedReturnConverterMyNiceTypeStructNot: NiceReturnConverter {
     }
     static func convertReturn(consuming ffiValue: FfiReturn) throws -> NiceReturn {
 
-        let x = Result { try IdentityConverter<Int32>.convertReturn(consuming: ffiValue.x) }
-        let y = Result { try IdentityConverter<Int32>.convertReturn(consuming: ffiValue.y) }
+        let x = Result { try IdentityResultConverter<Int32>.convertReturn(consuming: ffiValue.x) }
+        let y = Result { try IdentityResultConverter<Int32>.convertReturn(consuming: ffiValue.y) }
 
         return MyNiceTypeStruct(x: try x.get(), y: try y.get())
     }
@@ -1387,12 +1777,12 @@ internal enum DerivedReturnConverterMyRemoteDeriveEnum: NiceReturnConverter {
             return MyRemoteDeriveEnum.unit
         case SignalMyRemoteDeriveEnumFfiResultTuple:
             let _0 = Result {
-                try IdentityConverter<Int32>.convertReturn(
+                try IdentityResultConverter<Int32>.convertReturn(
                     consuming: ffiValue.tuple._0
                 )
             }
             let _1 = Result {
-                try IdentityConverter<Int32>.convertReturn(
+                try IdentityResultConverter<Int32>.convertReturn(
                     consuming: ffiValue.tuple._1
                 )
             }
@@ -1404,7 +1794,7 @@ internal enum DerivedReturnConverterMyRemoteDeriveEnum: NiceReturnConverter {
                 )
             }
             let y = Result {
-                try IdentityConverter<Int32>.convertReturn(
+                try IdentityResultConverter<Int32>.convertReturn(
                     consuming: ffiValue.record.y
                 )
             }
@@ -1423,8 +1813,8 @@ internal enum DerivedReturnConverterMyRemoteDeriveStruct: NiceReturnConverter {
     }
     static func convertReturn(consuming ffiValue: FfiReturn) throws -> NiceReturn {
 
-        let x = Result { try IdentityConverter<Int32>.convertReturn(consuming: ffiValue.x) }
-        let y = Result { try IdentityConverter<Int32>.convertReturn(consuming: ffiValue.y) }
+        let x = Result { try IdentityResultConverter<Int32>.convertReturn(consuming: ffiValue.x) }
+        let y = Result { try IdentityResultConverter<Int32>.convertReturn(consuming: ffiValue.y) }
 
         return MyRemoteDeriveStruct(x: try x.get(), y: try y.get())
     }
@@ -1462,26 +1852,26 @@ internal enum DerivedReturnConverterMyTestEnum: NiceReturnConverter {
             return MyTestEnum.unit
         case SignalMyTestEnumFfiResultSingle:
             let _0 = Result {
-                try IdentityConverter<Int32>.convertReturn(
+                try IdentityResultConverter<Int32>.convertReturn(
                     consuming: ffiValue.single._0
                 )
             }
             return MyTestEnum.single(try _0.get())
         case SignalMyTestEnumFfiResultSingleNamed:
             let x = Result {
-                try IdentityConverter<Int32>.convertReturn(
+                try IdentityResultConverter<Int32>.convertReturn(
                     consuming: ffiValue.single_named.x
                 )
             }
             return MyTestEnum.singleNamed(x: try x.get())
         case SignalMyTestEnumFfiResultDouble:
             let _0 = Result {
-                try IdentityConverter<Int32>.convertReturn(
+                try IdentityResultConverter<Int32>.convertReturn(
                     consuming: ffiValue.double_._0
                 )
             }
             let _1 = Result {
-                try IdentityConverter<Int32>.convertReturn(
+                try IdentityResultConverter<Int32>.convertReturn(
                     consuming: ffiValue.double_._1
                 )
             }
@@ -1493,7 +1883,7 @@ internal enum DerivedReturnConverterMyTestEnum: NiceReturnConverter {
                 )
             }
             let person_age = Result {
-                try IdentityConverter<Int32>.convertReturn(
+                try IdentityResultConverter<Int32>.convertReturn(
                     consuming: ffiValue.record.person_age
                 )
             }
@@ -1527,8 +1917,8 @@ internal enum DerivedReturnConverterMyTestPoint: NiceReturnConverter {
     }
     static func convertReturn(consuming ffiValue: FfiReturn) throws -> NiceReturn {
 
-        let _0 = Result { try IdentityConverter<Int32>.convertReturn(consuming: ffiValue._0) }
-        let _1 = Result { try IdentityConverter<Int32>.convertReturn(consuming: ffiValue._1) }
+        let _0 = Result { try IdentityResultConverter<Int32>.convertReturn(consuming: ffiValue._0) }
+        let _1 = Result { try IdentityResultConverter<Int32>.convertReturn(consuming: ffiValue._1) }
 
         return MyTestPoint(_0: try _0.get(), _1: try _1.get())
     }
@@ -1543,11 +1933,41 @@ internal enum DerivedReturnConverterMyTestStruct: NiceReturnConverter {
     static func convertReturn(consuming ffiValue: FfiReturn) throws -> NiceReturn {
 
         let my_numeric_field = Result {
-            try IdentityConverter<Int32>.convertReturn(consuming: ffiValue.my_numeric_field)
+            try IdentityResultConverter<Int32>.convertReturn(consuming: ffiValue.my_numeric_field)
         }
         let my_string_field = Result { try StringConverter.convertReturn(consuming: ffiValue.my_string_field) }
 
         return MyTestStruct(myNumericField: try my_numeric_field.get(), myStringField: try my_string_field.get())
+    }
+}
+
+internal enum DerivedReturnConverterReceiptCredentialError: NiceReturnConverter {
+    typealias NiceReturn = ReceiptCredentialError
+    typealias FfiReturn = SignalReceiptCredentialErrorFfiResult
+    static func emptyFfiReturn() -> FfiReturn {
+        SignalReceiptCredentialErrorFfiResult()
+    }
+    static func convertReturn(consuming ffiValue: FfiReturn) throws -> NiceReturn {
+        let ffiTag = ffiValue.tag
+        switch ffiTag {
+        case SignalReceiptCredentialErrorFfiResultPaymentStillProcessing:
+            return ReceiptCredentialError.paymentStillProcessing
+        case SignalReceiptCredentialErrorFfiResultPaymentRequired:
+            let charge_failure = Result {
+                try ArrayReturnConverter<
+                    DerivedReturnConverterChargeFailure, SignalOwnedBufferOfMaxAlignedChargeFailureFfiResult
+                >.convertReturn(
+                    consuming: ffiValue.payment_required.charge_failure
+                )
+            }
+            return ReceiptCredentialError.paymentRequired(chargeFailure: try charge_failure.get())
+        case SignalReceiptCredentialErrorFfiResultPaymentNotFound:
+            return ReceiptCredentialError.paymentNotFound
+        case SignalReceiptCredentialErrorFfiResultReceiptAlreadyIssued:
+            return ReceiptCredentialError.receiptAlreadyIssued
+        default:
+            throw SignalError.internalError("Unexpected enum tag for ReceiptCredentialError: \(ffiTag)")
+        }
     }
 }
 
@@ -1582,7 +2002,7 @@ internal enum DerivedReturnConverterRemoveDeviceArgs: NiceReturnConverter {
     }
     static func convertReturn(consuming ffiValue: FfiReturn) throws -> NiceReturn {
 
-        let id = Result { try IdentityConverter<UInt8>.convertReturn(consuming: ffiValue.id) }
+        let id = Result { try IdentityResultConverter<UInt8>.convertReturn(consuming: ffiValue.id) }
 
         return RemoveDeviceArgs(id: try id.get())
     }
@@ -1601,6 +2021,37 @@ internal enum DerivedReturnConverterRemoveDeviceOut: NiceReturnConverter {
             return RemoveDeviceOut.success
         default:
             throw SignalError.internalError("Unexpected enum tag for RemoveDeviceOut: \(ffiTag)")
+        }
+    }
+}
+
+internal enum DerivedReturnConverterRemoveMfaKeyArgs: NiceReturnConverter {
+    typealias NiceReturn = RemoveMfaKeyArgs
+    typealias FfiReturn = SignalRemoveMfaKeyArgsFfiResult
+    static func emptyFfiReturn() -> FfiReturn {
+        SignalRemoveMfaKeyArgsFfiResult()
+    }
+    static func convertReturn(consuming ffiValue: FfiReturn) throws -> NiceReturn {
+
+        let key_id = Result { try IdentityResultConverter<Int32>.convertReturn(consuming: ffiValue.key_id) }
+
+        return RemoveMfaKeyArgs(keyId: try key_id.get())
+    }
+}
+
+internal enum DerivedReturnConverterRemoveMfaKeyOut: NiceReturnConverter {
+    typealias NiceReturn = RemoveMfaKeyOut
+    typealias FfiReturn = SignalRemoveMfaKeyOutFfiResult
+    static func emptyFfiReturn() -> FfiReturn {
+        SignalRemoveMfaKeyOutFfiResult(0)
+    }
+    static func convertReturn(consuming ffiValue: FfiReturn) throws -> NiceReturn {
+        let ffiTag = ffiValue
+        switch ffiTag {
+        case SignalRemoveMfaKeyOutFfiResultSuccess:
+            return RemoveMfaKeyOut.success
+        default:
+            throw SignalError.internalError("Unexpected enum tag for RemoveMfaKeyOut: \(ffiTag)")
         }
     }
 }
@@ -1647,6 +2098,39 @@ internal enum DerivedReturnConverterReserveUsernameHashOut: NiceReturnConverter 
     }
 }
 
+internal enum DerivedReturnConverterServerPublicParamsSerialized: NiceReturnConverter {
+    typealias NiceReturn = ServerPublicParamsSerialized
+    typealias FfiReturn = SignalServerPublicParamsSerializedFfiResult
+    static func emptyFfiReturn() -> FfiReturn {
+        SignalServerPublicParamsSerializedFfiResult()
+    }
+    static func convertReturn(consuming ffiValue: FfiReturn) throws -> NiceReturn {
+
+        let bytes = Result { try DataConverter.convertReturn(consuming: ffiValue.bytes) }
+
+        return ServerPublicParamsSerialized(bytes: try bytes.get())
+    }
+}
+
+internal enum DerivedReturnConverterSetCapabilitiesArgs: NiceReturnConverter {
+    typealias NiceReturn = SetCapabilitiesArgs
+    typealias FfiReturn = SignalSetCapabilitiesArgsFfiResult
+    static func emptyFfiReturn() -> FfiReturn {
+        SignalSetCapabilitiesArgsFfiResult()
+    }
+    static func convertReturn(consuming ffiValue: FfiReturn) throws -> NiceReturn {
+
+        let capabilities = Result {
+            try ArrayReturnConverter<
+                DerivedReturnConverterDeviceCapabilityInternal,
+                SignalOwnedBufferOfMaxAlignedDeviceCapabilityInternalFfiResult
+            >.convertReturn(consuming: ffiValue.capabilities)
+        }
+
+        return SetCapabilitiesArgs(capabilities: try capabilities.get())
+    }
+}
+
 internal enum DerivedReturnConverterSetDeviceNameArgs: NiceReturnConverter {
     typealias NiceReturn = SetDeviceNameArgs
     typealias FfiReturn = SignalSetDeviceNameArgsFfiResult
@@ -1655,7 +2139,7 @@ internal enum DerivedReturnConverterSetDeviceNameArgs: NiceReturnConverter {
     }
     static func convertReturn(consuming ffiValue: FfiReturn) throws -> NiceReturn {
 
-        let id = Result { try IdentityConverter<UInt8>.convertReturn(consuming: ffiValue.id) }
+        let id = Result { try IdentityResultConverter<UInt8>.convertReturn(consuming: ffiValue.id) }
         let encrypted_name = Result { try DataConverter.convertReturn(consuming: ffiValue.encrypted_name) }
 
         return SetDeviceNameArgs(id: try id.get(), encryptedName: try encrypted_name.get())
@@ -1681,6 +2165,49 @@ internal enum DerivedReturnConverterSetDeviceNameOut: NiceReturnConverter {
     }
 }
 
+internal enum DerivedReturnConverterSetMfaKeyMetadataArgs: NiceReturnConverter {
+    typealias NiceReturn = SetMfaKeyMetadataArgs
+    typealias FfiReturn = SignalSetMfaKeyMetadataArgsFfiResult
+    static func emptyFfiReturn() -> FfiReturn {
+        SignalSetMfaKeyMetadataArgsFfiResult()
+    }
+    static func convertReturn(consuming ffiValue: FfiReturn) throws -> NiceReturn {
+
+        let key_id = Result { try IdentityResultConverter<Int32>.convertReturn(consuming: ffiValue.key_id) }
+        let name = Result { try StringConverter.convertReturn(consuming: ffiValue.name) }
+        let created_at = Result { try TimestampConverter.convertReturn(consuming: ffiValue.created_at) }
+        let svr_key = Result {
+            try FixedByteArrayConverter<FixedByteArrayHelper32>.convertReturn(consuming: ffiValue.svr_key)
+        }
+
+        return SetMfaKeyMetadataArgs(
+            keyId: try key_id.get(),
+            name: try name.get(),
+            createdAt: try created_at.get(),
+            svrKey: try svr_key.get()
+        )
+    }
+}
+
+internal enum DerivedReturnConverterSetMfaKeyMetadataOut: NiceReturnConverter {
+    typealias NiceReturn = SetMfaKeyMetadataOut
+    typealias FfiReturn = SignalSetMfaKeyMetadataOutFfiResult
+    static func emptyFfiReturn() -> FfiReturn {
+        SignalSetMfaKeyMetadataOutFfiResult(0)
+    }
+    static func convertReturn(consuming ffiValue: FfiReturn) throws -> NiceReturn {
+        let ffiTag = ffiValue
+        switch ffiTag {
+        case SignalSetMfaKeyMetadataOutFfiResultSuccess:
+            return SetMfaKeyMetadataOut.success
+        case SignalSetMfaKeyMetadataOutFfiResultKeyNotFound:
+            return SetMfaKeyMetadataOut.keyNotFound
+        default:
+            throw SignalError.internalError("Unexpected enum tag for SetMfaKeyMetadataOut: \(ffiTag)")
+        }
+    }
+}
+
 internal enum DerivedReturnConverterSetUsernameLinkArgs: NiceReturnConverter {
     typealias NiceReturn = SetUsernameLinkArgs
     typealias FfiReturn = SignalSetUsernameLinkArgsFfiResult
@@ -1691,7 +2218,7 @@ internal enum DerivedReturnConverterSetUsernameLinkArgs: NiceReturnConverter {
 
         let username_ciphertext = Result { try DataConverter.convertReturn(consuming: ffiValue.username_ciphertext) }
         let keep_link_handle = Result {
-            try IdentityConverter<Bool>.convertReturn(consuming: ffiValue.keep_link_handle)
+            try IdentityResultConverter<Bool>.convertReturn(consuming: ffiValue.keep_link_handle)
         }
 
         return SetUsernameLinkArgs(
@@ -1769,7 +2296,7 @@ internal enum DerivedReturnConverterTestStreamChunk: NiceReturnConverter {
 
 internal enum MyNiceTypeEnumNotArgConverterKeepAlive {
     case unit(())
-    case single((IdentityConverter<Int32>.KeepAlive?))
+    case single((IdentityArgConverter<Int32>.KeepAlive?))
 }
 
 internal enum DerivedArgConverterMyNiceTypeEnumNot: NiceArgConverter {
@@ -1794,12 +2321,12 @@ internal enum DerivedArgConverterMyNiceTypeEnumNot: NiceArgConverter {
 
             let (_0_ffi, _0_keepalive):
                 (
-                    IdentityConverter<Int32>.FfiArg,
-                    IdentityConverter<Int32>.KeepAlive?,
-                ) = IdentityConverter<Int32>.convertArg(_0)
+                    IdentityArgConverter<Int32>.FfiArg,
+                    IdentityArgConverter<Int32>.KeepAlive?,
+                ) = IdentityArgConverter<Int32>.convertArg(_0)
 
             let ffiStructArg = SignalMyNiceTypeEnumNotFfiArgSignalSingle_Body(_0: _0_ffi, )
-            let ffiStructKeepAlive: (IdentityConverter<Int32>.KeepAlive?, )? =
+            let ffiStructKeepAlive: (IdentityArgConverter<Int32>.KeepAlive?, )? =
                 (_0_keepalive != nil || false)
                 ? (_0_keepalive,)
                 : nil
@@ -1832,7 +2359,7 @@ internal enum DerivedArgConverterMyNiceTypeEnumNot: NiceArgConverter {
             let _0,
         ):
 
-            return try IdentityConverter<Int32>.convertArgBorrowed(_0) {
+            return try IdentityArgConverter<Int32>.convertArgBorrowed(_0) {
                 ffi__0 in
 
                 return try niceThunk(
@@ -1888,24 +2415,24 @@ internal enum DerivedArgConverterMyNiceTypeStructNot: NiceArgConverter {
     typealias NiceArg = MyNiceTypeStruct
     typealias FfiArg = SignalMyNiceTypeStructNotFfiArg
 
-    typealias KeepAlive = (IdentityConverter<Int32>.KeepAlive?, IdentityConverter<Int32>.KeepAlive?, )
+    typealias KeepAlive = (IdentityArgConverter<Int32>.KeepAlive?, IdentityArgConverter<Int32>.KeepAlive?, )
     static func convertArg(_ niceArg: NiceArg) -> (FfiArg, KeepAlive?) {
         let x = niceArg.x
         let y = niceArg.y
 
         let (x_ffi, x_keepalive):
             (
-                IdentityConverter<Int32>.FfiArg,
-                IdentityConverter<Int32>.KeepAlive?,
-            ) = IdentityConverter<Int32>.convertArg(x)
+                IdentityArgConverter<Int32>.FfiArg,
+                IdentityArgConverter<Int32>.KeepAlive?,
+            ) = IdentityArgConverter<Int32>.convertArg(x)
         let (y_ffi, y_keepalive):
             (
-                IdentityConverter<Int32>.FfiArg,
-                IdentityConverter<Int32>.KeepAlive?,
-            ) = IdentityConverter<Int32>.convertArg(y)
+                IdentityArgConverter<Int32>.FfiArg,
+                IdentityArgConverter<Int32>.KeepAlive?,
+            ) = IdentityArgConverter<Int32>.convertArg(y)
 
         let ffiStructArg = FfiArg(x: x_ffi, y: y_ffi, )
-        let ffiStructKeepAlive: (IdentityConverter<Int32>.KeepAlive?, IdentityConverter<Int32>.KeepAlive?, )? =
+        let ffiStructKeepAlive: (IdentityArgConverter<Int32>.KeepAlive?, IdentityArgConverter<Int32>.KeepAlive?, )? =
             (x_keepalive != nil || y_keepalive != nil || false)
             ? (x_keepalive, y_keepalive,)
             : nil
@@ -1919,9 +2446,9 @@ internal enum DerivedArgConverterMyNiceTypeStructNot: NiceArgConverter {
         let x = niceArg.x
         let y = niceArg.y
 
-        return try IdentityConverter<Int32>.convertArgBorrowed(x) {
+        return try IdentityArgConverter<Int32>.convertArgBorrowed(x) {
             ffi_x in
-            return try IdentityConverter<Int32>.convertArgBorrowed(y) {
+            return try IdentityArgConverter<Int32>.convertArgBorrowed(y) {
                 ffi_y in
 
                 return try niceThunk(
@@ -1939,8 +2466,8 @@ internal enum DerivedArgConverterMyNiceTypeStructNot: NiceArgConverter {
 
 internal enum MyRemoteDeriveEnumArgConverterKeepAlive {
     case unit(())
-    case tuple((IdentityConverter<Int32>.KeepAlive?, IdentityConverter<Int32>.KeepAlive?))
-    case record((StringConverter.KeepAlive?, IdentityConverter<Int32>.KeepAlive?))
+    case tuple((IdentityArgConverter<Int32>.KeepAlive?, IdentityArgConverter<Int32>.KeepAlive?))
+    case record((StringConverter.KeepAlive?, IdentityArgConverter<Int32>.KeepAlive?))
 }
 
 internal enum DerivedArgConverterMyRemoteDeriveEnum: NiceArgConverter {
@@ -1966,20 +2493,21 @@ internal enum DerivedArgConverterMyRemoteDeriveEnum: NiceArgConverter {
 
             let (_0_ffi, _0_keepalive):
                 (
-                    IdentityConverter<Int32>.FfiArg,
-                    IdentityConverter<Int32>.KeepAlive?,
-                ) = IdentityConverter<Int32>.convertArg(_0)
+                    IdentityArgConverter<Int32>.FfiArg,
+                    IdentityArgConverter<Int32>.KeepAlive?,
+                ) = IdentityArgConverter<Int32>.convertArg(_0)
             let (_1_ffi, _1_keepalive):
                 (
-                    IdentityConverter<Int32>.FfiArg,
-                    IdentityConverter<Int32>.KeepAlive?,
-                ) = IdentityConverter<Int32>.convertArg(_1)
+                    IdentityArgConverter<Int32>.FfiArg,
+                    IdentityArgConverter<Int32>.KeepAlive?,
+                ) = IdentityArgConverter<Int32>.convertArg(_1)
 
             let ffiStructArg = SignalMyRemoteDeriveEnumFfiArgSignalTuple_Body(_0: _0_ffi, _1: _1_ffi, )
-            let ffiStructKeepAlive: (IdentityConverter<Int32>.KeepAlive?, IdentityConverter<Int32>.KeepAlive?, )? =
-                (_0_keepalive != nil || _1_keepalive != nil || false)
-                ? (_0_keepalive, _1_keepalive,)
-                : nil
+            let ffiStructKeepAlive:
+                (IdentityArgConverter<Int32>.KeepAlive?, IdentityArgConverter<Int32>.KeepAlive?, )? =
+                    (_0_keepalive != nil || _1_keepalive != nil || false)
+                    ? (_0_keepalive, _1_keepalive,)
+                    : nil
 
             return (
                 SignalMyRemoteDeriveEnumFfiArg.init(
@@ -2001,12 +2529,12 @@ internal enum DerivedArgConverterMyRemoteDeriveEnum: NiceArgConverter {
                 ) = StringConverter.convertArg(x)
             let (y_ffi, y_keepalive):
                 (
-                    IdentityConverter<Int32>.FfiArg,
-                    IdentityConverter<Int32>.KeepAlive?,
-                ) = IdentityConverter<Int32>.convertArg(y)
+                    IdentityArgConverter<Int32>.FfiArg,
+                    IdentityArgConverter<Int32>.KeepAlive?,
+                ) = IdentityArgConverter<Int32>.convertArg(y)
 
             let ffiStructArg = SignalMyRemoteDeriveEnumFfiArgSignalRecord_Body(x: x_ffi, y: y_ffi, )
-            let ffiStructKeepAlive: (StringConverter.KeepAlive?, IdentityConverter<Int32>.KeepAlive?, )? =
+            let ffiStructKeepAlive: (StringConverter.KeepAlive?, IdentityArgConverter<Int32>.KeepAlive?, )? =
                 (x_keepalive != nil || y_keepalive != nil || false)
                 ? (x_keepalive, y_keepalive,)
                 : nil
@@ -2040,9 +2568,9 @@ internal enum DerivedArgConverterMyRemoteDeriveEnum: NiceArgConverter {
             let _1,
         ):
 
-            return try IdentityConverter<Int32>.convertArgBorrowed(_0) {
+            return try IdentityArgConverter<Int32>.convertArgBorrowed(_0) {
                 ffi__0 in
-                return try IdentityConverter<Int32>.convertArgBorrowed(_1) {
+                return try IdentityArgConverter<Int32>.convertArgBorrowed(_1) {
                     ffi__1 in
 
                     return try niceThunk(
@@ -2068,7 +2596,7 @@ internal enum DerivedArgConverterMyRemoteDeriveEnum: NiceArgConverter {
 
             return try StringConverter.convertArgBorrowed(x) {
                 ffi_x in
-                return try IdentityConverter<Int32>.convertArgBorrowed(y) {
+                return try IdentityArgConverter<Int32>.convertArgBorrowed(y) {
                     ffi_y in
 
                     return try niceThunk(
@@ -2095,24 +2623,24 @@ internal enum DerivedArgConverterMyRemoteDeriveStruct: NiceArgConverter {
     typealias NiceArg = MyRemoteDeriveStruct
     typealias FfiArg = SignalMyRemoteDeriveStructFfiArg
 
-    typealias KeepAlive = (IdentityConverter<Int32>.KeepAlive?, IdentityConverter<Int32>.KeepAlive?, )
+    typealias KeepAlive = (IdentityArgConverter<Int32>.KeepAlive?, IdentityArgConverter<Int32>.KeepAlive?, )
     static func convertArg(_ niceArg: NiceArg) -> (FfiArg, KeepAlive?) {
         let x = niceArg.x
         let y = niceArg.y
 
         let (x_ffi, x_keepalive):
             (
-                IdentityConverter<Int32>.FfiArg,
-                IdentityConverter<Int32>.KeepAlive?,
-            ) = IdentityConverter<Int32>.convertArg(x)
+                IdentityArgConverter<Int32>.FfiArg,
+                IdentityArgConverter<Int32>.KeepAlive?,
+            ) = IdentityArgConverter<Int32>.convertArg(x)
         let (y_ffi, y_keepalive):
             (
-                IdentityConverter<Int32>.FfiArg,
-                IdentityConverter<Int32>.KeepAlive?,
-            ) = IdentityConverter<Int32>.convertArg(y)
+                IdentityArgConverter<Int32>.FfiArg,
+                IdentityArgConverter<Int32>.KeepAlive?,
+            ) = IdentityArgConverter<Int32>.convertArg(y)
 
         let ffiStructArg = FfiArg(x: x_ffi, y: y_ffi, )
-        let ffiStructKeepAlive: (IdentityConverter<Int32>.KeepAlive?, IdentityConverter<Int32>.KeepAlive?, )? =
+        let ffiStructKeepAlive: (IdentityArgConverter<Int32>.KeepAlive?, IdentityArgConverter<Int32>.KeepAlive?, )? =
             (x_keepalive != nil || y_keepalive != nil || false)
             ? (x_keepalive, y_keepalive,)
             : nil
@@ -2126,9 +2654,9 @@ internal enum DerivedArgConverterMyRemoteDeriveStruct: NiceArgConverter {
         let x = niceArg.x
         let y = niceArg.y
 
-        return try IdentityConverter<Int32>.convertArgBorrowed(x) {
+        return try IdentityArgConverter<Int32>.convertArgBorrowed(x) {
             ffi_x in
-            return try IdentityConverter<Int32>.convertArgBorrowed(y) {
+            return try IdentityArgConverter<Int32>.convertArgBorrowed(y) {
                 ffi_y in
 
                 return try niceThunk(
@@ -2177,13 +2705,13 @@ internal enum DerivedArgConverterMySimpleTestEnum: NiceArgConverter {
 
 internal enum MyTestEnumArgConverterKeepAlive {
     case unit(())
-    case single((IdentityConverter<Int32>.KeepAlive?))
-    case singleNamed((IdentityConverter<Int32>.KeepAlive?))
-    case double((IdentityConverter<Int32>.KeepAlive?, IdentityConverter<Int32>.KeepAlive?))
+    case single((IdentityArgConverter<Int32>.KeepAlive?))
+    case singleNamed((IdentityArgConverter<Int32>.KeepAlive?))
+    case double((IdentityArgConverter<Int32>.KeepAlive?, IdentityArgConverter<Int32>.KeepAlive?))
     case record(
         (
-            StringConverter.KeepAlive?, IdentityConverter<Int32>.KeepAlive?, DerivedArgConverterMyTestPoint.KeepAlive?,
-            DerivedArgConverterMyTestStruct.KeepAlive?
+            StringConverter.KeepAlive?, IdentityArgConverter<Int32>.KeepAlive?,
+            DerivedArgConverterMyTestPoint.KeepAlive?, DerivedArgConverterMyTestStruct.KeepAlive?
         )
     )
 }
@@ -2210,12 +2738,12 @@ internal enum DerivedArgConverterMyTestEnum: NiceArgConverter {
 
             let (_0_ffi, _0_keepalive):
                 (
-                    IdentityConverter<Int32>.FfiArg,
-                    IdentityConverter<Int32>.KeepAlive?,
-                ) = IdentityConverter<Int32>.convertArg(_0)
+                    IdentityArgConverter<Int32>.FfiArg,
+                    IdentityArgConverter<Int32>.KeepAlive?,
+                ) = IdentityArgConverter<Int32>.convertArg(_0)
 
             let ffiStructArg = SignalMyTestEnumFfiArgSignalSingle_Body(_0: _0_ffi, )
-            let ffiStructKeepAlive: (IdentityConverter<Int32>.KeepAlive?, )? =
+            let ffiStructKeepAlive: (IdentityArgConverter<Int32>.KeepAlive?, )? =
                 (_0_keepalive != nil || false)
                 ? (_0_keepalive,)
                 : nil
@@ -2234,12 +2762,12 @@ internal enum DerivedArgConverterMyTestEnum: NiceArgConverter {
 
             let (x_ffi, x_keepalive):
                 (
-                    IdentityConverter<Int32>.FfiArg,
-                    IdentityConverter<Int32>.KeepAlive?,
-                ) = IdentityConverter<Int32>.convertArg(x)
+                    IdentityArgConverter<Int32>.FfiArg,
+                    IdentityArgConverter<Int32>.KeepAlive?,
+                ) = IdentityArgConverter<Int32>.convertArg(x)
 
             let ffiStructArg = SignalMyTestEnumFfiArgSignalSingleNamed_Body(x: x_ffi, )
-            let ffiStructKeepAlive: (IdentityConverter<Int32>.KeepAlive?, )? =
+            let ffiStructKeepAlive: (IdentityArgConverter<Int32>.KeepAlive?, )? =
                 (x_keepalive != nil || false)
                 ? (x_keepalive,)
                 : nil
@@ -2259,20 +2787,21 @@ internal enum DerivedArgConverterMyTestEnum: NiceArgConverter {
 
             let (_0_ffi, _0_keepalive):
                 (
-                    IdentityConverter<Int32>.FfiArg,
-                    IdentityConverter<Int32>.KeepAlive?,
-                ) = IdentityConverter<Int32>.convertArg(_0)
+                    IdentityArgConverter<Int32>.FfiArg,
+                    IdentityArgConverter<Int32>.KeepAlive?,
+                ) = IdentityArgConverter<Int32>.convertArg(_0)
             let (_1_ffi, _1_keepalive):
                 (
-                    IdentityConverter<Int32>.FfiArg,
-                    IdentityConverter<Int32>.KeepAlive?,
-                ) = IdentityConverter<Int32>.convertArg(_1)
+                    IdentityArgConverter<Int32>.FfiArg,
+                    IdentityArgConverter<Int32>.KeepAlive?,
+                ) = IdentityArgConverter<Int32>.convertArg(_1)
 
             let ffiStructArg = SignalMyTestEnumFfiArgSignalDouble_Body(_0: _0_ffi, _1: _1_ffi, )
-            let ffiStructKeepAlive: (IdentityConverter<Int32>.KeepAlive?, IdentityConverter<Int32>.KeepAlive?, )? =
-                (_0_keepalive != nil || _1_keepalive != nil || false)
-                ? (_0_keepalive, _1_keepalive,)
-                : nil
+            let ffiStructKeepAlive:
+                (IdentityArgConverter<Int32>.KeepAlive?, IdentityArgConverter<Int32>.KeepAlive?, )? =
+                    (_0_keepalive != nil || _1_keepalive != nil || false)
+                    ? (_0_keepalive, _1_keepalive,)
+                    : nil
 
             return (
                 SignalMyTestEnumFfiArg.init(
@@ -2296,9 +2825,9 @@ internal enum DerivedArgConverterMyTestEnum: NiceArgConverter {
                 ) = StringConverter.convertArg(person_name)
             let (person_age_ffi, person_age_keepalive):
                 (
-                    IdentityConverter<Int32>.FfiArg,
-                    IdentityConverter<Int32>.KeepAlive?,
-                ) = IdentityConverter<Int32>.convertArg(person_age)
+                    IdentityArgConverter<Int32>.FfiArg,
+                    IdentityArgConverter<Int32>.KeepAlive?,
+                ) = IdentityArgConverter<Int32>.convertArg(person_age)
             let (position_ffi, position_keepalive):
                 (
                     DerivedArgConverterMyTestPoint.FfiArg,
@@ -2318,7 +2847,7 @@ internal enum DerivedArgConverterMyTestEnum: NiceArgConverter {
             )
             let ffiStructKeepAlive:
                 (
-                    StringConverter.KeepAlive?, IdentityConverter<Int32>.KeepAlive?,
+                    StringConverter.KeepAlive?, IdentityArgConverter<Int32>.KeepAlive?,
                     DerivedArgConverterMyTestPoint.KeepAlive?, DerivedArgConverterMyTestStruct.KeepAlive?,
                 )? =
                     (person_name_keepalive != nil || person_age_keepalive != nil || position_keepalive != nil
@@ -2354,7 +2883,7 @@ internal enum DerivedArgConverterMyTestEnum: NiceArgConverter {
             let _0,
         ):
 
-            return try IdentityConverter<Int32>.convertArgBorrowed(_0) {
+            return try IdentityArgConverter<Int32>.convertArgBorrowed(_0) {
                 ffi__0 in
 
                 return try niceThunk(
@@ -2375,7 +2904,7 @@ internal enum DerivedArgConverterMyTestEnum: NiceArgConverter {
             let x,
         ):
 
-            return try IdentityConverter<Int32>.convertArgBorrowed(x) {
+            return try IdentityArgConverter<Int32>.convertArgBorrowed(x) {
                 ffi_x in
 
                 return try niceThunk(
@@ -2397,9 +2926,9 @@ internal enum DerivedArgConverterMyTestEnum: NiceArgConverter {
             let _1,
         ):
 
-            return try IdentityConverter<Int32>.convertArgBorrowed(_0) {
+            return try IdentityArgConverter<Int32>.convertArgBorrowed(_0) {
                 ffi__0 in
-                return try IdentityConverter<Int32>.convertArgBorrowed(_1) {
+                return try IdentityArgConverter<Int32>.convertArgBorrowed(_1) {
                     ffi__1 in
 
                     return try niceThunk(
@@ -2427,7 +2956,7 @@ internal enum DerivedArgConverterMyTestEnum: NiceArgConverter {
 
             return try StringConverter.convertArgBorrowed(person_name) {
                 ffi_person_name in
-                return try IdentityConverter<Int32>.convertArgBorrowed(person_age) {
+                return try IdentityArgConverter<Int32>.convertArgBorrowed(person_age) {
                     ffi_person_age in
                     return try DerivedArgConverterMyTestPoint.convertArgBorrowed(position) {
                         ffi_position in
@@ -2462,24 +2991,24 @@ internal enum DerivedArgConverterMyTestPoint: NiceArgConverter {
     typealias NiceArg = MyTestPoint
     typealias FfiArg = SignalMyTestPointFfiArg
 
-    typealias KeepAlive = (IdentityConverter<Int32>.KeepAlive?, IdentityConverter<Int32>.KeepAlive?, )
+    typealias KeepAlive = (IdentityArgConverter<Int32>.KeepAlive?, IdentityArgConverter<Int32>.KeepAlive?, )
     static func convertArg(_ niceArg: NiceArg) -> (FfiArg, KeepAlive?) {
         let _0 = niceArg._0
         let _1 = niceArg._1
 
         let (_0_ffi, _0_keepalive):
             (
-                IdentityConverter<Int32>.FfiArg,
-                IdentityConverter<Int32>.KeepAlive?,
-            ) = IdentityConverter<Int32>.convertArg(_0)
+                IdentityArgConverter<Int32>.FfiArg,
+                IdentityArgConverter<Int32>.KeepAlive?,
+            ) = IdentityArgConverter<Int32>.convertArg(_0)
         let (_1_ffi, _1_keepalive):
             (
-                IdentityConverter<Int32>.FfiArg,
-                IdentityConverter<Int32>.KeepAlive?,
-            ) = IdentityConverter<Int32>.convertArg(_1)
+                IdentityArgConverter<Int32>.FfiArg,
+                IdentityArgConverter<Int32>.KeepAlive?,
+            ) = IdentityArgConverter<Int32>.convertArg(_1)
 
         let ffiStructArg = FfiArg(_0: _0_ffi, _1: _1_ffi, )
-        let ffiStructKeepAlive: (IdentityConverter<Int32>.KeepAlive?, IdentityConverter<Int32>.KeepAlive?, )? =
+        let ffiStructKeepAlive: (IdentityArgConverter<Int32>.KeepAlive?, IdentityArgConverter<Int32>.KeepAlive?, )? =
             (_0_keepalive != nil || _1_keepalive != nil || false)
             ? (_0_keepalive, _1_keepalive,)
             : nil
@@ -2493,9 +3022,9 @@ internal enum DerivedArgConverterMyTestPoint: NiceArgConverter {
         let _0 = niceArg._0
         let _1 = niceArg._1
 
-        return try IdentityConverter<Int32>.convertArgBorrowed(_0) {
+        return try IdentityArgConverter<Int32>.convertArgBorrowed(_0) {
             ffi__0 in
-            return try IdentityConverter<Int32>.convertArgBorrowed(_1) {
+            return try IdentityArgConverter<Int32>.convertArgBorrowed(_1) {
                 ffi__1 in
 
                 return try niceThunk(
@@ -2515,16 +3044,16 @@ internal enum DerivedArgConverterMyTestStruct: NiceArgConverter {
     typealias NiceArg = MyTestStruct
     typealias FfiArg = SignalMyTestStructFfiArg
 
-    typealias KeepAlive = (IdentityConverter<Int32>.KeepAlive?, StringConverter.KeepAlive?, )
+    typealias KeepAlive = (IdentityArgConverter<Int32>.KeepAlive?, StringConverter.KeepAlive?, )
     static func convertArg(_ niceArg: NiceArg) -> (FfiArg, KeepAlive?) {
         let my_numeric_field = niceArg.myNumericField
         let my_string_field = niceArg.myStringField
 
         let (my_numeric_field_ffi, my_numeric_field_keepalive):
             (
-                IdentityConverter<Int32>.FfiArg,
-                IdentityConverter<Int32>.KeepAlive?,
-            ) = IdentityConverter<Int32>.convertArg(my_numeric_field)
+                IdentityArgConverter<Int32>.FfiArg,
+                IdentityArgConverter<Int32>.KeepAlive?,
+            ) = IdentityArgConverter<Int32>.convertArg(my_numeric_field)
         let (my_string_field_ffi, my_string_field_keepalive):
             (
                 StringConverter.FfiArg,
@@ -2532,7 +3061,7 @@ internal enum DerivedArgConverterMyTestStruct: NiceArgConverter {
             ) = StringConverter.convertArg(my_string_field)
 
         let ffiStructArg = FfiArg(my_numeric_field: my_numeric_field_ffi, my_string_field: my_string_field_ffi, )
-        let ffiStructKeepAlive: (IdentityConverter<Int32>.KeepAlive?, StringConverter.KeepAlive?, )? =
+        let ffiStructKeepAlive: (IdentityArgConverter<Int32>.KeepAlive?, StringConverter.KeepAlive?, )? =
             (my_numeric_field_keepalive != nil || my_string_field_keepalive != nil || false)
             ? (my_numeric_field_keepalive, my_string_field_keepalive,)
             : nil
@@ -2546,7 +3075,7 @@ internal enum DerivedArgConverterMyTestStruct: NiceArgConverter {
         let my_numeric_field = niceArg.myNumericField
         let my_string_field = niceArg.myStringField
 
-        return try IdentityConverter<Int32>.convertArgBorrowed(my_numeric_field) {
+        return try IdentityArgConverter<Int32>.convertArgBorrowed(my_numeric_field) {
             ffi_my_numeric_field in
             return try StringConverter.convertArgBorrowed(my_string_field) {
                 ffi_my_string_field in
@@ -2617,6 +3146,34 @@ internal enum NativeTestingNice {
         )
 
     }
+    internal static func TESTING_CheckSvrCredentialsTests() throws -> [GrpcTestCase<
+        CheckSvrCredentialsArgs, [(String, AuthCheckResult)]
+    >] {
+        var rawOutput = GrpcTestCaseVecConverter<
+            DerivedReturnConverterCheckSvrCredentialsArgs,
+            ArrayReturnConverter<
+                PairOfResultConverter<
+                    StringConverter, DerivedReturnConverterAuthCheckResult,
+                    SignalPairOfCStringPtrAuthCheckResultFfiResult
+                >, SignalOwnedBufferOfMaxAlignedPairOfCStringPtrAuthCheckResultFfiResult
+            >
+        >.emptyFfiReturn()
+        try checkError(
+            SignalFfi.signal_testing_check_svr_credentials_tests(
+                &rawOutput,
+            )
+        )
+        return try GrpcTestCaseVecConverter<
+            DerivedReturnConverterCheckSvrCredentialsArgs,
+            ArrayReturnConverter<
+                PairOfResultConverter<
+                    StringConverter, DerivedReturnConverterAuthCheckResult,
+                    SignalPairOfCStringPtrAuthCheckResultFfiResult
+                >, SignalOwnedBufferOfMaxAlignedPairOfCStringPtrAuthCheckResultFfiResult
+            >
+        >.convertReturn(consuming: rawOutput)
+
+    }
     internal static func TESTING_ClearPushTokenTests() throws -> [GrpcTestCase<Void, Void>] {
         var rawOutput = GrpcTestCaseVecConverter<VoidConverter, VoidConverter>.emptyFfiReturn()
         try checkError(
@@ -2635,6 +3192,20 @@ internal enum NativeTestingNice {
             )
         )
         return try GrpcTestCaseVecConverter<VoidConverter, VoidConverter>.convertReturn(consuming: rawOutput)
+
+    }
+    internal static func TESTING_ConfirmTotpKeyTests() throws -> [GrpcTestCase<ConfirmTotpKeyArgs, ConfirmTotpKeyOut>] {
+        var rawOutput = GrpcTestCaseVecConverter<
+            DerivedReturnConverterConfirmTotpKeyArgs, DerivedReturnConverterConfirmTotpKeyOut
+        >.emptyFfiReturn()
+        try checkError(
+            SignalFfi.signal_testing_confirm_totp_key_tests(
+                &rawOutput,
+            )
+        )
+        return try GrpcTestCaseVecConverter<
+            DerivedReturnConverterConfirmTotpKeyArgs, DerivedReturnConverterConfirmTotpKeyOut
+        >.convertReturn(consuming: rawOutput)
 
     }
     internal static func TESTING_ConfirmUsernameTests() throws -> [GrpcTestCase<
@@ -2679,6 +3250,34 @@ internal enum NativeTestingNice {
                 DerivedReturnConverterCopyBackupMediaOut, SignalOwnedBufferOfMaxAlignedCopyBackupMediaOutFfiResult
             >
         >.convertReturn(consuming: rawOutput)
+
+    }
+    internal static func TESTING_CreateLoginReceiptCredentialTests() throws -> [GrpcTestCase<
+        CreateLoginReceiptCredentialArgs, CreateLoginReceiptCredentialOut
+    >] {
+        var rawOutput = GrpcTestCaseVecConverter<
+            DerivedReturnConverterCreateLoginReceiptCredentialArgs,
+            DerivedReturnConverterCreateLoginReceiptCredentialOut
+        >.emptyFfiReturn()
+        try checkError(
+            SignalFfi.signal_testing_create_login_receipt_credential_tests(
+                &rawOutput,
+            )
+        )
+        return try GrpcTestCaseVecConverter<
+            DerivedReturnConverterCreateLoginReceiptCredentialArgs,
+            DerivedReturnConverterCreateLoginReceiptCredentialOut
+        >.convertReturn(consuming: rawOutput)
+
+    }
+    internal static func TESTING_DeleteAccountTests() throws -> [GrpcTestCase<Void, Void>] {
+        var rawOutput = GrpcTestCaseVecConverter<VoidConverter, VoidConverter>.emptyFfiReturn()
+        try checkError(
+            SignalFfi.signal_testing_delete_account_tests(
+                &rawOutput,
+            )
+        )
+        return try GrpcTestCaseVecConverter<VoidConverter, VoidConverter>.convertReturn(consuming: rawOutput)
 
     }
     internal static func TESTING_DeleteBackupMediaTests() throws -> [GrpcTestCase<
@@ -2729,15 +3328,29 @@ internal enum NativeTestingNice {
         return try GrpcTestCaseVecConverter<VoidConverter, VoidConverter>.convertReturn(consuming: rawOutput)
 
     }
-    internal static func TESTING_GetBackupCdnCredentialsTests() throws -> [GrpcTestCase<Int32, GetCdnCredentialsOut>] {
-        var rawOutput = GrpcTestCaseVecConverter<IdentityConverter<Int32>, DerivedReturnConverterGetCdnCredentialsOut>
+    internal static func TESTING_GenerateTotpKeyTests() throws -> [GrpcTestCase<Void, GenerateTotpKeyOut>] {
+        var rawOutput = GrpcTestCaseVecConverter<VoidConverter, DerivedReturnConverterGenerateTotpKeyOut>
             .emptyFfiReturn()
+        try checkError(
+            SignalFfi.signal_testing_generate_totp_key_tests(
+                &rawOutput,
+            )
+        )
+        return try GrpcTestCaseVecConverter<VoidConverter, DerivedReturnConverterGenerateTotpKeyOut>.convertReturn(
+            consuming: rawOutput
+        )
+
+    }
+    internal static func TESTING_GetBackupCdnCredentialsTests() throws -> [GrpcTestCase<Int32, GetCdnCredentialsOut>] {
+        var rawOutput = GrpcTestCaseVecConverter<
+            IdentityResultConverter<Int32>, DerivedReturnConverterGetCdnCredentialsOut
+        >.emptyFfiReturn()
         try checkError(
             SignalFfi.signal_testing_get_backup_cdn_credentials_tests(
                 &rawOutput,
             )
         )
-        return try GrpcTestCaseVecConverter<IdentityConverter<Int32>, DerivedReturnConverterGetCdnCredentialsOut>
+        return try GrpcTestCaseVecConverter<IdentityResultConverter<Int32>, DerivedReturnConverterGetCdnCredentialsOut>
             .convertReturn(consuming: rawOutput)
 
     }
@@ -2752,6 +3365,20 @@ internal enum NativeTestingNice {
         return try GrpcTestCaseVecConverter<VoidConverter, DerivedReturnConverterGetSvrBCredentialsOut>.convertReturn(
             consuming: rawOutput
         )
+
+    }
+    internal static func TESTING_GetCurrencyConversionsTests() throws -> [GrpcTestCase<
+        Void, CurrencyConversionsInternal
+    >] {
+        var rawOutput = GrpcTestCaseVecConverter<VoidConverter, DerivedReturnConverterCurrencyConversionsInternal>
+            .emptyFfiReturn()
+        try checkError(
+            SignalFfi.signal_testing_get_currency_conversions_tests(
+                &rawOutput,
+            )
+        )
+        return try GrpcTestCaseVecConverter<VoidConverter, DerivedReturnConverterCurrencyConversionsInternal>
+            .convertReturn(consuming: rawOutput)
 
     }
     internal static func TESTING_GetDevicesTests() throws -> [GrpcTestCase<Void, GetDevicesOut>] {
@@ -2790,6 +3417,46 @@ internal enum NativeTestingNice {
         return try GrpcTestCaseVecConverter<VoidConverter, DerivedReturnConverterGetMessageBackupInfoOut>.convertReturn(
             consuming: rawOutput
         )
+
+    }
+    internal static func TESTING_GetPreKeyCountTests() throws -> [GrpcTestCase<Void, BridgePreKeyCounts>] {
+        var rawOutput = GrpcTestCaseVecConverter<VoidConverter, DerivedReturnConverterBridgePreKeyCounts>
+            .emptyFfiReturn()
+        try checkError(
+            SignalFfi.signal_testing_get_pre_key_count_tests(
+                &rawOutput,
+            )
+        )
+        return try GrpcTestCaseVecConverter<VoidConverter, DerivedReturnConverterBridgePreKeyCounts>.convertReturn(
+            consuming: rawOutput
+        )
+
+    }
+    internal static func TESTING_GetStickerUploadFormTests() throws -> [GrpcTestCase<Int32, GetStickerUploadFormsOut>] {
+        var rawOutput = GrpcTestCaseVecConverter<
+            IdentityResultConverter<Int32>, DerivedReturnConverterGetStickerUploadFormsOut
+        >.emptyFfiReturn()
+        try checkError(
+            SignalFfi.signal_testing_get_sticker_upload_form_tests(
+                &rawOutput,
+            )
+        )
+        return try GrpcTestCaseVecConverter<
+            IdentityResultConverter<Int32>, DerivedReturnConverterGetStickerUploadFormsOut
+        >.convertReturn(consuming: rawOutput)
+
+    }
+    internal static func TESTING_ListMfaKeysTests() throws -> [GrpcTestCase<ListMfaKeysArgs, ListMfaKeysOut>] {
+        var rawOutput = GrpcTestCaseVecConverter<
+            DerivedReturnConverterListMfaKeysArgs, DerivedReturnConverterListMfaKeysOut
+        >.emptyFfiReturn()
+        try checkError(
+            SignalFfi.signal_testing_list_mfa_keys_tests(
+                &rawOutput,
+            )
+        )
+        return try GrpcTestCaseVecConverter<DerivedReturnConverterListMfaKeysArgs, DerivedReturnConverterListMfaKeysOut>
+            .convertReturn(consuming: rawOutput)
 
     }
     internal static func TESTING_LookUpUsernameLinkTests() throws -> [GrpcTestCase<
@@ -3111,6 +3778,20 @@ internal enum NativeTestingNice {
         >.convertReturn(consuming: rawOutput)
 
     }
+    internal static func TESTING_RemoveMfaKeyTests() throws -> [GrpcTestCase<RemoveMfaKeyArgs, RemoveMfaKeyOut>] {
+        var rawOutput = GrpcTestCaseVecConverter<
+            DerivedReturnConverterRemoveMfaKeyArgs, DerivedReturnConverterRemoveMfaKeyOut
+        >.emptyFfiReturn()
+        try checkError(
+            SignalFfi.signal_testing_remove_mfa_key_tests(
+                &rawOutput,
+            )
+        )
+        return try GrpcTestCaseVecConverter<
+            DerivedReturnConverterRemoveMfaKeyArgs, DerivedReturnConverterRemoveMfaKeyOut
+        >.convertReturn(consuming: rawOutput)
+
+    }
     internal static func TESTING_ReserveUsernameHashTests() throws -> [GrpcTestCase<
         ReserveUsernameHashArgs, ReserveUsernameHashOut
     >] {
@@ -3140,7 +3821,7 @@ internal enum NativeTestingNice {
     internal static func TESTING_ReturnSomeIoError(
         present: Bool,
     ) throws -> Error? {
-        try IdentityConverter<Bool>.convertArgBorrowed(present) { presentFfi in
+        try IdentityArgConverter<Bool>.convertArgBorrowed(present) { presentFfi in
             var rawOutput = OptionalErrorConverter.emptyFfiReturn()
             try checkError(
                 SignalFfi.signal_testing_return_some_io_error(
@@ -3150,6 +3831,19 @@ internal enum NativeTestingNice {
             )
             return try OptionalErrorConverter.convertReturn(consuming: rawOutput)
         }
+
+    }
+    internal static func TESTING_SetCapabilitiesTests() throws -> [GrpcTestCase<SetCapabilitiesArgs, Void>] {
+        var rawOutput = GrpcTestCaseVecConverter<DerivedReturnConverterSetCapabilitiesArgs, VoidConverter>
+            .emptyFfiReturn()
+        try checkError(
+            SignalFfi.signal_testing_set_capabilities_tests(
+                &rawOutput,
+            )
+        )
+        return try GrpcTestCaseVecConverter<DerivedReturnConverterSetCapabilitiesArgs, VoidConverter>.convertReturn(
+            consuming: rawOutput
+        )
 
     }
     internal static func TESTING_SetDeviceNameTests() throws -> [GrpcTestCase<SetDeviceNameArgs, SetDeviceNameOut>] {
@@ -3167,13 +3861,31 @@ internal enum NativeTestingNice {
 
     }
     internal static func TESTING_SetDiscoverableByPhoneNumberTests() throws -> [GrpcTestCase<Bool, Void>] {
-        var rawOutput = GrpcTestCaseVecConverter<IdentityConverter<Bool>, VoidConverter>.emptyFfiReturn()
+        var rawOutput = GrpcTestCaseVecConverter<IdentityResultConverter<Bool>, VoidConverter>.emptyFfiReturn()
         try checkError(
             SignalFfi.signal_testing_set_discoverable_by_phone_number_tests(
                 &rawOutput,
             )
         )
-        return try GrpcTestCaseVecConverter<IdentityConverter<Bool>, VoidConverter>.convertReturn(consuming: rawOutput)
+        return try GrpcTestCaseVecConverter<IdentityResultConverter<Bool>, VoidConverter>.convertReturn(
+            consuming: rawOutput
+        )
+
+    }
+    internal static func TESTING_SetMfaKeyMetadataTests() throws -> [GrpcTestCase<
+        SetMfaKeyMetadataArgs, SetMfaKeyMetadataOut
+    >] {
+        var rawOutput = GrpcTestCaseVecConverter<
+            DerivedReturnConverterSetMfaKeyMetadataArgs, DerivedReturnConverterSetMfaKeyMetadataOut
+        >.emptyFfiReturn()
+        try checkError(
+            SignalFfi.signal_testing_set_mfa_key_metadata_tests(
+                &rawOutput,
+            )
+        )
+        return try GrpcTestCaseVecConverter<
+            DerivedReturnConverterSetMfaKeyMetadataArgs, DerivedReturnConverterSetMfaKeyMetadataOut
+        >.convertReturn(consuming: rawOutput)
 
     }
     internal static func TESTING_SetPushTokenApnsTests() throws -> [GrpcTestCase<String, Void>] {
@@ -3253,14 +3965,14 @@ internal enum NativeTestingNice {
     ) throws -> Int32 {
         try BridgeHandleRefConverter<SignalMutPointerTestingIntBox, TestingIntBox>.convertArgBorrowed(my_int_box) {
             my_int_boxFfi in
-            var rawOutput = IdentityConverter<Int32>.emptyFfiReturn()
+            var rawOutput = IdentityResultConverter<Int32>.emptyFfiReturn()
             try checkError(
                 SignalFfi.signal_testing_testing_int_box_get(
                     &rawOutput,
                     my_int_boxFfi,
                 )
             )
-            return try IdentityConverter<Int32>.convertReturn(consuming: rawOutput)
+            return try IdentityResultConverter<Int32>.convertReturn(consuming: rawOutput)
         }
 
     }
@@ -3272,7 +3984,7 @@ internal enum NativeTestingNice {
             try await asyncContext.invokeAsyncFunction {
                 promiseFfi,
                 asyncContextFfi in
-                IdentityConverter<Int32>.convertArgBorrowed(count) { countFfi in
+                IdentityArgConverter<Int32>.convertArgBorrowed(count) { countFfi in
                     SignalFfi.signal_testing_tokio_async_context_future_success_bytes(
                         promiseFfi,
                         asyncContextFfi.const(),
@@ -3475,22 +4187,22 @@ internal enum NativeTestingNice {
     internal static func TESTING_conversion_Float_identity(
         x: Float,
     ) throws -> Float {
-        try IdentityConverter<Float>.convertArgBorrowed(x) { xFfi in
-            var rawOutput = IdentityConverter<Float>.emptyFfiReturn()
+        try IdentityArgConverter<Float>.convertArgBorrowed(x) { xFfi in
+            var rawOutput = IdentityResultConverter<Float>.emptyFfiReturn()
             try checkError(
                 SignalFfi.signal_testing_conversion_float_identity(
                     &rawOutput,
                     xFfi,
                 )
             )
-            return try IdentityConverter<Float>.convertReturn(consuming: rawOutput)
+            return try IdentityResultConverter<Float>.convertReturn(consuming: rawOutput)
         }
 
     }
     internal static func TESTING_conversion_Float_to_string(
         x: Float,
     ) throws -> String {
-        try IdentityConverter<Float>.convertArgBorrowed(x) { xFfi in
+        try IdentityArgConverter<Float>.convertArgBorrowed(x) { xFfi in
             var rawOutput = StringConverter.emptyFfiReturn()
             try checkError(
                 SignalFfi.signal_testing_conversion_float_to_string(
@@ -3537,15 +4249,16 @@ internal enum NativeTestingNice {
     internal static func TESTING_conversion_OptionalFloat_identity(
         x: Float?,
     ) throws -> Float? {
-        try OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.convertArgBorrowed(x) { xFfi in
-            var rawOutput = OptionalReturnConverter<IdentityConverter<Float>, SignalOptionalOff32>.emptyFfiReturn()
+        try OptionalArgConverter<IdentityArgConverter<Float>, SignalOptionalOff32>.convertArgBorrowed(x) { xFfi in
+            var rawOutput = OptionalReturnConverter<IdentityResultConverter<Float>, SignalOptionalOff32>
+                .emptyFfiReturn()
             try checkError(
                 SignalFfi.signal_testing_conversion_optional_float_identity(
                     &rawOutput,
                     xFfi,
                 )
             )
-            return try OptionalReturnConverter<IdentityConverter<Float>, SignalOptionalOff32>.convertReturn(
+            return try OptionalReturnConverter<IdentityResultConverter<Float>, SignalOptionalOff32>.convertReturn(
                 consuming: rawOutput
             )
         }
@@ -3554,7 +4267,7 @@ internal enum NativeTestingNice {
     internal static func TESTING_conversion_OptionalFloat_to_string(
         x: Float?,
     ) throws -> String {
-        try OptionalArgConverter<IdentityConverter<Float>, SignalOptionalOff32>.convertArgBorrowed(x) { xFfi in
+        try OptionalArgConverter<IdentityArgConverter<Float>, SignalOptionalOff32>.convertArgBorrowed(x) { xFfi in
             var rawOutput = StringConverter.emptyFfiReturn()
             try checkError(
                 SignalFfi.signal_testing_conversion_optional_float_to_string(
@@ -3689,22 +4402,22 @@ internal enum NativeTestingNice {
     internal static func TESTING_conversion_bool_identity(
         x: Bool,
     ) throws -> Bool {
-        try IdentityConverter<Bool>.convertArgBorrowed(x) { xFfi in
-            var rawOutput = IdentityConverter<Bool>.emptyFfiReturn()
+        try IdentityArgConverter<Bool>.convertArgBorrowed(x) { xFfi in
+            var rawOutput = IdentityResultConverter<Bool>.emptyFfiReturn()
             try checkError(
                 SignalFfi.signal_testing_conversion_bool_identity(
                     &rawOutput,
                     xFfi,
                 )
             )
-            return try IdentityConverter<Bool>.convertReturn(consuming: rawOutput)
+            return try IdentityResultConverter<Bool>.convertReturn(consuming: rawOutput)
         }
 
     }
     internal static func TESTING_conversion_bool_to_string(
         x: Bool,
     ) throws -> String {
-        try IdentityConverter<Bool>.convertArgBorrowed(x) { xFfi in
+        try IdentityArgConverter<Bool>.convertArgBorrowed(x) { xFfi in
             var rawOutput = StringConverter.emptyFfiReturn()
             try checkError(
                 SignalFfi.signal_testing_conversion_bool_to_string(
@@ -3719,22 +4432,22 @@ internal enum NativeTestingNice {
     internal static func TESTING_conversion_i32_identity(
         x: Int32,
     ) throws -> Int32 {
-        try IdentityConverter<Int32>.convertArgBorrowed(x) { xFfi in
-            var rawOutput = IdentityConverter<Int32>.emptyFfiReturn()
+        try IdentityArgConverter<Int32>.convertArgBorrowed(x) { xFfi in
+            var rawOutput = IdentityResultConverter<Int32>.emptyFfiReturn()
             try checkError(
                 SignalFfi.signal_testing_conversion_i32_identity(
                     &rawOutput,
                     xFfi,
                 )
             )
-            return try IdentityConverter<Int32>.convertReturn(consuming: rawOutput)
+            return try IdentityResultConverter<Int32>.convertReturn(consuming: rawOutput)
         }
 
     }
     internal static func TESTING_conversion_i32_to_string(
         x: Int32,
     ) throws -> String {
-        try IdentityConverter<Int32>.convertArgBorrowed(x) { xFfi in
+        try IdentityArgConverter<Int32>.convertArgBorrowed(x) { xFfi in
             var rawOutput = StringConverter.emptyFfiReturn()
             try checkError(
                 SignalFfi.signal_testing_conversion_i32_to_string(
@@ -3764,22 +4477,22 @@ internal enum NativeTestingNice {
     internal static func TESTING_conversion_u16_identity(
         x: UInt16,
     ) throws -> UInt16 {
-        try IdentityConverter<UInt16>.convertArgBorrowed(x) { xFfi in
-            var rawOutput = IdentityConverter<UInt16>.emptyFfiReturn()
+        try IdentityArgConverter<UInt16>.convertArgBorrowed(x) { xFfi in
+            var rawOutput = IdentityResultConverter<UInt16>.emptyFfiReturn()
             try checkError(
                 SignalFfi.signal_testing_conversion_u16_identity(
                     &rawOutput,
                     xFfi,
                 )
             )
-            return try IdentityConverter<UInt16>.convertReturn(consuming: rawOutput)
+            return try IdentityResultConverter<UInt16>.convertReturn(consuming: rawOutput)
         }
 
     }
     internal static func TESTING_conversion_u16_to_string(
         x: UInt16,
     ) throws -> String {
-        try IdentityConverter<UInt16>.convertArgBorrowed(x) { xFfi in
+        try IdentityArgConverter<UInt16>.convertArgBorrowed(x) { xFfi in
             var rawOutput = StringConverter.emptyFfiReturn()
             try checkError(
                 SignalFfi.signal_testing_conversion_u16_to_string(
@@ -3794,22 +4507,22 @@ internal enum NativeTestingNice {
     internal static func TESTING_conversion_u8_identity(
         x: UInt8,
     ) throws -> UInt8 {
-        try IdentityConverter<UInt8>.convertArgBorrowed(x) { xFfi in
-            var rawOutput = IdentityConverter<UInt8>.emptyFfiReturn()
+        try IdentityArgConverter<UInt8>.convertArgBorrowed(x) { xFfi in
+            var rawOutput = IdentityResultConverter<UInt8>.emptyFfiReturn()
             try checkError(
                 SignalFfi.signal_testing_conversion_u8_identity(
                     &rawOutput,
                     xFfi,
                 )
             )
-            return try IdentityConverter<UInt8>.convertReturn(consuming: rawOutput)
+            return try IdentityResultConverter<UInt8>.convertReturn(consuming: rawOutput)
         }
 
     }
     internal static func TESTING_conversion_u8_to_string(
         x: UInt8,
     ) throws -> String {
-        try IdentityConverter<UInt8>.convertArgBorrowed(x) { xFfi in
+        try IdentityArgConverter<UInt8>.convertArgBorrowed(x) { xFfi in
             var rawOutput = StringConverter.emptyFfiReturn()
             try checkError(
                 SignalFfi.signal_testing_conversion_u8_to_string(
