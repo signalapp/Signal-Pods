@@ -62,11 +62,24 @@ public struct CallLinkRootKey: CustomStringConvertible {
         }
         return result!
     }
+    
+    public var unredactedString: String {
+        var result: String? = nil
+        let errorCStr = bytes.withRtcBytes { bytes in
+            rtc_calllinks_CallLinkRootKey_toFormattedString(bytes, &result) { resultOpaquePtr, rtcString in
+                resultOpaquePtr!.assumingMemoryBound(to: Optional<String>.self).pointee = rtcString.toString()
+            }
+        }
+        if let errorCStr {
+            fail(String(cString: errorCStr))
+        }
+        return result!
+    }
 
     public var description: String {
         var result: String? = nil
         let errorCStr = bytes.withRtcBytes { bytes in
-            rtc_calllinks_CallLinkRootKey_toFormattedString(bytes, &result) { resultOpaquePtr, rtcString in
+            rtc_calllinks_CallLinkRootKey_toRedactedString(bytes, &result) { resultOpaquePtr, rtcString in
                 resultOpaquePtr!.assumingMemoryBound(to: Optional<String>.self).pointee = rtcString.toString()
             }
         }
