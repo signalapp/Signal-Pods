@@ -19,10 +19,10 @@ import SignalFfi
 
 extension SignalBorrowedSliceOfc_uchar32: SignalBorrowedSliceOf {
 
-    typealias Element = SignalType_ConstPointer_SignalType_FixedArray32_uint8_t?
+    typealias Element = SignalType_ConstPointer_FixedArray32_uint8_t?
 
     init(
-        generic_base: SignalType_ConstPointer_SignalType_ConstPointer_SignalType_FixedArray32_uint8_t?,
+        generic_base: SignalType_ConstPointer_ConstPointer_FixedArray32_uint8_t?,
         generic_length: size_t,
     ) {
         self.init(
@@ -32,7 +32,7 @@ extension SignalBorrowedSliceOfc_uchar32: SignalBorrowedSliceOf {
         )
     }
 
-    var generic_base: SignalType_ConstPointer_SignalType_ConstPointer_SignalType_FixedArray32_uint8_t? {
+    var generic_base: SignalType_ConstPointer_ConstPointer_FixedArray32_uint8_t? {
         get { self.base }
         set { base = newValue }
     }
@@ -374,7 +374,7 @@ extension SignalCPromisec_uchar32: SignalCPromise {
 
     init(
         generic_complete:
-            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalType_FixedArray32_uint8_t_SignalType_ConstPointer_void?,
+            SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_FixedArray32_uint8_t_ConstPointer_void?,
         generic_context: SignalType_ConstPointer_void?,
         generic_cancellation_id: UInt64,
     ) {
@@ -387,7 +387,7 @@ extension SignalCPromisec_uchar32: SignalCPromise {
     }
 
     var generic_complete:
-        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalType_FixedArray32_uint8_t_SignalType_ConstPointer_void?
+        SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_FixedArray32_uint8_t_ConstPointer_void?
     {
         get { self.complete }
         set { complete = newValue }
@@ -411,7 +411,7 @@ extension SignalCPromisebool: SignalCPromise {
 
     init(
         generic_complete:
-            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_bool_SignalType_ConstPointer_void?,
+            SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_bool_ConstPointer_void?,
         generic_context: SignalType_ConstPointer_void?,
         generic_cancellation_id: UInt64,
     ) {
@@ -423,8 +423,7 @@ extension SignalCPromisebool: SignalCPromise {
         )
     }
 
-    var generic_complete:
-        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_bool_SignalType_ConstPointer_void?
+    var generic_complete: SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_bool_ConstPointer_void?
     {
         get { self.complete }
         set { complete = newValue }
@@ -448,7 +447,7 @@ extension SignalCPromisei32: SignalCPromise {
 
     init(
         generic_complete:
-            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_int32_t_SignalType_ConstPointer_void?,
+            SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_int32_t_ConstPointer_void?,
         generic_context: SignalType_ConstPointer_void?,
         generic_cancellation_id: UInt64,
     ) {
@@ -461,7 +460,7 @@ extension SignalCPromisei32: SignalCPromise {
     }
 
     var generic_complete:
-        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_int32_t_SignalType_ConstPointer_void?
+        SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_int32_t_ConstPointer_void?
     {
         get { self.complete }
         set { complete = newValue }
@@ -485,7 +484,7 @@ extension SignalCPromiseFfiCdsiLookupResponse: SignalCPromise {
 
     init(
         generic_complete:
-            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalFfiCdsiLookupResponse_SignalType_ConstPointer_void?,
+            SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalFfiCdsiLookupResponse_ConstPointer_void?,
         generic_context: SignalType_ConstPointer_void?,
         generic_cancellation_id: UInt64,
     ) {
@@ -498,7 +497,7 @@ extension SignalCPromiseFfiCdsiLookupResponse: SignalCPromise {
     }
 
     var generic_complete:
-        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalFfiCdsiLookupResponse_SignalType_ConstPointer_void?
+        SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalFfiCdsiLookupResponse_ConstPointer_void?
     {
         get { self.complete }
         set { complete = newValue }
@@ -522,7 +521,7 @@ extension SignalCPromiseFfiChatResponse: SignalCPromise {
 
     init(
         generic_complete:
-            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalFfiChatResponse_SignalType_ConstPointer_void?,
+            SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalFfiChatResponse_ConstPointer_void?,
         generic_context: SignalType_ConstPointer_void?,
         generic_cancellation_id: UInt64,
     ) {
@@ -535,7 +534,7 @@ extension SignalCPromiseFfiChatResponse: SignalCPromise {
     }
 
     var generic_complete:
-        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalFfiChatResponse_SignalType_ConstPointer_void?
+        SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalFfiChatResponse_ConstPointer_void?
     {
         get { self.complete }
         set { complete = newValue }
@@ -559,7 +558,7 @@ extension SignalCPromiseFfiCheckSvr2CredentialsResponse: SignalCPromise {
 
     init(
         generic_complete:
-            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalFfiCheckSvr2CredentialsResponse_SignalType_ConstPointer_void?,
+            SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalFfiCheckSvr2CredentialsResponse_ConstPointer_void?,
         generic_context: SignalType_ConstPointer_void?,
         generic_cancellation_id: UInt64,
     ) {
@@ -572,7 +571,7 @@ extension SignalCPromiseFfiCheckSvr2CredentialsResponse: SignalCPromise {
     }
 
     var generic_complete:
-        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalFfiCheckSvr2CredentialsResponse_SignalType_ConstPointer_void?
+        SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalFfiCheckSvr2CredentialsResponse_ConstPointer_void?
     {
         get { self.complete }
         set { complete = newValue }
@@ -596,7 +595,7 @@ extension SignalCPromiseFfiPreKeysResponse: SignalCPromise {
 
     init(
         generic_complete:
-            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalFfiPreKeysResponse_SignalType_ConstPointer_void?,
+            SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalFfiPreKeysResponse_ConstPointer_void?,
         generic_context: SignalType_ConstPointer_void?,
         generic_cancellation_id: UInt64,
     ) {
@@ -609,7 +608,7 @@ extension SignalCPromiseFfiPreKeysResponse: SignalCPromise {
     }
 
     var generic_complete:
-        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalFfiPreKeysResponse_SignalType_ConstPointer_void?
+        SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalFfiPreKeysResponse_ConstPointer_void?
     {
         get { self.complete }
         set { complete = newValue }
@@ -633,7 +632,7 @@ extension SignalCPromiseFfiUploadForm: SignalCPromise {
 
     init(
         generic_complete:
-            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalFfiUploadForm_SignalType_ConstPointer_void?,
+            SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalFfiUploadForm_ConstPointer_void?,
         generic_context: SignalType_ConstPointer_void?,
         generic_cancellation_id: UInt64,
     ) {
@@ -646,7 +645,7 @@ extension SignalCPromiseFfiUploadForm: SignalCPromise {
     }
 
     var generic_complete:
-        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalFfiUploadForm_SignalType_ConstPointer_void?
+        SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalFfiUploadForm_ConstPointer_void?
     {
         get { self.complete }
         set { complete = newValue }
@@ -670,7 +669,7 @@ extension SignalCPromiseMutPointerCdsiLookup: SignalCPromise {
 
     init(
         generic_complete:
-            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalMutPointerCdsiLookup_SignalType_ConstPointer_void?,
+            SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalMutPointerCdsiLookup_ConstPointer_void?,
         generic_context: SignalType_ConstPointer_void?,
         generic_cancellation_id: UInt64,
     ) {
@@ -683,7 +682,7 @@ extension SignalCPromiseMutPointerCdsiLookup: SignalCPromise {
     }
 
     var generic_complete:
-        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalMutPointerCdsiLookup_SignalType_ConstPointer_void?
+        SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalMutPointerCdsiLookup_ConstPointer_void?
     {
         get { self.complete }
         set { complete = newValue }
@@ -707,7 +706,7 @@ extension SignalCPromiseMutPointerAuthenticatedChatConnection: SignalCPromise {
 
     init(
         generic_complete:
-            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalMutPointerAuthenticatedChatConnection_SignalType_ConstPointer_void?,
+            SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalMutPointerAuthenticatedChatConnection_ConstPointer_void?,
         generic_context: SignalType_ConstPointer_void?,
         generic_cancellation_id: UInt64,
     ) {
@@ -720,7 +719,7 @@ extension SignalCPromiseMutPointerAuthenticatedChatConnection: SignalCPromise {
     }
 
     var generic_complete:
-        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalMutPointerAuthenticatedChatConnection_SignalType_ConstPointer_void?
+        SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalMutPointerAuthenticatedChatConnection_ConstPointer_void?
     {
         get { self.complete }
         set { complete = newValue }
@@ -744,7 +743,7 @@ extension SignalCPromiseMutPointerProvisioningChatConnection: SignalCPromise {
 
     init(
         generic_complete:
-            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalMutPointerProvisioningChatConnection_SignalType_ConstPointer_void?,
+            SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalMutPointerProvisioningChatConnection_ConstPointer_void?,
         generic_context: SignalType_ConstPointer_void?,
         generic_cancellation_id: UInt64,
     ) {
@@ -757,7 +756,7 @@ extension SignalCPromiseMutPointerProvisioningChatConnection: SignalCPromise {
     }
 
     var generic_complete:
-        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalMutPointerProvisioningChatConnection_SignalType_ConstPointer_void?
+        SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalMutPointerProvisioningChatConnection_ConstPointer_void?
     {
         get { self.complete }
         set { complete = newValue }
@@ -781,7 +780,7 @@ extension SignalCPromiseMutPointerUnauthenticatedChatConnection: SignalCPromise 
 
     init(
         generic_complete:
-            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalMutPointerUnauthenticatedChatConnection_SignalType_ConstPointer_void?,
+            SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalMutPointerUnauthenticatedChatConnection_ConstPointer_void?,
         generic_context: SignalType_ConstPointer_void?,
         generic_cancellation_id: UInt64,
     ) {
@@ -794,7 +793,7 @@ extension SignalCPromiseMutPointerUnauthenticatedChatConnection: SignalCPromise 
     }
 
     var generic_complete:
-        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalMutPointerUnauthenticatedChatConnection_SignalType_ConstPointer_void?
+        SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalMutPointerUnauthenticatedChatConnection_ConstPointer_void?
     {
         get { self.complete }
         set { complete = newValue }
@@ -818,7 +817,7 @@ extension SignalCPromiseMutPointerRegistrationService: SignalCPromise {
 
     init(
         generic_complete:
-            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalMutPointerRegistrationService_SignalType_ConstPointer_void?,
+            SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalMutPointerRegistrationService_ConstPointer_void?,
         generic_context: SignalType_ConstPointer_void?,
         generic_cancellation_id: UInt64,
     ) {
@@ -831,7 +830,7 @@ extension SignalCPromiseMutPointerRegistrationService: SignalCPromise {
     }
 
     var generic_complete:
-        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalMutPointerRegistrationService_SignalType_ConstPointer_void?
+        SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalMutPointerRegistrationService_ConstPointer_void?
     {
         get { self.complete }
         set { complete = newValue }
@@ -855,7 +854,7 @@ extension SignalCPromiseMutPointerBackupRestoreResponse: SignalCPromise {
 
     init(
         generic_complete:
-            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalMutPointerBackupRestoreResponse_SignalType_ConstPointer_void?,
+            SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalMutPointerBackupRestoreResponse_ConstPointer_void?,
         generic_context: SignalType_ConstPointer_void?,
         generic_cancellation_id: UInt64,
     ) {
@@ -868,7 +867,7 @@ extension SignalCPromiseMutPointerBackupRestoreResponse: SignalCPromise {
     }
 
     var generic_complete:
-        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalMutPointerBackupRestoreResponse_SignalType_ConstPointer_void?
+        SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalMutPointerBackupRestoreResponse_ConstPointer_void?
     {
         get { self.complete }
         set { complete = newValue }
@@ -892,7 +891,7 @@ extension SignalCPromiseMutPointerBackupStoreResponse: SignalCPromise {
 
     init(
         generic_complete:
-            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalMutPointerBackupStoreResponse_SignalType_ConstPointer_void?,
+            SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalMutPointerBackupStoreResponse_ConstPointer_void?,
         generic_context: SignalType_ConstPointer_void?,
         generic_cancellation_id: UInt64,
     ) {
@@ -905,7 +904,7 @@ extension SignalCPromiseMutPointerBackupStoreResponse: SignalCPromise {
     }
 
     var generic_complete:
-        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalMutPointerBackupStoreResponse_SignalType_ConstPointer_void?
+        SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalMutPointerBackupStoreResponse_ConstPointer_void?
     {
         get { self.complete }
         set { complete = newValue }
@@ -929,7 +928,7 @@ extension SignalCPromiseMutPointerRegisterAccountResponse: SignalCPromise {
 
     init(
         generic_complete:
-            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalMutPointerRegisterAccountResponse_SignalType_ConstPointer_void?,
+            SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalMutPointerRegisterAccountResponse_ConstPointer_void?,
         generic_context: SignalType_ConstPointer_void?,
         generic_cancellation_id: UInt64,
     ) {
@@ -942,7 +941,7 @@ extension SignalCPromiseMutPointerRegisterAccountResponse: SignalCPromise {
     }
 
     var generic_complete:
-        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalMutPointerRegisterAccountResponse_SignalType_ConstPointer_void?
+        SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalMutPointerRegisterAccountResponse_ConstPointer_void?
     {
         get { self.complete }
         set { complete = newValue }
@@ -966,7 +965,7 @@ extension SignalCPromiseOptionalPairOfCStringPtrc_uchar32: SignalCPromise {
 
     init(
         generic_complete:
-            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalOptionalPairOfCStringPtrc_uchar32_SignalType_ConstPointer_void?,
+            SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalOptionalPairOfCStringPtrc_uchar32_ConstPointer_void?,
         generic_context: SignalType_ConstPointer_void?,
         generic_cancellation_id: UInt64,
     ) {
@@ -979,7 +978,7 @@ extension SignalCPromiseOptionalPairOfCStringPtrc_uchar32: SignalCPromise {
     }
 
     var generic_complete:
-        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalOptionalPairOfCStringPtrc_uchar32_SignalType_ConstPointer_void?
+        SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalOptionalPairOfCStringPtrc_uchar32_ConstPointer_void?
     {
         get { self.complete }
         set { complete = newValue }
@@ -1003,7 +1002,7 @@ extension SignalCPromiseOptionalUuid: SignalCPromise {
 
     init(
         generic_complete:
-            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalOptionalUuid_SignalType_ConstPointer_void?,
+            SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalOptionalUuid_ConstPointer_void?,
         generic_context: SignalType_ConstPointer_void?,
         generic_cancellation_id: UInt64,
     ) {
@@ -1016,7 +1015,7 @@ extension SignalCPromiseOptionalUuid: SignalCPromise {
     }
 
     var generic_complete:
-        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalOptionalUuid_SignalType_ConstPointer_void?
+        SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalOptionalUuid_ConstPointer_void?
     {
         get { self.complete }
         set { complete = newValue }
@@ -1040,7 +1039,7 @@ extension SignalCPromiseOwnedBufferOfc_uchar17: SignalCPromise {
 
     init(
         generic_complete:
-            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalOwnedBufferOfc_uchar17_SignalType_ConstPointer_void?,
+            SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalOwnedBufferOfc_uchar17_ConstPointer_void?,
         generic_context: SignalType_ConstPointer_void?,
         generic_cancellation_id: UInt64,
     ) {
@@ -1053,7 +1052,7 @@ extension SignalCPromiseOwnedBufferOfc_uchar17: SignalCPromise {
     }
 
     var generic_complete:
-        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalOwnedBufferOfc_uchar17_SignalType_ConstPointer_void?
+        SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalOwnedBufferOfc_uchar17_ConstPointer_void?
     {
         get { self.complete }
         set { complete = newValue }
@@ -1077,7 +1076,7 @@ extension SignalCPromiseOwnedBuffer: SignalCPromise {
 
     init(
         generic_complete:
-            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalOwnedBuffer_SignalType_ConstPointer_void?,
+            SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalOwnedBuffer_ConstPointer_void?,
         generic_context: SignalType_ConstPointer_void?,
         generic_cancellation_id: UInt64,
     ) {
@@ -1090,7 +1089,7 @@ extension SignalCPromiseOwnedBuffer: SignalCPromise {
     }
 
     var generic_complete:
-        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalOwnedBuffer_SignalType_ConstPointer_void?
+        SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalOwnedBuffer_ConstPointer_void?
     {
         get { self.complete }
         set { complete = newValue }
@@ -1114,7 +1113,7 @@ extension SignalCPromiseOwnedBufferOfMaxAlignedPairOfCStringPtrAuthCheckResultFf
 
     init(
         generic_complete:
-            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalOwnedBufferOfMaxAlignedPairOfCStringPtrAuthCheckResultFfiResult_SignalType_ConstPointer_void?,
+            SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalOwnedBufferOfMaxAlignedPairOfCStringPtrAuthCheckResultFfiResult_ConstPointer_void?,
         generic_context: SignalType_ConstPointer_void?,
         generic_cancellation_id: UInt64,
     ) {
@@ -1127,7 +1126,7 @@ extension SignalCPromiseOwnedBufferOfMaxAlignedPairOfCStringPtrAuthCheckResultFf
     }
 
     var generic_complete:
-        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalOwnedBufferOfMaxAlignedPairOfCStringPtrAuthCheckResultFfiResult_SignalType_ConstPointer_void?
+        SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalOwnedBufferOfMaxAlignedPairOfCStringPtrAuthCheckResultFfiResult_ConstPointer_void?
     {
         get { self.complete }
         set { complete = newValue }
@@ -1151,7 +1150,7 @@ extension SignalCPromiseOwnedBufferOfMaxAlignedBridgeConfirmedMfaKeyFfiResult: S
 
     init(
         generic_complete:
-            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalOwnedBufferOfMaxAlignedBridgeConfirmedMfaKeyFfiResult_SignalType_ConstPointer_void?,
+            SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalOwnedBufferOfMaxAlignedBridgeConfirmedMfaKeyFfiResult_ConstPointer_void?,
         generic_context: SignalType_ConstPointer_void?,
         generic_cancellation_id: UInt64,
     ) {
@@ -1164,7 +1163,7 @@ extension SignalCPromiseOwnedBufferOfMaxAlignedBridgeConfirmedMfaKeyFfiResult: S
     }
 
     var generic_complete:
-        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalOwnedBufferOfMaxAlignedBridgeConfirmedMfaKeyFfiResult_SignalType_ConstPointer_void?
+        SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalOwnedBufferOfMaxAlignedBridgeConfirmedMfaKeyFfiResult_ConstPointer_void?
     {
         get { self.complete }
         set { complete = newValue }
@@ -1188,7 +1187,7 @@ extension SignalCPromiseOwnedBufferOfMaxAlignedLinkedDeviceInternalFfiResult: Si
 
     init(
         generic_complete:
-            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalOwnedBufferOfMaxAlignedLinkedDeviceInternalFfiResult_SignalType_ConstPointer_void?,
+            SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalOwnedBufferOfMaxAlignedLinkedDeviceInternalFfiResult_ConstPointer_void?,
         generic_context: SignalType_ConstPointer_void?,
         generic_cancellation_id: UInt64,
     ) {
@@ -1201,7 +1200,7 @@ extension SignalCPromiseOwnedBufferOfMaxAlignedLinkedDeviceInternalFfiResult: Si
     }
 
     var generic_complete:
-        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalOwnedBufferOfMaxAlignedLinkedDeviceInternalFfiResult_SignalType_ConstPointer_void?
+        SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalOwnedBufferOfMaxAlignedLinkedDeviceInternalFfiResult_ConstPointer_void?
     {
         get { self.complete }
         set { complete = newValue }
@@ -1225,7 +1224,7 @@ extension SignalCPromisePairOfCStringPtrCStringPtr: SignalCPromise {
 
     init(
         generic_complete:
-            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalPairOfCStringPtrCStringPtr_SignalType_ConstPointer_void?,
+            SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalPairOfCStringPtrCStringPtr_ConstPointer_void?,
         generic_context: SignalType_ConstPointer_void?,
         generic_cancellation_id: UInt64,
     ) {
@@ -1238,7 +1237,7 @@ extension SignalCPromisePairOfCStringPtrCStringPtr: SignalCPromise {
     }
 
     var generic_complete:
-        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalPairOfCStringPtrCStringPtr_SignalType_ConstPointer_void?
+        SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalPairOfCStringPtrCStringPtr_ConstPointer_void?
     {
         get { self.complete }
         set { complete = newValue }
@@ -1262,7 +1261,7 @@ extension SignalCPromisePairOfOwnedBufferOfCStringPtrOwnedBufferOfCStringPtr: Si
 
     init(
         generic_complete:
-            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalPairOfOwnedBufferOfCStringPtrOwnedBufferOfCStringPtr_SignalType_ConstPointer_void?,
+            SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalPairOfOwnedBufferOfCStringPtrOwnedBufferOfCStringPtr_ConstPointer_void?,
         generic_context: SignalType_ConstPointer_void?,
         generic_cancellation_id: UInt64,
     ) {
@@ -1275,7 +1274,7 @@ extension SignalCPromisePairOfOwnedBufferOfCStringPtrOwnedBufferOfCStringPtr: Si
     }
 
     var generic_complete:
-        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalPairOfOwnedBufferOfCStringPtrOwnedBufferOfCStringPtr_SignalType_ConstPointer_void?
+        SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalPairOfOwnedBufferOfCStringPtrOwnedBufferOfCStringPtr_ConstPointer_void?
     {
         get { self.complete }
         set { complete = newValue }
@@ -1299,7 +1298,7 @@ extension SignalCPromisePairOfOwnedBufferOwnedBuffer: SignalCPromise {
 
     init(
         generic_complete:
-            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalPairOfOwnedBufferOwnedBuffer_SignalType_ConstPointer_void?,
+            SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalPairOfOwnedBufferOwnedBuffer_ConstPointer_void?,
         generic_context: SignalType_ConstPointer_void?,
         generic_cancellation_id: UInt64,
     ) {
@@ -1312,7 +1311,7 @@ extension SignalCPromisePairOfOwnedBufferOwnedBuffer: SignalCPromise {
     }
 
     var generic_complete:
-        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalPairOfOwnedBufferOwnedBuffer_SignalType_ConstPointer_void?
+        SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalPairOfOwnedBufferOwnedBuffer_ConstPointer_void?
     {
         get { self.complete }
         set { complete = newValue }
@@ -1336,7 +1335,7 @@ extension SignalCPromiseUuid: SignalCPromise {
 
     init(
         generic_complete:
-            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalUuid_SignalType_ConstPointer_void?,
+            SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalUuid_ConstPointer_void?,
         generic_context: SignalType_ConstPointer_void?,
         generic_cancellation_id: UInt64,
     ) {
@@ -1349,7 +1348,7 @@ extension SignalCPromiseUuid: SignalCPromise {
     }
 
     var generic_complete:
-        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalUuid_SignalType_ConstPointer_void?
+        SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalUuid_ConstPointer_void?
     {
         get { self.complete }
         set { complete = newValue }
@@ -1373,7 +1372,7 @@ extension SignalCPromiseBridgeMediaBackupInfoFfiResult: SignalCPromise {
 
     init(
         generic_complete:
-            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalBridgeMediaBackupInfoFfiResult_SignalType_ConstPointer_void?,
+            SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalBridgeMediaBackupInfoFfiResult_ConstPointer_void?,
         generic_context: SignalType_ConstPointer_void?,
         generic_cancellation_id: UInt64,
     ) {
@@ -1386,7 +1385,7 @@ extension SignalCPromiseBridgeMediaBackupInfoFfiResult: SignalCPromise {
     }
 
     var generic_complete:
-        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalBridgeMediaBackupInfoFfiResult_SignalType_ConstPointer_void?
+        SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalBridgeMediaBackupInfoFfiResult_ConstPointer_void?
     {
         get { self.complete }
         set { complete = newValue }
@@ -1410,7 +1409,7 @@ extension SignalCPromiseBridgeMessageBackupInfoFfiResult: SignalCPromise {
 
     init(
         generic_complete:
-            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalBridgeMessageBackupInfoFfiResult_SignalType_ConstPointer_void?,
+            SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalBridgeMessageBackupInfoFfiResult_ConstPointer_void?,
         generic_context: SignalType_ConstPointer_void?,
         generic_cancellation_id: UInt64,
     ) {
@@ -1423,7 +1422,7 @@ extension SignalCPromiseBridgeMessageBackupInfoFfiResult: SignalCPromise {
     }
 
     var generic_complete:
-        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalBridgeMessageBackupInfoFfiResult_SignalType_ConstPointer_void?
+        SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalBridgeMessageBackupInfoFfiResult_ConstPointer_void?
     {
         get { self.complete }
         set { complete = newValue }
@@ -1447,7 +1446,7 @@ extension SignalCPromiseBridgePendingTotpKeyFfiResult: SignalCPromise {
 
     init(
         generic_complete:
-            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalBridgePendingTotpKeyFfiResult_SignalType_ConstPointer_void?,
+            SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalBridgePendingTotpKeyFfiResult_ConstPointer_void?,
         generic_context: SignalType_ConstPointer_void?,
         generic_cancellation_id: UInt64,
     ) {
@@ -1460,7 +1459,7 @@ extension SignalCPromiseBridgePendingTotpKeyFfiResult: SignalCPromise {
     }
 
     var generic_complete:
-        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalBridgePendingTotpKeyFfiResult_SignalType_ConstPointer_void?
+        SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalBridgePendingTotpKeyFfiResult_ConstPointer_void?
     {
         get { self.complete }
         set { complete = newValue }
@@ -1484,7 +1483,7 @@ extension SignalCPromiseBridgePreKeyCountsFfiResult: SignalCPromise {
 
     init(
         generic_complete:
-            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalBridgePreKeyCountsFfiResult_SignalType_ConstPointer_void?,
+            SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalBridgePreKeyCountsFfiResult_ConstPointer_void?,
         generic_context: SignalType_ConstPointer_void?,
         generic_cancellation_id: UInt64,
     ) {
@@ -1497,7 +1496,7 @@ extension SignalCPromiseBridgePreKeyCountsFfiResult: SignalCPromise {
     }
 
     var generic_complete:
-        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalBridgePreKeyCountsFfiResult_SignalType_ConstPointer_void?
+        SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalBridgePreKeyCountsFfiResult_ConstPointer_void?
     {
         get { self.complete }
         set { complete = newValue }
@@ -1521,7 +1520,7 @@ extension SignalCPromiseCopyBackupMediaNextChunkFfiResult: SignalCPromise {
 
     init(
         generic_complete:
-            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalCopyBackupMediaNextChunkFfiResult_SignalType_ConstPointer_void?,
+            SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalCopyBackupMediaNextChunkFfiResult_ConstPointer_void?,
         generic_context: SignalType_ConstPointer_void?,
         generic_cancellation_id: UInt64,
     ) {
@@ -1534,7 +1533,7 @@ extension SignalCPromiseCopyBackupMediaNextChunkFfiResult: SignalCPromise {
     }
 
     var generic_complete:
-        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalCopyBackupMediaNextChunkFfiResult_SignalType_ConstPointer_void?
+        SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalCopyBackupMediaNextChunkFfiResult_ConstPointer_void?
     {
         get { self.complete }
         set { complete = newValue }
@@ -1558,7 +1557,7 @@ extension SignalCPromiseDeleteBackupMediaNextChunkFfiResult: SignalCPromise {
 
     init(
         generic_complete:
-            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalDeleteBackupMediaNextChunkFfiResult_SignalType_ConstPointer_void?,
+            SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalDeleteBackupMediaNextChunkFfiResult_ConstPointer_void?,
         generic_context: SignalType_ConstPointer_void?,
         generic_cancellation_id: UInt64,
     ) {
@@ -1571,7 +1570,7 @@ extension SignalCPromiseDeleteBackupMediaNextChunkFfiResult: SignalCPromise {
     }
 
     var generic_complete:
-        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalDeleteBackupMediaNextChunkFfiResult_SignalType_ConstPointer_void?
+        SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalDeleteBackupMediaNextChunkFfiResult_ConstPointer_void?
     {
         get { self.complete }
         set { complete = newValue }
@@ -1595,7 +1594,7 @@ extension SignalCPromiseCurrencyConversionsInternalFfiResult: SignalCPromise {
 
     init(
         generic_complete:
-            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalCurrencyConversionsInternalFfiResult_SignalType_ConstPointer_void?,
+            SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalCurrencyConversionsInternalFfiResult_ConstPointer_void?,
         generic_context: SignalType_ConstPointer_void?,
         generic_cancellation_id: UInt64,
     ) {
@@ -1608,7 +1607,7 @@ extension SignalCPromiseCurrencyConversionsInternalFfiResult: SignalCPromise {
     }
 
     var generic_complete:
-        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalCurrencyConversionsInternalFfiResult_SignalType_ConstPointer_void?
+        SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalCurrencyConversionsInternalFfiResult_ConstPointer_void?
     {
         get { self.complete }
         set { complete = newValue }
@@ -1632,7 +1631,7 @@ extension SignalCPromiseGetStickerUploadFormsResponseFfiResult: SignalCPromise {
 
     init(
         generic_complete:
-            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalGetStickerUploadFormsResponseFfiResult_SignalType_ConstPointer_void?,
+            SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalGetStickerUploadFormsResponseFfiResult_ConstPointer_void?,
         generic_context: SignalType_ConstPointer_void?,
         generic_cancellation_id: UInt64,
     ) {
@@ -1645,7 +1644,7 @@ extension SignalCPromiseGetStickerUploadFormsResponseFfiResult: SignalCPromise {
     }
 
     var generic_complete:
-        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalGetStickerUploadFormsResponseFfiResult_SignalType_ConstPointer_void?
+        SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalGetStickerUploadFormsResponseFfiResult_ConstPointer_void?
     {
         get { self.complete }
         set { complete = newValue }
@@ -1669,7 +1668,7 @@ extension SignalCPromiseListMediaResponseFfiResult: SignalCPromise {
 
     init(
         generic_complete:
-            SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalListMediaResponseFfiResult_SignalType_ConstPointer_void?,
+            SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalListMediaResponseFfiResult_ConstPointer_void?,
         generic_context: SignalType_ConstPointer_void?,
         generic_cancellation_id: UInt64,
     ) {
@@ -1682,7 +1681,7 @@ extension SignalCPromiseListMediaResponseFfiResult: SignalCPromise {
     }
 
     var generic_complete:
-        SignalType_FunctionPointer_void_SignalType_MutPointer_SignalFfiError_SignalType_ConstPointer_SignalListMediaResponseFfiResult_SignalType_ConstPointer_void?
+        SignalType_FunctionPointer_void_MutPointer_SignalFfiError_ConstPointer_SignalListMediaResponseFfiResult_ConstPointer_void?
     {
         get { self.complete }
         set { complete = newValue }
