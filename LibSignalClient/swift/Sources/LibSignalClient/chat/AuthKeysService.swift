@@ -41,6 +41,81 @@ public struct PreKeyCounts: Equatable, Sendable {
     }
 }
 
+/// A one-time elliptic-curve pre-key, as uploaded to the server.
+///
+/// This is only the public half of the key; the private half never leaves the
+/// device.
+public struct PublicEcPreKey: Sendable {
+    /// A locally-unique identifier for this key, which peers using this key to
+    /// encrypt messages will provide so the private key can be looked up.
+    ///
+    /// Must be less than `1 << 31` (`Int32.max`).
+    public let keyId: UInt32
+    /// The public key.
+    public let publicKey: PublicKey
+
+    public init(keyId: UInt32, publicKey: PublicKey) {
+        self.keyId = keyId
+        self.publicKey = publicKey
+    }
+
+    public init(_ record: PreKeyRecord) throws {
+        self.init(keyId: record.id, publicKey: try record.publicKey())
+    }
+}
+
+/// A signed elliptic-curve pre-key, as uploaded to the server.
+///
+/// This is only the public half of the key; the private half never leaves the
+/// device.
+public struct PublicSignedEcPreKey: Sendable {
+    /// A locally-unique identifier for this key, which peers using this key to
+    /// encrypt messages will provide so the private key can be looked up.
+    ///
+    /// Must be less than `1 << 31` (`Int32.max`).
+    public let keyId: UInt32
+    /// The public key.
+    public let publicKey: PublicKey
+    /// The signature of the public key by the appropriate identity key.
+    public let signature: Data
+
+    public init(keyId: UInt32, publicKey: PublicKey, signature: Data) {
+        self.keyId = keyId
+        self.publicKey = publicKey
+        self.signature = signature
+    }
+
+    public init(_ record: SignedPreKeyRecord) throws {
+        self.init(keyId: record.id, publicKey: try record.publicKey(), signature: record.signature)
+    }
+}
+
+/// A KEM pre-key, as uploaded to the server.
+///
+/// This is only the public half of the key; the private half never leaves the
+/// device.
+public struct PublicKemPreKey: Sendable {
+    /// A locally-unique identifier for this key, which peers using this key to
+    /// encrypt messages will provide so the private key can be looked up.
+    ///
+    /// Must be less than `1 << 31` (`Int32.max`).
+    public let keyId: UInt32
+    /// The public key.
+    public let publicKey: KEMPublicKey
+    /// The signature of the public key by the appropriate identity key.
+    public let signature: Data
+
+    public init(keyId: UInt32, publicKey: KEMPublicKey, signature: Data) {
+        self.keyId = keyId
+        self.publicKey = publicKey
+        self.signature = signature
+    }
+
+    public init(_ record: KyberPreKeyRecord) throws {
+        self.init(keyId: record.id, publicKey: try record.publicKey(), signature: record.signature)
+    }
+}
+
 public protocol AuthKeysService: Sendable {
     /// Retrieves an approximate count of the number of the various kinds of
     /// one-time pre-keys stored for the authenticated device.
@@ -48,6 +123,38 @@ public protocol AuthKeysService: Sendable {
     /// - Throws:
     ///   - the standard Signal network errors
     func getPreKeyCount() async throws -> PreKeyCounts
+
+    /// Uploads a new set of one-time EC pre-keys for the authenticated device,
+    /// clearing any previously-stored one-time EC pre-keys for `identity`.
+    ///
+    /// - Parameters:
+    ///   - preKeys: Must contain between 1 and 100 keys
+    /// - Throws:
+    ///   - the standard Signal network errors
+    func setOneTimeEcPreKeys(identity: ServiceIdKind, preKeys: [PublicEcPreKey]) async throws
+
+    /// Uploads a new set of one-time KEM pre-keys for the authenticated device,
+    /// clearing any previously-stored one-time KEM pre-keys for `identity`.
+    ///
+    /// - Parameters:
+    ///   - preKeys: Must contain between 1 and 100 keys
+    /// - Throws:
+    ///   - the standard Signal network errors
+    func setOneTimeKemPreKeys(identity: ServiceIdKind, preKeys: [PublicKemPreKey]) async throws
+
+    /// Uploads a new signed EC pre-key for the authenticated device,
+    /// clearing the previously-stored signed EC pre-key for `identity`.
+    ///
+    /// - Throws:
+    ///   - the standard Signal network errors
+    func setSignedEcPreKey(identity: ServiceIdKind, preKey: PublicSignedEcPreKey) async throws
+
+    /// Uploads a new last-resort KEM pre-key for the authenticated device,
+    /// clearing the previously-stored last-resort KEM pre-key for `identity`.
+    ///
+    /// - Throws:
+    ///   - the standard Signal network errors
+    func setLastResortKemPreKey(identity: ServiceIdKind, preKey: PublicKemPreKey) async throws
 }
 
 extension AuthenticatedChatConnection: AuthKeysService {
@@ -59,6 +166,76 @@ extension AuthenticatedChatConnection: AuthKeysService {
                 chat: self,
             )
         )
+    }
+
+    public func setOneTimeEcPreKeys(identity: ServiceIdKind, preKeys: [PublicEcPreKey]) async throws {
+        var ids = [UInt32]()
+        ids.reserveCapacity(preKeys.count)
+        var keys = [PublicKey]()
+        keys.reserveCapacity(preKeys.count)
+
+        for next in preKeys {
+            ids.append(next.keyId)
+            keys.append(next.publicKey)
+        }
+
+        return try await NativeNice.AuthenticatedChatConnection_set_one_time_ec_pre_keys(
+            asyncContext: self.tokioAsyncContext,
+            chat: self,
+            identityType: identity,
+            preKeyIds: ids,
+            preKeyData: keys,
+        )
+    }
+
+    public func setOneTimeKemPreKeys(identity: ServiceIdKind, preKeys: [PublicKemPreKey]) async throws {
+        var ids = [UInt32]()
+        ids.reserveCapacity(preKeys.count)
+        var keys = [KEMPublicKey]()
+        keys.reserveCapacity(preKeys.count)
+        var signatures = [Data]()
+        signatures.reserveCapacity(preKeys.count)
+
+        for next in preKeys {
+            ids.append(next.keyId)
+            keys.append(next.publicKey)
+            signatures.append(next.signature)
+        }
+
+        return try await NativeNice.AuthenticatedChatConnection_set_one_time_kem_pre_keys(
+            asyncContext: self.tokioAsyncContext,
+            chat: self,
+            identityType: identity,
+            preKeyIds: ids,
+            preKeyData: keys,
+            preKeySignatures: signatures,
+        )
+    }
+
+    public func setSignedEcPreKey(identity: ServiceIdKind, preKey: PublicSignedEcPreKey) async throws {
+        return
+            try await NativeNice
+            .AuthenticatedChatConnection_set_signed_ec_pre_key(
+                asyncContext: self.tokioAsyncContext,
+                chat: self,
+                identityType: identity,
+                id: preKey.keyId,
+                key: preKey.publicKey,
+                signature: preKey.signature,
+            )
+    }
+
+    public func setLastResortKemPreKey(identity: ServiceIdKind, preKey: PublicKemPreKey) async throws {
+        return
+            try await NativeNice
+            .AuthenticatedChatConnection_set_last_resort_kem_pre_key(
+                asyncContext: self.tokioAsyncContext,
+                chat: self,
+                identityType: identity,
+                id: preKey.keyId,
+                key: preKey.publicKey,
+                signature: preKey.signature,
+            )
     }
 
 }

@@ -175,6 +175,19 @@ static_assert_64bit(alignof(SignalConstPointerPublicKey) == 8);
 typedef const SignalConstPointerPublicKey* SignalType_ConstPointer_SignalConstPointerPublicKey;
 static_assert_64bit(sizeof(SignalType_ConstPointer_SignalConstPointerPublicKey) == 8);
 static_assert_64bit(alignof(SignalType_ConstPointer_SignalConstPointerPublicKey) == 8);
+typedef struct SignalKyberPublicKey SignalKyberPublicKey;
+typedef const SignalKyberPublicKey* SignalType_ConstPointer_SignalKyberPublicKey;
+static_assert_64bit(sizeof(SignalType_ConstPointer_SignalKyberPublicKey) == 8);
+static_assert_64bit(alignof(SignalType_ConstPointer_SignalKyberPublicKey) == 8);
+typedef struct {
+  const SignalKyberPublicKey* raw;
+} SignalConstPointerKyberPublicKey;
+static_assert_64bit(offsetof(SignalConstPointerKyberPublicKey, raw) == 0);
+static_assert_64bit(sizeof(SignalConstPointerKyberPublicKey) == 8);
+static_assert_64bit(alignof(SignalConstPointerKyberPublicKey) == 8);
+typedef const SignalConstPointerKyberPublicKey* SignalType_ConstPointer_SignalConstPointerKyberPublicKey;
+static_assert_64bit(sizeof(SignalType_ConstPointer_SignalConstPointerKyberPublicKey) == 8);
+static_assert_64bit(alignof(SignalType_ConstPointer_SignalConstPointerKyberPublicKey) == 8);
 typedef struct SignalCiphertextMessage SignalCiphertextMessage;
 typedef const SignalCiphertextMessage* SignalType_ConstPointer_SignalCiphertextMessage;
 static_assert_64bit(sizeof(SignalType_ConstPointer_SignalCiphertextMessage) == 8);
@@ -1461,10 +1474,6 @@ typedef struct SignalFingerprint SignalFingerprint;
 typedef const SignalFingerprint* SignalType_ConstPointer_SignalFingerprint;
 static_assert_64bit(sizeof(SignalType_ConstPointer_SignalFingerprint) == 8);
 static_assert_64bit(alignof(SignalType_ConstPointer_SignalFingerprint) == 8);
-typedef struct SignalKyberPublicKey SignalKyberPublicKey;
-typedef const SignalKyberPublicKey* SignalType_ConstPointer_SignalKyberPublicKey;
-static_assert_64bit(sizeof(SignalType_ConstPointer_SignalKyberPublicKey) == 8);
-static_assert_64bit(alignof(SignalType_ConstPointer_SignalKyberPublicKey) == 8);
 typedef struct SignalKyberSecretKey SignalKyberSecretKey;
 typedef const SignalKyberSecretKey* SignalType_ConstPointer_SignalKyberSecretKey;
 static_assert_64bit(sizeof(SignalType_ConstPointer_SignalKyberSecretKey) == 8);
@@ -2896,6 +2905,14 @@ static_assert_64bit(offsetof(SignalBorrowedSliceOfConstPointerPublicKey, length)
 static_assert_64bit(sizeof(SignalBorrowedSliceOfConstPointerPublicKey) == 16);
 static_assert_64bit(alignof(SignalBorrowedSliceOfConstPointerPublicKey) == 8);
 typedef struct {
+  const SignalConstPointerKyberPublicKey* base;
+  size_t length;
+} SignalBorrowedSliceOfConstPointerKyberPublicKey;
+static_assert_64bit(offsetof(SignalBorrowedSliceOfConstPointerKyberPublicKey, base) == 0);
+static_assert_64bit(offsetof(SignalBorrowedSliceOfConstPointerKyberPublicKey, length) == 8);
+static_assert_64bit(sizeof(SignalBorrowedSliceOfConstPointerKyberPublicKey) == 16);
+static_assert_64bit(alignof(SignalBorrowedSliceOfConstPointerKyberPublicKey) == 8);
+typedef struct {
   const SignalConstPointerCiphertextMessage* base;
   size_t length;
 } SignalBorrowedSliceOfConstPointerCiphertextMessage;
@@ -3177,12 +3194,6 @@ typedef struct {
 static_assert_64bit(offsetof(SignalConstPointerFingerprint, raw) == 0);
 static_assert_64bit(sizeof(SignalConstPointerFingerprint) == 8);
 static_assert_64bit(alignof(SignalConstPointerFingerprint) == 8);
-typedef struct {
-  const SignalKyberPublicKey* raw;
-} SignalConstPointerKyberPublicKey;
-static_assert_64bit(offsetof(SignalConstPointerKyberPublicKey, raw) == 0);
-static_assert_64bit(sizeof(SignalConstPointerKyberPublicKey) == 8);
-static_assert_64bit(alignof(SignalConstPointerKyberPublicKey) == 8);
 typedef struct {
   const SignalKyberSecretKey* raw;
 } SignalConstPointerKyberSecretKey;
@@ -3884,6 +3895,15 @@ SignalFfiError* signal_authenticated_chat_connection_set_discoverable_by_phone_n
   SignalConstPointerAuthenticatedChatConnection chat,
   bool discoverable
 );
+SignalFfiError* signal_authenticated_chat_connection_set_last_resort_kem_pre_key(
+  SignalCPromisebool* promise,
+  SignalConstPointerTokioAsyncContext async_runtime,
+  SignalConstPointerAuthenticatedChatConnection chat,
+  uint8_t identity_type,
+  uint32_t id,
+  SignalConstPointerKyberPublicKey key,
+  SignalBorrowedBuffer signature
+);
 SignalFfiError* signal_authenticated_chat_connection_set_mfa_key_metadata(
   SignalCPromisebool* promise,
   SignalConstPointerTokioAsyncContext async_runtime,
@@ -3893,6 +3913,23 @@ SignalFfiError* signal_authenticated_chat_connection_set_mfa_key_metadata(
   uint64_t created_at,
   const SignalType_FixedArray32_uint8_t* svr_key,
   int64_t rng
+);
+SignalFfiError* signal_authenticated_chat_connection_set_one_time_ec_pre_keys(
+  SignalCPromisebool* promise,
+  SignalConstPointerTokioAsyncContext async_runtime,
+  SignalConstPointerAuthenticatedChatConnection chat,
+  uint8_t identity_type,
+  SignalBorrowedSliceOfu32 pre_key_ids,
+  SignalBorrowedSliceOfConstPointerPublicKey pre_key_data
+);
+SignalFfiError* signal_authenticated_chat_connection_set_one_time_kem_pre_keys(
+  SignalCPromisebool* promise,
+  SignalConstPointerTokioAsyncContext async_runtime,
+  SignalConstPointerAuthenticatedChatConnection chat,
+  uint8_t identity_type,
+  SignalBorrowedSliceOfu32 pre_key_ids,
+  SignalBorrowedSliceOfConstPointerKyberPublicKey pre_key_data,
+  SignalBorrowedSliceOfBuffers pre_key_signatures
 );
 SignalFfiError* signal_authenticated_chat_connection_set_push_token_apns(
   SignalCPromisebool* promise,
@@ -3911,6 +3948,15 @@ SignalFfiError* signal_authenticated_chat_connection_set_registration_recovery_p
   SignalConstPointerTokioAsyncContext async_runtime,
   SignalConstPointerAuthenticatedChatConnection chat,
   const SignalType_FixedArray32_uint8_t* svr_key
+);
+SignalFfiError* signal_authenticated_chat_connection_set_signed_ec_pre_key(
+  SignalCPromisebool* promise,
+  SignalConstPointerTokioAsyncContext async_runtime,
+  SignalConstPointerAuthenticatedChatConnection chat,
+  uint8_t identity_type,
+  uint32_t id,
+  SignalConstPointerPublicKey key,
+  SignalBorrowedBuffer signature
 );
 SignalFfiError* signal_authenticated_chat_connection_set_username_link(
   SignalCPromiseUuid* promise,
