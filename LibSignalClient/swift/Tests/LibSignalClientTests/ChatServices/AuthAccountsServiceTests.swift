@@ -99,6 +99,26 @@ class AuthAccountsServiceTests: AuthChatServiceTestBase<any AuthAccountsService>
         )
     }
 
+    func testStartWebAuthnRegistration() async throws {
+        try await testGrpcCases(
+            try NativeTestingNice.TESTING_StartWebAuthnRegistrationTests(),
+            invoke: { api, _ in
+                try await api.startWebAuthnRegistration()
+            },
+            check: { expected, actual in
+                switch expected {
+                case .success(let params):
+                    XCTAssertEqual(try actual.get(), WebAuthnCreateParameters.fromInternal(params))
+                case .tooManyMfaKeys:
+                    do {
+                        _ = try actual.get()
+                        XCTFail("Expected exception")
+                    } catch SignalError.tooManyMfaKeys(_) {}
+                }
+            }
+        )
+    }
+
     func testListMfaKeys() async throws {
         try await testGrpcCases(
             try NativeTestingNice.TESTING_ListMfaKeysTests(),
@@ -120,6 +140,7 @@ class AuthAccountsServiceTests: AuthChatServiceTestBase<any AuthAccountsService>
                         }
                         switch expectedKey.kind {
                         case .totp: XCTAssertEqual(actualKey.kind, .totp)
+                        case .webAuthn: XCTAssertEqual(actualKey.kind, .webAuthn)
                         case .unknown: XCTAssertEqual(actualKey.kind, .unknown)
                         }
                     }
@@ -128,7 +149,7 @@ class AuthAccountsServiceTests: AuthChatServiceTestBase<any AuthAccountsService>
         )
     }
 
-    func testTotpKeyNameInvalid() async throws {
+    func testMfaKeyNameInvalid() async throws {
         for invalidName in [
             String(repeating: "a", count: MfaMetadata.nameMaxLength + 1),
             "before\0after",
@@ -153,10 +174,19 @@ class AuthAccountsServiceTests: AuthChatServiceTestBase<any AuthAccountsService>
                 )
                 XCTFail("Expected exception")
             } catch SignalError.invalidArgument(_) {}
+            do {
+                _ = try await api.finishWebAuthnRegistration(
+                    attestationObject: Data(),
+                    collectedClientDataJson: "{}",
+                    metadata: metadata,
+                    svrKey: SvrKey(contents: Data(repeating: 0, count: 32))
+                )
+                XCTFail("Expected exception")
+            } catch SignalError.invalidArgument(_) {}
         }
     }
 
-    func testTotpKeyCreatedAtUnrepresentable() async throws {
+    func testMfaKeyCreatedAtUnrepresentable() async throws {
         let invalidDates = [
             Date(timeIntervalSince1970: -1),
             Date(timeIntervalSince1970: -0.0005),
@@ -179,6 +209,16 @@ class AuthAccountsServiceTests: AuthChatServiceTestBase<any AuthAccountsService>
 
             do {
                 try await api.setMfaKeyMetadata(for: 0, metadata: metadata, svrKey: svrKey)
+                XCTFail("Expected exception")
+            } catch SignalError.invalidArgument(_) {}
+
+            do {
+                _ = try await api.finishWebAuthnRegistration(
+                    attestationObject: Data(),
+                    collectedClientDataJson: "{}",
+                    metadata: metadata,
+                    svrKey: svrKey
+                )
                 XCTFail("Expected exception")
             } catch SignalError.invalidArgument(_) {}
         }
@@ -219,6 +259,59 @@ class AuthAccountsServiceTests: AuthChatServiceTestBase<any AuthAccountsService>
             }
         )
     }
+
+    func testStartMfaVerification() async throws {
+        try await testGrpcCases(
+            try NativeTestingNice.TESTING_StartMfaVerificationTests(),
+            invoke: { api, _ in
+                try await api.startMfaVerification()
+            },
+            check: { expected, actual in
+                switch expected {
+                case .success(let expectedResponse):
+                    let response = try actual.get()
+                    XCTAssertEqual(response.hasTotp, expectedResponse.hasTotp)
+                    XCTAssertEqual(response.webauthnParams?.challenge, expectedResponse.webauthnParams?.challenge)
+                    XCTAssertEqual(response.webauthnParams?.timeout, expectedResponse.webauthnParams?.timeout)
+                    XCTAssertEqual(
+                        response.webauthnParams?.allowedCredentialIds,
+                        expectedResponse.webauthnParams?.allowedCredentialIds
+                    )
+                case .malformed:
+                    do {
+                        _ = try actual.get()
+                        XCTFail("Expected exception")
+                    } catch SignalError.networkProtocolError(_) {}
+                }
+            }
+        )
+    }
+
+    func testFinishMfaVerification() async throws {
+        try await testGrpcCases(
+            try NativeTestingNice.TESTING_FinishMfaVerificationTests(),
+            invoke: { api, cred in
+                let apiCred: MfaVerificationCredential =
+                    switch cred {
+                    case .totp(let password): .totp(password: UInt32(password))
+                    case .webAuthn(let json): .webAuthn(json: json)
+                    }
+                try await api.finishMfaVerification(apiCred)
+            },
+            check: { expected, actual in
+                switch expected {
+                case .success:
+                    () = try actual.get()
+                case .failedToVerify:
+                    do {
+                        _ = try actual.get()
+                        XCTFail("Expected exception")
+                    } catch SignalError.mfaNotVerified(_) {}
+                }
+            }
+        )
+
+    }
 }
 
 // Uses the internal Impl protocol so the test can pin the RNG seed; the public methods simply
@@ -246,7 +339,39 @@ class AuthAccountsServiceImplTests: AuthChatServiceTestBase<any AuthAccountsServ
                     do {
                         _ = try actual.get()
                         XCTFail("Expected exception")
-                    } catch SignalError.oneTimePasswordNotVerified(_) {}
+                    } catch SignalError.mfaNotVerified(_) {}
+                case .tooManyMfaKeys:
+                    do {
+                        _ = try actual.get()
+                        XCTFail("Expected exception")
+                    } catch SignalError.tooManyMfaKeys(_) {}
+                }
+            }
+        )
+    }
+
+    func testFinishWebAuthnRegistration() async throws {
+        signal_testing_enable_deterministic_rng_for_testing()
+        try await testGrpcCases(
+            try NativeTestingNice.TESTING_FinishWebAuthnRegistrationTests(),
+            invoke: { api, args in
+                try await api.finishWebAuthnRegistration(
+                    attestationObject: args.attestationObject,
+                    collectedClientDataJson: args.collectedClientDataJson,
+                    metadata: MfaMetadata(name: args.name, createdAt: args.createdAt),
+                    svrKey: SvrKey(contents: args.svrKey),
+                    rngForTesting: 0,
+                )
+            },
+            check: { expected, actual in
+                switch expected {
+                case .success(let keyId):
+                    XCTAssertEqual(try actual.get(), Int(keyId))
+                case .webAuthnRegistrationUnsuccessful:
+                    do {
+                        _ = try actual.get()
+                        XCTFail("Expected exception")
+                    } catch SignalError.webAuthnRegistrationUnsuccessful(_) {}
                 case .tooManyMfaKeys:
                     do {
                         _ = try actual.get()

@@ -827,6 +827,26 @@ internal enum DeleteBackupMediaOut {
     case credentialRejectedWithoutAppropriateServerInfo
 }
 
+internal enum FinishMfaVerificationOut {
+    case success
+    case failedToVerify
+}
+
+internal struct FinishWebAuthnRegistrationArgs {
+    var attestationObject: Data
+    var collectedClientDataJson: String
+    var name: String
+    var createdAt: Date
+    var svrKey: Data
+
+}
+
+internal enum FinishWebAuthnRegistrationOut {
+    case success(Int32)
+    case webAuthnRegistrationUnsuccessful
+    case tooManyMfaKeys
+}
+
 internal enum GenerateTotpKeyOut {
     case success(BridgePendingTotpKey)
     case tooManyTotpKeys
@@ -1098,6 +1118,16 @@ internal enum SimpleBackupTestOut {
     case missingResponse
 }
 
+internal enum StartMfaVerificationOut {
+    case success(StartMfaVerificationResponse)
+    case malformed
+}
+
+internal enum StartWebAuthnRegistrationOut {
+    case success(BridgeWebAuthnCreateParameters)
+    case tooManyMfaKeys
+}
+
 internal struct TestStreamChunk {
     var chunk: [String]
     var termination: BulkPolledStreamTermination?
@@ -1142,6 +1172,35 @@ internal enum DerivedReturnConverterBridgeCopyBackupMediaItem: NiceReturnConvert
             mediaId: try media_id.get(),
             encryptionKey: try encryption_key.get()
         )
+    }
+}
+
+internal enum DerivedReturnConverterBridgeMfaVerificationCredential: NiceReturnConverter {
+    typealias NiceReturn = BridgeMfaVerificationCredential
+    typealias FfiReturn = SignalBridgeMfaVerificationCredentialFfiResult
+    static func emptyFfiReturn() -> FfiReturn {
+        SignalBridgeMfaVerificationCredentialFfiResult()
+    }
+    static func convertReturn(consuming ffiValue: FfiReturn) throws -> NiceReturn {
+        let ffiTag = ffiValue.tag
+        switch ffiTag {
+        case SignalBridgeMfaVerificationCredentialFfiResultTotp:
+            let password = Result {
+                try IdentityResultConverter<Int32>.convertReturn(
+                    consuming: ffiValue.totp.password
+                )
+            }
+            return BridgeMfaVerificationCredential.totp(password: try password.get())
+        case SignalBridgeMfaVerificationCredentialFfiResultWebAuthn:
+            let json = Result {
+                try StringConverter.convertReturn(
+                    consuming: ffiValue.web_authn.json
+                )
+            }
+            return BridgeMfaVerificationCredential.webAuthn(json: try json.get())
+        default:
+            throw SignalError.internalError("Unexpected enum tag for BridgeMfaVerificationCredential: \(ffiTag)")
+        }
     }
 }
 
@@ -1524,6 +1583,79 @@ internal enum DerivedReturnConverterDeviceCapabilityInternal: NiceReturnConverte
             return DeviceCapabilityInternal.optionalPhoneNumber
         default:
             throw SignalError.internalError("Unexpected enum tag for DeviceCapabilityInternal: \(ffiTag)")
+        }
+    }
+}
+
+internal enum DerivedReturnConverterFinishMfaVerificationOut: NiceReturnConverter {
+    typealias NiceReturn = FinishMfaVerificationOut
+    typealias FfiReturn = SignalFinishMfaVerificationOutFfiResult
+    static func emptyFfiReturn() -> FfiReturn {
+        SignalFinishMfaVerificationOutFfiResult(0)
+    }
+    static func convertReturn(consuming ffiValue: FfiReturn) throws -> NiceReturn {
+        let ffiTag = ffiValue
+        switch ffiTag {
+        case SignalFinishMfaVerificationOutFfiResultSuccess:
+            return FinishMfaVerificationOut.success
+        case SignalFinishMfaVerificationOutFfiResultFailedToVerify:
+            return FinishMfaVerificationOut.failedToVerify
+        default:
+            throw SignalError.internalError("Unexpected enum tag for FinishMfaVerificationOut: \(ffiTag)")
+        }
+    }
+}
+
+internal enum DerivedReturnConverterFinishWebAuthnRegistrationArgs: NiceReturnConverter {
+    typealias NiceReturn = FinishWebAuthnRegistrationArgs
+    typealias FfiReturn = SignalFinishWebAuthnRegistrationArgsFfiResult
+    static func emptyFfiReturn() -> FfiReturn {
+        SignalFinishWebAuthnRegistrationArgsFfiResult()
+    }
+    static func convertReturn(consuming ffiValue: FfiReturn) throws -> NiceReturn {
+
+        let attestation_object = Result { try DataConverter.convertReturn(consuming: ffiValue.attestation_object) }
+        let collected_client_data_json = Result {
+            try StringConverter.convertReturn(consuming: ffiValue.collected_client_data_json)
+        }
+        let name = Result { try StringConverter.convertReturn(consuming: ffiValue.name) }
+        let created_at = Result { try TimestampConverter.convertReturn(consuming: ffiValue.created_at) }
+        let svr_key = Result {
+            try FixedByteArrayConverter<FixedByteArrayHelper32>.convertReturn(consuming: ffiValue.svr_key)
+        }
+
+        return FinishWebAuthnRegistrationArgs(
+            attestationObject: try attestation_object.get(),
+            collectedClientDataJson: try collected_client_data_json.get(),
+            name: try name.get(),
+            createdAt: try created_at.get(),
+            svrKey: try svr_key.get()
+        )
+    }
+}
+
+internal enum DerivedReturnConverterFinishWebAuthnRegistrationOut: NiceReturnConverter {
+    typealias NiceReturn = FinishWebAuthnRegistrationOut
+    typealias FfiReturn = SignalFinishWebAuthnRegistrationOutFfiResult
+    static func emptyFfiReturn() -> FfiReturn {
+        SignalFinishWebAuthnRegistrationOutFfiResult()
+    }
+    static func convertReturn(consuming ffiValue: FfiReturn) throws -> NiceReturn {
+        let ffiTag = ffiValue.tag
+        switch ffiTag {
+        case SignalFinishWebAuthnRegistrationOutFfiResultSuccess:
+            let _0 = Result {
+                try IdentityResultConverter<Int32>.convertReturn(
+                    consuming: ffiValue.success._0
+                )
+            }
+            return FinishWebAuthnRegistrationOut.success(try _0.get())
+        case SignalFinishWebAuthnRegistrationOutFfiResultWebAuthnRegistrationUnsuccessful:
+            return FinishWebAuthnRegistrationOut.webAuthnRegistrationUnsuccessful
+        case SignalFinishWebAuthnRegistrationOutFfiResultTooManyMfaKeys:
+            return FinishWebAuthnRegistrationOut.tooManyMfaKeys
+        default:
+            throw SignalError.internalError("Unexpected enum tag for FinishWebAuthnRegistrationOut: \(ffiTag)")
         }
     }
 }
@@ -2471,6 +2603,54 @@ internal enum DerivedReturnConverterSimpleBackupTestOut: NiceReturnConverter {
             return SimpleBackupTestOut.missingResponse
         default:
             throw SignalError.internalError("Unexpected enum tag for SimpleBackupTestOut: \(ffiTag)")
+        }
+    }
+}
+
+internal enum DerivedReturnConverterStartMfaVerificationOut: NiceReturnConverter {
+    typealias NiceReturn = StartMfaVerificationOut
+    typealias FfiReturn = SignalStartMfaVerificationOutFfiResult
+    static func emptyFfiReturn() -> FfiReturn {
+        SignalStartMfaVerificationOutFfiResult()
+    }
+    static func convertReturn(consuming ffiValue: FfiReturn) throws -> NiceReturn {
+        let ffiTag = ffiValue.tag
+        switch ffiTag {
+        case SignalStartMfaVerificationOutFfiResultSuccess:
+            let _0 = Result {
+                try DerivedReturnConverterStartMfaVerificationResponse.convertReturn(
+                    consuming: ffiValue.success._0
+                )
+            }
+            return StartMfaVerificationOut.success(try _0.get())
+        case SignalStartMfaVerificationOutFfiResultMalformed:
+            return StartMfaVerificationOut.malformed
+        default:
+            throw SignalError.internalError("Unexpected enum tag for StartMfaVerificationOut: \(ffiTag)")
+        }
+    }
+}
+
+internal enum DerivedReturnConverterStartWebAuthnRegistrationOut: NiceReturnConverter {
+    typealias NiceReturn = StartWebAuthnRegistrationOut
+    typealias FfiReturn = SignalStartWebAuthnRegistrationOutFfiResult
+    static func emptyFfiReturn() -> FfiReturn {
+        SignalStartWebAuthnRegistrationOutFfiResult()
+    }
+    static func convertReturn(consuming ffiValue: FfiReturn) throws -> NiceReturn {
+        let ffiTag = ffiValue.tag
+        switch ffiTag {
+        case SignalStartWebAuthnRegistrationOutFfiResultSuccess:
+            let _0 = Result {
+                try DerivedReturnConverterBridgeWebAuthnCreateParameters.convertReturn(
+                    consuming: ffiValue.success._0
+                )
+            }
+            return StartWebAuthnRegistrationOut.success(try _0.get())
+        case SignalStartWebAuthnRegistrationOutFfiResultTooManyMfaKeys:
+            return StartWebAuthnRegistrationOut.tooManyMfaKeys
+        default:
+            throw SignalError.internalError("Unexpected enum tag for StartWebAuthnRegistrationOut: \(ffiTag)")
         }
     }
 }
@@ -3546,6 +3726,38 @@ internal enum NativeTestingNice {
         return try GrpcTestCaseVecConverter<VoidConverter, VoidConverter>.convertReturn(consuming: rawOutput)
 
     }
+    internal static func TESTING_FinishMfaVerificationTests() throws -> [GrpcTestCase<
+        BridgeMfaVerificationCredential, FinishMfaVerificationOut
+    >] {
+        var rawOutput = GrpcTestCaseVecConverter<
+            DerivedReturnConverterBridgeMfaVerificationCredential, DerivedReturnConverterFinishMfaVerificationOut
+        >.emptyFfiReturn()
+        try checkError(
+            SignalFfi.signal_testing_finish_mfa_verification_tests(
+                &rawOutput,
+            )
+        )
+        return try GrpcTestCaseVecConverter<
+            DerivedReturnConverterBridgeMfaVerificationCredential, DerivedReturnConverterFinishMfaVerificationOut
+        >.convertReturn(consuming: rawOutput)
+
+    }
+    internal static func TESTING_FinishWebAuthnRegistrationTests() throws -> [GrpcTestCase<
+        FinishWebAuthnRegistrationArgs, FinishWebAuthnRegistrationOut
+    >] {
+        var rawOutput = GrpcTestCaseVecConverter<
+            DerivedReturnConverterFinishWebAuthnRegistrationArgs, DerivedReturnConverterFinishWebAuthnRegistrationOut
+        >.emptyFfiReturn()
+        try checkError(
+            SignalFfi.signal_testing_finish_web_authn_registration_tests(
+                &rawOutput,
+            )
+        )
+        return try GrpcTestCaseVecConverter<
+            DerivedReturnConverterFinishWebAuthnRegistrationArgs, DerivedReturnConverterFinishWebAuthnRegistrationOut
+        >.convertReturn(consuming: rawOutput)
+
+    }
     internal static func TESTING_GenerateTotpKeyTests() throws -> [GrpcTestCase<Void, GenerateTotpKeyOut>] {
         var rawOutput = GrpcTestCaseVecConverter<VoidConverter, DerivedReturnConverterGenerateTotpKeyOut>
             .emptyFfiReturn()
@@ -4206,6 +4418,33 @@ internal enum NativeTestingNice {
         return try GrpcTestCaseVecConverter<
             DerivedReturnConverterSetUsernameLinkArgs, DerivedReturnConverterSetUsernameLinkOut
         >.convertReturn(consuming: rawOutput)
+
+    }
+    internal static func TESTING_StartMfaVerificationTests() throws -> [GrpcTestCase<Void, StartMfaVerificationOut>] {
+        var rawOutput = GrpcTestCaseVecConverter<VoidConverter, DerivedReturnConverterStartMfaVerificationOut>
+            .emptyFfiReturn()
+        try checkError(
+            SignalFfi.signal_testing_start_mfa_verification_tests(
+                &rawOutput,
+            )
+        )
+        return try GrpcTestCaseVecConverter<VoidConverter, DerivedReturnConverterStartMfaVerificationOut>.convertReturn(
+            consuming: rawOutput
+        )
+
+    }
+    internal static func TESTING_StartWebAuthnRegistrationTests() throws -> [GrpcTestCase<
+        Void, StartWebAuthnRegistrationOut
+    >] {
+        var rawOutput = GrpcTestCaseVecConverter<VoidConverter, DerivedReturnConverterStartWebAuthnRegistrationOut>
+            .emptyFfiReturn()
+        try checkError(
+            SignalFfi.signal_testing_start_web_authn_registration_tests(
+                &rawOutput,
+            )
+        )
+        return try GrpcTestCaseVecConverter<VoidConverter, DerivedReturnConverterStartWebAuthnRegistrationOut>
+            .convertReturn(consuming: rawOutput)
 
     }
     internal static func TESTING_SubmitCallQualitySurveyTests() throws -> [GrpcTestCase<CallQualitySurvey, Void>] {

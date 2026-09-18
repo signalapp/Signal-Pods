@@ -82,10 +82,96 @@ public struct PendingTotpKey: Sendable, Equatable {
     }
 }
 
+/// The parameters a WebAuthn authenticator needs to create a new credential for the account.
+///
+/// Returned by ``AuthAccountsService/startWebAuthnRegistration()``; the caller passes these to the
+/// platform's WebAuthn API to run a registration ceremony, then reports the outcome via
+/// ``AuthAccountsService/finishWebAuthnRegistration(attestationObject:collectedClientDataJson:metadata:svrKey:)``.
+public struct WebAuthnCreateParameters: Sendable, Equatable {
+    /// The "user handle" (`user.id`) that should be handed to the authenticator.
+    public var userHandle: Data
+    /// The COSE IDs (<https://www.iana.org/assignments/cose#algorithms>) of acceptable algorithms
+    /// for the created key, as WebAuthn `COSEAlgorithmIdentifier`s.
+    public var allowedAlgorithms: [Int32]
+    /// The credential IDs already registered for this account.
+    ///
+    /// These can be passed to candidate authenticators to tell them not to create a new key if
+    /// they already have a private key matching one of these.
+    public var excludeCredentialIds: [Data]
+
+    public init(userHandle: Data, allowedAlgorithms: [Int32], excludeCredentialIds: [Data]) {
+        self.userHandle = userHandle
+        self.allowedAlgorithms = allowedAlgorithms
+        self.excludeCredentialIds = excludeCredentialIds
+    }
+
+    internal static func fromInternal(_ it: BridgeWebAuthnCreateParameters) -> WebAuthnCreateParameters {
+        WebAuthnCreateParameters(
+            userHandle: it.userHandle,
+            allowedAlgorithms: it.allowedAlgorithms,
+            excludeCredentialIds: it.excludeCredentialIds,
+        )
+    }
+}
+
+/// Information necessary to run an MFA verification, returned by
+/// ``AuthAccountsService/startMfaVerification()``.
+///
+/// Note that it is possible for no methods of verification to be available; this occurs when the
+/// account has no MFA keys, or when all registered keys are of a type this version of libsignal
+/// does not support.
+public struct StartMfaVerificationResponse: Sendable {
+    /// If true, the account has one or more TOTP keys registered and can complete verification with
+    /// ``MfaVerificationCredential/totp(password:)``.
+    public var hasTotp: Bool
+    /// If present, the account has one or more WebAuthn keys registered and can complete
+    /// verification with ``MfaVerificationCredential/webAuthn(json:)`` using the parameters
+    /// provided.
+    public var webauthnParams: WebAuthnAuthenticationParameters?
+
+    public init(hasTotp: Bool = false, webauthnParams: WebAuthnAuthenticationParameters? = nil) {
+        self.hasTotp = hasTotp
+        self.webauthnParams = webauthnParams
+    }
+}
+
+public struct WebAuthnAuthenticationParameters: Sendable {
+    public var challenge: Data
+    /// After this interval, verification may fail even if everything else is done correctly.
+    public var timeout: TimeInterval
+    public var allowedCredentialIds: [Data]
+
+    public init(challenge: Data, timeout: TimeInterval, allowedCredentialIds: [Data]) {
+        self.challenge = challenge
+        self.timeout = timeout
+        self.allowedCredentialIds = allowedCredentialIds
+    }
+
+    // For bridging.
+    internal init(challenge: Data, timeoutSeconds: Int32, allowedCredentialIds: [Data]) {
+        self.init(
+            challenge: challenge,
+            timeout: TimeInterval(timeoutSeconds),
+            allowedCredentialIds: allowedCredentialIds
+        )
+    }
+}
+
+/// A credential used to demonstrate ownership of an MFA method.
+///
+/// - SeeAlso: ``AuthAccountsService/startMfaVerification()`` and
+///   ``AuthAccountsService/finishMfaVerification(_:)``.
+public enum MfaVerificationCredential: Sendable {
+    case totp(password: UInt32)
+    case webAuthn(json: String)
+}
+
 /// The kind of a confirmed MFA key.
 public enum MfaKeyKind: Sendable, Equatable {
     /// A TOTP key; see ``AuthAccountsService/generateTotpKey()``.
     case totp
+    /// A WebAuthn credential (passkey); see ``AuthAccountsService/startWebAuthnRegistration()``.
+    case webAuthn
     /// A kind of key this version of libsignal doesn't know about; see
     /// ``AuthAccountsService/listMfaKeys(svrKey:)``.
     case unknown
@@ -93,6 +179,7 @@ public enum MfaKeyKind: Sendable, Equatable {
     internal static func fromInternal(_ it: BridgeMfaKeyKind) -> MfaKeyKind {
         switch it {
         case .totp: .totp
+        case .webAuthn: .webAuthn
         case .unknown: .unknown
         }
     }
@@ -226,7 +313,7 @@ public protocol AuthAccountsService: Sendable {
     ///   - svrKey: The account's SVR key
     /// - Returns: The account-specific identifier assigned to the newly-confirmed key
     /// - Throws:
-    ///   - ``SignalError/oneTimePasswordNotVerified(_:)`` if the one-time password was not
+    ///   - ``SignalError/mfaNotVerified(_:)`` if the one-time password was not
     ///     accepted for any reason
     ///   - ``SignalError/tooManyMfaKeys(_:)`` if the account filled up with MFA keys between
     ///     generating and confirming this one
@@ -240,6 +327,79 @@ public protocol AuthAccountsService: Sendable {
         metadata: MfaMetadata,
         svrKey: SvrKey
     ) async throws -> Int
+
+    /// Starts a WebAuthn registration ceremony, returning the parameters the authenticator needs
+    /// to create a new credential (passkey) for the authenticated account.
+    ///
+    /// The caller passes the returned ``WebAuthnCreateParameters`` to the platform's WebAuthn API
+    /// to run the ceremony, and then reports its outcome via
+    /// ``finishWebAuthnRegistration(attestationObject:collectedClientDataJson:metadata:svrKey:)``.
+    /// No MFA key is added until the ceremony is finished, so a started registration that is
+    /// never finished leaves the account's keys unchanged.
+    ///
+    /// WebAuthn credentials may only be registered for accounts without phone numbers.
+    ///
+    /// - Throws:
+    ///   - ``SignalError/tooManyMfaKeys(_:)`` if the account already has too many MFA keys of all
+    ///     kinds, and one must be removed before adding more
+    ///   - the standard Signal network errors
+    func startWebAuthnRegistration() async throws -> WebAuthnCreateParameters
+
+    /// Concludes a WebAuthn registration ceremony (see ``startWebAuthnRegistration()``), adding
+    /// the new credential (passkey) to the authenticated account.
+    ///
+    /// - Parameters:
+    ///   - attestationObject: The attestation object from the completed ceremony, serialized as
+    ///     specified in <https://www.w3.org/TR/webauthn/#attestation-object>
+    ///   - collectedClientDataJson: The "collected client data" map used in the ceremony, as the
+    ///     exact JSON map that was hashed for the authenticator; it is passed through unchanged
+    ///   - metadata: Metadata (name, creation time) to attach to the newly-registered key; stored
+    ///     encrypted, so that it may not be read by the server
+    ///   - svrKey: The account's SVR key to encrypt metadata with
+    /// - Returns: The account-specific identifier assigned to the newly-registered key
+    /// - Throws:
+    ///   - ``SignalError/webAuthnRegistrationUnsuccessful(_:)`` if the ceremony's response was not
+    ///     verified successfully, for any reason
+    ///   - ``SignalError/tooManyMfaKeys(_:)`` if the account filled up with MFA keys while the
+    ///     ceremony was running
+    ///   - ``SignalError/invalidArgument(_:)`` if any of the arguments are invalid, such as if
+    ///     the metadata's name exceeds ``MfaMetadata/nameMaxLength`` bytes of UTF-8 or contains
+    ///     U+0000, or its creation date is not valid
+    ///   - the standard Signal network errors
+    func finishWebAuthnRegistration(
+        attestationObject: Data,
+        collectedClientDataJson: String,
+        metadata: MfaMetadata,
+        svrKey: SvrKey
+    ) async throws -> Int
+
+    /// Starts a verification check for any of the MFA keys on the authenticated account.
+    ///
+    /// WebAuthn verification is necessarily two-phase; this checks which MFA methods are available
+    /// and provides the necessary data to run a check for any of them.
+    ///
+    /// Note that it is possible for the returned ``StartMfaVerificationResponse`` to
+    /// not include any verification methods; this occurs when the account has no MFA keys,
+    /// or when all registered keys are of a type this version of libsignal does not support.
+    ///
+    /// If ``StartMfaVerificationResponse/webauthnParams`` are returned, the set of valid
+    /// ``WebAuthnAuthenticationParameters/allowedCredentialIds`` will be non-empty.
+    ///
+    /// - Throws:
+    ///   - the standard Signal network errors
+    /// - SeeAlso: ``finishMfaVerification(_:)``
+    func startMfaVerification() async throws -> StartMfaVerificationResponse
+
+    /// Completes a verification check for any of the MFA keys on the authenticated account.
+    ///
+    /// WebAuthn verification is necessarily two-phase; this passes the response back to the chat
+    /// server to verify.
+    ///
+    /// - Throws:
+    ///   - ``SignalError/mfaNotVerified(_:)`` if the verification fails for any reason
+    ///   - the standard Signal network errors
+    /// - SeeAlso: ``startMfaVerification()``
+    func finishMfaVerification(_ credential: MfaVerificationCredential) async throws
 
     /// Lists the confirmed MFA keys for the authenticated account.
     ///
@@ -344,6 +504,50 @@ extension AuthenticatedChatConnection: AuthAccountsService {
         )
     }
 
+    public func startWebAuthnRegistration() async throws -> WebAuthnCreateParameters {
+        return WebAuthnCreateParameters.fromInternal(
+            try await NativeNice.AuthenticatedChatConnection_start_web_authn_registration(
+                asyncContext: self.tokioAsyncContext,
+                chat: self,
+            )
+        )
+    }
+
+    public func finishWebAuthnRegistration(
+        attestationObject: Data,
+        collectedClientDataJson: String,
+        metadata: MfaMetadata,
+        svrKey: SvrKey
+    ) async throws -> Int {
+        return try await self.finishWebAuthnRegistration(
+            attestationObject: attestationObject,
+            collectedClientDataJson: collectedClientDataJson,
+            metadata: metadata,
+            svrKey: svrKey,
+            rngForTesting: -1,
+        )
+    }
+
+    public func startMfaVerification() async throws -> StartMfaVerificationResponse {
+        return try await NativeNice.AuthenticatedChatConnection_start_mfa_verification(
+            asyncContext: self.tokioAsyncContext,
+            chat: self
+        )
+    }
+
+    public func finishMfaVerification(_ credential: MfaVerificationCredential) async throws {
+        let bridgeCred: BridgeMfaVerificationCredential =
+            switch credential {
+            case .totp(let password): .totp(password: Int32(password))
+            case .webAuthn(let json): .webAuthn(json: json)
+            }
+        return try await NativeNice.AuthenticatedChatConnection_finish_mfa_verification(
+            asyncContext: self.tokioAsyncContext,
+            chat: self,
+            credential: bridgeCred
+        )
+    }
+
     public func listMfaKeys(svrKey: SvrKey) async throws -> [ConfirmedMfaKey] {
         return try await NativeNice.AuthenticatedChatConnection_list_mfa_keys(
             asyncContext: self.tokioAsyncContext,
@@ -377,6 +581,14 @@ extension AuthServiceSelector where Self == AuthServiceSelectorHelper<any AuthAc
 internal protocol AuthAccountsServiceImpl: Sendable {
     func confirmTotpKey(
         oneTimePassword: Int,
+        metadata: MfaMetadata,
+        svrKey: SvrKey,
+        rngForTesting: Int64,
+    ) async throws -> Int
+
+    func finishWebAuthnRegistration(
+        attestationObject: Data,
+        collectedClientDataJson: String,
         metadata: MfaMetadata,
         svrKey: SvrKey,
         rngForTesting: Int64,
@@ -436,6 +648,26 @@ extension AuthenticatedChatConnection: AuthAccountsServiceImpl {
             asyncContext: self.tokioAsyncContext,
             chat: self,
             oneTimePassword: try bridgeInt32(oneTimePassword, "oneTimePassword"),
+            name: try bridgeMfaKeyName(metadata.name),
+            createdAt: try bridgeTimestamp(metadata.createdAt, "metadata.createdAt"),
+            svrKey: svrKey.serialize(),
+            rng: rngForTesting,
+        )
+        return Int(keyId)
+    }
+
+    func finishWebAuthnRegistration(
+        attestationObject: Data,
+        collectedClientDataJson: String,
+        metadata: MfaMetadata,
+        svrKey: SvrKey,
+        rngForTesting: Int64,
+    ) async throws -> Int {
+        let keyId = try await NativeNice.AuthenticatedChatConnection_finish_web_authn_registration(
+            asyncContext: self.tokioAsyncContext,
+            chat: self,
+            attestationObject: attestationObject,
+            collectedClientDataJson: collectedClientDataJson,
             name: try bridgeMfaKeyName(metadata.name),
             createdAt: try bridgeTimestamp(metadata.createdAt, "metadata.createdAt"),
             svrKey: svrKey.serialize(),
