@@ -5269,6 +5269,66 @@ internal enum NativeNice {
         return try DerivedReturnConverterBridgeWebAuthnCreateParameters.convertReturn(consuming: rawOutput)
 
     }
+    internal static func BackupJsonExporter_ExportFrames(
+        exporter: BackupJsonExporter,
+        frames: Data,
+    ) throws -> [(String?, String?)] {
+        try BridgeHandleMutRefConverter<SignalMutPointerBackupJsonExporter, BackupJsonExporter>.convertArgBorrowed(
+            exporter
+        ) { exporterFfi in
+            try DataConverter.convertArgBorrowed(frames) { framesFfi in
+                var rawOutput = ArrayReturnConverter<
+                    PairOfResultConverter<
+                        OptionalStringConverter, OptionalStringConverter, SignalPairOfCStringPtrCStringPtr
+                    >, SignalOwnedBufferOfMaxAlignedPairOfCStringPtrCStringPtr
+                >.emptyFfiReturn()
+                try checkError(
+                    SignalFfi.signal_backup_json_exporter_export_frames(
+                        &rawOutput,
+                        exporterFfi,
+                        framesFfi,
+                    )
+                )
+                return try ArrayReturnConverter<
+                    PairOfResultConverter<
+                        OptionalStringConverter, OptionalStringConverter, SignalPairOfCStringPtrCStringPtr
+                    >, SignalOwnedBufferOfMaxAlignedPairOfCStringPtrCStringPtr
+                >.convertReturn(consuming: rawOutput)
+            }
+        }
+
+    }
+    internal static func BackupJsonExporter_Finish(
+        exporter: BackupJsonExporter,
+    ) throws {
+        try BridgeHandleMutRefConverter<SignalMutPointerBackupJsonExporter, BackupJsonExporter>.convertArgBorrowed(
+            exporter
+        ) { exporterFfi in
+            try checkError(
+                SignalFfi.signal_backup_json_exporter_finish(
+                    exporterFfi,
+                )
+            )
+        }
+
+    }
+    internal static func BackupJsonExporter_GetInitialChunk(
+        exporter: BackupJsonExporter,
+    ) throws -> String {
+        try BridgeHandleRefConverter<SignalMutPointerBackupJsonExporter, BackupJsonExporter>.convertArgBorrowed(
+            exporter
+        ) { exporterFfi in
+            var rawOutput = StringConverter.emptyFfiReturn()
+            try checkError(
+                SignalFfi.signal_backup_json_exporter_get_initial_chunk(
+                    &rawOutput,
+                    exporterFfi,
+                )
+            )
+            return try StringConverter.convertReturn(consuming: rawOutput)
+        }
+
+    }
     internal static func CopyBackupMediaStream_next(
         asyncContext: TokioAsyncContext,
         stream: CopyBackupMediaStream,

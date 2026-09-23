@@ -238,6 +238,21 @@ internal struct BridgeHandleRefConverter<Ptr: SignalMutPointer, T: NativeHandleO
     }
 }
 
+internal struct BridgeHandleMutRefConverter<Ptr: SignalMutPointer, T: NativeHandleOwner<Ptr>>: NiceArgConverter {
+    typealias NiceArg = T
+    typealias FfiArg = Ptr
+    typealias KeepAlive = ()
+
+    static func convertArg(_ arg: NiceArg) -> (FfiArg, KeepAlive?) {
+        // Safe because arg will be kept alive by the caller.
+        return (arg.unsafeNativeHandle, nil)
+    }
+
+    static func convertArgBorrowed<Result>(_ arg: NiceArg, _ thunk: (FfiArg) throws -> Result) rethrows -> Result {
+        return try arg.withNativeHandle(thunk)
+    }
+}
+
 internal struct BridgeHandleConverter<Ptr: SignalMutPointer, T: NativeHandleOwner<Ptr>>: NiceReturnConverter {
     typealias NiceReturn = T
     typealias FfiReturn = Ptr

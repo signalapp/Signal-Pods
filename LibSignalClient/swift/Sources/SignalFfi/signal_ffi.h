@@ -742,6 +742,10 @@ static_assert_64bit(alignof(SignalFfiSyncInputStreamStruct) == 8);
 typedef const SignalFfiSyncInputStreamStruct* SignalType_ConstPointer_SignalFfiSyncInputStreamStruct;
 static_assert_64bit(sizeof(SignalType_ConstPointer_SignalFfiSyncInputStreamStruct) == 8);
 static_assert_64bit(alignof(SignalType_ConstPointer_SignalFfiSyncInputStreamStruct) == 8);
+typedef struct SignalBackupJsonExporter SignalBackupJsonExporter;
+typedef const SignalBackupJsonExporter* SignalType_ConstPointer_SignalBackupJsonExporter;
+static_assert_64bit(sizeof(SignalType_ConstPointer_SignalBackupJsonExporter) == 8);
+static_assert_64bit(alignof(SignalType_ConstPointer_SignalBackupJsonExporter) == 8);
 typedef struct SignalMessageBackupKey SignalMessageBackupKey;
 typedef const SignalMessageBackupKey* SignalType_ConstPointer_SignalMessageBackupKey;
 static_assert_64bit(sizeof(SignalType_ConstPointer_SignalMessageBackupKey) == 8);
@@ -1790,6 +1794,18 @@ static_assert_64bit(alignof(SignalMutPointerValidatingMac) == 8);
 typedef SignalMutPointerValidatingMac* SignalType_MutPointer_SignalMutPointerValidatingMac;
 static_assert_64bit(sizeof(SignalType_MutPointer_SignalMutPointerValidatingMac) == 8);
 static_assert_64bit(alignof(SignalType_MutPointer_SignalMutPointerValidatingMac) == 8);
+typedef SignalBackupJsonExporter* SignalType_MutPointer_SignalBackupJsonExporter;
+static_assert_64bit(sizeof(SignalType_MutPointer_SignalBackupJsonExporter) == 8);
+static_assert_64bit(alignof(SignalType_MutPointer_SignalBackupJsonExporter) == 8);
+typedef struct {
+  SignalBackupJsonExporter* raw;
+} SignalMutPointerBackupJsonExporter;
+static_assert_64bit(offsetof(SignalMutPointerBackupJsonExporter, raw) == 0);
+static_assert_64bit(sizeof(SignalMutPointerBackupJsonExporter) == 8);
+static_assert_64bit(alignof(SignalMutPointerBackupJsonExporter) == 8);
+typedef SignalMutPointerBackupJsonExporter* SignalType_MutPointer_SignalMutPointerBackupJsonExporter;
+static_assert_64bit(sizeof(SignalType_MutPointer_SignalMutPointerBackupJsonExporter) == 8);
+static_assert_64bit(alignof(SignalType_MutPointer_SignalMutPointerBackupJsonExporter) == 8);
 typedef SignalMessageBackupKey* SignalType_MutPointer_SignalMessageBackupKey;
 static_assert_64bit(sizeof(SignalType_MutPointer_SignalMessageBackupKey) == 8);
 static_assert_64bit(alignof(SignalType_MutPointer_SignalMessageBackupKey) == 8);
@@ -2257,6 +2273,9 @@ static_assert_64bit(alignof(SignalOwnedBufferOfFfiRegisterResponseBadge) == 8);
 typedef SignalOwnedBufferOfFfiRegisterResponseBadge* SignalType_MutPointer_SignalOwnedBufferOfFfiRegisterResponseBadge;
 static_assert_64bit(sizeof(SignalType_MutPointer_SignalOwnedBufferOfFfiRegisterResponseBadge) == 8);
 static_assert_64bit(alignof(SignalType_MutPointer_SignalOwnedBufferOfFfiRegisterResponseBadge) == 8);
+typedef SignalOwnedBufferOfMaxAlignedPairOfCStringPtrCStringPtr* SignalType_MutPointer_SignalOwnedBufferOfMaxAlignedPairOfCStringPtrCStringPtr;
+static_assert_64bit(sizeof(SignalType_MutPointer_SignalOwnedBufferOfMaxAlignedPairOfCStringPtrCStringPtr) == 8);
+static_assert_64bit(alignof(SignalType_MutPointer_SignalOwnedBufferOfMaxAlignedPairOfCStringPtrCStringPtr) == 8);
 typedef struct {
   const int8_t* first;
   bool second;
@@ -3088,6 +3107,12 @@ typedef struct {
 static_assert_64bit(offsetof(SignalConstPointerFfiSyncInputStreamStruct, raw) == 0);
 static_assert_64bit(sizeof(SignalConstPointerFfiSyncInputStreamStruct) == 8);
 static_assert_64bit(alignof(SignalConstPointerFfiSyncInputStreamStruct) == 8);
+typedef struct {
+  const SignalBackupJsonExporter* raw;
+} SignalConstPointerBackupJsonExporter;
+static_assert_64bit(offsetof(SignalConstPointerBackupJsonExporter, raw) == 0);
+static_assert_64bit(sizeof(SignalConstPointerBackupJsonExporter) == 8);
+static_assert_64bit(alignof(SignalConstPointerBackupJsonExporter) == 8);
 typedef struct {
   const SignalMessageBackupKey* raw;
 } SignalConstPointerMessageBackupKey;
@@ -4242,6 +4267,26 @@ SignalFfiError* signal_backup_auth_credential_request_issue_deterministic(
 );
 SignalFfiError* signal_backup_auth_credential_response_check_valid_contents(
   SignalBorrowedBuffer response_bytes
+);
+SignalFfiError* signal_backup_json_exporter_destroy(
+  SignalMutPointerBackupJsonExporter p
+);
+SignalFfiError* signal_backup_json_exporter_export_frames(
+  SignalOwnedBufferOfMaxAlignedPairOfCStringPtrCStringPtr* out,
+  SignalMutPointerBackupJsonExporter exporter,
+  SignalBorrowedBuffer frames
+);
+SignalFfiError* signal_backup_json_exporter_finish(
+  SignalMutPointerBackupJsonExporter exporter
+);
+SignalFfiError* signal_backup_json_exporter_get_initial_chunk(
+  SignalCStringPtr* out,
+  SignalConstPointerBackupJsonExporter exporter
+);
+SignalFfiError* signal_backup_json_exporter_new(
+  SignalMutPointerBackupJsonExporter* out,
+  SignalBorrowedBuffer backup_info,
+  bool should_validate
 );
 SignalFfiError* signal_backup_key_derive_backup_id(
   SignalType_FixedArray16_uint8_t* out,
