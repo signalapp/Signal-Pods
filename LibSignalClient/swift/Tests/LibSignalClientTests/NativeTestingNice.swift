@@ -766,6 +766,89 @@ internal enum FixedByteArrayHelper64: FixedByteArrayHelper {
     }
 }
 
+internal enum FixedByteArrayHelper153: FixedByteArrayHelper {
+    public typealias Ffi = (
+        UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
+        UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
+        UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
+        UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
+        UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
+        UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
+        UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
+        UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
+        UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
+        UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8
+    )
+    public static func count() -> Int {
+        153
+    }
+    public static func emptyFfi() -> Ffi {
+        (
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0
+        )
+    }
+}
+
+internal enum FixedByteArrayHelper473: FixedByteArrayHelper {
+    public typealias Ffi = (
+        UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
+        UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
+        UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
+        UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
+        UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
+        UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
+        UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
+        UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
+        UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
+        UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
+        UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
+        UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
+        UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
+        UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
+        UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
+        UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
+        UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
+        UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
+        UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
+        UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
+        UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
+        UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
+        UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
+        UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
+        UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
+        UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
+        UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
+        UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
+        UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
+        UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8
+    )
+    public static func count() -> Int {
+        473
+    }
+    public static func emptyFfi() -> Ffi {
+        (
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0
+        )
+    }
+}
+
 internal struct CheckSvrCredentialsArgs {
     var number: String
     var passwords: [String]
@@ -876,9 +959,34 @@ internal enum GetMessageBackupInfoOut {
     case missingResponse
 }
 
+internal struct GetProfileKeyCredentialArgs {
+    var profileKeyRequestContext: ProfileKeyCredentialRequestContext
+    var serverParams: ServerPublicParamsSerialized
+
+}
+
+internal enum GetProfileKeyCredentialOut {
+    case success(ExpiringProfileKeyCredential)
+    case unexpectedError(contains: String)
+    case explicitError(ProfileKeyCredentialRequestError)
+}
+
 internal enum GetStickerUploadFormsOut {
     case success(GetStickerUploadFormsResponse)
     case invalid
+}
+
+internal struct GetSubscriptionReceiptCredentialArgs {
+    var subscriberId: Data
+    var receiptCredentialRequestContext: ReceiptCredentialRequestContext
+    var serverParams: ServerPublicParamsSerialized
+
+}
+
+internal enum GetSubscriptionReceiptCredentialOut {
+    case success(ReceiptCredential)
+    case unexpectedError(contains: String)
+    case explicitError(ReceiptCredentialError)
 }
 
 internal enum GetSvrBCredentialsOut {
@@ -1001,6 +1109,11 @@ internal struct MyTestStruct {
 
 }
 
+internal enum ProfileKeyCredentialRequestError {
+    case authFailed
+    case profileNotFound
+}
+
 internal enum ReceiptCredentialError {
     case paymentStillProcessing
     case paymentRequired(chargeFailure: [ChargeFailure])
@@ -1031,6 +1144,13 @@ internal struct RemoveMfaKeyArgs {
 
 internal enum RemoveMfaKeyOut {
     case success
+}
+
+internal struct ReportMessageArgs {
+    var source: Aci
+    var messageGuid: UUID
+    var reportSpamToken: Data
+
 }
 
 internal struct ReserveUsernameHashArgs {
@@ -1140,6 +1260,8 @@ internal struct TestingAnySignedPreKey {
     var sig: Data
 
 }
+
+extension ProfileKeyCredentialRequestError: Equatable {}
 
 extension ReceiptCredentialError: Equatable {}
 
@@ -1782,6 +1904,65 @@ internal enum DerivedReturnConverterGetMessageBackupInfoOut: NiceReturnConverter
     }
 }
 
+internal enum DerivedReturnConverterGetProfileKeyCredentialArgs: NiceReturnConverter {
+    typealias NiceReturn = GetProfileKeyCredentialArgs
+    typealias FfiReturn = SignalGetProfileKeyCredentialArgsFfiResult
+    static func emptyFfiReturn() -> FfiReturn {
+        SignalGetProfileKeyCredentialArgsFfiResult()
+    }
+    static func convertReturn(consuming ffiValue: FfiReturn) throws -> NiceReturn {
+
+        let profile_key_request_context = Result {
+            try FixedLengthSerializedConverter<ProfileKeyCredentialRequestContext, FixedByteArrayHelper473>
+                .convertReturn(consuming: ffiValue.profile_key_request_context)
+        }
+        let server_params = Result {
+            try DerivedReturnConverterServerPublicParamsSerialized.convertReturn(consuming: ffiValue.server_params)
+        }
+
+        return GetProfileKeyCredentialArgs(
+            profileKeyRequestContext: try profile_key_request_context.get(),
+            serverParams: try server_params.get()
+        )
+    }
+}
+
+internal enum DerivedReturnConverterGetProfileKeyCredentialOut: NiceReturnConverter {
+    typealias NiceReturn = GetProfileKeyCredentialOut
+    typealias FfiReturn = SignalGetProfileKeyCredentialOutFfiResult
+    static func emptyFfiReturn() -> FfiReturn {
+        SignalGetProfileKeyCredentialOutFfiResult()
+    }
+    static func convertReturn(consuming ffiValue: FfiReturn) throws -> NiceReturn {
+        let ffiTag = ffiValue.tag
+        switch ffiTag {
+        case SignalGetProfileKeyCredentialOutFfiResultSuccess:
+            let _0 = Result {
+                try FixedLengthSerializedConverter<ExpiringProfileKeyCredential, FixedByteArrayHelper153>.convertReturn(
+                    consuming: ffiValue.success._0
+                )
+            }
+            return GetProfileKeyCredentialOut.success(try _0.get())
+        case SignalGetProfileKeyCredentialOutFfiResultUnexpectedError:
+            let contains = Result {
+                try StringConverter.convertReturn(
+                    consuming: ffiValue.unexpected_error.contains
+                )
+            }
+            return GetProfileKeyCredentialOut.unexpectedError(contains: try contains.get())
+        case SignalGetProfileKeyCredentialOutFfiResultExplicitError:
+            let _0 = Result {
+                try DerivedReturnConverterProfileKeyCredentialRequestError.convertReturn(
+                    consuming: ffiValue.explicit_error._0
+                )
+            }
+            return GetProfileKeyCredentialOut.explicitError(try _0.get())
+        default:
+            throw SignalError.internalError("Unexpected enum tag for GetProfileKeyCredentialOut: \(ffiTag)")
+        }
+    }
+}
+
 internal enum DerivedReturnConverterGetStickerUploadFormsOut: NiceReturnConverter {
     typealias NiceReturn = GetStickerUploadFormsOut
     typealias FfiReturn = SignalGetStickerUploadFormsOutFfiResult
@@ -1802,6 +1983,68 @@ internal enum DerivedReturnConverterGetStickerUploadFormsOut: NiceReturnConverte
             return GetStickerUploadFormsOut.invalid
         default:
             throw SignalError.internalError("Unexpected enum tag for GetStickerUploadFormsOut: \(ffiTag)")
+        }
+    }
+}
+
+internal enum DerivedReturnConverterGetSubscriptionReceiptCredentialArgs: NiceReturnConverter {
+    typealias NiceReturn = GetSubscriptionReceiptCredentialArgs
+    typealias FfiReturn = SignalGetSubscriptionReceiptCredentialArgsFfiResult
+    static func emptyFfiReturn() -> FfiReturn {
+        SignalGetSubscriptionReceiptCredentialArgsFfiResult()
+    }
+    static func convertReturn(consuming ffiValue: FfiReturn) throws -> NiceReturn {
+
+        let subscriber_id = Result { try DataConverter.convertReturn(consuming: ffiValue.subscriber_id) }
+        let receipt_credential_request_context = Result {
+            try ByteArrayConverter<ReceiptCredentialRequestContext>.convertReturn(
+                consuming: ffiValue.receipt_credential_request_context
+            )
+        }
+        let server_params = Result {
+            try DerivedReturnConverterServerPublicParamsSerialized.convertReturn(consuming: ffiValue.server_params)
+        }
+
+        return GetSubscriptionReceiptCredentialArgs(
+            subscriberId: try subscriber_id.get(),
+            receiptCredentialRequestContext: try receipt_credential_request_context.get(),
+            serverParams: try server_params.get()
+        )
+    }
+}
+
+internal enum DerivedReturnConverterGetSubscriptionReceiptCredentialOut: NiceReturnConverter {
+    typealias NiceReturn = GetSubscriptionReceiptCredentialOut
+    typealias FfiReturn = SignalGetSubscriptionReceiptCredentialOutFfiResult
+    static func emptyFfiReturn() -> FfiReturn {
+        SignalGetSubscriptionReceiptCredentialOutFfiResult()
+    }
+    static func convertReturn(consuming ffiValue: FfiReturn) throws -> NiceReturn {
+        let ffiTag = ffiValue.tag
+        switch ffiTag {
+        case SignalGetSubscriptionReceiptCredentialOutFfiResultSuccess:
+            let _0 = Result {
+                try ByteArrayConverter<ReceiptCredential>.convertReturn(
+                    consuming: ffiValue.success._0
+                )
+            }
+            return GetSubscriptionReceiptCredentialOut.success(try _0.get())
+        case SignalGetSubscriptionReceiptCredentialOutFfiResultUnexpectedError:
+            let contains = Result {
+                try StringConverter.convertReturn(
+                    consuming: ffiValue.unexpected_error.contains
+                )
+            }
+            return GetSubscriptionReceiptCredentialOut.unexpectedError(contains: try contains.get())
+        case SignalGetSubscriptionReceiptCredentialOutFfiResultExplicitError:
+            let _0 = Result {
+                try DerivedReturnConverterReceiptCredentialError.convertReturn(
+                    consuming: ffiValue.explicit_error._0
+                )
+            }
+            return GetSubscriptionReceiptCredentialOut.explicitError(try _0.get())
+        default:
+            throw SignalError.internalError("Unexpected enum tag for GetSubscriptionReceiptCredentialOut: \(ffiTag)")
         }
     }
 }
@@ -2201,6 +2444,25 @@ internal enum DerivedReturnConverterMyTestStruct: NiceReturnConverter {
     }
 }
 
+internal enum DerivedReturnConverterProfileKeyCredentialRequestError: NiceReturnConverter {
+    typealias NiceReturn = ProfileKeyCredentialRequestError
+    typealias FfiReturn = SignalProfileKeyCredentialRequestErrorFfiResult
+    static func emptyFfiReturn() -> FfiReturn {
+        SignalProfileKeyCredentialRequestErrorFfiResult(0)
+    }
+    static func convertReturn(consuming ffiValue: FfiReturn) throws -> NiceReturn {
+        let ffiTag = ffiValue
+        switch ffiTag {
+        case SignalProfileKeyCredentialRequestErrorFfiResultAuthFailed:
+            return ProfileKeyCredentialRequestError.authFailed
+        case SignalProfileKeyCredentialRequestErrorFfiResultProfileNotFound:
+            return ProfileKeyCredentialRequestError.profileNotFound
+        default:
+            throw SignalError.internalError("Unexpected enum tag for ProfileKeyCredentialRequestError: \(ffiTag)")
+        }
+    }
+}
+
 internal enum DerivedReturnConverterReceiptCredentialError: NiceReturnConverter {
     typealias NiceReturn = ReceiptCredentialError
     typealias FfiReturn = SignalReceiptCredentialErrorFfiResult
@@ -2313,6 +2575,26 @@ internal enum DerivedReturnConverterRemoveMfaKeyOut: NiceReturnConverter {
         default:
             throw SignalError.internalError("Unexpected enum tag for RemoveMfaKeyOut: \(ffiTag)")
         }
+    }
+}
+
+internal enum DerivedReturnConverterReportMessageArgs: NiceReturnConverter {
+    typealias NiceReturn = ReportMessageArgs
+    typealias FfiReturn = SignalReportMessageArgsFfiResult
+    static func emptyFfiReturn() -> FfiReturn {
+        SignalReportMessageArgsFfiResult()
+    }
+    static func convertReturn(consuming ffiValue: FfiReturn) throws -> NiceReturn {
+
+        let source = Result { try AciConverter.convertReturn(consuming: ffiValue.source) }
+        let message_guid = Result { try UuidNiceConverter.convertReturn(consuming: ffiValue.message_guid) }
+        let report_spam_token = Result { try DataConverter.convertReturn(consuming: ffiValue.report_spam_token) }
+
+        return ReportMessageArgs(
+            source: try source.get(),
+            messageGuid: try message_guid.get(),
+            reportSpamToken: try report_spam_token.get()
+        )
     }
 }
 
@@ -3862,6 +4144,22 @@ internal enum NativeTestingNice {
         )
 
     }
+    internal static func TESTING_GetProfileKeyCredentialTests() throws -> [GrpcTestCase<
+        GetProfileKeyCredentialArgs, GetProfileKeyCredentialOut
+    >] {
+        var rawOutput = GrpcTestCaseVecConverter<
+            DerivedReturnConverterGetProfileKeyCredentialArgs, DerivedReturnConverterGetProfileKeyCredentialOut
+        >.emptyFfiReturn()
+        try checkError(
+            SignalFfi.signal_testing_get_profile_key_credential_tests(
+                &rawOutput,
+            )
+        )
+        return try GrpcTestCaseVecConverter<
+            DerivedReturnConverterGetProfileKeyCredentialArgs, DerivedReturnConverterGetProfileKeyCredentialOut
+        >.convertReturn(consuming: rawOutput)
+
+    }
     internal static func TESTING_GetStickerUploadFormTests() throws -> [GrpcTestCase<Int32, GetStickerUploadFormsOut>] {
         var rawOutput = GrpcTestCaseVecConverter<
             IdentityResultConverter<Int32>, DerivedReturnConverterGetStickerUploadFormsOut
@@ -3873,6 +4171,24 @@ internal enum NativeTestingNice {
         )
         return try GrpcTestCaseVecConverter<
             IdentityResultConverter<Int32>, DerivedReturnConverterGetStickerUploadFormsOut
+        >.convertReturn(consuming: rawOutput)
+
+    }
+    internal static func TESTING_GetSubscriptionReceiptCredentialTests() throws -> [GrpcTestCase<
+        GetSubscriptionReceiptCredentialArgs, GetSubscriptionReceiptCredentialOut
+    >] {
+        var rawOutput = GrpcTestCaseVecConverter<
+            DerivedReturnConverterGetSubscriptionReceiptCredentialArgs,
+            DerivedReturnConverterGetSubscriptionReceiptCredentialOut
+        >.emptyFfiReturn()
+        try checkError(
+            SignalFfi.signal_testing_get_subscription_receipt_credential_tests(
+                &rawOutput,
+            )
+        )
+        return try GrpcTestCaseVecConverter<
+            DerivedReturnConverterGetSubscriptionReceiptCredentialArgs,
+            DerivedReturnConverterGetSubscriptionReceiptCredentialOut
         >.convertReturn(consuming: rawOutput)
 
     }
@@ -4220,6 +4536,19 @@ internal enum NativeTestingNice {
         return try GrpcTestCaseVecConverter<
             DerivedReturnConverterRemoveMfaKeyArgs, DerivedReturnConverterRemoveMfaKeyOut
         >.convertReturn(consuming: rawOutput)
+
+    }
+    internal static func TESTING_ReportMessageTests() throws -> [GrpcTestCase<ReportMessageArgs, Void>] {
+        var rawOutput = GrpcTestCaseVecConverter<DerivedReturnConverterReportMessageArgs, VoidConverter>
+            .emptyFfiReturn()
+        try checkError(
+            SignalFfi.signal_testing_report_message_tests(
+                &rawOutput,
+            )
+        )
+        return try GrpcTestCaseVecConverter<DerivedReturnConverterReportMessageArgs, VoidConverter>.convertReturn(
+            consuming: rawOutput
+        )
 
     }
     internal static func TESTING_ReserveUsernameHashTests() throws -> [GrpcTestCase<

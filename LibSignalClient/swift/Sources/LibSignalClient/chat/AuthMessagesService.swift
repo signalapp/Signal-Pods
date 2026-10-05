@@ -68,6 +68,21 @@ public protocol AuthMessagesService: Sendable {
         contents: [SingleOutboundUnsealedMessage],
         urgent: Bool,
     ) async throws
+
+    /// Reports a message as spam.
+    ///
+    /// - Parameters:
+    ///   - messageGuid: The offending message's `serverGuid`.
+    ///   - source: The sender of the offending message.
+    ///   - spamToken: The offending message's `reportSpamToken`. Pass empty data for a
+    ///     message that arrived without one; the server interprets an empty token as no token.
+    /// - Throws:
+    ///   - the standard Signal network errors
+    func reportMessage(
+        _ messageGuid: UUID,
+        from source: Aci,
+        spamToken: Data,
+    ) async throws
 }
 
 extension AuthenticatedChatConnection: AuthMessagesService {
@@ -165,6 +180,20 @@ extension AuthenticatedChatConnection: AuthMessagesService {
                 )
             }
         }
+    }
+
+    public func reportMessage(
+        _ messageGuid: UUID,
+        from source: Aci,
+        spamToken: Data
+    ) async throws {
+        return try await NativeNice.AuthenticatedChatConnection_report_message(
+            asyncContext: self.tokioAsyncContext,
+            chat: self,
+            source: source,
+            messageGuid: messageGuid,
+            reportSpamToken: spamToken,
+        )
     }
 }
 

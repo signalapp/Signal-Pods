@@ -10,19 +10,17 @@ import XCTest
 // These testing endpoints aren't generated in device builds, to save on code size.
 #if !os(iOS) || targetEnvironment(simulator)
 
-class UnauthLoginPurchaseServiceTests: UnauthChatServiceTestBase<any UnauthLoginPurchaseService> {
-    override class var selector: SelectorCheck { .loginPurchase }
+class UnauthSubscriptionsServiceTests: UnauthChatServiceTestBase<any UnauthSubscriptionsService> {
+    override class var selector: SelectorCheck { .subscriptions }
 
-    func testCreateLoginReceiptCredential() async throws {
+    func testGetReceiptCredential() async throws {
         try await testGrpcCases(
-            try NativeTestingNice.TESTING_CreateLoginReceiptCredentialTests(),
+            try NativeTestingNice.TESTING_GetSubscriptionReceiptCredentialTests(),
             invoke: { api, args in
-                try await api.createLoginReceiptCredential(
-                    paymentProcessor: args.paymentProcessor,
-                    purchaseIdentifier: args.purchaseIdentifier,
+                try await api.getSubscriptionReceiptCredential(
+                    subscriberId: args.subscriberId,
                     receiptCredentialRequestContext: args.receiptCredentialRequestContext,
                     serverParams: ServerPublicParams(contents: args.serverParams.bytes),
-                    purchaseTime: args.purchaseTime,
                 )
             },
             check: { (expected, actual: Result<ReceiptCredential, any Error>) in

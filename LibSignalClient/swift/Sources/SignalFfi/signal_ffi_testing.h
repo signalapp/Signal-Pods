@@ -982,6 +982,44 @@ typedef struct {
 } SignalGetMessageBackupInfoOutFfiResult;
 static_assert_64bit(sizeof(SignalGetMessageBackupInfoOutFfiResult) == 32);
 static_assert_64bit(alignof(SignalGetMessageBackupInfoOutFfiResult) == 8);
+typedef struct {
+  SignalType_FixedArray473_uint8_t profile_key_request_context;
+  SignalServerPublicParamsSerializedFfiResult server_params;
+} SignalGetProfileKeyCredentialArgsFfiResult;
+static_assert_64bit(offsetof(SignalGetProfileKeyCredentialArgsFfiResult, profile_key_request_context) == 0);
+static_assert_64bit(offsetof(SignalGetProfileKeyCredentialArgsFfiResult, server_params) == 480);
+static_assert_64bit(sizeof(SignalGetProfileKeyCredentialArgsFfiResult) == 496);
+static_assert_64bit(alignof(SignalGetProfileKeyCredentialArgsFfiResult) == 8);
+typedef enum {
+  SignalProfileKeyCredentialRequestErrorFfiResultAuthFailed,
+  SignalProfileKeyCredentialRequestErrorFfiResultProfileNotFound,
+} SignalProfileKeyCredentialRequestErrorFfiResult;
+static_assert_64bit(sizeof(SignalProfileKeyCredentialRequestErrorFfiResult) == 4);
+static_assert_64bit(alignof(SignalProfileKeyCredentialRequestErrorFfiResult) == 4);
+typedef enum {
+  SignalGetProfileKeyCredentialOutFfiResultSuccess,
+  SignalGetProfileKeyCredentialOutFfiResultUnexpectedError,
+  SignalGetProfileKeyCredentialOutFfiResultExplicitError,
+} SignalGetProfileKeyCredentialOutFfiResult_Tag;
+typedef struct {
+  SignalType_FixedArray153_uint8_t _0;
+} SignalGetProfileKeyCredentialOutFfiResultSignalSuccess_Body;
+typedef struct {
+  const int8_t* contains;
+} SignalGetProfileKeyCredentialOutFfiResultSignalUnexpectedError_Body;
+typedef struct {
+  SignalProfileKeyCredentialRequestErrorFfiResult _0;
+} SignalGetProfileKeyCredentialOutFfiResultSignalExplicitError_Body;
+typedef struct {
+  SignalGetProfileKeyCredentialOutFfiResult_Tag tag;
+  union {
+    SignalGetProfileKeyCredentialOutFfiResultSignalSuccess_Body success;
+    SignalGetProfileKeyCredentialOutFfiResultSignalUnexpectedError_Body unexpected_error;
+    SignalGetProfileKeyCredentialOutFfiResultSignalExplicitError_Body explicit_error;
+  };
+} SignalGetProfileKeyCredentialOutFfiResult;
+static_assert_64bit(sizeof(SignalGetProfileKeyCredentialOutFfiResult) == 168);
+static_assert_64bit(alignof(SignalGetProfileKeyCredentialOutFfiResult) == 8);
 typedef enum {
   SignalGetStickerUploadFormsOutFfiResultSuccess,
   SignalGetStickerUploadFormsOutFfiResultInvalid,
@@ -997,6 +1035,40 @@ typedef struct {
 } SignalGetStickerUploadFormsOutFfiResult;
 static_assert_64bit(sizeof(SignalGetStickerUploadFormsOutFfiResult) == 96);
 static_assert_64bit(alignof(SignalGetStickerUploadFormsOutFfiResult) == 8);
+typedef struct {
+  SignalOwnedBuffer subscriber_id;
+  SignalOwnedBuffer receipt_credential_request_context;
+  SignalServerPublicParamsSerializedFfiResult server_params;
+} SignalGetSubscriptionReceiptCredentialArgsFfiResult;
+static_assert_64bit(offsetof(SignalGetSubscriptionReceiptCredentialArgsFfiResult, subscriber_id) == 0);
+static_assert_64bit(offsetof(SignalGetSubscriptionReceiptCredentialArgsFfiResult, receipt_credential_request_context) == 16);
+static_assert_64bit(offsetof(SignalGetSubscriptionReceiptCredentialArgsFfiResult, server_params) == 32);
+static_assert_64bit(sizeof(SignalGetSubscriptionReceiptCredentialArgsFfiResult) == 48);
+static_assert_64bit(alignof(SignalGetSubscriptionReceiptCredentialArgsFfiResult) == 8);
+typedef enum {
+  SignalGetSubscriptionReceiptCredentialOutFfiResultSuccess,
+  SignalGetSubscriptionReceiptCredentialOutFfiResultUnexpectedError,
+  SignalGetSubscriptionReceiptCredentialOutFfiResultExplicitError,
+} SignalGetSubscriptionReceiptCredentialOutFfiResult_Tag;
+typedef struct {
+  SignalOwnedBuffer _0;
+} SignalGetSubscriptionReceiptCredentialOutFfiResultSignalSuccess_Body;
+typedef struct {
+  const int8_t* contains;
+} SignalGetSubscriptionReceiptCredentialOutFfiResultSignalUnexpectedError_Body;
+typedef struct {
+  SignalReceiptCredentialErrorFfiResult _0;
+} SignalGetSubscriptionReceiptCredentialOutFfiResultSignalExplicitError_Body;
+typedef struct {
+  SignalGetSubscriptionReceiptCredentialOutFfiResult_Tag tag;
+  union {
+    SignalGetSubscriptionReceiptCredentialOutFfiResultSignalSuccess_Body success;
+    SignalGetSubscriptionReceiptCredentialOutFfiResultSignalUnexpectedError_Body unexpected_error;
+    SignalGetSubscriptionReceiptCredentialOutFfiResultSignalExplicitError_Body explicit_error;
+  };
+} SignalGetSubscriptionReceiptCredentialOutFfiResult;
+static_assert_64bit(sizeof(SignalGetSubscriptionReceiptCredentialOutFfiResult) == 40);
+static_assert_64bit(alignof(SignalGetSubscriptionReceiptCredentialOutFfiResult) == 8);
 typedef enum {
   SignalGetSvrBCredentialsOutFfiResultSuccess,
   SignalGetSvrBCredentialsOutFfiResultCredentialRejected,
@@ -1114,6 +1186,16 @@ typedef enum {
 } SignalRemoveMfaKeyOutFfiResult;
 static_assert_64bit(sizeof(SignalRemoveMfaKeyOutFfiResult) == 4);
 static_assert_64bit(alignof(SignalRemoveMfaKeyOutFfiResult) == 4);
+typedef struct {
+  SignalType_FixedArray17_uint8_t source;
+  SignalUuid message_guid;
+  SignalOwnedBuffer report_spam_token;
+} SignalReportMessageArgsFfiResult;
+static_assert_64bit(offsetof(SignalReportMessageArgsFfiResult, source) == 0);
+static_assert_64bit(offsetof(SignalReportMessageArgsFfiResult, message_guid) == 17);
+static_assert_64bit(offsetof(SignalReportMessageArgsFfiResult, report_spam_token) == 40);
+static_assert_64bit(sizeof(SignalReportMessageArgsFfiResult) == 56);
+static_assert_64bit(alignof(SignalReportMessageArgsFfiResult) == 8);
 typedef struct {
   SignalOwnedBufferOfMaxAlignedc_uchar32 usernames;
 } SignalReserveUsernameHashArgsFfiResult;
@@ -2102,7 +2184,13 @@ SignalFfiError* signal_testing_get_message_backup_info_tests(
 SignalFfiError* signal_testing_get_pre_key_count_tests(
   SignalOwnedBufferOfGrpcTestCaseBridgedFfi* out
 );
+SignalFfiError* signal_testing_get_profile_key_credential_tests(
+  SignalOwnedBufferOfGrpcTestCaseBridgedFfi* out
+);
 SignalFfiError* signal_testing_get_sticker_upload_form_tests(
+  SignalOwnedBufferOfGrpcTestCaseBridgedFfi* out
+);
+SignalFfiError* signal_testing_get_subscription_receipt_credential_tests(
   SignalOwnedBufferOfGrpcTestCaseBridgedFfi* out
 );
 SignalFfiError* signal_testing_handle_type_clone(
@@ -2300,6 +2388,9 @@ SignalFfiError* signal_testing_remove_device_tests(
   SignalOwnedBufferOfGrpcTestCaseBridgedFfi* out
 );
 SignalFfiError* signal_testing_remove_mfa_key_tests(
+  SignalOwnedBufferOfGrpcTestCaseBridgedFfi* out
+);
+SignalFfiError* signal_testing_report_message_tests(
   SignalOwnedBufferOfGrpcTestCaseBridgedFfi* out
 );
 SignalFfiError* signal_testing_reserve_username_hash_tests(

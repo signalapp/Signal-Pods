@@ -253,6 +253,22 @@ class AuthMessagesServiceTests: AuthChatServiceTestBase<any AuthMessagesService>
             XCTAssertEqual(options, [ChallengeOption.captcha])
         }
     }
+
+    func testReportMessage() async throws {
+        try await testGrpcCases(
+            try NativeTestingNice.TESTING_ReportMessageTests(),
+            invoke: { api, args in
+                try await api.reportMessage(
+                    args.messageGuid,
+                    from: args.source,
+                    spamToken: args.reportSpamToken
+                )
+            },
+            check: { _, actual in
+                try actual.get()
+            }
+        )
+    }
 }
 
 #endif
