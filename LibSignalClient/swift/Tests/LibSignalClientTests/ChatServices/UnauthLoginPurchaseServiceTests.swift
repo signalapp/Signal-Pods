@@ -23,6 +23,7 @@ class UnauthLoginPurchaseServiceTests: UnauthChatServiceTestBase<any UnauthLogin
                     receiptCredentialRequestContext: args.receiptCredentialRequestContext,
                     serverParams: ServerPublicParams(contents: args.serverParams.bytes),
                     purchaseTime: args.purchaseTime,
+                    expectedLevel: args.expectedLevel,
                 )
             },
             check: { (expected, actual: Result<ReceiptCredential, any Error>) in

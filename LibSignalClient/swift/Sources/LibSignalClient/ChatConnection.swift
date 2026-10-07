@@ -50,6 +50,18 @@ public class ConnectionInfo: NativeHandleOwner<SignalMutPointerChatConnectionInf
         return IpType(rawValue: rawValue) ?? .unknown
     }
 
+    /// Whether the connection was made directly to the Signal service, rather than through a
+    /// reflector or a user-configured proxy.
+    public var isDirect: Bool {
+        withNativeHandle { connectionInfo in
+            failOnError {
+                try invokeFnReturningBool {
+                    signal_chat_connection_info_is_direct($0, connectionInfo.const())
+                }
+            }
+        }
+    }
+
     /// A developer-facing description of the connection.
     public var description: String {
         withNativeHandle { connectionInfo in

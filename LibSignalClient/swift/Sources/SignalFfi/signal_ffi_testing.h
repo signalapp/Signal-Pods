@@ -811,19 +811,27 @@ typedef struct {
 static_assert_64bit(offsetof(SignalServerPublicParamsSerializedFfiResult, bytes) == 0);
 static_assert_64bit(sizeof(SignalServerPublicParamsSerializedFfiResult) == 16);
 static_assert_64bit(alignof(SignalServerPublicParamsSerializedFfiResult) == 8);
+typedef enum {
+  SignalLoginReceiptLevelFfiResultNormal,
+  SignalLoginReceiptLevelFfiResultSandbox,
+} SignalLoginReceiptLevelFfiResult;
+static_assert_64bit(sizeof(SignalLoginReceiptLevelFfiResult) == 4);
+static_assert_64bit(alignof(SignalLoginReceiptLevelFfiResult) == 4);
 typedef struct {
   SignalPaymentProviderFfiResult payment_processor;
   const int8_t* purchase_identifier;
   SignalOwnedBuffer receipt_credential_request_context;
   SignalServerPublicParamsSerializedFfiResult server_params;
   uint64_t purchase_time;
+  SignalLoginReceiptLevelFfiResult expected_level;
 } SignalCreateLoginReceiptCredentialArgsFfiResult;
 static_assert_64bit(offsetof(SignalCreateLoginReceiptCredentialArgsFfiResult, payment_processor) == 0);
 static_assert_64bit(offsetof(SignalCreateLoginReceiptCredentialArgsFfiResult, purchase_identifier) == 8);
 static_assert_64bit(offsetof(SignalCreateLoginReceiptCredentialArgsFfiResult, receipt_credential_request_context) == 16);
 static_assert_64bit(offsetof(SignalCreateLoginReceiptCredentialArgsFfiResult, server_params) == 32);
 static_assert_64bit(offsetof(SignalCreateLoginReceiptCredentialArgsFfiResult, purchase_time) == 48);
-static_assert_64bit(sizeof(SignalCreateLoginReceiptCredentialArgsFfiResult) == 56);
+static_assert_64bit(offsetof(SignalCreateLoginReceiptCredentialArgsFfiResult, expected_level) == 56);
+static_assert_64bit(sizeof(SignalCreateLoginReceiptCredentialArgsFfiResult) == 64);
 static_assert_64bit(alignof(SignalCreateLoginReceiptCredentialArgsFfiResult) == 8);
 typedef struct {
   SignalChargeFailureFfiResult* base;

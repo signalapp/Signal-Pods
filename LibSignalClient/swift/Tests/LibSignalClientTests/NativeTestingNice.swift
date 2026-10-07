@@ -894,6 +894,7 @@ internal struct CreateLoginReceiptCredentialArgs {
     var receiptCredentialRequestContext: ReceiptCredentialRequestContext
     var serverParams: ServerPublicParamsSerialized
     var purchaseTime: Date
+    var expectedLevel: LoginReceiptLevel
 
 }
 
@@ -1605,13 +1606,17 @@ internal enum DerivedReturnConverterCreateLoginReceiptCredentialArgs: NiceReturn
             try DerivedReturnConverterServerPublicParamsSerialized.convertReturn(consuming: ffiValue.server_params)
         }
         let purchase_time = Result { try TimestampConverter.convertReturn(consuming: ffiValue.purchase_time) }
+        let expected_level = Result {
+            try DerivedReturnConverterLoginReceiptLevel.convertReturn(consuming: ffiValue.expected_level)
+        }
 
         return CreateLoginReceiptCredentialArgs(
             paymentProcessor: try payment_processor.get(),
             purchaseIdentifier: try purchase_identifier.get(),
             receiptCredentialRequestContext: try receipt_credential_request_context.get(),
             serverParams: try server_params.get(),
-            purchaseTime: try purchase_time.get()
+            purchaseTime: try purchase_time.get(),
+            expectedLevel: try expected_level.get()
         )
     }
 }
@@ -2160,6 +2165,25 @@ internal enum DerivedReturnConverterListMfaKeysOut: NiceReturnConverter {
             return ListMfaKeysOut.success(try _0.get())
         default:
             throw SignalError.internalError("Unexpected enum tag for ListMfaKeysOut: \(ffiTag)")
+        }
+    }
+}
+
+internal enum DerivedReturnConverterLoginReceiptLevel: NiceReturnConverter {
+    typealias NiceReturn = LoginReceiptLevel
+    typealias FfiReturn = SignalLoginReceiptLevelFfiResult
+    static func emptyFfiReturn() -> FfiReturn {
+        SignalLoginReceiptLevelFfiResult(0)
+    }
+    static func convertReturn(consuming ffiValue: FfiReturn) throws -> NiceReturn {
+        let ffiTag = ffiValue
+        switch ffiTag {
+        case SignalLoginReceiptLevelFfiResultNormal:
+            return LoginReceiptLevel.normal
+        case SignalLoginReceiptLevelFfiResultSandbox:
+            return LoginReceiptLevel.sandbox
+        default:
+            throw SignalError.internalError("Unexpected enum tag for LoginReceiptLevel: \(ffiTag)")
         }
     }
 }

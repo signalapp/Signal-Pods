@@ -3701,6 +3701,12 @@ static_assert_64bit(offsetof(SignalCallQualitySurveyInternalFfiArg, call_id_hash
 static_assert_64bit(sizeof(SignalCallQualitySurveyInternalFfiArg) == 216);
 static_assert_64bit(alignof(SignalCallQualitySurveyInternalFfiArg) == 8);
 typedef enum {
+  SignalLoginReceiptLevelFfiArgNormal,
+  SignalLoginReceiptLevelFfiArgSandbox,
+} SignalLoginReceiptLevelFfiArg;
+static_assert_64bit(sizeof(SignalLoginReceiptLevelFfiArg) == 4);
+static_assert_64bit(alignof(SignalLoginReceiptLevelFfiArg) == 4);
+typedef enum {
   SignalPaymentProviderFfiArgGooglePlayBilling,
   SignalPaymentProviderFfiArgAppleAppStore,
   SignalPaymentProviderFfiArgStripe,
@@ -4485,6 +4491,10 @@ SignalFfiError* signal_chat_connection_info_destroy(
 );
 SignalFfiError* signal_chat_connection_info_ip_version(
   uint8_t* out,
+  SignalConstPointerChatConnectionInfo connection_info
+);
+SignalFfiError* signal_chat_connection_info_is_direct(
+  bool* out,
   SignalConstPointerChatConnectionInfo connection_info
 );
 SignalFfiError* signal_chat_connection_info_local_port(
@@ -6790,7 +6800,8 @@ SignalFfiError* signal_unauthenticated_chat_connection_create_login_receipt_cred
   const int8_t* purchase_identifier,
   SignalBorrowedBuffer receipt_credential_request_context,
   SignalConstPointerServerPublicParams server_params,
-  uint64_t purchase_time
+  uint64_t purchase_time,
+  SignalLoginReceiptLevelFfiArg expected_level
 );
 SignalFfiError* signal_unauthenticated_chat_connection_destroy(
   SignalMutPointerUnauthenticatedChatConnection p

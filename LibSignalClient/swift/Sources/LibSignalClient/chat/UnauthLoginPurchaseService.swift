@@ -5,6 +5,11 @@
 
 import Foundation
 
+public enum LoginReceiptLevel: Sendable {
+    case normal
+    case sandbox
+}
+
 public protocol UnauthLoginPurchaseService: Sendable {
     /// Obtain a ZK receipt credential for a completed one-time login payment.
     /// The receipt credential can then be presented at registration.
@@ -27,6 +32,7 @@ public protocol UnauthLoginPurchaseService: Sendable {
         receiptCredentialRequestContext: ReceiptCredentialRequestContext,
         serverParams: ServerPublicParams,
         purchaseTime: Date,
+        expectedLevel: LoginReceiptLevel,
     ) async throws -> ReceiptCredential
 }
 
@@ -37,6 +43,7 @@ extension UnauthenticatedChatConnection: UnauthLoginPurchaseService {
         receiptCredentialRequestContext: ReceiptCredentialRequestContext,
         serverParams: ServerPublicParams,
         purchaseTime: Date,
+        expectedLevel: LoginReceiptLevel,
     ) async throws -> ReceiptCredential {
         return try await NativeNice.UnauthenticatedChatConnection_create_login_receipt_credential(
             asyncContext: self.tokioAsyncContext,
@@ -46,6 +53,7 @@ extension UnauthenticatedChatConnection: UnauthLoginPurchaseService {
             receiptCredentialRequestContext: receiptCredentialRequestContext,
             serverParams: serverParams,
             purchaseTime: purchaseTime,
+            expectedLevel: expectedLevel,
         )
     }
 

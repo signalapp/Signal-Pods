@@ -3022,6 +3022,16 @@ internal struct ListMediaResponse {
 }
 
 /*
+// LoginReceiptLevel
+
+internal enum LoginReceiptLevel {
+    case normal
+    case sandbox
+}
+
+*/
+
+/*
 // PaymentProvider
 
 internal enum PaymentProvider {
@@ -4444,6 +4454,37 @@ internal enum DerivedArgConverterDeviceCapabilityInternal: NiceArgConverter {
 
         case .optionalPhoneNumber:
             return try niceThunk(SignalDeviceCapabilityInternalFfiArgOptionalPhoneNumber)
+
+        }
+    }
+}
+
+internal enum DerivedArgConverterLoginReceiptLevel: NiceArgConverter {
+    typealias NiceArg = LoginReceiptLevel
+    typealias FfiArg = SignalLoginReceiptLevelFfiArg
+    typealias KeepAlive = ()
+    static func convertArg(_ niceArg: NiceArg) -> (FfiArg, KeepAlive?) {
+        switch niceArg {
+
+        case .normal:
+            return (SignalLoginReceiptLevelFfiArgNormal, nil)
+
+        case .sandbox:
+            return (SignalLoginReceiptLevelFfiArgSandbox, nil)
+
+        }
+    }
+    static func convertArgBorrowed<Result>(
+        _ niceArg: NiceArg,
+        _ niceThunk: (FfiArg) throws -> Result,
+    ) rethrows -> Result {
+        switch niceArg {
+
+        case .normal:
+            return try niceThunk(SignalLoginReceiptLevelFfiArgNormal)
+
+        case .sandbox:
+            return try niceThunk(SignalLoginReceiptLevelFfiArgSandbox)
 
         }
     }
@@ -6092,6 +6133,7 @@ internal enum NativeNice {
         receiptCredentialRequestContext receipt_credential_request_context: ReceiptCredentialRequestContext,
         serverParams server_params: ServerPublicParams,
         purchaseTime purchase_time: Date,
+        expectedLevel expected_level: LoginReceiptLevel,
     ) async throws -> ReceiptCredential {
         let rawOutput: ByteArrayConverter<ReceiptCredential>.FfiReturn =
             try await asyncContext.invokeAsyncFunction {
@@ -6108,17 +6150,21 @@ internal enum NativeNice {
                                     BridgeHandleRefConverter<SignalMutPointerServerPublicParams, ServerPublicParams>
                                         .convertArgBorrowed(server_params) { server_paramsFfi in
                                             TimestampConverter.convertArgBorrowed(purchase_time) { purchase_timeFfi in
-                                                SignalFfi
-                                                    .signal_unauthenticated_chat_connection_create_login_receipt_credential(
-                                                        promiseFfi,
-                                                        asyncContextFfi.const(),
-                                                        chatFfi,
-                                                        payment_processorFfi,
-                                                        purchase_identifierFfi,
-                                                        receipt_credential_request_contextFfi,
-                                                        server_paramsFfi,
-                                                        purchase_timeFfi,
-                                                    )
+                                                DerivedArgConverterLoginReceiptLevel.convertArgBorrowed(expected_level)
+                                                { expected_levelFfi in
+                                                    SignalFfi
+                                                        .signal_unauthenticated_chat_connection_create_login_receipt_credential(
+                                                            promiseFfi,
+                                                            asyncContextFfi.const(),
+                                                            chatFfi,
+                                                            payment_processorFfi,
+                                                            purchase_identifierFfi,
+                                                            receipt_credential_request_contextFfi,
+                                                            server_paramsFfi,
+                                                            purchase_timeFfi,
+                                                            expected_levelFfi,
+                                                        )
+                                                }
                                             }
                                         }
                                 }

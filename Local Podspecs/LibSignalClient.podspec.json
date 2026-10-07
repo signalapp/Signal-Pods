@@ -1,13 +1,13 @@
 {
   "name": "LibSignalClient",
-  "version": "0.104.0",
+  "version": "0.105.0",
   "summary": "A Swift wrapper library for communicating with the Signal messaging service.",
   "homepage": "https://github.com/signalapp/libsignal",
   "license": "AGPL-3.0-only",
   "authors": "Signal Messenger LLC",
   "source": {
     "git": "https://github.com/signalapp/libsignal.git",
-    "tag": "v0.104.0"
+    "tag": "v0.105.0"
   },
   "swift_versions": "5",
   "platforms": {
@@ -30,8 +30,8 @@
     "LIBSIGNAL_FFI_TEMP_DIR": "$(PROJECT_TEMP_DIR)/libsignal_ffi",
     "LIBSIGNAL_FFI_LIB_TO_LINK": "$(LIBSIGNAL_FFI_TEMP_DIR)/$(LIBSIGNAL_FFI_BUILD_PATH)/libsignal_ffi.a",
     "OTHER_LDFLAGS": "$(LIBSIGNAL_FFI_LIB_TO_LINK)",
-    "LIBSIGNAL_FFI_PREBUILD_ARCHIVE": "libsignal-client-ios-build-v0.104.0.tar.gz",
-    "LIBSIGNAL_FFI_PREBUILD_CHECKSUM": "b12d691ac1ba94e0490122cb18480c7970be81257144a4ab68cd054777a21e59",
+    "LIBSIGNAL_FFI_PREBUILD_ARCHIVE": "libsignal-client-ios-build-v0.105.0.tar.gz",
+    "LIBSIGNAL_FFI_PREBUILD_CHECKSUM": "556a82414b545490085a0e21d94990788bdcbee4d769043f7889397872443faf",
     "CARGO_BUILD_TARGET[sdk=iphonesimulator*][arch=arm64]": "aarch64-apple-ios-sim",
     "CARGO_BUILD_TARGET[sdk=iphonesimulator*][arch=*]": "x86_64-apple-ios",
     "CARGO_BUILD_TARGET[sdk=iphoneos*][arch=arm64e]": "arm64e-apple-ios",
