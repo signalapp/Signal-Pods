@@ -1,17 +1,8 @@
 PODS:
-  - CocoaLumberjack (3.7.4):
-    - CocoaLumberjack/Core (= 3.7.4)
-  - CocoaLumberjack/Core (3.7.4)
   - GRDB.swift/SQLCipher (5.26.0):
     - SQLCipher (>= 3.4.0)
-  - LibMobileCoin/CoreHTTP (6.0.2):
-    - SwiftProtobuf (~> 1.5)
   - LibSignalClient (0.105.0)
   - LibSignalClient/Tests (0.105.0)
-  - Logging (1.4.0)
-  - MobileCoin/CoreHTTP (6.0.3):
-    - LibMobileCoin/CoreHTTP (~> 6.0.0-pre1)
-    - Logging (~> 1.4)
   - SignalRingRTC (2.73.0):
     - SignalRingRTC/WebRTC (= 2.73.0)
   - SignalRingRTC/WebRTC (2.73.0)
@@ -20,37 +11,22 @@ PODS:
   - SQLCipher/common (4.6.1)
   - SQLCipher/standard (4.6.1):
     - SQLCipher/common
-  - SwiftProtobuf (1.38.1)
 
 DEPENDENCIES:
-  - CocoaLumberjack
   - GRDB.swift/SQLCipher
-  - LibMobileCoin/CoreHTTP (from `https://github.com/signalapp/libmobilecoin-ios-artifacts`, tag `signal/6.0.2`)
   - LibSignalClient (from `https://github.com/signalapp/libsignal.git`, tag `v0.105.0`)
   - LibSignalClient/Tests (from `https://github.com/signalapp/libsignal.git`, tag `v0.105.0`)
-  - MobileCoin/CoreHTTP (from `https://github.com/mobilecoinofficial/MobileCoin-Swift`, tag `v6.0.3`)
   - SignalRingRTC (from `https://github.com/signalapp/ringrtc`, tag `v2.73.0`)
   - SQLCipher (from `https://github.com/signalapp/sqlcipher.git`, tag `v4.6.1-f_barrierfsync`)
-  - SwiftProtobuf (= 1.38.1)
 
 SPEC REPOS:
   trunk:
-    - CocoaLumberjack
     - GRDB.swift
-    - Logging
-    - SwiftProtobuf
 
 EXTERNAL SOURCES:
-  LibMobileCoin:
-    :git: https://github.com/signalapp/libmobilecoin-ios-artifacts
-    :submodules: true
-    :tag: signal/6.0.2
   LibSignalClient:
     :git: https://github.com/signalapp/libsignal.git
     :tag: v0.105.0
-  MobileCoin:
-    :git: https://github.com/mobilecoinofficial/MobileCoin-Swift
-    :tag: v6.0.3
   SignalRingRTC:
     :git: https://github.com/signalapp/ringrtc
     :tag: v2.73.0
@@ -59,16 +35,9 @@ EXTERNAL SOURCES:
     :tag: v4.6.1-f_barrierfsync
 
 CHECKOUT OPTIONS:
-  LibMobileCoin:
-    :git: https://github.com/signalapp/libmobilecoin-ios-artifacts
-    :submodules: true
-    :tag: signal/6.0.2
   LibSignalClient:
     :git: https://github.com/signalapp/libsignal.git
     :tag: v0.105.0
-  MobileCoin:
-    :git: https://github.com/mobilecoinofficial/MobileCoin-Swift
-    :tag: v6.0.3
   SignalRingRTC:
     :git: https://github.com/signalapp/ringrtc
     :tag: v2.73.0
@@ -77,16 +46,11 @@ CHECKOUT OPTIONS:
     :tag: v4.6.1-f_barrierfsync
 
 SPEC CHECKSUMS:
-  CocoaLumberjack: 543c79c114dadc3b1aba95641d8738b06b05b646
   GRDB.swift: 1395cb3556df6b16ed69dfc74c3886abc75d2825
-  LibMobileCoin: 8503f567fa32184a5be7bc038fbd727747dd9991
   LibSignalClient: 2b65bad98bf695e2036871b7160598595a60ed45
-  Logging: beeb016c9c80cf77042d62e83495816847ef108b
-  MobileCoin: cd7f49d6eaa2d362e4c9f8324cae0cc3bc3c53b5
   SignalRingRTC: d91fcb22696b892df857b2b98fe60411b9ea3ebd
   SQLCipher: ff2f045b20d675a73a70f7329395ddd4a2580063
-  SwiftProtobuf: 409d3aaec90e51b1705b1dd8065b56893450e77c
 
-PODFILE CHECKSUM: c53a8cfb50826322b8d638eb3d15aef3dfc854c7
+PODFILE CHECKSUM: 6847ead09ccf74572eb4a8fdd0fd80b33ccd776f
 
 COCOAPODS: 1.15.2
