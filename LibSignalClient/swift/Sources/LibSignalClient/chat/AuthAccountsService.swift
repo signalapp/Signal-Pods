@@ -216,6 +216,16 @@ public struct ConfirmedMfaKey: Sendable, Equatable {
     }
 }
 
+public struct AccountEntitlements: Sendable {
+    public var badges: [BadgeEntitlement]
+    public var backup: BackupEntitlement?
+
+    public init(badges: [BadgeEntitlement], backup: BackupEntitlement?) {
+        self.badges = badges
+        self.backup = backup
+    }
+}
+
 public protocol AuthAccountsService: Sendable {
     /// Deletes the authenticated account, purging all associated data in the
     /// process.
@@ -441,6 +451,20 @@ public protocol AuthAccountsService: Sendable {
     ///     server assigns (a programmer error)
     ///   - the standard Signal network errors
     func removeMfaKey(id keyId: Int) async throws
+
+    /// Returns the current set of account entitlements (may be empty).
+    ///
+    /// - Throws:
+    ///   - the standard Signal network errors
+    func getAccountEntitlements() async throws -> AccountEntitlements
+
+    /// Gets the capabilities of the authenticated account.
+    ///
+    /// Capabilities that are not recognized are filtered out.
+    ///
+    /// - Throws:
+    ///   - the standard Signal network errors
+    func getAccountCapabilities() async throws -> Set<DeviceCapability>
 }
 
 extension AuthenticatedChatConnection: AuthAccountsService {
@@ -572,6 +596,15 @@ extension AuthenticatedChatConnection: AuthAccountsService {
             keyId: try bridgeInt32(keyId, "keyId"),
         )
     }
+
+    public func getAccountCapabilities() async throws -> Set<DeviceCapability> {
+        return Set(
+            try await NativeNice.AuthenticatedChatConnection_get_capabilities(
+                asyncContext: self.tokioAsyncContext,
+                chat: self
+            )
+        )
+    }
 }
 
 extension AuthServiceSelector where Self == AuthServiceSelectorHelper<any AuthAccountsService> {
@@ -690,6 +723,13 @@ extension AuthenticatedChatConnection: AuthAccountsServiceImpl {
             createdAt: try bridgeTimestamp(metadata.createdAt, "metadata.createdAt"),
             svrKey: svrKey.serialize(),
             rng: rngForTesting,
+        )
+    }
+
+    public func getAccountEntitlements() async throws -> AccountEntitlements {
+        return try await NativeNice.AuthenticatedChatConnection_get_entitlements(
+            asyncContext: self.tokioAsyncContext,
+            chat: self
         )
     }
 }

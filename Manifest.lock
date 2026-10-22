@@ -1,8 +1,8 @@
 PODS:
   - GRDB.swift/SQLCipher (5.26.0):
     - SQLCipher (>= 3.4.0)
-  - LibSignalClient (0.105.0)
-  - LibSignalClient/Tests (0.105.0)
+  - LibSignalClient (0.105.4)
+  - LibSignalClient/Tests (0.105.4)
   - SignalRingRTC (2.73.0):
     - SignalRingRTC/WebRTC (= 2.73.0)
   - SignalRingRTC/WebRTC (2.73.0)
@@ -14,8 +14,8 @@ PODS:
 
 DEPENDENCIES:
   - GRDB.swift/SQLCipher
-  - LibSignalClient (from `https://github.com/signalapp/libsignal.git`, tag `v0.105.0`)
-  - LibSignalClient/Tests (from `https://github.com/signalapp/libsignal.git`, tag `v0.105.0`)
+  - LibSignalClient (from `https://github.com/signalapp/libsignal.git`, tag `v0.105.4`)
+  - LibSignalClient/Tests (from `https://github.com/signalapp/libsignal.git`, tag `v0.105.4`)
   - SignalRingRTC (from `https://github.com/signalapp/ringrtc`, tag `v2.73.0`)
   - SQLCipher (from `https://github.com/signalapp/sqlcipher.git`, tag `v4.6.1-f_barrierfsync`)
 
@@ -26,7 +26,7 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   LibSignalClient:
     :git: https://github.com/signalapp/libsignal.git
-    :tag: v0.105.0
+    :tag: v0.105.4
   SignalRingRTC:
     :git: https://github.com/signalapp/ringrtc
     :tag: v2.73.0
@@ -37,7 +37,7 @@ EXTERNAL SOURCES:
 CHECKOUT OPTIONS:
   LibSignalClient:
     :git: https://github.com/signalapp/libsignal.git
-    :tag: v0.105.0
+    :tag: v0.105.4
   SignalRingRTC:
     :git: https://github.com/signalapp/ringrtc
     :tag: v2.73.0
@@ -47,10 +47,10 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   GRDB.swift: 1395cb3556df6b16ed69dfc74c3886abc75d2825
-  LibSignalClient: 2b65bad98bf695e2036871b7160598595a60ed45
+  LibSignalClient: 7ddaff59864a8b8835d36238a62a03c4e7024a7d
   SignalRingRTC: d91fcb22696b892df857b2b98fe60411b9ea3ebd
   SQLCipher: ff2f045b20d675a73a70f7329395ddd4a2580063
 
-PODFILE CHECKSUM: 6847ead09ccf74572eb4a8fdd0fd80b33ccd776f
+PODFILE CHECKSUM: d2e01af72e1d0bd5528714ea893dd23f30751058
 
 COCOAPODS: 1.15.2
