@@ -1,19 +1,19 @@
 PODS:
-  - LibSignalClient (0.105.4)
-  - LibSignalClient/Tests (0.105.4)
+  - LibSignalClient (0.106.0)
+  - LibSignalClient/Tests (0.106.0)
   - SignalRingRTC (2.73.0):
     - SignalRingRTC/WebRTC (= 2.73.0)
   - SignalRingRTC/WebRTC (2.73.0)
 
 DEPENDENCIES:
-  - LibSignalClient (from `https://github.com/signalapp/libsignal.git`, tag `v0.105.4`)
-  - LibSignalClient/Tests (from `https://github.com/signalapp/libsignal.git`, tag `v0.105.4`)
+  - LibSignalClient (from `https://github.com/signalapp/libsignal.git`, tag `v0.106.0`)
+  - LibSignalClient/Tests (from `https://github.com/signalapp/libsignal.git`, tag `v0.106.0`)
   - SignalRingRTC (from `https://github.com/signalapp/ringrtc`, tag `v2.73.0`)
 
 EXTERNAL SOURCES:
   LibSignalClient:
     :git: https://github.com/signalapp/libsignal.git
-    :tag: v0.105.4
+    :tag: v0.106.0
   SignalRingRTC:
     :git: https://github.com/signalapp/ringrtc
     :tag: v2.73.0
@@ -21,15 +21,15 @@ EXTERNAL SOURCES:
 CHECKOUT OPTIONS:
   LibSignalClient:
     :git: https://github.com/signalapp/libsignal.git
-    :tag: v0.105.4
+    :tag: v0.106.0
   SignalRingRTC:
     :git: https://github.com/signalapp/ringrtc
     :tag: v2.73.0
 
 SPEC CHECKSUMS:
-  LibSignalClient: a59d4759ec0a2f19ee17810a50e2ceb64cee42d5
+  LibSignalClient: 6672c1a8b0cb3fdc3317707483d506a91a9b469b
   SignalRingRTC: d91fcb22696b892df857b2b98fe60411b9ea3ebd
 
-PODFILE CHECKSUM: d88136397b52d66907f02afe593ba288f04a3916
+PODFILE CHECKSUM: 5aae2ae5d4154bb03dc7114e799d5783bea32f92
 
 COCOAPODS: 1.15.2
