@@ -176,22 +176,18 @@ code_sign_if_enabled() {
 }
 
 if [[ "$CONFIGURATION" == "App Store Release" ]]; then
-  install_framework "${BUILT_PRODUCTS_DIR}/LibSignalClient/LibSignalClient.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SignalRingRTC/SignalRingRTC.framework"
   install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/SignalRingRTC/WebRTC/WebRTC.framework"
 fi
 if [[ "$CONFIGURATION" == "Debug" ]]; then
-  install_framework "${BUILT_PRODUCTS_DIR}/LibSignalClient/LibSignalClient.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SignalRingRTC/SignalRingRTC.framework"
   install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/SignalRingRTC/WebRTC/WebRTC.framework"
 fi
 if [[ "$CONFIGURATION" == "Profiling" ]]; then
-  install_framework "${BUILT_PRODUCTS_DIR}/LibSignalClient/LibSignalClient.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SignalRingRTC/SignalRingRTC.framework"
   install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/SignalRingRTC/WebRTC/WebRTC.framework"
 fi
 if [[ "$CONFIGURATION" == "Testable Release" ]]; then
-  install_framework "${BUILT_PRODUCTS_DIR}/LibSignalClient/LibSignalClient.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SignalRingRTC/SignalRingRTC.framework"
   install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/SignalRingRTC/WebRTC/WebRTC.framework"
 fi
